@@ -27,7 +27,7 @@ scenes:
       - "00:01.5–00:20.0 Taipei prompt, itinerary response and tool question"
       - "00:20.0–00:24.4 handoff into the request-processing explanation"
     visual_intent: "Assemble an unbranded assistant interface with a compact composer fixed at the bottom; type and send the prompt into a user bubble; animate an AI loading state; reveal the nature-first Taipei title and two itinerary cards in sequence."
-    review_status: "latest local revision passed keyframe and seek checks; pending public Pages update"
+    review_status: "published for user review; code commit 21cb52c"
   - id: "scene-02"
     start_seconds: 24.4
     end_seconds: 55.6
@@ -39,18 +39,18 @@ scenes:
       - "00:44.0–00:48.9 tokens map to illustrative numeric IDs"
       - "00:48.9–00:55.6 tokens are building blocks, not complete ideas"
     visual_intent: "Reuse the same submitted prompt node as it moves from the chat bubble into a centered zoom; keep the sentence visible as it becomes larger individual word tiles on two spaced rows; move the original tiles on downward-curved paths into WHOLE WORD, WORD PIECES and PUNCTUATION bins; expand illustrative numeric-ID cells directly below selected tiles."
-    review_status: "latest local revision passed keyframe and seek checks; pending public Pages update"
+    review_status: "published for user review; code commit 21cb52c"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: "47b6aa8"
+  git_commit: "21cb52c"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "none observed during latest local Chromium preview checks; Three.js/WebGL initialized"
-  preview_seek_and_handoff: "pass: original MP3 previously confirmed with a 55.6-second seekable range; latest local checks validated 45s → 6.5s → 24.2s cross-section scrubbing, stable prompt-node reuse, repeatable flight positions and IDs; review caption remained outside the frame"
+  browser_errors: "none observed during latest public Pages Chromium preview checks; Three.js/WebGL initialized"
+  preview_seek_and_handoff: "pass: public MP3 loaded with a 55.6-second duration; public checks at 37.1s and 45s confirmed token flights, category landings and numeric IDs; local cross-section scrubbing validated 45s → 6.5s → 24.2s, stable prompt-node reuse and repeatable flight positions; review caption remained outside the frame"
   keyframes_reviewed: [6.5, 10.8, 13.8, 24.2, 27.5, 30.0, 37.1, 45.0]
   ffprobe_verified: true
   full_decode_verified: true
