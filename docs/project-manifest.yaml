@@ -1,0 +1,53 @@
+project:
+  title: "From Prompt to Action: How AI Turns Words into Work"
+  purpose: "A section-by-section, audio-synchronized motion-design explainer showing how AI turns a user prompt into an answer and, later, tool-assisted work."
+  repository_or_workspace: "https://github.com/ckfun0skf/superintelligence-vd-ai-explainer"
+  delivery_choices:
+    source: "existing GitHub repository"
+    preview: "temporary local preview server for review; GitHub Pages not enabled"
+    final_video: "no"
+
+video:
+  duration_seconds: 24.45
+  fps: 24
+  width: 1080
+  height: 1920
+  frame_range: "[0, 587)"
+  narration_or_master_audio: "public/audio/section-01-preview-mix.mp3"
+  audio_codec: "MP3 preview mix; final master format TBD"
+  audio_sample_rate_hz: 44100
+
+scenes:
+  - id: "scene-01"
+    start_seconds: 0.0
+    end_seconds: 24.45
+    module: "src/main.js"
+    narration_cues:
+      - "00:00–00:01.5 music-only interface build"
+      - "00:01.5 Imagine typing this into an AI assistant"
+      - "00:04.0 Taipei weekend prompt begins typing"
+      - "00:10.0 itinerary reply appears"
+      - "00:16.6 tool options emerge"
+      - "00:21.2 transition cue: follow the request"
+    visual_intent: "Assemble an unbranded AI-chat interface, type the Taipei request, reveal a simple itinerary response, then hint at available tools."
+    review_status: "previewed"
+
+delivery:
+  preview_url: null
+  project_bundle: null
+  final_video: null
+  git_commit: null
+
+quality_checks:
+  deterministic_random_seed: "0xA17E2026"
+  browser_errors: "none observed after user-initiated playback"
+  preview_seek_and_handoff: "pass for section 01 seeks at 5, 12, and 18 seconds, including a backward seek; no later-section handoff yet"
+  keyframes_reviewed: [0.0, 20.4]
+  ffprobe_verified: true
+  full_decode_verified: true
+  notes:
+    - "Measured preview audio duration is 24.45 seconds; speech begins at 1.5 seconds."
+    - "Music is lowered beneath speech and sidechain-ducked from the voice; the first 1.5 seconds remain music-only."
+    - "The visual clock is tied to audio.currentTime; renderAt(seconds) and renderFrame(frame) use absolute time."
+    - "Portrait framing is based on the supplied vertical reference; final aspect ratio remains adjustable."
+    - "The temporary preview server is not GitHub Pages; Pages has not been enabled."
