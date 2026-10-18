@@ -1,6 +1,6 @@
 project:
   title: "From Prompt to Action: How AI Turns Words into Work"
-  purpose: "An audio-synchronized 16:9 explainer showing how a user prompt enters an AI assistant and becomes tokens."
+  purpose: "An audio-synchronized 16:9 explainer that animates a prompt from assistant input into a response and then into illustrative token pieces."
   repository_or_workspace: "https://github.com/ckfun0skf/superintelligence-vd-ai-explainer"
   delivery_choices:
     source: "existing GitHub repository, main branch"
@@ -26,8 +26,8 @@ scenes:
       - "00:00–00:01.5 music-only assistant interface build"
       - "00:01.5–00:20.0 Taipei prompt, itinerary response and tool question"
       - "00:20.0–00:24.4 handoff into the request-processing explanation"
-    visual_intent: "Assemble an unbranded assistant interface, type the Taipei request, reveal the itinerary draft, then transition from the whole prompt to its text pieces."
-    review_status: "existing visual direction retained"
+    visual_intent: "Assemble an unbranded assistant interface with the composer fixed at the bottom; type and send the prompt into a user bubble; animate an AI loading state; reveal the nature-first Taipei title and two itinerary cards in sequence."
+    review_status: "revised local preview; awaiting published review"
   - id: "scene-02"
     start_seconds: 24.4
     end_seconds: 55.6
@@ -38,8 +38,8 @@ scenes:
       - "00:34.5–00:44.0 whole-word, word-piece and punctuation examples; boundaries vary"
       - "00:44.0–00:48.9 tokens map to illustrative numeric IDs"
       - "00:48.9–00:55.6 tokens are building blocks, not complete ideas"
-    visual_intent: "Transform the original request into token tiles; highlight word, subword and punctuation examples; flip token tiles to sample numeric IDs; hold the takeaway with synchronized subtitles."
-    review_status: "published preview for user review"
+    visual_intent: "Carry the submitted request into a centered zoom; split it into two spaced sentence rows and individual word tiles; arc selected examples into WHOLE WORD, WORD PIECES and PUNCTUATION bins; reveal illustrative IDs afterward with audio-timed particles and glow."
+    review_status: "revised local preview; awaiting published review"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
@@ -49,17 +49,19 @@ delivery:
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "none observed on the published preview"
-  preview_seek_and_handoff: "pass: public playback started; timeline seeks to 37s and 50s synchronized audio and visuals; deterministic scene renders checked across 23.8–25.0s handoff"
-  keyframes_reviewed: [0.0, 24.4, 30.5, 37.0, 50.0]
+  browser_errors: "none observed in local browser preview; live Pages update pending"
+  preview_seek_and_handoff: "local pass: bottom composer, submitted bubble/loading/answer, prompt zoom, word split, category flight and ID reveal checked at absolute audio times; live Pages update pending"
+  keyframes_reviewed: [7.0, 10.8, 13.8, 24.6, 27.0, 33.0, 37.4, 42.5, 45.0]
   ffprobe_verified: true
   full_decode_verified: true
   notes:
     - "Approved narration voice retained; Sections 01–02 are extracted from the approved narration recording."
     - "Music starts before narration, continues under the cut, and is sidechain-ducked beneath speech."
     - "The 1920×1080 Three.js canvas is rendered at fixed resolution; frame composition remains 16:9."
-    - "The preview page contains only the film frame and necessary play/seek controls."
+    - "No review captions or section titles are rendered inside the 16:9 film frame; synchronized English review captions sit below the frame, outside the movie composition."
+    - "The preview page contains only the film frame, the review-only caption line and necessary play/seek controls."
+    - "All animation states are driven by absolute audio time, including curved token flights and seeded particle motion."
     - "Token boundaries and numeric IDs are explicitly illustrative; real mappings vary by tokenizer."
     - "Public Pages asset URLs returned HTTP 200; MP3 byte-range request returned HTTP 206, with a 55.6-second seekable audio track."
     - "The final narration sentence of Section 02 was checked by transcription at the source cut; Section 03 is not included."
-    - "Live preview verified 16:9 stage (1280×720 browser view) with fixed 1920×1080 canvas rendering."
+    - "Local browser preview verified 16:9 stage (1280×720 browser view) with fixed 1920×1080 canvas rendering."

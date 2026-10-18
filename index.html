@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#05070c" />
-    <meta name="description" content="A 16:9 HD motion-design preview explaining how AI turns words into tokens." />
+    <meta name="description" content="A 16:9 HD video preview explaining how an AI assistant processes a prompt." />
     <title>From Prompt to Action — HD Video Preview</title>
   </head>
   <body>
     <main class="app-shell">
-      <section class="preview-column" aria-label="HD video preview">
+      <section class="preview-column" aria-label="HD film preview">
         <div class="stage-frame">
           <div class="stage" id="stage">
             <canvas id="scene-canvas" aria-hidden="true"></canvas>
@@ -22,60 +22,76 @@
                   <div class="assistant-identity"><strong>Assistant</strong><small>Ready to help</small></div>
                   <div class="online-indicator"><i></i> ONLINE</div>
                 </div>
-                <div class="conversation-label" id="conversation-label"><span>EXAMPLE REQUEST</span><span class="label-dash"></span></div>
-                <div class="conversation">
+
+                <div class="conversation" id="conversation">
                   <div class="user-message" id="user-message">
                     <div class="message-label">YOU <span>·</span> NOW</div>
-                    <p><span id="prompt-text"></span><span class="typing-cursor" id="typing-cursor" aria-hidden="true"></span></p>
+                    <p id="prompt-text"></p>
                   </div>
+
+                  <div class="ai-working" id="ai-working" aria-hidden="true">
+                    <span class="thinking-orb" id="thinking-orb"><i></i><i></i><i></i></span>
+                    <span class="working-copy">Planning a nature-first weekend…</span>
+                    <span class="working-dots"><i></i><i></i><i></i></span>
+                  </div>
+
                   <div class="answer-message" id="answer-message">
-                    <div class="answer-heading"><span class="answer-orb" aria-hidden="true"></span><span>ITINERARY DRAFT</span><span class="answer-rule"></span></div>
-                    <h2>A nature-first<br />weekend in Taipei</h2>
-                    <div class="answer-tags"><span>2 DAYS</span><span>NATURE</span><span>WITHIN BUDGET</span></div>
+                    <div class="answer-heading"><span class="answer-orb" aria-hidden="true"></span><span>A nature-first weekend in Taipei</span><span class="answer-rule"></span></div>
+                    <div class="itinerary-grid">
+                      <div class="itinerary-item" id="day-one"><small>DAY 01</small><strong>Maokong ridge</strong><span>Forest trails · tea hills</span></div>
+                      <div class="itinerary-item" id="day-two"><small>DAY 02</small><strong>Yangmingshan</strong><span>Mountain paths · hot springs</span></div>
+                    </div>
+                    <div class="answer-footnote" id="answer-footnote">Nature-first plan · budget-aware</div>
                   </div>
                 </div>
-                <div class="composer" id="composer"><span class="composer-hint">Ask anything…</span><span class="composer-send" id="composer-send" aria-hidden="true">↑</span></div>
+
+                <div class="composer" id="composer" aria-label="Prompt being typed">
+                  <div class="composer-content">
+                    <span class="composer-placeholder" id="composer-placeholder">Ask anything…</span>
+                    <span class="composer-prompt" id="composer-prompt"></span>
+                    <span class="typing-cursor" id="typing-cursor" aria-hidden="true"></span>
+                  </div>
+                  <span class="composer-send" id="composer-send" aria-hidden="true">↑</span>
+                </div>
               </div>
 
               <div class="tool-dock" id="tool-dock" aria-hidden="true">
-                <span class="dock-label">WHEN NEEDED</span>
                 <div class="tool-chip"><i class="tool-icon search-icon"></i> SEARCH</div>
                 <div class="tool-chip"><i class="tool-icon map-icon"></i> MAPS</div>
                 <div class="tool-chip"><i class="tool-icon calendar-icon"></i> CALENDAR</div>
               </div>
-
-              <div class="caption" id="caption" aria-live="polite"></div>
             </div>
 
-            <div class="token-story" id="token-story" aria-label="Illustration of a prompt becoming tokens">
-              <div class="token-heading">
-                <span class="token-kicker">TEXT <b>→</b> TOKENS</span>
-                <span class="token-heading-rule"></span>
-                <span class="token-phase" id="token-phase">ONE INPUT</span>
+            <div class="token-story" id="token-story" aria-label="A prompt splitting into illustrative tokens">
+              <div class="zoom-prompt" id="zoom-prompt">
+                <p>Plan a two-day weekend in Taipei.</p>
+                <p>My budget is eight thousand dollars, and I love nature.</p>
               </div>
 
-              <div class="source-strip" id="source-strip">
-                <span class="source-label">THE REQUEST</span>
-                <p>Plan a two-day weekend in Taipei. My budget is eight thousand dollars, and I love nature.</p>
+              <div class="word-stream" id="word-stream" aria-label="An illustrative token split of the request"></div>
+
+              <div class="category-rack" id="category-rack">
+                <div class="category-box" id="box-whole">
+                  <span class="category-label">WHOLE WORD</span>
+                  <div class="category-content"><span class="token-slot" id="slot-weekend">weekend</span><span class="token-id" id="id-weekend">904</span></div>
+                </div>
+                <div class="category-box" id="box-pieces">
+                  <span class="category-label">WORD PIECES</span>
+                  <div class="category-content pieces-content"><span class="token-slot" id="slot-tai">Tai</span><span class="token-id" id="id-tai">731</span><span class="token-slot" id="slot-pei">pei</span><span class="token-id" id="id-pei">86</span></div>
+                </div>
+                <div class="category-box" id="box-punctuation">
+                  <span class="category-label">PUNCTUATION</span>
+                  <div class="category-content"><span class="token-slot punctuation-slot" id="slot-period">.</span><span class="token-id" id="id-period">5</span></div>
+                </div>
               </div>
 
-              <div class="token-stage-label" id="token-stage-label">EXCERPT: “TWO-DAY WEEKEND IN TAIPEI” · ONE POSSIBLE SPLIT</div>
-              <div class="token-tiles" id="token-tiles" aria-label="Illustrative token pieces"></div>
-
-              <div class="token-examples" id="token-examples">
-                <div class="token-example whole-example"><small>WHOLE WORD</small><strong>weekend</strong></div>
-                <div class="token-example parts-example"><small>WORD PIECES</small><strong><i>Tai</i><i>pei</i></strong></div>
-                <div class="token-example punctuation-example"><small>PUNCTUATION</small><strong>.</strong></div>
-              </div>
-
-              <div class="id-heading" id="id-heading"><span>PIECES</span><span>→</span><span>ILLUSTRATIVE TOKEN IDs</span></div>
-              <div class="token-ids" id="token-ids" aria-label="Illustrative token IDs"></div>
-              <div class="token-takeaway" id="token-takeaway">Tokens are building blocks—not complete ideas.</div>
-              <div class="caption token-caption" id="token-caption" aria-live="polite"></div>
+              <div class="flight-layer" id="flight-layer" aria-hidden="true"></div>
+              <div class="token-particle-glow" id="token-particle-glow" aria-hidden="true"></div>
             </div>
           </div>
         </div>
 
+        <div class="review-caption" id="review-caption" aria-live="polite"></div>
         <div class="player-controls" aria-label="Preview playback controls">
           <button class="play-button" id="play-button" type="button" aria-label="Play video preview">
             <span class="play-glyph" id="play-glyph" aria-hidden="true">▶</span>
