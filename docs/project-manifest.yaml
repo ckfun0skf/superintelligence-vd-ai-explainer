@@ -39,18 +39,18 @@ scenes:
       - "00:44.0–00:48.9 tokens map to illustrative numeric IDs"
       - "00:48.9–00:55.6 tokens are building blocks, not complete ideas"
     visual_intent: "Enlarge the complete submitted-message bubble near the center and preserve its sentence; create separate word copies below it one by one while dimming each source word; settle copies into two central rows, then move selected copies into WHOLE WORD, WORD PIECES and PUNCTUATION bins; expand illustrative numeric-ID cells below selected tokens."
-    review_status: "local production preview passed keyframe and seek QA; pending publication"
+    review_status: "published for user review; code commit 678ec50; public keyframes and seek verified"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: "21cb52c"
+  git_commit: "678ec50"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "none observed during local production-preview QA; Three.js/WebGL initialized"
-  preview_seek_and_handoff: "local pass: 16:9 stage retained its 1.7778 aspect with no horizontal overflow; the 29.0s keyframe already shows token copies emerging in the center; 33.8s shows settled rows; 38.0s shows category flights without empty punctuation placeholders; 45.5s shows IDs below their selected tokens; reverse scrubbing 45.5s → 29s → 38s → 24.2s → 45.5s reproduced each state without duplicate prompt nodes"
+  browser_errors: "none observed during public Pages Chromium preview checks; Three.js/WebGL initialized"
+  preview_seek_and_handoff: "pass: published bundle and CSS returned HTTP 200; MP3 duration is 55.6 seconds and byte-range requests returned HTTP 206; public checks at 29.0s showed central token copies with dimmed source words, and 45.5s showed numeric IDs beneath selected tokens with no empty punctuation placeholder; local checks at 33.8s and 38.0s verified settled rows and category flights; reverse scrubbing reproduced each state without duplicate prompt nodes"
   keyframes_reviewed: [6.5, 10.8, 13.8, 24.2, 26.5, 29.0, 32.2, 33.8, 38.0, 45.5]
   ffprobe_verified: true
   full_decode_verified: true
@@ -65,6 +65,6 @@ quality_checks:
     - "Public Pages asset URLs returned HTTP 200; MP3 byte-range requests returned HTTP 206 and seekable ranges were confirmed."
     - "The final narration sentence of Section 02 was checked by transcription at the source cut; Section 03 is not included."
     - "Public browser preview verified a 1280×720 stage with fixed 1920×1080 canvas rendering."
-    - "Tokenized sentence tiles now finish at 1.62cqw instead of 1.03cqw; larger type remains inside the two-row 16:9 safe area."
-    - "The same prompt DOM node is retained through the zoom and tokenization handoff; persistent placeholders keep source-word order stable during frame-by-frame flight resets."
+    - "Token-copy tiles finish at 1.62cqw; row spacing and the frame remain inside the 16:9 safe area."
+    - "The complete submitted bubble remains visible above separate word copies; each source word dims as its copy moves. Persistent placeholders keep source-word order stable during deterministic flight resets."
     - "Example numeric IDs expand in aligned cells beneath each selected token; their boundaries and values are illustrative only."
