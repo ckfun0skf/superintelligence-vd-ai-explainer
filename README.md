@@ -1,30 +1,38 @@
-# From Prompt to Action — AI Explainer
+# From Prompt to Action — Video Preview
 
-A section-by-section Three.js motion-design preview. The first review build contains **Section 01 only**: the opening AI-assistant UI, the Taipei prompt, a draft itinerary card, and a brief cue toward tools.
+A section-by-section, audio-synchronized 16:9 motion-design film preview. The current cut contains Sections 01–02: the Taipei request enters an assistant, then the text is broken into illustrative tokens and numeric IDs.
 
-## Run the preview
+## Preview
+
+The page is intentionally limited to the 16:9 video frame and basic play/seek controls. Text and animation inside the frame are the film content; there is no separate title card or website introduction. The Three.js canvas renders at **1920×1080** and **24 fps**, while the responsive page scales the frame for the browser window.
+
+Published preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/
+
+## Run locally
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite. Use the player beneath the 16:9 landscape preview frame to play, pause, seek, or change playback speed. The animation is driven by the preview audio clock, so seeking reconstructs the visual state at that time.
+Use the player below the frame to play, pause, or seek. Animation timing is driven by the audio clock, so seeking reconstructs the same scene state.
 
-## Build static files
+## Build
 
 ```bash
 npm run build
 npm run preview
 ```
 
-The static build is written to `dist/`. GitHub Pages is not enabled yet; this repository is the source of truth while the opening section is being reviewed.
+GitHub Actions builds and publishes the production `dist/` output to GitHub Pages when `main` changes.
 
-## Current section
+## Current cut
 
-- **Section 01 — Start with one question**
-- Duration: approximately 24.45 seconds
-- Frame design: 16:9 landscape, 1920×1080 target, 24 fps timeline basis
-- Audio: approved opening narration take plus restrained cyber/space score; music leads the first 1.5 seconds and is ducked under speech
+- Section 01 — Start with one question
+- Section 02 — First, the words become tokens
+- Runtime: approximately 55.6 seconds
+- Frame: 1920×1080, 16:9, 24 fps
+- Audio: approved warm, measured English narration with the restrained cyber/space score ducked beneath speech
+- Token split and token IDs are labeled illustrative; actual boundaries and IDs depend on the tokenizer
 
-The narration take used in this section matches the first section of the current script. Later sections will be added only after this visual direction is reviewed.
+This is a review preview, not the final MP4 render.

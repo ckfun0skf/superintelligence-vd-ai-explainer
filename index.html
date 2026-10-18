@@ -3,34 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#060911" />
-    <meta name="description" content="A landscape 16:9 motion-design preview of section one of an explainer about how AI turns words into answers." />
-    <title>From Prompt to Action — Section 01 Preview</title>
+    <meta name="theme-color" content="#05070c" />
+    <meta name="description" content="A 16:9 HD motion-design preview explaining how AI turns words into tokens." />
+    <title>From Prompt to Action — HD Video Preview</title>
   </head>
   <body>
-    <div class="app-shell">
-      <header class="topbar">
-        <a class="wordmark" href="./" aria-label="AI explainer preview home">
-          <span class="wordmark-mark" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span>FIELD NOTES <b>/</b> AI</span>
-        </a>
-        <div class="topbar-status"><span class="status-led"></span> SECTION 01 <span class="topbar-divider">/</span> OPENING</div>
-      </header>
+    <main class="app-shell">
+      <section class="preview-column" aria-label="HD video preview">
+        <div class="stage-frame">
+          <div class="stage" id="stage">
+            <canvas id="scene-canvas" aria-hidden="true"></canvas>
+            <div class="stage-vignette" aria-hidden="true"></div>
 
-      <main class="layout">
-        <section class="intro-copy" aria-label="Preview information">
-          <p class="eyebrow">MOTION STUDY · 01 OF 10</p>
-          <h1>From prompt<br /><em>to possibility.</em></h1>
-          <p class="intro-description">A single request enters the assistant. The interface builds, the prompt appears, and an answer takes shape.</p>
-        </section>
-
-        <section class="preview-column" aria-label="Section one video preview">
-          <div class="stage-frame">
-            <div class="stage" id="stage">
-              <canvas id="scene-canvas" aria-hidden="true"></canvas>
-              <div class="stage-vignette" aria-hidden="true"></div>
-              <div class="top-readout"><span>REQUEST FLOW</span><span class="readout-line"></span><span id="clock-label">00:00</span></div>
-
+            <div class="scene-one" id="scene-one">
               <div class="assistant-card" id="assistant-card" aria-label="AI assistant interface animation">
                 <div class="assistant-header" id="assistant-header">
                   <div class="assistant-avatar" aria-hidden="true"><span></span><span></span><span></span></div>
@@ -60,38 +45,49 @@
               </div>
 
               <div class="caption" id="caption" aria-live="polite"></div>
-              <div class="scene-footer"><span>01</span><span class="footer-line"></span><span>ONE QUESTION</span></div>
+            </div>
+
+            <div class="token-story" id="token-story" aria-label="Illustration of a prompt becoming tokens">
+              <div class="token-heading">
+                <span class="token-kicker">TEXT <b>→</b> TOKENS</span>
+                <span class="token-heading-rule"></span>
+                <span class="token-phase" id="token-phase">ONE INPUT</span>
+              </div>
+
+              <div class="source-strip" id="source-strip">
+                <span class="source-label">THE REQUEST</span>
+                <p>Plan a two-day weekend in Taipei. My budget is eight thousand dollars, and I love nature.</p>
+              </div>
+
+              <div class="token-stage-label" id="token-stage-label">EXCERPT: “TWO-DAY WEEKEND IN TAIPEI” · ONE POSSIBLE SPLIT</div>
+              <div class="token-tiles" id="token-tiles" aria-label="Illustrative token pieces"></div>
+
+              <div class="token-examples" id="token-examples">
+                <div class="token-example whole-example"><small>WHOLE WORD</small><strong>weekend</strong></div>
+                <div class="token-example parts-example"><small>WORD PIECES</small><strong><i>Tai</i><i>pei</i></strong></div>
+                <div class="token-example punctuation-example"><small>PUNCTUATION</small><strong>.</strong></div>
+              </div>
+
+              <div class="id-heading" id="id-heading"><span>PIECES</span><span>→</span><span>ILLUSTRATIVE TOKEN IDs</span></div>
+              <div class="token-ids" id="token-ids" aria-label="Illustrative token IDs"></div>
+              <div class="token-takeaway" id="token-takeaway">Tokens are building blocks—not complete ideas.</div>
+              <div class="caption token-caption" id="token-caption" aria-live="polite"></div>
             </div>
           </div>
+        </div>
 
-          <div class="player-controls">
-            <button class="play-button" id="play-button" type="button" aria-label="Play section one preview">
-              <span class="play-glyph" id="play-glyph" aria-hidden="true">▶</span>
-              <span id="play-label">Play section</span>
-            </button>
-            <div class="timeline-group">
-              <span class="time-readout" id="current-time">00:00</span>
-              <input id="timeline" type="range" min="0" max="24.45" value="0" step="0.01" aria-label="Seek through section one preview" />
-              <span class="time-readout" id="total-time">00:25</span>
-            </div>
-            <label class="speed-control">SPEED
-              <select id="speed-select" aria-label="Playback speed">
-                <option value="0.75">0.75×</option>
-                <option value="1" selected>1×</option>
-                <option value="1.25">1.25×</option>
-              </select>
-            </label>
-          </div>
-          <p class="preview-note" id="preview-note">Music leads by 1.5 seconds. Preview contains section one only; use Play to hear the narration and score.</p>
-          <audio id="preview-audio" preload="metadata" src="./audio/section-01-preview-mix.mp3"></audio>
-        </section>
-      </main>
-
-      <footer class="page-footer">
-        <span>FROM PROMPT TO ACTION</span>
-        <span>FIRST-SECTION REVIEW · VISUALS ARE A WORK IN PROGRESS</span>
-      </footer>
-    </div>
+        <div class="player-controls" aria-label="Preview playback controls">
+          <button class="play-button" id="play-button" type="button" aria-label="Play video preview">
+            <span class="play-glyph" id="play-glyph" aria-hidden="true">▶</span>
+            <span class="visually-hidden" id="play-label">Play</span>
+          </button>
+          <span class="time-readout" id="current-time">00:00</span>
+          <input id="timeline" type="range" min="0" max="55.6" value="0" step="0.01" aria-label="Seek through the video preview" />
+          <span class="time-readout" id="total-time">00:56</span>
+        </div>
+        <audio id="preview-audio" preload="metadata" src="./audio/section-01-02-preview-mix.mp3"></audio>
+      </section>
+    </main>
     <script type="module" src="./src/main.js"></script>
   </body>
 </html>

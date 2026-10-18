@@ -4,14 +4,14 @@ import './style.css';
 const stage = document.querySelector('#stage');
 const canvas = document.querySelector('#scene-canvas');
 const audio = document.querySelector('#preview-audio');
+const sceneOne = document.querySelector('#scene-one');
+const tokenStory = document.querySelector('#token-story');
 const playButton = document.querySelector('#play-button');
 const playLabel = document.querySelector('#play-label');
 const playGlyph = document.querySelector('#play-glyph');
 const timeline = document.querySelector('#timeline');
 const currentTimeReadout = document.querySelector('#current-time');
 const totalTimeReadout = document.querySelector('#total-time');
-const speedSelect = document.querySelector('#speed-select');
-const clockLabel = document.querySelector('#clock-label');
 const assistantCard = document.querySelector('#assistant-card');
 const assistantHeader = document.querySelector('#assistant-header');
 const conversationLabel = document.querySelector('#conversation-label');
@@ -23,9 +23,21 @@ const composerSend = document.querySelector('#composer-send');
 const answerMessage = document.querySelector('#answer-message');
 const toolDock = document.querySelector('#tool-dock');
 const caption = document.querySelector('#caption');
+const tokenPhase = document.querySelector('#token-phase');
+const sourceStrip = document.querySelector('#source-strip');
+const tokenStageLabel = document.querySelector('#token-stage-label');
+const tokenTilesContainer = document.querySelector('#token-tiles');
+const tokenExamplesContainer = document.querySelector('#token-examples');
+const tokenExamples = [...document.querySelectorAll('.token-example')];
+const idHeading = document.querySelector('#id-heading');
+const tokenIdsContainer = document.querySelector('#token-ids');
+const tokenTakeaway = document.querySelector('#token-takeaway');
+const tokenCaption = document.querySelector('#token-caption');
 
-const DURATION = 24.45;
+const DURATION = 55.6;
 const FPS = 24;
+const SECTION_TWO_START = 24.4;
+const SECTION_TWO_DURATION = 31.2;
 const PROMPT = 'Plan a two-day weekend in Taipei. My budget is eight thousand dollars, and I love nature.';
 const CAPTIONS = [
   { start: 1.5, end: 4.0, text: 'Imagine typing this into an AI assistant.' },
@@ -34,7 +46,19 @@ const CAPTIONS = [
   { start: 10.0, end: 12.9, text: 'The assistant replies with an itinerary.' },
   { start: 12.9, end: 16.6, text: 'A simple exchange—but how did those words become an answer?' },
   { start: 16.6, end: 21.2, text: 'And if the assistant can do more than answer, how does it know when to use a tool?' },
-  { start: 21.2, end: 24.45, text: "Let's follow the request, one step at a time." },
+  { start: 21.2, end: 24.4, text: "Let's follow the request, one step at a time." },
+];
+const TOKEN_CAPTIONS = [
+  { start: 24.4, end: 29.9, text: 'A language model does not usually process a sentence as one complete object.' },
+  { start: 29.9, end: 34.5, text: 'A tokenizer breaks the text into smaller pieces called tokens.' },
+  { start: 34.5, end: 40.5, text: 'A token might be a whole word, part of a word, punctuation, or another piece of text.' },
+  { start: 40.5, end: 44.0, text: 'The exact pieces depend on the tokenizer and the language.' },
+  { start: 44.0, end: 48.9, text: 'The tokens are then represented as numbers, so the model can work with them.' },
+  { start: 48.9, end: 55.6, text: 'Tokens are building blocks for processing text, but a token is not by itself a complete idea.' },
+];
+const TOKEN_ITEMS = [
+  ['two', '308'], ['-', '14'], ['day', '612'], ['weekend', '904'],
+  ['in', '52'], ['Tai', '731'], ['pei', '86'], ['.', '5'],
 ];
 
 const clamp = (value, min = 0, max = 1) => Math.max(min, Math.min(max, value));
@@ -49,6 +73,24 @@ const fmtTime = (seconds) => {
   const secs = Math.floor(safe % 60);
   return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 };
+
+const tokenTileNodes = [];
+const tokenIdNodes = [];
+TOKEN_ITEMS.forEach(([text, id], index) => {
+  const tile = document.createElement('span');
+  tile.className = `token-tile${['.', ',', '-'].includes(text) ? ' punctuation' : ''}`;
+  tile.textContent = text;
+  tile.dataset.index = String(index);
+  tokenTilesContainer.append(tile);
+  tokenTileNodes.push(tile);
+
+  const idTile = document.createElement('span');
+  idTile.className = 'token-id';
+  idTile.textContent = id;
+  idTile.dataset.index = String(index);
+  tokenIdsContainer.append(idTile);
+  tokenIdNodes.push(idTile);
+});
 
 // Fixed seed so the point field is identical on every load and seek.
 let seed = 0xA17E2026;
@@ -68,7 +110,7 @@ let failedWebGL = false;
 
 try {
   renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'low-power' });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  renderer.setPixelRatio(1);
   renderer.setClearColor(0x050812, 0);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
@@ -122,10 +164,8 @@ try {
   scene.add(new THREE.LineSegments(gridGeometry, gridMaterial));
 
   function resizeRenderer() {
-    const width = Math.max(1, stage.clientWidth);
-    const height = Math.max(1, stage.clientHeight);
-    renderer.setSize(width, height, false);
-    camera.aspect = width / height;
+    renderer.setSize(1920, 1080, false);
+    camera.aspect = 16 / 9;
     camera.updateProjectionMatrix();
   }
   window.addEventListener('resize', resizeRenderer, { passive: true });
@@ -147,6 +187,10 @@ function reveal(element, amount, y = 8, scale = 0.98) {
 /** Deterministically set the whole section to an absolute audio time. */
 function renderAt(seconds) {
   const t = clamp(seconds, 0, DURATION);
+  const sectionTwoTime = clamp(t - SECTION_TWO_START, 0, SECTION_TWO_DURATION);
+  sceneOne.style.opacity = (1 - smoothstep(23.95, 24.95, t)).toFixed(3);
+  tokenStory.style.opacity = smoothstep(24.0, 25.0, t).toFixed(3);
+
   const entry = smoothstep(0, 1.45, t);
   const pullback = smoothstep(21.15, 24.35, t);
   const shellScale = lerp(0.925, 1, entry) * lerp(1, 0.93, pullback);
@@ -173,8 +217,49 @@ function renderAt(seconds) {
   caption.textContent = activeCaption ? activeCaption.text : '';
   caption.style.opacity = activeCaption ? String(Math.min(smoothstep(activeCaption.start, activeCaption.start + 0.22, t), smoothstep(activeCaption.end, activeCaption.end - 0.22, t))) : '0';
 
-  const clock = fmtTime(t);
-  clockLabel.textContent = clock;
+  sourceStrip.style.opacity = smoothstep(0.2, 1.0, sectionTwoTime).toFixed(3);
+  sourceStrip.style.transform = `translateY(${lerp(0.6, 0, smoothstep(0.2, 1.0, sectionTwoTime)).toFixed(2)}cqw)`;
+  tokenStageLabel.style.opacity = smoothstep(4.5, 5.3, sectionTwoTime).toFixed(3);
+  tokenPhase.textContent = sectionTwoTime < 4.8 ? 'ONE INPUT'
+    : sectionTwoTime < 10.0 ? 'SMALLER PIECES'
+      : sectionTwoTime < 19.4 ? 'WORDS · PARTS · PUNCTUATION'
+        : sectionTwoTime < 24.3 ? 'NUMERIC REPRESENTATION'
+          : 'PARTS, NOT IDEAS';
+
+  const tokenProgress = clamp((sectionTwoTime - 4.8) / 5.2);
+  tokenTileNodes.forEach((tile, index) => {
+    const stagger = (index / tokenTileNodes.length) * 0.72;
+    const amount = smoothstep(stagger, stagger + 0.08, tokenProgress);
+    tile.style.opacity = amount.toFixed(3);
+    tile.style.transform = `translateY(${lerp(0.55, 0, amount).toFixed(2)}cqw) scale(${lerp(0.96, 1, amount).toFixed(3)})`;
+  });
+
+  tokenExamples.forEach((example, index) => {
+    const amount = smoothstep(10.0 + index * 1.25, 11.0 + index * 1.25, sectionTwoTime);
+    example.style.opacity = amount.toFixed(3);
+    example.style.transform = `translateY(${lerp(0.5, 0, amount).toFixed(2)}cqw)`;
+  });
+  const examplesVisible = smoothstep(10.0, 11.2, sectionTwoTime);
+  tokenExamplesContainer.style.opacity = examplesVisible.toFixed(3);
+  tokenExamplesContainer.style.transform = `translateY(${lerp(0.5, 0, examplesVisible).toFixed(2)}cqw)`;
+
+  idHeading.style.opacity = smoothstep(19.0, 20.0, sectionTwoTime).toFixed(3);
+  tokenIdNodes.forEach((idTile, index) => {
+    const start = 19.5 + (index / tokenIdNodes.length) * 4.3;
+    const amount = smoothstep(start, start + 0.24, sectionTwoTime);
+    idTile.style.opacity = amount.toFixed(3);
+    idTile.style.transform = `translateY(${lerp(0.4, 0, amount).toFixed(2)}cqw)`;
+  });
+  const takeaway = smoothstep(24.0, 25.2, sectionTwoTime);
+  tokenTakeaway.style.opacity = takeaway.toFixed(3);
+  tokenTakeaway.style.transform = `translateY(${lerp(0.4, 0, takeaway).toFixed(2)}cqw)`;
+
+  const activeTokenCaption = TOKEN_CAPTIONS.find((item) => t >= item.start && t < item.end);
+  tokenCaption.textContent = activeTokenCaption ? activeTokenCaption.text : '';
+  tokenCaption.style.opacity = activeTokenCaption
+    ? String(Math.min(smoothstep(activeTokenCaption.start, activeTokenCaption.start + 0.2, t), smoothstep(activeTokenCaption.end, activeTokenCaption.end - 0.2, t)))
+    : '0';
+
   if (renderer && camera && !failedWebGL) {
     stars.rotation.y = 0.003 * t;
     stars.rotation.x = 0.002 * Math.sin(t * 0.16);
@@ -195,9 +280,9 @@ function updatePlayer() {
   timeline.value = String(Math.min(t, duration));
   currentTimeReadout.textContent = fmtTime(t);
   totalTimeReadout.textContent = fmtTime(duration);
-  playLabel.textContent = audio.paused ? 'Play section' : 'Pause preview';
+  playLabel.textContent = audio.paused ? 'Play' : 'Pause';
   playGlyph.textContent = audio.paused ? '▶' : 'Ⅱ';
-  playButton.setAttribute('aria-label', audio.paused ? 'Play section one preview' : 'Pause section one preview');
+  playButton.setAttribute('aria-label', audio.paused ? 'Play video preview' : 'Pause video preview');
   renderAt(t);
 }
 
@@ -206,8 +291,6 @@ playButton.addEventListener('click', async () => {
     try {
       await audio.play();
     } catch (error) {
-      const note = document.querySelector('#preview-note');
-      note.textContent = 'Audio could not start. Check that the preview audio asset is available, then try again.';
       console.error('Audio playback failed:', error);
     }
   } else {
@@ -222,7 +305,6 @@ audio.addEventListener('play', updatePlayer);
 audio.addEventListener('pause', updatePlayer);
 audio.addEventListener('ended', updatePlayer);
 audio.addEventListener('error', () => {
-  document.querySelector('#preview-note').textContent = 'The audio asset failed to load. Reload the page or check the local audio path.';
   console.error('Preview audio failed to load:', audio.error);
 });
 
@@ -231,11 +313,6 @@ timeline.addEventListener('input', () => {
   audio.currentTime = nextTime;
   renderAt(nextTime);
   currentTimeReadout.textContent = fmtTime(nextTime);
-  clockLabel.textContent = fmtTime(nextTime);
-});
-
-speedSelect.addEventListener('change', () => {
-  audio.playbackRate = Number(speedSelect.value);
 });
 
 document.addEventListener('keydown', (event) => {

@@ -1,53 +1,62 @@
 project:
   title: "From Prompt to Action: How AI Turns Words into Work"
-  purpose: "A section-by-section, audio-synchronized motion-design explainer showing how AI turns a user prompt into an answer and, later, tool-assisted work."
+  purpose: "An audio-synchronized 16:9 explainer showing how a user prompt enters an AI assistant and becomes tokens."
   repository_or_workspace: "https://github.com/ckfun0skf/superintelligence-vd-ai-explainer"
   delivery_choices:
-    source: "existing GitHub repository"
-    preview: "temporary local preview server for review; GitHub Pages not enabled"
-    final_video: "no"
+    source: "existing GitHub repository, main branch"
+    preview: "GitHub Pages published from GitHub Actions"
+    final_video: "not rendered yet"
 
 video:
-  duration_seconds: 24.45
+  duration_seconds: 55.6
   fps: 24
   width: 1920
   height: 1080
-  frame_range: "[0, 587)"
-  narration_or_master_audio: "public/audio/section-01-preview-mix.mp3"
-  audio_codec: "MP3 preview mix; final master format TBD"
+  frame_range: "[0, 1335)"
+  narration_or_master_audio: "public/audio/section-01-02-preview-mix.mp3"
+  audio_codec: "MP3 review mix; final master format TBD"
   audio_sample_rate_hz: 44100
 
 scenes:
   - id: "scene-01"
     start_seconds: 0.0
-    end_seconds: 24.45
+    end_seconds: 24.4
     module: "src/main.js"
     narration_cues:
-      - "00:00–00:01.5 music-only interface build"
-      - "00:01.5 Imagine typing this into an AI assistant"
-      - "00:04.0 Taipei weekend prompt begins typing"
-      - "00:10.0 itinerary reply appears"
-      - "00:16.6 tool options emerge"
-      - "00:21.2 transition cue: follow the request"
-    visual_intent: "Assemble an unbranded AI-chat interface, type the Taipei request, reveal a simple itinerary response, then hint at available tools."
-    review_status: "previewed"
+      - "00:00–00:01.5 music-only assistant interface build"
+      - "00:01.5–00:20.0 Taipei prompt, itinerary response and tool question"
+      - "00:20.0–00:24.4 handoff into the request-processing explanation"
+    visual_intent: "Assemble an unbranded assistant interface, type the Taipei request, reveal the itinerary draft, then transition from the whole prompt to its text pieces."
+    review_status: "existing visual direction retained"
+  - id: "scene-02"
+    start_seconds: 24.4
+    end_seconds: 55.6
+    module: "src/main.js"
+    narration_cues:
+      - "00:24.4–00:29.9 language model receives pieces, not one sentence-object"
+      - "00:29.9–00:34.5 tokenizer breaks text into tokens"
+      - "00:34.5–00:44.0 whole-word, word-piece and punctuation examples; boundaries vary"
+      - "00:44.0–00:48.9 tokens map to illustrative numeric IDs"
+      - "00:48.9–00:55.6 tokens are building blocks, not complete ideas"
+    visual_intent: "Transform the original request into token tiles; highlight word, subword and punctuation examples; flip token tiles to sample numeric IDs; hold the takeaway with synchronized subtitles."
+    review_status: "preview build for user review"
 
 delivery:
-  preview_url: null
+  preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
   git_commit: null
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "none observed after user-initiated playback"
-  preview_seek_and_handoff: "pass for section 01 seeks at 5, 12, and 18 seconds, including a backward seek; no later-section handoff yet"
-  keyframes_reviewed: [0.0, 20.4]
+  browser_errors: "pending live preview QA"
+  preview_seek_and_handoff: "pending checks at section boundary and token-animation beats"
+  keyframes_reviewed: []
   ffprobe_verified: true
   full_decode_verified: true
   notes:
-    - "Measured preview audio duration is 24.45 seconds; speech begins at 1.5 seconds."
-    - "Music is lowered beneath speech and sidechain-ducked from the voice; the first 1.5 seconds remain music-only."
-    - "The visual clock is tied to audio.currentTime; renderAt(seconds) and renderFrame(frame) use absolute time."
-    - "The user specified a landscape 16:9 frame; the preview scene and 1920×1080 target follow that format."
-    - "The temporary preview server is not GitHub Pages; Pages has not been enabled."
+    - "Approved narration voice retained; Sections 01–02 are extracted from the approved narration recording."
+    - "Music starts before narration, continues under the cut, and is sidechain-ducked beneath speech."
+    - "The 1920×1080 Three.js canvas is rendered at fixed resolution; frame composition remains 16:9."
+    - "The preview page contains only the film frame and necessary play/seek controls."
+    - "Token boundaries and numeric IDs are explicitly illustrative; real mappings vary by tokenizer."
