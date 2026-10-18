@@ -8,7 +8,7 @@ Published preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer
 
 The film frame itself contains no title card or review subtitles. For review, the synchronized English caption is shown below the 16:9 frame; it is outside the film composition. The preview page otherwise keeps only the frame and basic play/seek controls. The Three.js canvas renders at **1920×1080** and **24 fps**, while the responsive page scales it for the browser window.
 
-Section 01 now types the request into a composer at the bottom of the assistant, sends it into a message bubble, shows an AI loading state, then reveals the answer title and two itinerary cards. Section 02 carries that same prompt into a centered zoom, breaks it into individually framed word pieces, then animates selected examples into **WHOLE WORD**, **WORD PIECES**, and **PUNCTUATION** groups. Small particles and curved token flights are tied to the audio timeline.
+Section 01 now types the request into a compact composer at the bottom of the assistant, sends it into a message bubble, shows an AI loading state, then reveals the answer title and two itinerary cards. Section 02 moves the same prompt text node from the message bubble into a centered zoom; the sentence stays visible as individual word tiles form, then those original tiles fly into **WHOLE WORD**, **WORD PIECES**, and **PUNCTUATION** groups. Illustrative numeric-ID cells expand beneath selected tiles. Downward-curved token flights and small particles are tied to the audio timeline.
 
 ## Run locally
 

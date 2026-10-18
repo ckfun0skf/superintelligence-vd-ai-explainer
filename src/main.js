@@ -30,7 +30,6 @@ const answerFootnote = document.querySelector('#answer-footnote');
 const toolDock = document.querySelector('#tool-dock');
 const reviewCaption = document.querySelector('#review-caption');
 const zoomPrompt = document.querySelector('#zoom-prompt');
-const wordStream = document.querySelector('#word-stream');
 const categoryRack = document.querySelector('#category-rack');
 const flightLayer = document.querySelector('#flight-layer');
 const tokenParticleGlow = document.querySelector('#token-particle-glow');
@@ -39,6 +38,8 @@ const DURATION = 55.6;
 const FPS = 24;
 const SECTION_TWO_START = 24.4;
 const SECTION_TWO_DURATION = 31.2;
+const PROMPT_TRANSITION_START = 23.8;
+const TOKENIZE_START = 5.3;
 const PROMPT = 'Plan a two-day weekend in Taipei. My budget is eight thousand dollars, and I love nature.';
 const CAPTIONS = [
   { start: 1.5, end: 4.0, text: 'Imagine typing this into an AI assistant.' },
@@ -80,44 +81,161 @@ const fmtTime = (seconds) => {
   return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 };
 
-// Keep the token candidates and target slots stable so every seek rebuilds the same composition.
+// The token tiles are generated from the prompt node itself; the original word nodes later fly into the bins.
 const wordNodes = new Map();
-let wordIndex = 0;
-WORD_ROWS.forEach((row, rowIndex) => {
-  const line = document.createElement('div');
-  line.className = 'word-line';
-  line.dataset.row = String(rowIndex);
-  row.forEach(([text, key]) => {
-    const word = document.createElement('span');
-    word.className = `word-unit${['.', ',', '-'].includes(text) ? ' punctuation' : ''}`;
-    word.textContent = text;
-    word.dataset.word = key;
-    word.dataset.index = String(wordIndex);
-    word.style.setProperty('--word-order', String(wordIndex));
-    line.append(word);
-    wordNodes.set(key, word);
-    wordIndex += 1;
-  });
-  wordStream.append(line);
-});
+let flights = [];
+let promptPhase = 'chat';
+let promptSourceBox = null;
+let tokenRowsBuilt = false;
+let tileOrder = 0;
 
-const flights = [
-  { source: 'weekend', target: 'slot-weekend', id: 'id-weekend', text: 'weekend', start: 12.2, widthFactor: 1, offset: -5 },
-  { source: 'taipei', target: 'slot-tai', id: 'id-tai', text: 'Tai', start: 12.55, widthFactor: 0.5, offset: -13 },
-  { source: 'taipei', target: 'slot-pei', id: 'id-pei', text: 'pei', start: 12.82, widthFactor: 0.5, offset: 13 },
-  { source: 'period-0', target: 'slot-period', id: 'id-period', text: '.', start: 13.12, widthFactor: 1, offset: 1 },
-];
-flights.forEach((flight) => {
-  const node = document.createElement('span');
-  node.className = `flight-token${flight.text === '.' ? ' punctuation' : ''}`;
-  node.textContent = flight.text;
-  node.setAttribute('aria-hidden', 'true');
-  flightLayer.append(node);
-  flight.node = node;
-  flight.sourceNode = wordNodes.get(flight.source);
-  flight.targetNode = document.querySelector(`#${flight.target}`);
-  flight.idNode = document.querySelector(`#${flight.id}`);
-});
+function resetFlightNodes(removeAnchors = false) {
+  flights.forEach((flight) => {
+    if (flight.sourceParent && flight.sourceNode.parentElement !== flight.sourceParent) {
+      const before = flight.placeholder?.parentElement === flight.sourceParent
+        ? flight.placeholder.nextSibling
+        : null;
+      flight.sourceParent.insertBefore(flight.sourceNode, before);
+    }
+    if (flight.placeholder) {
+      if (removeAnchors) {
+        flight.placeholder.remove();
+        flight.placeholder = null;
+      } else {
+        flight.placeholder.style.display = 'none';
+      }
+    }
+    if (flight.targetNode) flight.targetNode.replaceChildren();
+    flight.sourceNode.classList.remove('flight-token', 'token-slot');
+    ['position', 'left', 'top', 'width', 'height', 'min-height', 'opacity', 'transform', 'margin', 'padding', 'box-sizing', 'z-index']
+      .forEach((property) => flight.sourceNode.style.removeProperty(property));
+  });
+}
+
+function setZoomPhraseMarkup() {
+  promptText.className = 'prompt-text zoom-text';
+  promptText.replaceChildren();
+  tokenRowsBuilt = false;
+  wordNodes.clear();
+  flights = [];
+  const first = document.createElement('span');
+  first.className = 'prompt-line';
+  first.textContent = 'Plan a two-day weekend in Taipei.';
+  const second = document.createElement('span');
+  second.className = 'prompt-line';
+  second.textContent = 'My budget is eight thousand dollars, and I love nature.';
+  promptText.append(first, second);
+}
+
+function buildTokenRows() {
+  resetFlightNodes(true);
+  wordNodes.clear();
+  tileOrder = 0;
+  promptText.replaceChildren();
+  promptText.classList.add('tokenized');
+
+  WORD_ROWS.forEach((row, rowIndex) => {
+    const line = document.createElement('div');
+    line.className = 'word-line';
+    line.dataset.row = String(rowIndex);
+    row.forEach(([text, key]) => {
+      if (key === 'taipei') {
+        const group = document.createElement('span');
+        group.className = 'taipei-unit';
+        group.dataset.index = String(tileOrder);
+        const whole = document.createElement('span');
+        whole.className = 'word-unit taipei-whole';
+        whole.textContent = 'Taipei';
+        whole.dataset.word = 'taipei-whole';
+        whole.dataset.index = String(tileOrder);
+        const pieces = document.createElement('span');
+        pieces.className = 'taipei-pieces';
+        const tai = document.createElement('span');
+        tai.className = 'word-piece';
+        tai.textContent = 'Tai';
+        tai.dataset.word = 'taipei-tai';
+        tai.dataset.index = String(tileOrder);
+        const pei = document.createElement('span');
+        pei.className = 'word-piece';
+        pei.textContent = 'pei';
+        pei.dataset.word = 'taipei-pei';
+        pei.dataset.index = String(tileOrder);
+        pieces.append(tai, pei);
+        group.append(whole, pieces);
+        line.append(group);
+        wordNodes.set('taipei', whole);
+        wordNodes.set('taipei-tai', tai);
+        wordNodes.set('taipei-pei', pei);
+      } else {
+        const word = document.createElement('span');
+        word.className = `word-unit${['.', ',', '-'].includes(text) ? ' punctuation' : ''}`;
+        word.textContent = text;
+        word.dataset.word = key;
+        word.dataset.index = String(tileOrder);
+        line.append(word);
+        wordNodes.set(key, word);
+      }
+      tileOrder += 1;
+    });
+    promptText.append(line);
+  });
+
+  flights = [
+    { sourceKey: 'weekend', target: 'slot-weekend', id: 'id-weekend', start: 12.2, offset: -5 },
+    { sourceKey: 'taipei-tai', target: 'slot-tai', id: 'id-tai', start: 12.55, offset: -8 },
+    { sourceKey: 'taipei-pei', target: 'slot-pei', id: 'id-pei', start: 12.82, offset: 8 },
+    { sourceKey: 'period-0', target: 'slot-period', id: 'id-period', start: 13.12, offset: 1 },
+  ];
+  flights.forEach((flight) => {
+    flight.sourceNode = wordNodes.get(flight.sourceKey);
+    flight.sourceParent = flight.sourceNode.parentElement;
+    flight.targetNode = document.querySelector(`#${flight.target}`);
+    flight.idNode = document.querySelector(`#${flight.id}`);
+    flight.placeholder = null;
+  });
+  tokenRowsBuilt = true;
+}
+
+function capturePromptSourceBox() {
+  const stageRect = stage.getBoundingClientRect();
+  const sourceRect = promptText.getBoundingClientRect();
+  if (!stageRect.width || !stageRect.height) return;
+  promptSourceBox = {
+    x: (sourceRect.left - stageRect.left) / stageRect.width,
+    y: (sourceRect.top - stageRect.top) / stageRect.height,
+    width: sourceRect.width / stageRect.width,
+    height: sourceRect.height / stageRect.height,
+  };
+}
+
+function setPromptPhase(nextPhase, time) {
+  if (nextPhase === promptPhase) return;
+  if (promptPhase === 'tokenized') resetFlightNodes(true);
+
+  if (nextPhase === 'chat') {
+    userMessage.append(promptText);
+    promptText.className = 'prompt-text';
+    ['left', 'top', 'width', 'font-size', 'text-align'].forEach((property) => promptText.style.removeProperty(property));
+    promptText.textContent = time >= 9.55 ? PROMPT : '';
+    zoomPrompt.replaceChildren();
+    promptSourceBox = null;
+    tokenRowsBuilt = false;
+    wordNodes.clear();
+    flights = [];
+  } else if (nextPhase === 'zoom') {
+    if (promptPhase === 'chat') capturePromptSourceBox();
+    zoomPrompt.append(promptText);
+    setZoomPhraseMarkup();
+  } else if (nextPhase === 'tokenized') {
+    if (promptPhase === 'chat') {
+      capturePromptSourceBox();
+      setZoomPhraseMarkup();
+    }
+    zoomPrompt.append(promptText);
+    buildTokenRows();
+  }
+  promptPhase = nextPhase;
+}
 
 // Fixed seed drives both the static star field and absolute-time particle motion.
 let seed = 0xA17E2026;
@@ -227,50 +345,62 @@ function reveal(element, amount, y = 8, scale = 0.98) {
   element.style.transform = `translateY(${((1 - p) * y).toFixed(2)}px) scale(${lerp(scale, 1, p).toFixed(3)})`;
 }
 
-function elementCenterInStage(element) {
-  const stageRect = stage.getBoundingClientRect();
-  const rect = element.getBoundingClientRect();
-  return {
-    x: rect.left - stageRect.left + rect.width / 2,
-    y: rect.top - stageRect.top + rect.height / 2,
-    width: rect.width,
-  };
-}
-
 function updateFlights(sectionTwoTime) {
-  const sourceFade = new Map();
+  if (!flights.length) return;
+  resetFlightNodes();
+  const stageRect = stage.getBoundingClientRect();
+  const idReveal = smoothstep(19.6, 20.4, sectionTwoTime);
   flights.forEach((flight) => {
-    const p = smoothstep(flight.start, flight.start + 1.45, sectionTwoTime);
-    const active = smoothstep(flight.start - 0.12, flight.start + 0.08, sectionTwoTime)
-      * (1 - smoothstep(flight.start + 1.25, flight.start + 1.5, sectionTwoTime));
-    const start = elementCenterInStage(flight.sourceNode);
-    const target = elementCenterInStage(flight.targetNode);
-    const startX = start.x + flight.offset;
-    const startY = start.y;
-    const endX = target.x;
-    const endY = target.y;
+    flight.idNode.style.opacity = idReveal.toFixed(3);
+    flight.idNode.style.maxHeight = `${(2.35 * idReveal).toFixed(3)}cqw`;
+    flight.idNode.style.paddingTop = `${(0.24 * idReveal).toFixed(3)}cqw`;
+    flight.idNode.style.paddingBottom = `${(0.24 * idReveal).toFixed(3)}cqw`;
+    flight.idNode.style.borderColor = `rgba(152,193,173,${(0.35 * idReveal).toFixed(3)})`;
+    flight.idNode.style.transform = `scaleY(${lerp(0.72, 1, idReveal).toFixed(3)})`;
+
+    if (sectionTwoTime < flight.start) return;
+    const sourceRect = flight.sourceNode.getBoundingClientRect();
+    const targetRect = flight.targetNode.getBoundingClientRect();
+    if (!flight.placeholder) {
+      const placeholder = document.createElement('span');
+      placeholder.className = 'token-placeholder';
+      placeholder.style.width = `${flight.sourceNode.offsetWidth}px`;
+      placeholder.style.height = `${flight.sourceNode.offsetHeight}px`;
+      placeholder.style.display = 'none';
+      flight.sourceParent.insertBefore(placeholder, flight.sourceNode);
+      flight.placeholder = placeholder;
+    }
+    flight.placeholder.style.display = 'inline-block';
+
+    const p = smoothstep(flight.start + 0.08, flight.start + 1.34, sectionTwoTime);
+    const startX = sourceRect.left - stageRect.left + sourceRect.width / 2 + flight.offset;
+    const startY = sourceRect.top - stageRect.top + sourceRect.height / 2;
+    const endX = targetRect.left - stageRect.left + targetRect.width / 2;
+    const endY = targetRect.top - stageRect.top + targetRect.height / 2;
     const arc = Math.sin(Math.PI * p) * Math.min(stage.clientHeight * 0.13, 84);
     const x = lerp(startX, endX, p);
-    const y = lerp(startY, endY, p) - arc;
-    const width = Math.max(24, start.width * flight.widthFactor);
-    flight.node.style.width = `${width}px`;
-    flight.node.style.left = `${x - width / 2}px`;
-    flight.node.style.top = `${y - 15}px`;
-    flight.node.style.opacity = active.toFixed(3);
-    flight.node.style.transform = `rotate(${((1 - p) * (flight.text === '.' ? 10 : -5)).toFixed(2)}deg) scale(${lerp(1.1, 0.92, p).toFixed(3)})`;
-    flight.node.style.setProperty('--flight-glow', String(active));
+    const y = lerp(startY, endY, p) + arc;
+    if (p >= 0.999) {
+      flight.targetNode.append(flight.sourceNode);
+      flight.sourceNode.classList.add('token-slot');
+      flight.sourceNode.style.opacity = '1';
+      return;
+    }
 
-    const existingFade = sourceFade.get(flight.source) ?? 0;
-    sourceFade.set(flight.source, Math.max(existingFade, smoothstep(flight.start - 0.2, flight.start + 0.45, sectionTwoTime)));
-    const landed = smoothstep(flight.start + 1.05, flight.start + 1.5, sectionTwoTime);
-    flight.targetNode.style.opacity = landed.toFixed(3);
-    const idReveal = smoothstep(19.6, 20.4, sectionTwoTime);
-    flight.idNode.style.opacity = idReveal.toFixed(3);
-    flight.idNode.style.transform = `translateY(${lerp(5, 0, idReveal).toFixed(1)}px) scaleY(${lerp(0.55, 1, idReveal).toFixed(3)})`;
-  });
-  wordNodes.forEach((node, key) => {
-    const fade = sourceFade.get(key) ?? 0;
-    node.style.opacity = String(1 - fade * 0.92);
+    flightLayer.append(flight.sourceNode);
+    flight.sourceNode.classList.add('flight-token');
+    flight.sourceNode.style.position = 'absolute';
+    flight.sourceNode.style.left = `${x - sourceRect.width / 2}px`;
+    flight.sourceNode.style.top = `${y - sourceRect.height / 2}px`;
+    flight.sourceNode.style.width = `${sourceRect.width}px`;
+    flight.sourceNode.style.height = `${sourceRect.height}px`;
+    flight.sourceNode.style.minHeight = '0';
+    flight.sourceNode.style.margin = '0';
+    flight.sourceNode.style.opacity = '1';
+    flight.sourceNode.style.transform = `rotate(${lerp(-4, 0, p).toFixed(2)}deg) scale(${lerp(1.06, 1, p).toFixed(3)})`;
+    flight.sourceNode.style.zIndex = '8';
+    flight.sourceNode.style.setProperty('--tile-glow', String(1 - p * 0.5));
+
   });
 }
 
@@ -301,12 +431,11 @@ function updateParticleField(time, sectionTwoTime) {
 function renderAt(seconds) {
   const t = clamp(seconds, 0, DURATION);
   const sectionTwoTime = clamp(t - SECTION_TWO_START, 0, SECTION_TWO_DURATION);
-  const sectionOneOpacity = 1 - smoothstep(23.8, 24.95, t);
-  const sectionTwoOpacity = smoothstep(23.95, 24.95, t);
+  const sectionOneOpacity = 1 - smoothstep(PROMPT_TRANSITION_START, 24.95, t);
   sceneOne.style.opacity = sectionOneOpacity.toFixed(3);
   sceneOne.style.visibility = t >= 24.96 ? 'hidden' : 'visible';
-  tokenStory.style.opacity = sectionTwoOpacity.toFixed(3);
-  tokenStory.style.visibility = t < 23.95 ? 'hidden' : 'visible';
+  tokenStory.style.opacity = t < PROMPT_TRANSITION_START ? '0' : '1';
+  tokenStory.style.visibility = t < PROMPT_TRANSITION_START ? 'hidden' : 'visible';
 
   // Section 01: assemble the assistant, type in the fixed bottom composer, send, then receive.
   const cardEntry = smoothstep(0.0, 1.55, t);
@@ -328,13 +457,17 @@ function renderAt(seconds) {
   cursor.style.transform = `scaleY(${0.8 + 0.2 * Math.sin(t * 3.5) ** 2})`;
   const sent = smoothstep(9.42, 10.08, t);
   composerPrompt.style.opacity = (1 - sent).toFixed(3);
-  composerSend.style.transform = `scale(${lerp(1, 1.32, smoothstep(9.35, 9.72, t))}) rotate(${lerp(0, -35, smoothstep(9.42, 9.78, t)).toFixed(1)}deg)`;
+  composerSend.style.transform = `translateY(-50%) scale(${lerp(1, 1.32, smoothstep(9.35, 9.72, t))})`;
   composerSend.style.filter = `brightness(${1 + 0.7 * (smoothstep(9.42, 9.6, t) * (1 - smoothstep(9.75, 10.08, t)))})`;
 
-  promptText.textContent = t >= 9.55 ? PROMPT : '';
+  if (promptPhase === 'chat') promptText.textContent = t >= 9.55 ? PROMPT : '';
   const bubble = smoothstep(9.75, 10.48, t);
   reveal(userMessage, bubble, 26, 0.94);
   userMessage.style.transform = `translate(${lerp(72, 0, bubble).toFixed(2)}px, ${lerp(24, 0, bubble).toFixed(2)}px) scale(${lerp(0.88, 1, bubble).toFixed(3)})`;
+  const nextPromptPhase = t < PROMPT_TRANSITION_START
+    ? 'chat'
+    : sectionTwoTime < TOKENIZE_START ? 'zoom' : 'tokenized';
+  setPromptPhase(nextPromptPhase, t);
 
   const loadingIn = smoothstep(10.15, 10.45, t);
   const loadingOut = 1 - smoothstep(11.2, 11.82, t);
@@ -363,32 +496,61 @@ function renderAt(seconds) {
     chip.style.transform = `translateY(${lerp(18, 0, p).toFixed(2)}px) rotate(${lerp(index % 2 ? 5 : -5, 0, p).toFixed(2)}deg)`;
   });
 
-  // Section 02: grow the submitted request, split it into word tiles, then send examples into bins.
-  const zoomIn = smoothstep(0.08, 1.5, sectionTwoTime);
-  const zoomOut = 1 - smoothstep(2.55, 3.8, sectionTwoTime);
-  zoomPrompt.style.opacity = zoomOut.toFixed(3);
-  const zoomTravel = smoothstep(0, 2.5, sectionTwoTime);
-  zoomPrompt.style.left = `${lerp(63, 50, zoomTravel).toFixed(2)}%`;
-  zoomPrompt.style.top = `${lerp(27, 42, zoomTravel).toFixed(2)}%`;
-  zoomPrompt.style.transform = `translate(-50%, -50%) scale(${lerp(0.76, 1.08, smoothstep(0, 2.5, sectionTwoTime)).toFixed(3)}) rotateX(${lerp(5, 0, zoomIn).toFixed(2)}deg)`;
-  zoomPrompt.querySelectorAll('p').forEach((line, index) => {
-    line.style.transform = `translateX(${lerp(index ? 45 : -45, 0, smoothstep(0.25, 2.2, sectionTwoTime)).toFixed(2)}px)`;
-  });
+  // Section 02: the chat's actual prompt node travels to center, becomes token tiles, then flies into bins.
+  zoomPrompt.style.opacity = promptPhase === 'chat' ? '0' : '1';
+  if (promptPhase === 'zoom') {
+    const stageWidth = stage.clientWidth;
+    const stageHeight = stage.clientHeight;
+    const p = smoothstep(PROMPT_TRANSITION_START, 26.45, t);
+    const source = promptSourceBox ?? { x: 0.63, y: 0.25, width: 0.62, height: 0.08 };
+    const left = lerp(source.x * stageWidth, stageWidth * 0.06, p);
+    const top = lerp(source.y * stageHeight, stageHeight * 0.35, p);
+    const width = lerp(source.width * stageWidth, stageWidth * 0.88, p);
+    const fontSize = lerp(1.12, 2.45, p);
+    promptText.style.left = `${left}px`;
+    promptText.style.top = `${top}px`;
+    promptText.style.width = `${width}px`;
+    promptText.style.fontSize = `${fontSize}cqw`;
+    promptText.style.textAlign = 'left';
+    promptText.querySelectorAll('.prompt-line').forEach((line) => {
+      const centeredOffset = Math.max(0, (width - line.offsetWidth) / 2);
+      line.style.marginLeft = `${lerp(0, centeredOffset, p)}px`;
+    });
+  } else if (promptPhase === 'tokenized') {
+    const stageWidth = stage.clientWidth;
+    const stageHeight = stage.clientHeight;
+    const travel = smoothstep(TOKENIZE_START, 8.65, sectionTwoTime);
+    const tileFont = lerp(2.45, 1.62, travel);
+    const borderProgress = smoothstep(TOKENIZE_START, 8.25, sectionTwoTime);
+    promptText.style.left = `${stageWidth * 0.055}px`;
+    promptText.style.top = `${lerp(stageHeight * 0.35, stageHeight * 0.17, travel)}px`;
+    promptText.style.width = `${stageWidth * 0.89}px`;
+    promptText.style.fontSize = `${tileFont}cqw`;
+    promptText.style.textAlign = 'center';
 
-  const wordStreamIn = smoothstep(4.2, 5.0, sectionTwoTime);
-  const wordStreamSettle = smoothstep(4.6, 5.8, sectionTwoTime);
-  wordStream.style.opacity = wordStreamIn.toFixed(3);
-  wordStream.style.transform = `translateY(${lerp(38, 0, wordStreamIn).toFixed(2)}px) scale(${lerp(0.95, 1, wordStreamSettle).toFixed(3)})`;
-  const allWords = [...wordStream.querySelectorAll('.word-unit')];
-  allWords.forEach((word, index) => {
-    const revealStart = 4.6 + index * 0.13;
-    const p = smoothstep(revealStart, revealStart + 0.35, sectionTwoTime);
-    word.style.opacity = p.toFixed(3);
-    word.style.transform = `translateY(${lerp(24, 0, p).toFixed(2)}px) scale(${lerp(0.86, 1, p).toFixed(3)})`;
-    const boxProgress = smoothstep(5.7, 8.7, sectionTwoTime);
-    word.style.setProperty('--tile-border', String(boxProgress));
-    word.style.setProperty('--tile-glow', String(boxProgress * (0.25 + 0.75 * Math.sin(sectionTwoTime * 3.2 + index * 0.8) ** 2)));
-  });
+    const allWords = [...promptText.querySelectorAll('.word-unit, .word-piece')];
+    allWords.forEach((word, index) => {
+      word.style.opacity = '1';
+      word.style.transform = `translateY(${(Math.sin(sectionTwoTime * 2.1 + index * 0.24) * 0.7 * borderProgress).toFixed(2)}px) scale(${lerp(1, 1.015, borderProgress)})`;
+      word.style.setProperty('--tile-border', borderProgress.toFixed(3));
+      word.style.setProperty('--tile-glow', String(borderProgress * (0.22 + 0.36 * Math.sin(sectionTwoTime * 2.8 + index * 0.6) ** 2)));
+    });
+
+    const taipei = wordNodes.get('taipei');
+    const pieces = taipei?.parentElement.querySelector('.taipei-pieces');
+    if (taipei && pieces) {
+      const split = smoothstep(11.0, 11.95, sectionTwoTime);
+      taipei.style.width = 'auto';
+      taipei.style.opacity = '1';
+      const wholeWidth = taipei.getBoundingClientRect().width;
+      const fontPx = Number.parseFloat(getComputedStyle(promptText).fontSize);
+      taipei.style.width = `${Math.max(0, wholeWidth * (1 - split))}px`;
+      taipei.style.opacity = String(1 - split);
+      pieces.style.maxWidth = `${fontPx * 4.9 * split}px`;
+      pieces.style.opacity = String(split);
+      pieces.style.transform = `translateX(${lerp(-8, 0, split).toFixed(2)}px)`;
+    }
+  }
 
   const rackIn = smoothstep(9.4, 10.7, sectionTwoTime);
   categoryRack.style.opacity = rackIn.toFixed(3);

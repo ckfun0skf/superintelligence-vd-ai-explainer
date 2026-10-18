@@ -26,7 +26,7 @@
                 <div class="conversation" id="conversation">
                   <div class="user-message" id="user-message">
                     <div class="message-label">YOU <span>·</span> NOW</div>
-                    <p id="prompt-text"></p>
+                    <div id="prompt-text" class="prompt-text"></div>
                   </div>
 
                   <div class="ai-working" id="ai-working" aria-hidden="true">
@@ -63,25 +63,20 @@
             </div>
 
             <div class="token-story" id="token-story" aria-label="A prompt splitting into illustrative tokens">
-              <div class="zoom-prompt" id="zoom-prompt">
-                <p>Plan a two-day weekend in Taipei.</p>
-                <p>My budget is eight thousand dollars, and I love nature.</p>
-              </div>
-
-              <div class="word-stream" id="word-stream" aria-label="An illustrative token split of the request"></div>
+              <div class="zoom-prompt" id="zoom-prompt" aria-hidden="true"></div>
 
               <div class="category-rack" id="category-rack">
                 <div class="category-box" id="box-whole">
                   <span class="category-label">WHOLE WORD</span>
-                  <div class="category-content"><span class="token-slot" id="slot-weekend">weekend</span><span class="token-id" id="id-weekend">904</span></div>
+                  <div class="category-content"><div class="token-entry" id="entry-weekend"><div class="token-entry-word" id="slot-weekend"></div><div class="token-id" id="id-weekend">904</div></div></div>
                 </div>
                 <div class="category-box" id="box-pieces">
                   <span class="category-label">WORD PIECES</span>
-                  <div class="category-content pieces-content"><span class="token-slot" id="slot-tai">Tai</span><span class="token-id" id="id-tai">731</span><span class="token-slot" id="slot-pei">pei</span><span class="token-id" id="id-pei">86</span></div>
+                  <div class="category-content pieces-content"><div class="token-entry" id="entry-tai"><div class="token-entry-word" id="slot-tai"></div><div class="token-id" id="id-tai">731</div></div><div class="token-entry" id="entry-pei"><div class="token-entry-word" id="slot-pei"></div><div class="token-id" id="id-pei">86</div></div></div>
                 </div>
                 <div class="category-box" id="box-punctuation">
                   <span class="category-label">PUNCTUATION</span>
-                  <div class="category-content"><span class="token-slot punctuation-slot" id="slot-period">.</span><span class="token-id" id="id-period">5</span></div>
+                  <div class="category-content"><div class="token-entry" id="entry-period"><div class="token-entry-word punctuation-slot" id="slot-period"></div><div class="token-id" id="id-period">5</div></div></div>
                 </div>
               </div>
 

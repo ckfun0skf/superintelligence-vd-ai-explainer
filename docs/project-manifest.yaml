@@ -26,8 +26,8 @@ scenes:
       - "00:00–00:01.5 music-only assistant interface build"
       - "00:01.5–00:20.0 Taipei prompt, itinerary response and tool question"
       - "00:20.0–00:24.4 handoff into the request-processing explanation"
-    visual_intent: "Assemble an unbranded assistant interface with the composer fixed at the bottom; type and send the prompt into a user bubble; animate an AI loading state; reveal the nature-first Taipei title and two itinerary cards in sequence."
-    review_status: "published for user review; tested code commit 47b6aa8"
+    visual_intent: "Assemble an unbranded assistant interface with a compact composer fixed at the bottom; type and send the prompt into a user bubble; animate an AI loading state; reveal the nature-first Taipei title and two itinerary cards in sequence."
+    review_status: "latest local revision passed keyframe and seek checks; pending public Pages update"
   - id: "scene-02"
     start_seconds: 24.4
     end_seconds: 55.6
@@ -38,8 +38,8 @@ scenes:
       - "00:34.5–00:44.0 whole-word, word-piece and punctuation examples; boundaries vary"
       - "00:44.0–00:48.9 tokens map to illustrative numeric IDs"
       - "00:48.9–00:55.6 tokens are building blocks, not complete ideas"
-    visual_intent: "Carry the submitted request into a centered zoom; split it into two spaced sentence rows and individual word tiles; arc selected examples into WHOLE WORD, WORD PIECES and PUNCTUATION bins; reveal illustrative IDs afterward with audio-timed particles and glow."
-    review_status: "published for user review; tested code commit 47b6aa8"
+    visual_intent: "Reuse the same submitted prompt node as it moves from the chat bubble into a centered zoom; keep the sentence visible as it becomes larger individual word tiles on two spaced rows; move the original tiles on downward-curved paths into WHOLE WORD, WORD PIECES and PUNCTUATION bins; expand illustrative numeric-ID cells directly below selected tiles."
+    review_status: "latest local revision passed keyframe and seek checks; pending public Pages update"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
@@ -49,9 +49,9 @@ delivery:
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "none observed during public Pages preview checks; Three.js/WebGL initialized"
-  preview_seek_and_handoff: "pass: public MP3 loaded with a 55.6-second seekable range; playback started; seeks at 13.8s, 37.4s and 45s synchronized response, token flights and IDs; review caption remained outside the frame"
-  keyframes_reviewed: [7.0, 10.8, 13.8, 24.6, 27.0, 33.0, 37.4, 42.5, 45.0]
+  browser_errors: "none observed during latest local Chromium preview checks; Three.js/WebGL initialized"
+  preview_seek_and_handoff: "pass: original MP3 previously confirmed with a 55.6-second seekable range; latest local checks validated 45s → 6.5s → 24.2s cross-section scrubbing, stable prompt-node reuse, repeatable flight positions and IDs; review caption remained outside the frame"
+  keyframes_reviewed: [6.5, 10.8, 13.8, 24.2, 27.5, 30.0, 37.1, 45.0]
   ffprobe_verified: true
   full_decode_verified: true
   notes:
@@ -65,3 +65,6 @@ quality_checks:
     - "Public Pages asset URLs returned HTTP 200; MP3 byte-range requests returned HTTP 206 and seekable ranges were confirmed."
     - "The final narration sentence of Section 02 was checked by transcription at the source cut; Section 03 is not included."
     - "Public browser preview verified a 1280×720 stage with fixed 1920×1080 canvas rendering."
+    - "Tokenized sentence tiles now finish at 1.62cqw instead of 1.03cqw; larger type remains inside the two-row 16:9 safe area."
+    - "The same prompt DOM node is retained through the zoom and tokenization handoff; persistent placeholders keep source-word order stable during frame-by-frame flight resets."
+    - "Example numeric IDs expand in aligned cells beneath each selected token; their boundaries and values are illustrative only."
