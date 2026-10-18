@@ -10,8 +10,8 @@ project:
 video:
   duration_seconds: 24.45
   fps: 24
-  width: 1080
-  height: 1920
+  width: 1920
+  height: 1080
   frame_range: "[0, 587)"
   narration_or_master_audio: "public/audio/section-01-preview-mix.mp3"
   audio_codec: "MP3 preview mix; final master format TBD"
@@ -49,5 +49,5 @@ quality_checks:
     - "Measured preview audio duration is 24.45 seconds; speech begins at 1.5 seconds."
     - "Music is lowered beneath speech and sidechain-ducked from the voice; the first 1.5 seconds remain music-only."
     - "The visual clock is tied to audio.currentTime; renderAt(seconds) and renderFrame(frame) use absolute time."
-    - "Portrait framing is based on the supplied vertical reference; final aspect ratio remains adjustable."
+    - "The user specified a landscape 16:9 frame; the preview scene and 1920×1080 target follow that format."
     - "The temporary preview server is not GitHub Pages; Pages has not been enabled."

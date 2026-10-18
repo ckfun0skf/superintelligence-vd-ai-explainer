@@ -73,13 +73,13 @@ try {
   renderer.outputColorSpace = THREE.SRGBColorSpace;
 
   const scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera(42, 9 / 16, 0.1, 80);
+  camera = new THREE.PerspectiveCamera(42, 16 / 9, 0.1, 80);
   camera.position.set(0, 0, 11);
 
   const starPositions = new Float32Array(420 * 3);
   for (let i = 0; i < 420; i += 1) {
-    starPositions[i * 3] = (seededRandom() - 0.5) * 15;
-    starPositions[i * 3 + 1] = (seededRandom() - 0.5) * 25;
+    starPositions[i * 3] = (seededRandom() - 0.5) * 27;
+    starPositions[i * 3 + 1] = (seededRandom() - 0.5) * 15;
     starPositions[i * 3 + 2] = -12 + seededRandom() * 9;
   }
   const starGeometry = new THREE.BufferGeometry();
@@ -96,9 +96,9 @@ try {
   scene.add(stars);
 
   const nodePoints = [
-    [-3.8, 2.8, -2.2], [-1.9, 1.5, -1.6], [0.1, 2.2, -2.4], [2.4, 1.3, -1.7],
-    [-2.9, -0.5, -2], [-0.8, -1.5, -1.5], [1.4, -0.5, -2.2], [3.2, -1.8, -2.5],
-    [-2.3, -3.8, -1.6], [-0.1, -4.2, -2.5], [2.1, -3.5, -1.8],
+    [-6.6, 2.8, -2.2], [-3.3, 1.5, -1.6], [0.2, 2.2, -2.4], [4.2, 1.3, -1.7],
+    [-5.1, -0.5, -2], [-1.4, -1.5, -1.5], [2.5, -0.5, -2.2], [5.6, -1.8, -2.5],
+    [-4.0, -3.8, -1.6], [-0.2, -4.2, -2.5], [3.7, -3.5, -1.8],
   ];
   const linkPairs = [[0,1],[1,2],[2,3],[0,4],[1,5],[2,6],[3,6],[4,5],[5,6],[6,7],[4,8],[5,9],[6,10],[8,9],[9,10]];
   const linePositions = [];
@@ -110,11 +110,11 @@ try {
   scene.add(network);
 
   const gridPositions = [];
-  for (let x = -5; x <= 5; x += 1) {
-    gridPositions.push(x, -7, -3.5, x, 7, -3.5);
+  for (let x = -9; x <= 9; x += 1) {
+    gridPositions.push(x, -5, -3.5, x, 5, -3.5);
   }
-  for (let y = -7; y <= 7; y += 1) {
-    gridPositions.push(-5, y, -3.5, 5, y, -3.5);
+  for (let y = -5; y <= 5; y += 1) {
+    gridPositions.push(-9, y, -3.5, 9, y, -3.5);
   }
   const gridGeometry = new THREE.BufferGeometry();
   gridGeometry.setAttribute('position', new THREE.Float32BufferAttribute(gridPositions, 3));

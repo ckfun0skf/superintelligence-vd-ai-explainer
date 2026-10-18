@@ -9,7 +9,7 @@ npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite. Use the player beneath the 9:16 preview frame to play, pause, seek, or change playback speed. The animation is driven by the preview audio clock, so seeking reconstructs the visual state at that time.
+Open the local URL printed by Vite. Use the player beneath the 16:9 landscape preview frame to play, pause, seek, or change playback speed. The animation is driven by the preview audio clock, so seeking reconstructs the visual state at that time.
 
 ## Build static files
 
@@ -24,7 +24,7 @@ The static build is written to `dist/`. GitHub Pages is not enabled yet; this re
 
 - **Section 01 — Start with one question**
 - Duration: approximately 24.45 seconds
-- Frame design: portrait composition, 24 fps timeline basis (final delivery aspect ratio remains adjustable)
+- Frame design: 16:9 landscape, 1920×1080 target, 24 fps timeline basis
 - Audio: approved opening narration take plus restrained cyber/space score; music leads the first 1.5 seconds and is ducked under speech
 
 The narration take used in this section matches the first section of the current script. Later sections will be added only after this visual direction is reviewed.
