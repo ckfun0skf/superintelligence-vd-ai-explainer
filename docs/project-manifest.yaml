@@ -38,8 +38,8 @@ scenes:
       - "00:34.5–00:44.0 whole-word, word-piece and punctuation examples; boundaries vary"
       - "00:44.0–00:48.9 tokens map to illustrative numeric IDs"
       - "00:48.9–00:55.6 tokens are building blocks, not complete ideas"
-    visual_intent: "Reuse the same submitted prompt node as it moves from the chat bubble into a centered zoom; keep the sentence visible as it becomes larger individual word tiles on two spaced rows; move the original tiles on downward-curved paths into WHOLE WORD, WORD PIECES and PUNCTUATION bins; expand illustrative numeric-ID cells directly below selected tiles."
-    review_status: "published for user review; code commit 21cb52c"
+    visual_intent: "Enlarge the complete submitted-message bubble near the center and preserve its sentence; create separate word copies below it one by one while dimming each source word; settle copies into two central rows, then move selected copies into WHOLE WORD, WORD PIECES and PUNCTUATION bins; expand illustrative numeric-ID cells below selected tokens."
+    review_status: "local production preview passed keyframe and seek QA; pending publication"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
@@ -49,9 +49,9 @@ delivery:
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "none observed during latest public Pages Chromium preview checks; Three.js/WebGL initialized"
-  preview_seek_and_handoff: "pass: public MP3 loaded with a 55.6-second duration; public checks at 37.1s and 45s confirmed token flights, category landings and numeric IDs; local cross-section scrubbing validated 45s → 6.5s → 24.2s, stable prompt-node reuse and repeatable flight positions; review caption remained outside the frame"
-  keyframes_reviewed: [6.5, 10.8, 13.8, 24.2, 27.5, 30.0, 37.1, 45.0]
+  browser_errors: "none observed during local production-preview QA; Three.js/WebGL initialized"
+  preview_seek_and_handoff: "local pass: 16:9 stage retained its 1.7778 aspect with no horizontal overflow; the 29.0s keyframe already shows token copies emerging in the center; 33.8s shows settled rows; 38.0s shows category flights without empty punctuation placeholders; 45.5s shows IDs below their selected tokens; reverse scrubbing 45.5s → 29s → 38s → 24.2s → 45.5s reproduced each state without duplicate prompt nodes"
+  keyframes_reviewed: [6.5, 10.8, 13.8, 24.2, 26.5, 29.0, 32.2, 33.8, 38.0, 45.5]
   ffprobe_verified: true
   full_decode_verified: true
   notes:
