@@ -39,19 +39,19 @@ scenes:
       - "00:44.0–00:48.9 tokens map to illustrative numeric IDs"
       - "00:48.9–00:55.6 tokens are building blocks, not complete ideas"
     visual_intent: "Transform the original request into token tiles; highlight word, subword and punctuation examples; flip token tiles to sample numeric IDs; hold the takeaway with synchronized subtitles."
-    review_status: "preview build for user review"
+    review_status: "published preview for user review"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: null
+  git_commit: "8d4fe22"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "pending live preview QA"
-  preview_seek_and_handoff: "pending checks at section boundary and token-animation beats"
-  keyframes_reviewed: []
+  browser_errors: "none observed on the published preview"
+  preview_seek_and_handoff: "pass: public playback started; timeline seeks to 37s and 50s synchronized audio and visuals; deterministic scene renders checked across 23.8–25.0s handoff"
+  keyframes_reviewed: [0.0, 24.4, 30.5, 37.0, 50.0]
   ffprobe_verified: true
   full_decode_verified: true
   notes:
@@ -60,3 +60,6 @@ quality_checks:
     - "The 1920×1080 Three.js canvas is rendered at fixed resolution; frame composition remains 16:9."
     - "The preview page contains only the film frame and necessary play/seek controls."
     - "Token boundaries and numeric IDs are explicitly illustrative; real mappings vary by tokenizer."
+    - "Public Pages asset URLs returned HTTP 200; MP3 byte-range request returned HTTP 206, with a 55.6-second seekable audio track."
+    - "The final narration sentence of Section 02 was checked by transcription at the source cut; Section 03 is not included."
+    - "Live preview verified 16:9 stage (1280×720 browser view) with fixed 1920×1080 canvas rendering."
