@@ -1,6 +1,6 @@
 project:
   title: "From Prompt to Action: How AI Turns Words into Work"
-  purpose: "An audio-synchronized 16:9 explainer that animates a prompt from assistant input into a response and then into illustrative token pieces."
+  purpose: "An audio-synchronized 16:9 explainer that follows a request from an assistant interface through tokenization, context, attention, and intent inference."
   repository_or_workspace: "https://github.com/ckfun0skf/superintelligence-vd-ai-explainer"
   delivery_choices:
     source: "existing GitHub repository, main branch"
@@ -8,12 +8,12 @@ project:
     final_video: "not rendered yet"
 
 video:
-  duration_seconds: 55.6
+  duration_seconds: 110.0
   fps: 24
   width: 1920
   height: 1080
-  frame_range: "[0, 1335)"
-  narration_or_master_audio: "public/audio/section-01-02-preview-mix.mp3"
+  frame_range: "[0, 2640)"
+  narration_or_master_audio: "public/audio/section-01-03-preview-mix.mp3"
   audio_codec: "MP3 review mix; final master format TBD"
   audio_sample_rate_hz: 44100
 
@@ -24,10 +24,10 @@ scenes:
     module: "src/main.js"
     narration_cues:
       - "00:00–00:01.5 music-only assistant interface build"
-      - "00:01.5–00:20.0 Taipei prompt, itinerary response and tool question"
+      - "00:01.5–00:20.0 Taipei prompt, itinerary response, and tool question"
       - "00:20.0–00:24.4 handoff into the request-processing explanation"
     visual_intent: "Assemble an unbranded assistant interface with a compact composer fixed at the bottom; type and send the prompt into a user bubble; animate an AI loading state; reveal the nature-first Taipei title and two itinerary cards in sequence."
-    review_status: "published for user review; code commit 21cb52c"
+    review_status: "previously published; regression checked in the 110-second local preview"
   - id: "scene-02"
     start_seconds: 24.4
     end_seconds: 55.6
@@ -35,36 +35,48 @@ scenes:
     narration_cues:
       - "00:24.4–00:29.9 language model receives pieces, not one sentence-object"
       - "00:29.9–00:34.5 tokenizer breaks text into tokens"
-      - "00:34.5–00:44.0 whole-word, word-piece and punctuation examples; boundaries vary"
+      - "00:34.5–00:44.0 whole-word, word-piece, and punctuation examples; boundaries vary"
       - "00:44.0–00:48.9 tokens map to illustrative numeric IDs"
       - "00:48.9–00:55.6 tokens are building blocks, not complete ideas"
-    visual_intent: "Enlarge the complete submitted-message bubble near the center and preserve its sentence; create separate word copies below it one by one while dimming each source word; settle copies into two central rows, then move selected copies into WHOLE WORD, WORD PIECES and PUNCTUATION bins; expand illustrative numeric-ID cells below selected tokens."
-    review_status: "published for user review; code commit 678ec50; public keyframes and seek verified"
+    visual_intent: "Enlarge the complete submitted-message bubble near the center and preserve its sentence; create separate, larger and more widely spaced word copies below it one by one while dimming each source word; after every copy has arrived, fade the bubble away; then move selected copies into WHOLE WORD, WORD PIECES, and PUNCTUATION bins, with illustrative numeric-ID cells expanding beneath selected tokens."
+    review_status: "updated locally; token row, spacing, bubble fade, flights, and ID keyframes checked"
+  - id: "scene-03"
+    start_seconds: 55.6
+    end_seconds: 110.0
+    module: "src/main.js"
+    narration_cues:
+      - "00:55.6–00:58.3 the model uses the pieces together"
+      - "00:58.3–01:08.4 duration, location, budget, and preference relationships"
+      - "01:08.4–01:13.6 context patterns connect the pieces"
+      - "01:13.6–01:20.8 Transformer attention weighs relationships"
+      - "01:20.8–01:25.7 typo and imperfect-grammar example begins"
+      - "01:25.7–01:37.3 surrounding words make ‘quiet place’ a likely reading"
+      - "01:37.3–01:44.5 best-fit inference is not mind-reading"
+      - "01:44.5–01:49.8 ask when the distinction matters"
+    visual_intent: "Fade the category rack while the original two token rows reappear; draw animated curves from the words into four concept cards for duration, location, budget, and preference; bring in a CONTEXT core, relabel it ATTENTION, and move a focus frame across the relationship cards; transition to a separate typo example, highlight ‘quite’, reveal surrounding contextual words and a ‘quiet place’ likely-reading card, then add best-fit uncertainty and a clarification cue."
+    review_status: "local Vite production preview checked at 65.5s, 76.5s, 89.0s, and 106.2s; awaiting public review"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: "678ec50"
+  git_commit: "see main branch history"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "none observed during public Pages Chromium preview checks; Three.js/WebGL initialized"
-  preview_seek_and_handoff: "pass: published bundle and CSS returned HTTP 200; MP3 duration is 55.6 seconds and byte-range requests returned HTTP 206; public checks at 29.0s showed central token copies with dimmed source words, and 45.5s showed numeric IDs beneath selected tokens with no empty punctuation placeholder; local checks at 33.8s and 38.0s verified settled rows and category flights; reverse scrubbing reproduced each state without duplicate prompt nodes"
-  keyframes_reviewed: [6.5, 10.8, 13.8, 24.2, 26.5, 29.0, 32.2, 33.8, 38.0, 45.5]
+  browser_errors: "no runtime errors observed in the final local Vite production preview; Three.js/WebGL initialized"
+  preview_seek_and_handoff: "pass locally: audio duration 110 seconds, MP3 byte-range request returned HTTP 206, and actual seeks rendered at 32.5s (token copies settled and bubble faded), 65.5s (four concept cards and token links), 76.5s (attention focus), 89.0s (typo and likely reading), and 106.2s (uncertainty/clarification); selected element bounds showed no final cue overlap"
+  keyframes_reviewed: [6.5, 10.8, 13.8, 24.2, 29.0, 32.5, 45.5, 55.6, 65.5, 76.5, 89.0, 106.2]
   ffprobe_verified: true
   full_decode_verified: true
   notes:
-    - "Approved narration voice retained; Sections 01–02 are extracted from the approved narration recording."
-    - "Music starts before narration, continues under the cut, and is sidechain-ducked beneath speech."
+    - "Approved narration voice retained; the Section 01–03 mix uses the approved recording with a 1.2-second music lead-in and sidechain-ducked background music."
     - "The 1920×1080 Three.js canvas is rendered at fixed resolution; frame composition remains 16:9."
     - "No review captions or section titles are rendered inside the 16:9 film frame; synchronized English review captions sit below the frame, outside the movie composition."
-    - "The preview page contains only the film frame, the review-only caption line and necessary play/seek controls."
-    - "All animation states are driven by absolute audio time, including curved token flights and seeded particle motion."
+    - "The preview page contains only the film frame, the review-only caption line, and necessary play/seek controls."
+    - "All animation states are driven by absolute audio time, including curved token flights, relationship paths, attention focus, and seeded particle motion."
     - "Token boundaries and numeric IDs are explicitly illustrative; real mappings vary by tokenizer."
-    - "Public Pages asset URLs returned HTTP 200; MP3 byte-range requests returned HTTP 206 and seekable ranges were confirmed."
-    - "The final narration sentence of Section 02 was checked by transcription at the source cut; Section 03 is not included."
-    - "Public browser preview verified a 1280×720 stage with fixed 1920×1080 canvas rendering."
-    - "Token-copy tiles finish at 1.62cqw; row spacing and the frame remain inside the 16:9 safe area."
-    - "The complete submitted bubble remains visible above separate word copies; each source word dims as its copy moves. Persistent placeholders keep source-word order stable during deterministic flight resets."
-    - "Example numeric IDs expand in aligned cells beneath each selected token; their boundaries and values are illustrative only."
+    - "The final MP3 is stereo, 44.1 kHz, 192 kbps, approximately 110.03 seconds, and was fully decoded with ffmpeg."
+    - "Section 02 token tiles are 1.9cqw with increased padding and margins; the message bubble fades only after the final copy settles."
+    - "Section 03 retains a separate destination row beneath the token-copy layer so relationship links start from a stable, reconstructable token layout."
+    - "Browser review subtitles remain outside the film frame and follow the existing approved narration timing."

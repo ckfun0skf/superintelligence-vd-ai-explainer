@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#05070c" />
-    <meta name="description" content="A 16:9 HD video preview explaining how an AI assistant processes a prompt." />
+    <meta name="description" content="A 16:9 HD video preview following an AI prompt through tokens, context, and attention." />
     <title>From Prompt to Action — HD Video Preview</title>
   </head>
   <body>
@@ -85,6 +85,29 @@
               <div class="flight-layer" id="flight-layer" aria-hidden="true"></div>
               <div class="token-particle-glow" id="token-particle-glow" aria-hidden="true"></div>
             </div>
+
+            <div class="context-story" id="context-story" aria-label="How context connects prompt pieces and helps infer meaning">
+              <svg class="context-lines" id="context-lines" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"></svg>
+              <div class="context-core" id="context-core"><span id="context-label">CONTEXT</span><i></i></div>
+              <div class="concept-card" id="concept-duration"><small>DURATION</small><strong>two-day</strong></div>
+              <div class="concept-card" id="concept-location"><small>LOCATION</small><strong>Taipei</strong></div>
+              <div class="concept-card" id="concept-budget"><small>BUDGET</small><strong>8,000 dollars</strong></div>
+              <div class="concept-card" id="concept-preference"><small>PREFERENCE</small><strong>nature</strong></div>
+              <div class="attention-focus" id="attention-focus" aria-hidden="true"><i></i></div>
+
+              <div class="typo-scene" id="typo-scene">
+                <svg class="context-lines typo-lines" id="typo-lines" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"></svg>
+                <div class="typo-sentence" aria-label="Find me a quite place near Taipei">
+                  <span>Find me a</span><span class="typo-source" id="typo-source">quite</span>
+                  <span class="typo-context" id="typo-place">place</span>
+                  <span class="typo-context" id="typo-near">near</span>
+                  <span class="typo-context" id="typo-taipei">Taipei.</span>
+                </div>
+                <div class="likely-reading" id="likely-reading"><small>LIKELY READING</small><strong>quiet</strong><span>place</span></div>
+                <div class="uncertainty-indicator" id="uncertainty-indicator"><span class="branch-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>BEST-FIT GUESS</span></div>
+                <div class="clarify-indicator" id="clarify-indicator"><span class="question-orbit">?</span><span>ASK IF THE DISTINCTION MATTERS</span></div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -95,10 +118,10 @@
             <span class="visually-hidden" id="play-label">Play</span>
           </button>
           <span class="time-readout" id="current-time">00:00</span>
-          <input id="timeline" type="range" min="0" max="55.6" value="0" step="0.01" aria-label="Seek through the video preview" />
-          <span class="time-readout" id="total-time">00:56</span>
+          <input id="timeline" type="range" min="0" max="110" value="0" step="0.01" aria-label="Seek through the video preview" />
+          <span class="time-readout" id="total-time">01:50</span>
         </div>
-        <audio id="preview-audio" preload="metadata" src="./audio/section-01-02-preview-mix.mp3"></audio>
+        <audio id="preview-audio" preload="metadata" src="./audio/section-01-03-preview-mix.mp3"></audio>
       </section>
     </main>
     <script type="module" src="./src/main.js"></script>

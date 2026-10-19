@@ -35,13 +35,27 @@ const tokenField = document.querySelector('#token-field');
 const categoryRack = document.querySelector('#category-rack');
 const flightLayer = document.querySelector('#flight-layer');
 const tokenParticleGlow = document.querySelector('#token-particle-glow');
+const contextStory = document.querySelector('#context-story');
+const contextLines = document.querySelector('#context-lines');
+const typoLines = document.querySelector('#typo-lines');
+const contextCore = document.querySelector('#context-core');
+const contextLabel = document.querySelector('#context-label');
+const attentionFocus = document.querySelector('#attention-focus');
+const typoScene = document.querySelector('#typo-scene');
+const typoSource = document.querySelector('#typo-source');
+const likelyReading = document.querySelector('#likely-reading');
+const uncertaintyIndicator = document.querySelector('#uncertainty-indicator');
+const clarifyIndicator = document.querySelector('#clarify-indicator');
 
-const DURATION = 55.6;
+const DURATION = 110.0;
 const FPS = 24;
 const SECTION_TWO_START = 24.4;
 const SECTION_TWO_DURATION = 31.2;
+const SECTION_THREE_START = 55.6;
 const PROMPT_TRANSITION_START = 23.8;
 const TOKENIZE_START = 3.0;
+const TOKEN_COPY_STAGGER = 0.16;
+const TOKEN_COPY_DURATION = 0.6;
 const PROMPT = 'Plan a two-day weekend in Taipei. My budget is eight thousand dollars, and I love nature.';
 const CAPTIONS = [
   { start: 1.5, end: 4.0, text: 'Imagine typing this into an AI assistant.' },
@@ -57,6 +71,15 @@ const CAPTIONS = [
   { start: 40.5, end: 44.0, text: 'The exact pieces depend on the tokenizer and the language.' },
   { start: 44.0, end: 48.9, text: 'The tokens are then represented as numbers, so the model can work with them.' },
   { start: 48.9, end: 55.6, text: 'Tokens are building blocks for processing text, but a token is not by itself a complete idea.' },
+  { start: 55.6, end: 58.3, text: 'The model has to use the pieces together.' },
+  { start: 58.3, end: 68.4, text: 'In our example, two-day is about duration, Taipei gives a location, eight thousand sets a budget, and nature expresses a preference.' },
+  { start: 68.4, end: 73.6, text: 'Modern language models use patterns in context to work out how the pieces relate.' },
+  { start: 73.6, end: 80.8, text: 'Many use a design called a Transformer, whose attention mechanism helps weigh relationships between different parts of the input.' },
+  { start: 80.8, end: 85.7, text: 'This is also why an AI can often make sense of a typo or imperfect grammar.' },
+  { start: 85.7, end: 93.0, text: 'If you write, “Find me a quite place near Taipei,” the surrounding words make “quiet place” a likely meaning.' },
+  { start: 93.0, end: 97.3, text: 'The model uses context and language patterns to infer what you may intend.' },
+  { start: 97.3, end: 104.5, text: 'It does not need to perfectly correct the sentence first, but it is making a best-fit guess, not reading your mind.' },
+  { start: 104.5, end: 109.8, text: 'If the context is unclear, it may guess wrong, so it should ask when the distinction matters.' },
 ];
 
 const WORD_ROWS = [
@@ -70,12 +93,45 @@ const WORD_ROWS = [
   ],
 ];
 
+const TOKEN_COPY_COUNT = WORD_ROWS.reduce((total, row) => total + row.length, 0);
+const TOKEN_COPY_COMPLETE = TOKENIZE_START + (TOKEN_COPY_COUNT - 1) * TOKEN_COPY_STAGGER + TOKEN_COPY_DURATION;
+const BUBBLE_FADE_START = TOKEN_COPY_COMPLETE + 0.12;
+const BUBBLE_FADE_END = BUBBLE_FADE_START + 0.85;
+const SEMANTIC_RELATIONS = [
+  { id: 'duration', node: 'concept-duration', keys: ['two', 'day'], reveal: 2.7 },
+  { id: 'location', node: 'concept-location', keys: ['taipei-tai', 'taipei-pei'], reveal: 4.8 },
+  { id: 'budget', node: 'concept-budget', keys: ['eight', 'thousand', 'dollars'], reveal: 6.9 },
+  { id: 'preference', node: 'concept-preference', keys: ['nature'], reveal: 9.0 },
+];
+const svgPath = (svg, className) => {
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('pathLength', '1');
+  className.split(/\s+/).filter(Boolean).forEach((name) => path.classList.add(name));
+  svg.append(path);
+  return path;
+};
+const semanticEdges = SEMANTIC_RELATIONS.flatMap((group) => group.keys.map((key) => ({
+  group,
+  key,
+  path: svgPath(contextLines, `context-edge edge-${group.id}`),
+})));
+const contextEdges = SEMANTIC_RELATIONS.map((group) => ({
+  from: document.getElementById(group.node),
+  path: svgPath(contextLines, 'context-edge edge-core'),
+}));
+const typoEdges = ['typo-place', 'typo-near', 'typo-taipei'].map((id) => ({
+  from: document.getElementById(id),
+  path: svgPath(typoLines, 'typo-edge'),
+}));
+const typoSourceEdge = svgPath(typoLines, 'typo-edge typo-source-edge');
+
 const clamp = (value, min = 0, max = 1) => Math.max(min, Math.min(max, value));
 const smoothstep = (start, end, value) => {
   const x = clamp((value - start) / (end - start));
   return x * x * (3 - 2 * x);
 };
 const lerp = (a, b, t) => a + (b - a) * t;
+const tokenFontSize = () => Math.max(13, Math.min(stage.clientWidth * 0.019, 38));
 const fmtTime = (seconds) => {
   const safe = Math.max(0, Number.isFinite(seconds) ? seconds : 0);
   const mins = Math.floor(safe / 60);
@@ -223,7 +279,7 @@ function buildTokenRows() {
         sourceNode: sourceNodes.get(key),
         copyNode: copy,
         destinationNode: destination,
-        start: TOKENIZE_START + copyOrder * 0.16,
+        start: TOKENIZE_START + copyOrder * TOKEN_COPY_STAGGER,
         order: copyOrder,
       });
       copyOrder += 1;
@@ -404,7 +460,7 @@ function updateTaipeiSplit(sectionTwoTime) {
   const animation = tokenAnimations.find((item) => item.key === 'taipei');
   if (!animation) return;
   const split = smoothstep(11.0, 11.95, sectionTwoTime);
-  const fontSize = stage.clientWidth * 0.0162;
+  const fontSize = tokenFontSize();
   const copyWhole = animation.copyNode.querySelector('.taipei-whole');
   const destinationWhole = animation.destinationNode.querySelector('.taipei-whole');
   const copyPieces = animation.copyNode.querySelector('.taipei-pieces');
@@ -416,8 +472,8 @@ function updateTaipeiSplit(sectionTwoTime) {
     whole.style.paddingRight = '';
     const naturalWidth = whole.getBoundingClientRect().width;
     whole.style.width = `${(naturalWidth * (1 - split)).toFixed(2)}px`;
-    whole.style.paddingLeft = `${(fontSize * 0.34 * (1 - split)).toFixed(2)}px`;
-    whole.style.paddingRight = `${(fontSize * 0.34 * (1 - split)).toFixed(2)}px`;
+    whole.style.paddingLeft = `${(fontSize * 0.42 * (1 - split)).toFixed(2)}px`;
+    whole.style.paddingRight = `${(fontSize * 0.42 * (1 - split)).toFixed(2)}px`;
     whole.style.opacity = (1 - split).toFixed(3);
   });
   [copyPieces, destinationPieces].forEach((pieces) => {
@@ -436,12 +492,12 @@ function renderTokenCopies(sectionTwoTime) {
   updateTaipeiSplit(sectionTwoTime);
 
   const fieldRect = tokenField.getBoundingClientRect();
-  const targetFontSize = stage.clientWidth * 0.0162;
+  const targetFontSize = tokenFontSize();
   tokenAnimations.forEach((animation) => {
     const { sourceNode, copyNode, destinationNode, start } = animation;
     const sourceRect = sourceNode.getBoundingClientRect();
     const targetRect = destinationNode.getBoundingClientRect();
-    const progress = smoothstep(start, start + 0.6, sectionTwoTime);
+    const progress = smoothstep(start, start + TOKEN_COPY_DURATION, sectionTwoTime);
     const visible = smoothstep(start, start + 0.1, sectionTwoTime);
     const sourceFontSize = Number.parseFloat(getComputedStyle(sourceNode).fontSize) || targetFontSize;
     const width = lerp(sourceRect.width, targetRect.width, progress);
@@ -459,7 +515,7 @@ function renderTokenCopies(sectionTwoTime) {
     copyNode.style.fontSize = `${lerp(sourceFontSize, targetFontSize, progress).toFixed(2)}px`;
     copyNode.style.padding = animation.key === 'taipei'
       ? '0'
-      : `${(targetFontSize * 0.16 * progress).toFixed(2)}px ${(targetFontSize * 0.34 * progress).toFixed(2)}px`;
+      : `${(targetFontSize * 0.22 * progress).toFixed(2)}px ${(targetFontSize * 0.42 * progress).toFixed(2)}px`;
     copyNode.style.opacity = visible.toFixed(3);
     copyNode.style.visibility = sectionTwoTime < start ? 'hidden' : 'visible';
     copyNode.style.transform = `rotate(${lerp(-2.5, 0, progress).toFixed(2)}deg)`;
@@ -476,6 +532,16 @@ function renderTokenCopies(sectionTwoTime) {
     const dim = smoothstep(start + 0.04, start + 0.42, sectionTwoTime);
     sourceNode.style.opacity = (1 - 0.8 * dim).toFixed(3);
   });
+}
+
+function contextTokenNode(key) {
+  const direct = tokenAnimations.find((animation) => animation.key === key);
+  if (direct) return direct.destinationNode;
+  if (key === 'taipei-tai' || key === 'taipei-pei') {
+    const taipei = tokenAnimations.find((animation) => animation.key === 'taipei')?.destinationNode;
+    return taipei?.querySelector(`[data-word="${key}"]`) ?? taipei;
+  }
+  return null;
 }
 
 function updateFlights(sectionTwoTime) {
@@ -542,11 +608,127 @@ function updateFlights(sectionTwoTime) {
   });
 }
 
+function drawLink(path, from, to, progress, opacity) {
+  if (!path || !from || !to || opacity <= 0.001) {
+    if (path) path.style.opacity = '0';
+    return;
+  }
+  const bounds = stage.getBoundingClientRect();
+  if (!bounds.width || !bounds.height) return;
+  const a = from.getBoundingClientRect();
+  const b = to.getBoundingClientRect();
+  const sx = ((a.left + a.width / 2 - bounds.left) / bounds.width) * 1920;
+  const sy = ((a.top + a.height / 2 - bounds.top) / bounds.height) * 1080;
+  const tx = ((b.left + b.width / 2 - bounds.left) / bounds.width) * 1920;
+  const ty = ((b.top + b.height / 2 - bounds.top) / bounds.height) * 1080;
+  const bend = Math.min(110, Math.abs(ty - sy) * 0.2);
+  const direction = ty >= sy ? -1 : 1;
+  const cy = (sy + ty) / 2 + bend * direction;
+  path.setAttribute('d', `M ${sx.toFixed(1)} ${sy.toFixed(1)} C ${sx.toFixed(1)} ${cy.toFixed(1)}, ${tx.toFixed(1)} ${cy.toFixed(1)}, ${tx.toFixed(1)} ${ty.toFixed(1)}`);
+  path.style.strokeDashoffset = (1 - clamp(progress)).toFixed(3);
+  path.style.opacity = clamp(opacity).toFixed(3);
+}
+
+function renderContextStory(time) {
+  if (time < SECTION_THREE_START) {
+    contextStory.style.opacity = '0';
+    contextStory.style.visibility = 'hidden';
+    return;
+  }
+  const local = time - SECTION_THREE_START;
+  const enter = smoothstep(SECTION_THREE_START, SECTION_THREE_START + 0.65, time);
+  const endFade = 1 - smoothstep(DURATION - 0.8, DURATION, time);
+  contextStory.style.visibility = 'visible';
+  contextStory.style.opacity = (enter * endFade).toFixed(3);
+
+  const rowHandoff = smoothstep(0.0, 0.8, local);
+  tokenAnimations.forEach((animation) => {
+    animation.destinationNode.style.visibility = 'visible';
+    animation.destinationNode.style.opacity = rowHandoff.toFixed(3);
+    animation.destinationNode.querySelectorAll('.token-destination').forEach((node) => { node.style.visibility = 'visible'; });
+    animation.copyNode.style.opacity = (1 - rowHandoff).toFixed(3);
+  });
+
+  const semanticFade = 1 - smoothstep(24.0, 26.0, local);
+  SEMANTIC_RELATIONS.forEach((group) => {
+    const reveal = smoothstep(group.reveal, group.reveal + 0.8, local);
+    const node = document.getElementById(group.node);
+    const nodeOpacity = reveal * semanticFade;
+    node.style.opacity = nodeOpacity.toFixed(3);
+    node.style.transform = `translateY(${lerp(18, 0, reveal).toFixed(2)}px) scale(${lerp(0.95, 1, reveal).toFixed(3)})`;
+    node.classList.toggle('is-active', local >= group.reveal + 0.75 && local < group.reveal + 2.6);
+    group.keys.forEach((key) => {
+      const source = contextTokenNode(key);
+      const edge = semanticEdges.find((item) => item.group.id === group.id && item.key === key);
+      drawLink(edge?.path, source, node, smoothstep(group.reveal + 0.2, group.reveal + 1.3, local), nodeOpacity);
+    });
+  });
+
+  const coreIn = smoothstep(12.6, 13.5, local);
+  const coreOpacity = coreIn * semanticFade;
+  contextCore.style.opacity = coreOpacity.toFixed(3);
+  contextCore.style.transform = `translate(-50%, ${lerp(10, 0, coreIn).toFixed(2)}px) scale(${lerp(0.92, 1, coreIn).toFixed(3)})`;
+  contextLabel.textContent = local < 18.0 ? 'CONTEXT' : 'ATTENTION';
+  contextEdges.forEach((edge) => {
+    drawLink(edge.path, edge.from, contextCore, smoothstep(13.0, 15.0, local), coreOpacity * semanticFade);
+  });
+
+  const attentionIn = smoothstep(17.7, 18.8, local) * (1 - smoothstep(24.0, 25.5, local));
+  const focusTargets = ['concept-budget', 'concept-preference', 'concept-location'];
+  const focusPath = clamp((local - 18.2) / 5.6, 0, 0.999) * (focusTargets.length - 1);
+  const focusIndex = Math.floor(focusPath);
+  const focusMix = smoothstep(0, 1, focusPath - focusIndex);
+  const firstRect = document.getElementById(focusTargets[focusIndex]).getBoundingClientRect();
+  const secondRect = document.getElementById(focusTargets[Math.min(focusIndex + 1, focusTargets.length - 1)]).getBoundingClientRect();
+  const stageRect = stage.getBoundingClientRect();
+  const focusX = lerp(firstRect.left + firstRect.width / 2, secondRect.left + secondRect.width / 2, focusMix) - stageRect.left;
+  const focusY = lerp(firstRect.top + firstRect.height / 2, secondRect.top + secondRect.height / 2, focusMix) - stageRect.top;
+  attentionFocus.style.left = `${focusX.toFixed(2)}px`;
+  attentionFocus.style.top = `${focusY.toFixed(2)}px`;
+  attentionFocus.style.opacity = attentionIn.toFixed(3);
+  attentionFocus.style.transform = `translate(-50%,-50%) scale(${lerp(0.94, 1, attentionIn).toFixed(3)})`;
+
+  const tokenFade = 1 - smoothstep(24.0, 26.0, local);
+  tokenField.style.opacity = tokenFade.toFixed(3);
+  const typoIn = smoothstep(24.7, 26.0, local);
+  typoScene.style.opacity = (typoIn * endFade).toFixed(3);
+  const typoFocus = smoothstep(24.9, 25.8, local) * (1 - smoothstep(29.2, 30.2, local));
+  typoSource.style.transform = `scale(${lerp(0.96, 1.08, typoFocus).toFixed(3)})`;
+  typoSource.style.boxShadow = `0 0 ${(0.5 + 1.0 * typoFocus).toFixed(2)}cqw rgba(229,151,119,${(0.08 + 0.22 * typoFocus).toFixed(3)})`;
+
+  ['typo-place', 'typo-near', 'typo-taipei'].forEach((id, index) => {
+    const word = document.getElementById(id);
+    const wordIn = smoothstep(29.8 + index * 0.22, 30.6 + index * 0.22, local);
+    word.style.opacity = wordIn.toFixed(3);
+    word.style.background = `rgba(52,91,76,${(0.14 + 0.2 * wordIn).toFixed(3)})`;
+  });
+  const likelyIn = smoothstep(30.1, 31.3, local);
+  likelyReading.style.opacity = (likelyIn * endFade).toFixed(3);
+  likelyReading.style.transform = `translate(-50%, ${lerp(20, 0, likelyIn).toFixed(2)}px) scale(${lerp(0.94, 1, likelyIn).toFixed(3)})`;
+  typoEdges.forEach((edge, index) => {
+    const from = edge.from;
+    const to = likelyReading;
+    drawLink(edge.path, from, to, smoothstep(30.2 + index * 0.2, 31.3 + index * 0.2, local), likelyIn * endFade);
+  });
+  drawLink(typoSourceEdge, typoSource, likelyReading, smoothstep(30.0, 31.1, local), likelyIn * 0.82 * endFade);
+
+  const uncertaintyIn = smoothstep(41.5, 42.6, local);
+  uncertaintyIndicator.style.opacity = (uncertaintyIn * endFade).toFixed(3);
+  uncertaintyIndicator.style.transform = `translate(-50%, ${lerp(16, 0, uncertaintyIn).toFixed(2)}px)`;
+  const clarifyIn = smoothstep(48.7, 49.8, local);
+  clarifyIndicator.style.opacity = (clarifyIn * endFade).toFixed(3);
+  clarifyIndicator.style.transform = `translate(-50%, ${lerp(16, 0, clarifyIn).toFixed(2)}px)`;
+}
+
 function updateParticleField(time, sectionTwoTime) {
   if (!sparkCloud || !sparkMaterial) return;
   const assistantBurst = smoothstep(9.45, 10.25, time) * (1 - smoothstep(16.0, 17.5, time));
   const tokenBurst = smoothstep(0.0, 2.2, sectionTwoTime) * (1 - smoothstep(29.0, 31.2, sectionTwoTime));
-  const intensity = Math.max(assistantBurst, tokenBurst * 0.92);
+  const relationBurst = smoothstep(SECTION_THREE_START + 2.0, SECTION_THREE_START + 6.0, time)
+    * (1 - smoothstep(SECTION_THREE_START + 20.0, SECTION_THREE_START + 25.0, time));
+  const inferenceBurst = smoothstep(SECTION_THREE_START + 25.0, SECTION_THREE_START + 30.0, time)
+    * (1 - smoothstep(SECTION_THREE_START + 49.0, SECTION_THREE_START + 53.0, time));
+  const intensity = Math.max(assistantBurst, tokenBurst * 0.92, relationBurst * 0.65, inferenceBurst * 0.42);
   sparkMaterial.opacity = 0.68 * intensity;
   sparkMaterial.size = 0.025 + 0.035 * intensity;
 
@@ -646,7 +828,7 @@ function renderAt(seconds) {
     userMessage.style.width = `${lerp(source.width * stageWidth, stageWidth * 0.80, p).toFixed(2)}px`;
     userMessage.style.height = 'auto';
     userMessage.style.padding = `${lerp(0.8, 1.05, p).toFixed(3)}cqw ${lerp(1.05, 1.3, p).toFixed(3)}cqw ${lerp(0.95, 1.15, p).toFixed(3)}cqw`;
-    userMessage.style.opacity = '1';
+    userMessage.style.opacity = (1 - smoothstep(BUBBLE_FADE_START, BUBBLE_FADE_END, sectionTwoTime)).toFixed(3);
     userMessage.style.transform = 'none';
     promptText.style.position = 'relative';
     promptText.style.left = 'auto';
@@ -660,7 +842,8 @@ function renderAt(seconds) {
   }
 
   const rackIn = smoothstep(9.4, 10.7, sectionTwoTime);
-  categoryRack.style.opacity = rackIn.toFixed(3);
+  const categoryFade = 1 - smoothstep(SECTION_THREE_START, SECTION_THREE_START + 1.15, t);
+  categoryRack.style.opacity = (rackIn * categoryFade).toFixed(3);
   categoryRack.style.transform = `translateY(${lerp(54, 0, rackIn).toFixed(2)}px) scale(${lerp(0.91, 1, rackIn).toFixed(3)})`;
   categoryRack.querySelectorAll('.category-box').forEach((box, index) => {
     const p = smoothstep(9.7 + index * 0.25, 10.75 + index * 0.25, sectionTwoTime);
@@ -670,7 +853,8 @@ function renderAt(seconds) {
     box.style.setProperty('--box-energy', String(p * (0.35 + 0.65 * Math.sin(sectionTwoTime * 2 + index) ** 2)));
   });
 
-  updateFlights(sectionTwoTime);
+  if (t < SECTION_THREE_START) updateFlights(sectionTwoTime);
+  renderContextStory(t);
   const focus = smoothstep(0, 11.5, sectionTwoTime) * (1 - smoothstep(26.5, 30.5, sectionTwoTime));
   tokenParticleGlow.style.opacity = (focus * 0.82).toFixed(3);
   tokenParticleGlow.style.transform = `translate(-50%, -50%) scale(${lerp(0.55, 1.35, smoothstep(0, 12, sectionTwoTime)).toFixed(3)})`;
