@@ -74,18 +74,18 @@ scenes:
       - "02:43.5–02:48.8 generation draws on learned patterns and supplied context"
       - "02:48.8–02:57.2 current facts and interacting with services require more than the LLM alone"
     visual_intent: "Let the attention/typo scene fade into a visibly layered neural network labeled 'LLM = NEURAL NETWORK'. Send moving signal pulses across four neuron columns. Connect the network to candidate next tokens, fade the candidate-to-response curve together with the candidate panel, append chosen tokens to an example response, and reconnect the original prompt with the growing output. Introduce a restrained cache metaphor, dissolve a static answer-shelf motif into moving pattern particles, and finish with muted live-map/calendar modules outside the model boundary. No title card or review subtitles inside the frame."
-    review_status: "production preview locally verified at the layer-activation, token-choice, and learned-pattern cues; public deployment of this visual revision pending"
+    review_status: "live revision verified at the neural-network definition, token choice, and learned-pattern cues; the 163–164s candidate curve now exits with its panel"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: "pending Section 4 network revision"
+  git_commit: "c4d475ef26bc1e1641d4993430aee9cc4f6f8dd7"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "none after favicon fix; the revised desktop and mobile Chromium production preview reported no JavaScript/console errors or failed HTTP resources"
-  preview_seek_and_handoff: "Local production preview loaded the 177.4-second MP3 and 24 fps canvas. Absolute-time seeks exercised all four scenes. Section 4 was reviewed at the first network definition, next-token choice, and the 163–164s candidate-panel exit; the 36 synapse lines, 16 neurons, and 3 traveling signal particles rebuild deterministically, and the candidate-to-response edge reaches zero opacity with the candidate panel. The mobile frame remains 16:9 without horizontal overflow."
+  browser_errors: "none after favicon fix; revised desktop/mobile Chromium preview and live Pages keyframe check showed no JavaScript/console errors or failed HTTP resources"
+  preview_seek_and_handoff: "Local production preview loaded the 177.4-second MP3 and 24 fps canvas. Absolute-time and reverse seeks exercised all four scenes. At Section 4, the 36 synapse lines, 16 neurons, and 3 traveling signal particles rebuild identically after reverse seek. At 163s the candidate panel and output edge are both 0.5 opacity; at 164s both are 0. Live Pages returns the same label, graph, caption, and 16:9 composition."
   keyframes_reviewed: [0.0, 24.4, 32.5, 36.4, 36.65, 37.3, 38.1, 45.5, 55.6, 65.5, 76.5, 89.0, 106.2, 109.6, 110.0, 115.0, 122.0, 131.0, 138.0, 151.0, 160.0, 162.0, 163.0, 164.0, 167.0, 172.0, 177.2]
   responsive_viewports:
     - viewport: "1280x720 Chromium desktop"
@@ -94,7 +94,7 @@ quality_checks:
     - viewport: "390x844 at DPR 3"
       aspect_ratio: "stage 374x210.375 CSS px; 16:9; no page overflow"
       result: "pass"
-  public_deployment: "pending latest Section 4 network revision and public keyframe check"
+  public_deployment: "success: GitHub Actions run 39220160101 deployed commit c4d475ef26bc1e1641d4993430aee9cc4f6f8dd7; public page and favicon HTTP 200; MP3 byte-range HTTP 206; live browser confirms the LLM = NEURAL NETWORK label, 36 graph connections, 3 moving signals, and candidate-edge exit at 164s"
   ffprobe_verified: true
   full_decode_verified: true
   notes:
