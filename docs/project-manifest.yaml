@@ -40,7 +40,7 @@ scenes:
       - "00:44.0–00:48.9 tokens map to illustrative numeric IDs"
       - "00:48.9–00:55.6 tokens are building blocks, not complete ideas"
     visual_intent: "Enlarge the complete submitted-message bubble near the center and preserve its sentence; create separate, larger and more widely spaced word copies below it one by one while dimming each source word; after every copy has arrived, fade the bubble away; then move selected copies into WHOLE WORD, WORD PIECES, and PUNCTUATION bins, with illustrative numeric-ID cells expanding beneath selected tokens."
-    review_status: "token row, spacing, bubble fade, flights, and ID keyframes checked locally at desktop and mobile frame sizes"
+    review_status: "token row, spacing, bubble fade, flights, and ID keyframes checked locally and on public Pages at desktop and mobile frame sizes"
   - id: "scene-03"
     start_seconds: 55.6
     end_seconds: 110.0
@@ -55,13 +55,13 @@ scenes:
       - "01:37.3–01:44.5 best-fit inference is not mind-reading"
       - "01:44.5–01:49.8 ask when the distinction matters"
     visual_intent: "Fade the category rack while the original two token rows reappear; draw animated curves from the words into four concept cards for duration, location, budget, and preference; bring in a CONTEXT core, relabel it ATTENTION, and move a focus frame across the relationship cards; transition to a separate typo example, highlight ‘quite’, reveal surrounding contextual words and a ‘quiet place’ likely-reading card, then add best-fit uncertainty and a clarification cue."
-    review_status: "local Vite production preview checked at 65.5s, 76.5s, 89.0s, and 106.2s; mobile-scaled keyframes checked at 65.5s and 89.0s; awaiting public deployment"
+    review_status: "local preview checked at 65.5s, 76.5s, 89.0s, and 106.2s; mobile-scaled keyframes checked at 65.5s and 89.0s; public Pages verified"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: "see main branch history"
+  git_commit: "8177628a0298fad75ef2b9f9d71141b147bd2e7d (responsive preview release)"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
@@ -79,6 +79,7 @@ quality_checks:
       checked_keyframes_seconds: [6.5, 32.5, 45.5, 65.5, 89.0]
       page_horizontal_overflow: false
       result: "pass"
+  public_deployment: "pass: responsive commit 8177628 deployed via GitHub Actions; public HTML, JS, CSS, and range-seekable 110-second audio returned successfully; public seeks at 45.5s and 89.0s preserved 16:9 and had no page overflow"
   ffprobe_verified: true
   full_decode_verified: true
   notes:
