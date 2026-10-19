@@ -1,6 +1,6 @@
 project:
   title: "From Prompt to Action: How AI Turns Words into Work"
-  purpose: "An audio-synchronized 16:9 explainer that follows a request from an assistant interface through tokenization, context, attention, and intent inference."
+  purpose: "An audio-synchronized 16:9 explainer that follows a request from an assistant interface through tokenization, context, attention, intent inference, and next-token generation."
   repository_or_workspace: "https://github.com/ckfun0skf/superintelligence-vd-ai-explainer"
   delivery_choices:
     source: "existing GitHub repository, main branch"
@@ -8,15 +8,17 @@ project:
     final_video: "not rendered yet"
 
 video:
-  duration_seconds: 110.0
+  duration_seconds: 177.4
   fps: 24
   width: 1920
   height: 1080
   responsive_scaling: "The browser frame preserves 16:9 and fits available viewport width and height; in-frame typography, spacing, borders, and animation geometry scale with the frame. Review captions and play/seek controls stay outside the frame."
-  frame_range: "[0, 2640)"
-  narration_or_master_audio: "public/audio/section-01-03-preview-mix.mp3"
+  frame_range: "[0, 4258)"
+  narration_or_master_audio: "public/audio/section-01-04-preview-mix.mp3"
   audio_codec: "MP3 review mix; final master format TBD"
   audio_sample_rate_hz: 44100
+  audio_channels: 2
+  audio_bitrate_kbps: 192
 
 scenes:
   - id: "scene-01"
@@ -28,7 +30,7 @@ scenes:
       - "00:01.5–00:20.0 Taipei prompt, itinerary response, and tool question"
       - "00:20.0–00:24.4 handoff into the request-processing explanation"
     visual_intent: "Assemble an unbranded assistant interface with a compact composer fixed at the bottom; type and send the prompt into a user bubble; animate an AI loading state; reveal the nature-first Taipei title and two itinerary cards in sequence."
-    review_status: "previously published; regression checked in the 110-second local preview"
+    review_status: "previously published; retained in the four-section regression preview"
   - id: "scene-02"
     start_seconds: 24.4
     end_seconds: 55.6
@@ -39,8 +41,8 @@ scenes:
       - "00:34.5–00:44.0 whole-word, word-piece, and punctuation examples; boundaries vary"
       - "00:44.0–00:48.9 tokens map to illustrative numeric IDs"
       - "00:48.9–00:55.6 tokens are building blocks, not complete ideas"
-    visual_intent: "Enlarge the complete submitted-message bubble near the center and preserve its sentence; create separate, larger and more widely spaced word copies below it one by one while dimming each source word; after every copy has arrived, fade the bubble away; then move selected copies into WHOLE WORD, WORD PIECES, and PUNCTUATION bins, with illustrative numeric-ID cells expanding beneath selected tokens."
-    review_status: "token row, spacing, bubble fade, flights, and ID keyframes checked locally and on public Pages at desktop and mobile frame sizes"
+    visual_intent: "Enlarge the complete submitted-message bubble and preserve its sentence; separate, larger and more widely spaced word copies emerge below it one by one while source words dim; after every copy arrives, fade the bubble; then move selected copies into WHOLE WORD, WORD PIECES, and PUNCTUATION bins, with illustrative numeric-ID cells below selected tokens. Flight motion reparents the same token node and starts from its actual measured copy position, remaining deterministic under reverse and direct seeking."
+    review_status: "token row, spacing, bubble fade, flights, and ID keyframes checked locally; same-node identity and zero-offset takeoff verified after flight correction"
   - id: "scene-03"
     start_seconds: 55.6
     end_seconds: 110.0
@@ -54,43 +56,54 @@ scenes:
       - "01:25.7–01:37.3 surrounding words make ‘quiet place’ a likely reading"
       - "01:37.3–01:44.5 best-fit inference is not mind-reading"
       - "01:44.5–01:49.8 ask when the distinction matters"
-    visual_intent: "Fade the category rack while the original two token rows reappear; draw animated curves from the words into four concept cards for duration, location, budget, and preference; bring in a CONTEXT core, relabel it ATTENTION, and move a focus frame across the relationship cards; transition to a separate typo example, highlight ‘quite’, reveal surrounding contextual words and a ‘quiet place’ likely-reading card, then add best-fit uncertainty and a clarification cue."
-    review_status: "local preview checked at 65.5s, 76.5s, 89.0s, and 106.2s; mobile-scaled keyframes checked at 65.5s and 89.0s; public Pages verified"
+    visual_intent: "Fade the category rack while the original two token rows reappear; draw animated curves from the words into four concept cards for duration, location, budget, and preference; bring in a CONTEXT core, relabel it ATTENTION, and move a focus frame across the relationship cards; transition to a separate typo example, highlight ‘quite’, reveal surrounding contextual words and a ‘quiet place’ likely-reading card, then add best-fit uncertainty and a clarification cue. Fade the whole scene as the fourth chapter enters."
+    review_status: "rechecked locally at 55.6s, 65.5s, 76.5s, 89.0s, 106.2s, and the 110s handoff"
+  - id: "scene-04"
+    start_seconds: 110.0
+    end_seconds: 177.4
+    module: "src/main.js"
+    narration_cues:
+      - "01:50–02:01.4 an LLM is a trained neural network that recognizes patterns in token sequences"
+      - "02:01.4–02:06.1 a response is generally predicted one token at a time"
+      - "02:06.1–02:10.3 plausible next-token options are calculated"
+      - "02:10.3–02:15.5 a decoding choice is appended to the growing sequence"
+      - "02:15.5–02:22.9 each next prediction uses the original prompt plus generated text so far"
+      - "02:22.9–02:29.3 repeated passes grow a sentence or longer answer"
+      - "02:29.3–02:38.4 caching can reuse earlier computation while context grows"
+      - "02:38.4–02:43.5 the model is not simply retrieving one perfect stored answer"
+      - "02:43.5–02:48.8 generation draws on learned patterns and supplied context"
+      - "02:48.8–02:57.2 current facts and interacting with services require more than the LLM alone"
+    visual_intent: "Let the attention/typo scene fade into a compact network model. Show possible next-token candidates, highlight an illustrative choice, append tokens to an example response one by one, then reconnect the original prompt with the generated sequence to show the repeated prediction loop. Introduce a restrained cache metaphor, dissolve a static answer-shelf motif into learned pattern particles, and finish with muted live-map/calendar modules outside the model boundary. No heading or review subtitles inside the frame."
+    review_status: "local deterministic seek, audio-driven playback, desktop/mobile 16:9 sizing, and external-service cue verified; public deployment check pending"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: "8177628a0298fad75ef2b9f9d71141b147bd2e7d (responsive preview release)"
+  git_commit: "pending current main-branch update"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "no runtime errors observed in the final local Vite production preview; Three.js/WebGL initialized"
-  preview_seek_and_handoff: "pass locally: audio duration 110 seconds, MP3 byte-range request returned HTTP 206, and actual seeks rendered at 32.5s (token copies settled and bubble faded), 65.5s (four concept cards and token links), 76.5s (attention focus), 89.0s (typo and likely reading), and 106.2s (uncertainty/clarification); selected element bounds showed no final cue overlap"
-  keyframes_reviewed: [6.5, 10.8, 13.8, 24.2, 29.0, 32.5, 45.5, 55.6, 65.5, 76.5, 89.0, 106.2]
+  browser_errors: "none after favicon fix; desktop and mobile Chromium pass reported no JavaScript/console errors or failed HTTP resources"
+  preview_seek_and_handoff: "Local production preview loaded the 177.4-second MP3 and 24 fps canvas. Absolute-time direct seeks rebuilt prompt copies, Section 3 relationships, attention/typo states, LLM candidates, generated tokens, cache metaphor, and final service-boundary frame; reverse seek preserved token identity and the takeoff position had zero initial offset. The actual play control advanced audio time and rendered the matching opening state; slider input sought to 131 seconds and updated the matching caption."
+  keyframes_reviewed: [0.0, 24.4, 32.5, 36.4, 36.65, 37.3, 38.1, 45.5, 55.6, 65.5, 76.5, 89.0, 106.2, 109.6, 110.0, 115.0, 122.0, 131.0, 138.0, 151.0, 160.0, 167.0, 172.0, 177.2]
   responsive_viewports:
-    - viewport: "1280x720"
-      frame: "1031.11x579.98"
-      aspect_ratio: "16:9"
+    - viewport: "1280x720 Chromium desktop"
+      aspect_ratio: "stage 1031.11x579.98 CSS px; backing canvas 1920x1080; no page overflow"
       result: "pass"
     - viewport: "390x844 at DPR 3"
-      frame: "374x210.38"
-      aspect_ratio: "16:9"
-      checked_keyframes_seconds: [6.5, 32.5, 45.5, 65.5, 89.0]
-      page_horizontal_overflow: false
+      aspect_ratio: "stage 374x210.375 CSS px; 16:9; no page overflow"
       result: "pass"
-  public_deployment: "pass: responsive commit 8177628 deployed via GitHub Actions; public HTML, JS, CSS, and range-seekable 110-second audio returned successfully; public seeks at 45.5s and 89.0s preserved 16:9 and had no page overflow"
+  public_deployment: "pending latest GitHub Actions deploy and public audio-range check"
   ffprobe_verified: true
   full_decode_verified: true
   notes:
-    - "Approved narration voice retained; the Section 01–03 mix uses the approved recording with a 1.2-second music lead-in and sidechain-ducked background music."
-    - "The 1920×1080 Three.js canvas is rendered at fixed resolution; frame composition remains 16:9."
-    - "CSS and JavaScript-generated token sizes use the stage width as their scaling reference; live browser QA confirmed in-frame text and motion remain proportional on phone and desktop viewports."
-    - "No review captions or section titles are rendered inside the 16:9 film frame; synchronized English review captions sit below the frame, outside the movie composition."
-    - "The preview page contains only the film frame, the review-only caption line, and necessary play/seek controls."
-    - "All animation states are driven by absolute audio time, including curved token flights, relationship paths, attention focus, and seeded particle motion."
-    - "Token boundaries and numeric IDs are explicitly illustrative; real mappings vary by tokenizer."
-    - "The final MP3 is stereo, 44.1 kHz, 192 kbps, approximately 110.03 seconds, and was fully decoded with ffmpeg."
-    - "Section 02 token tiles are 1.9cqw with increased padding and margins; the message bubble fades only after the final copy settles."
-    - "Section 03 retains a separate destination row beneath the token-copy layer so relationship links start from a stable, reconstructable token layout."
-    - "Browser review subtitles remain outside the film frame and follow the existing approved narration timing."
+    - "Approved narration is unchanged. The preview mix has a 1.2-second music-led opening, approved voice part 1, a 1.5-second chapter pause, approved voice part 2, and the same cyber/space BGM sidechain-ducked beneath speech."
+    - "Measured audio duration is approximately 177.398 seconds, stereo, 44.1 kHz, MP3 at 192 kbps; complete ffmpeg decode succeeds."
+    - "The Three.js canvas is rendered at 1920×1080 with deterministic absolute-time states and seeded particles."
+    - "CSS and JavaScript scene geometry use stage-relative units; the film composition stays 16:9 and player/review captions remain outside the film frame."
+    - "Token boundaries, token-ID examples, and next-token candidate bar lengths are illustrative rather than a report of a specific model's tokenizer or probabilities."
+    - "Punctuation token tiles no longer use the former brown placeholder treatment."
+    - "A bundled SVG favicon eliminates the browser's default /favicon.ico 404 request."
+    - "The preview page contains only the film frame, a review-only caption line, and necessary play/seek controls."
+    - "The final MP4 has not been rendered; this is a browser preview and source-project update."

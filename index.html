@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#05070c" />
-    <meta name="description" content="A 16:9 HD video preview following an AI prompt through tokens, context, and attention." />
+    <meta name="description" content="A 16:9 HD video preview following an AI prompt through tokens, context, attention, and next-token generation." />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <title>From Prompt to Action — HD Video Preview</title>
   </head>
   <body>
@@ -108,6 +109,46 @@
                 <div class="clarify-indicator" id="clarify-indicator"><span class="question-orbit">?</span><span>ASK IF THE DISTINCTION MATTERS</span></div>
               </div>
             </div>
+
+            <div class="model-story" id="model-story" aria-label="How a language model predicts a response one token at a time">
+              <svg class="model-lines" id="model-lines" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"></svg>
+              <div class="llm-prompt" id="llm-prompt">
+                <small>PROMPT CONTEXT</small>
+                <div class="prompt-token-strip"><span>weekend</span><span>2 days</span><span>Taipei</span><span>$8,000</span><span>nature</span></div>
+              </div>
+              <div class="llm-network" id="llm-network" aria-hidden="true">
+                <span class="network-label">LLM</span>
+                <div class="neural-columns">
+                  <div class="neural-column"><i></i><i></i><i></i><i></i></div>
+                  <div class="neural-column"><i></i><i></i><i></i><i></i><i></i></div>
+                  <div class="neural-column"><i></i><i></i><i></i><i></i><i></i></div>
+                  <div class="neural-column"><i></i><i></i><i></i><i></i></div>
+                </div>
+                <div class="pattern-cloud" id="llm-patterns"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+              </div>
+              <div class="llm-candidates" id="llm-candidates">
+                <small>POSSIBLE NEXT TOKENS</small>
+                <div class="candidate-row selected" data-candidate="a"><span>A</span><i style="--bar: 78%"></i></div>
+                <div class="candidate-row" data-candidate="for"><span>For</span><i style="--bar: 48%"></i></div>
+                <div class="candidate-row" data-candidate="you"><span>You</span><i style="--bar: 31%"></i></div>
+              </div>
+              <div class="llm-response" id="llm-response">
+                <small>RESPONSE SO FAR</small>
+                <div class="generated-phrase" id="generated-phrase">
+                  <span class="generated-token">A</span><span class="generated-token">nature-first</span><span class="generated-token">weekend</span><span class="generated-token">in</span><span class="generated-token">Taipei.</span>
+                </div>
+              </div>
+              <div class="llm-context-return" id="llm-context-return">
+                <small>UPDATED CONTEXT</small>
+                <div>Original prompt <b>+</b> <span id="context-output-copy">A nature-first weekend in Taipei.</span></div>
+              </div>
+              <div class="llm-cache" id="llm-cache"><i></i><i></i><i></i><span>REUSE EARLIER WORK</span></div>
+              <div class="llm-shelf" id="llm-shelf" aria-hidden="true"><i></i><i></i><i></i></div>
+              <div class="llm-external" id="llm-external">
+                <small>NOT LIVE BY ITSELF</small>
+                <div><span>MAP</span><span>CALENDAR</span></div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -118,10 +159,10 @@
             <span class="visually-hidden" id="play-label">Play</span>
           </button>
           <span class="time-readout" id="current-time">00:00</span>
-          <input id="timeline" type="range" min="0" max="110" value="0" step="0.01" aria-label="Seek through the video preview" />
-          <span class="time-readout" id="total-time">01:50</span>
+          <input id="timeline" type="range" min="0" max="177.4" value="0" step="0.01" aria-label="Seek through the video preview" />
+          <span class="time-readout" id="total-time">02:57</span>
         </div>
-        <audio id="preview-audio" preload="metadata" src="./audio/section-01-03-preview-mix.mp3"></audio>
+        <audio id="preview-audio" preload="metadata" src="./audio/section-01-04-preview-mix.mp3"></audio>
       </section>
     </main>
     <script type="module" src="./src/main.js"></script>

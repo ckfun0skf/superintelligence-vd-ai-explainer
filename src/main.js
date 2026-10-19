@@ -38,6 +38,7 @@ const tokenParticleGlow = document.querySelector('#token-particle-glow');
 const contextStory = document.querySelector('#context-story');
 const contextLines = document.querySelector('#context-lines');
 const typoLines = document.querySelector('#typo-lines');
+const modelLines = document.querySelector('#model-lines');
 const contextCore = document.querySelector('#context-core');
 const contextLabel = document.querySelector('#context-label');
 const attentionFocus = document.querySelector('#attention-focus');
@@ -46,12 +47,23 @@ const typoSource = document.querySelector('#typo-source');
 const likelyReading = document.querySelector('#likely-reading');
 const uncertaintyIndicator = document.querySelector('#uncertainty-indicator');
 const clarifyIndicator = document.querySelector('#clarify-indicator');
+const modelStory = document.querySelector('#model-story');
+const llmPrompt = document.querySelector('#llm-prompt');
+const llmNetwork = document.querySelector('#llm-network');
+const llmCandidates = document.querySelector('#llm-candidates');
+const llmResponse = document.querySelector('#llm-response');
+const llmContextReturn = document.querySelector('#llm-context-return');
+const llmCache = document.querySelector('#llm-cache');
+const llmShelf = document.querySelector('#llm-shelf');
+const llmPatterns = document.querySelector('#llm-patterns');
+const llmExternal = document.querySelector('#llm-external');
 
-const DURATION = 110.0;
+const DURATION = 177.4;
 const FPS = 24;
 const SECTION_TWO_START = 24.4;
 const SECTION_TWO_DURATION = 31.2;
 const SECTION_THREE_START = 55.6;
+const SECTION_FOUR_START = 110.0;
 const PROMPT_TRANSITION_START = 23.8;
 const TOKENIZE_START = 3.0;
 const TOKEN_COPY_STAGGER = 0.16;
@@ -80,6 +92,16 @@ const CAPTIONS = [
   { start: 93.0, end: 97.3, text: 'The model uses context and language patterns to infer what you may intend.' },
   { start: 97.3, end: 104.5, text: 'It does not need to perfectly correct the sentence first, but it is making a best-fit guess, not reading your mind.' },
   { start: 104.5, end: 109.8, text: 'If the context is unclear, it may guess wrong, so it should ask when the distinction matters.' },
+  { start: 111.8, end: 121.36, text: 'A large language model, or LLM, is a neural network trained to recognize patterns in sequences of tokens and generate likely continuations.' },
+  { start: 121.36, end: 126.1, text: 'When it writes a response, it generally predicts one token at a time.' },
+  { start: 126.1, end: 130.3, text: 'For each step, it calculates which next tokens are plausible.' },
+  { start: 130.3, end: 135.48, text: 'A decoding process selects one, and that token is added to the growing sequence.' },
+  { start: 135.48, end: 142.94, text: 'The next prediction uses the original prompt together with everything generated so far, not just the last token.' },
+  { start: 142.94, end: 149.32, text: 'Repeated many times, this loop produces a sentence, an itinerary, or a longer answer.' },
+  { start: 149.32, end: 158.36, text: 'Systems can use techniques such as caching to avoid recalculating all the earlier work from scratch, but conceptually, the context keeps growing.' },
+  { start: 158.36, end: 163.52, text: 'So an LLM is not usually retrieving one perfect answer from a shelf.' },
+  { start: 163.52, end: 168.76, text: 'It is generating a response based on learned patterns and the context it has received.' },
+  { start: 168.76, end: 177.2, text: 'That can work well for many requests, but it does not automatically give the model current facts or the ability to interact with other services.' },
 ];
 
 const WORD_ROWS = [
@@ -124,6 +146,12 @@ const typoEdges = ['typo-place', 'typo-near', 'typo-taipei'].map((id) => ({
   path: svgPath(typoLines, 'typo-edge'),
 }));
 const typoSourceEdge = svgPath(typoLines, 'typo-edge typo-source-edge');
+const modelEdges = [
+  { from: llmPrompt, to: llmNetwork, className: 'llm-edge' },
+  { from: llmNetwork, to: llmCandidates, className: 'llm-edge edge-choice' },
+  { from: llmCandidates, to: llmResponse, className: 'llm-edge edge-choice' },
+  { from: llmResponse, to: llmContextReturn, className: 'llm-edge edge-return' },
+].map((edge) => ({ ...edge, path: svgPath(modelLines, edge.className) }));
 
 const clamp = (value, min = 0, max = 1) => Math.max(min, Math.min(max, value));
 const smoothstep = (start, end, value) => {
@@ -152,6 +180,7 @@ let tileOrder = 0;
 
 function resetFlightNodes(removeAnchors = false) {
   flights.forEach((flight) => {
+    if (!removeAnchors && flight.activeAtCurrentTime) return;
     if (flight.sourceParent && flight.sourceNode.parentElement !== flight.sourceParent) {
       const before = flight.placeholder?.parentElement === flight.sourceParent
         ? flight.placeholder.nextSibling
@@ -159,16 +188,13 @@ function resetFlightNodes(removeAnchors = false) {
       flight.sourceParent.insertBefore(flight.sourceNode, before);
     }
     if (flight.placeholder) {
-      if (removeAnchors) {
-        flight.placeholder.remove();
-        flight.placeholder = null;
-      } else {
-        flight.placeholder.style.display = 'none';
-      }
+      flight.placeholder.remove();
+      flight.placeholder = null;
     }
     if (flight.targetNode) flight.targetNode.replaceChildren();
     flight.sourceNode.classList.remove('flight-token', 'token-slot');
     flight.sourceNode.classList.add('token-copy');
+    flight.startRect = null;
     ['position', 'left', 'top', 'width', 'height', 'min-height', 'font-size', 'opacity', 'transform', 'margin', 'padding', 'box-sizing', 'z-index', 'border-radius', 'background', 'border-color']
       .forEach((property) => flight.sourceNode.style.removeProperty(property));
     flight.sourceNode.style.removeProperty('--tile-border');
@@ -301,6 +327,7 @@ function buildTokenRows() {
     flight.targetNode = document.querySelector(`#${flight.target}`);
     flight.idNode = document.querySelector(`#${flight.id}`);
     flight.placeholder = null;
+    flight.startRect = null;
   });
   tokenRowsBuilt = true;
 }
@@ -486,7 +513,8 @@ function updateTaipeiSplit(sectionTwoTime) {
 
 function renderTokenCopies(sectionTwoTime) {
   if (!tokenCloneLayer || !tokenAnimations.length) return;
-  resetFlightNodes();
+  flights.forEach((flight) => { flight.activeAtCurrentTime = sectionTwoTime >= flight.start; });
+  resetFlightNodes(false);
   tokenField.style.opacity = smoothstep(TOKENIZE_START, TOKENIZE_START + 0.35, sectionTwoTime).toFixed(3);
   sourceNodes.forEach((source) => { source.style.opacity = '1'; });
   updateTaipeiSplit(sectionTwoTime);
@@ -495,6 +523,8 @@ function renderTokenCopies(sectionTwoTime) {
   const targetFontSize = tokenFontSize();
   tokenAnimations.forEach((animation) => {
     const { sourceNode, copyNode, destinationNode, start } = animation;
+    const activeFlight = flights.find((flight) => flight.sourceNode === copyNode && sectionTwoTime >= flight.start);
+    if (activeFlight && copyNode.parentElement !== tokenCloneLayer) return;
     const sourceRect = sourceNode.getBoundingClientRect();
     const targetRect = destinationNode.getBoundingClientRect();
     const progress = smoothstep(start, start + TOKEN_COPY_DURATION, sectionTwoTime);
@@ -557,22 +587,31 @@ function updateFlights(sectionTwoTime) {
     flight.idNode.style.transform = `scaleY(${lerp(0.72, 1, idReveal).toFixed(3)})`;
 
     if (sectionTwoTime < flight.start) return;
-    const sourceRect = flight.sourceNode.getBoundingClientRect();
+    if (!flight.startRect) {
+      const rect = flight.sourceNode.getBoundingClientRect();
+      flight.startRect = {
+        left: rect.left,
+        top: rect.top,
+        width: rect.width,
+        height: rect.height,
+        fontSize: getComputedStyle(flight.sourceNode).fontSize,
+      };
+    }
+    const sourceRect = flight.startRect;
     const targetRect = flight.targetNode.getBoundingClientRect();
-    const sourceFontSize = getComputedStyle(flight.sourceNode).fontSize;
+    const sourceFontSize = sourceRect.fontSize;
     if (flight.sourceParent !== tokenCloneLayer && !flight.placeholder) {
       const placeholder = document.createElement('span');
       placeholder.className = 'token-placeholder';
-      placeholder.style.width = `${flight.sourceNode.offsetWidth}px`;
-      placeholder.style.height = `${flight.sourceNode.offsetHeight}px`;
-      placeholder.style.display = 'none';
+      placeholder.style.width = `${sourceRect.width}px`;
+      placeholder.style.height = `${sourceRect.height}px`;
       flight.sourceParent.insertBefore(placeholder, flight.sourceNode);
       flight.placeholder = placeholder;
     }
     if (flight.placeholder) flight.placeholder.style.display = 'inline-block';
 
     const p = smoothstep(flight.start + 0.08, flight.start + 1.34, sectionTwoTime);
-    const startX = sourceRect.left - stageRect.left + sourceRect.width / 2 + flight.offset;
+    const startX = sourceRect.left - stageRect.left + sourceRect.width / 2 + flight.offset * p;
     const startY = sourceRect.top - stageRect.top + sourceRect.height / 2;
     const endX = targetRect.left - stageRect.left + targetRect.width / 2;
     const endY = targetRect.top - stageRect.top + targetRect.height / 2;
@@ -582,6 +621,7 @@ function updateFlights(sectionTwoTime) {
     if (p >= 0.999) {
       flight.targetNode.append(flight.sourceNode);
       flight.sourceNode.classList.remove('token-copy');
+      flight.sourceNode.classList.remove('flight-token');
       flight.sourceNode.classList.add('token-slot');
       ['position', 'left', 'top', 'width', 'height', 'min-height', 'font-size', 'transform', 'margin', 'padding', 'box-sizing', 'z-index']
         .forEach((property) => flight.sourceNode.style.removeProperty(property));
@@ -601,9 +641,8 @@ function updateFlights(sectionTwoTime) {
     flight.sourceNode.style.fontSize = sourceFontSize;
     flight.sourceNode.style.margin = '0';
     flight.sourceNode.style.opacity = '1';
-    flight.sourceNode.style.transform = `rotate(${lerp(-4, 0, p).toFixed(2)}deg) scale(${lerp(1.06, 1, p).toFixed(3)})`;
+    flight.sourceNode.style.transform = 'none';
     flight.sourceNode.style.zIndex = '8';
-    flight.sourceNode.style.setProperty('--tile-glow', String(1 - p * 0.5));
 
   });
 }
@@ -637,7 +676,7 @@ function renderContextStory(time) {
   }
   const local = time - SECTION_THREE_START;
   const enter = smoothstep(SECTION_THREE_START, SECTION_THREE_START + 0.65, time);
-  const endFade = 1 - smoothstep(DURATION - 0.8, DURATION, time);
+  const endFade = 1 - smoothstep(SECTION_FOUR_START - 0.8, SECTION_FOUR_START + 0.3, time);
   contextStory.style.visibility = 'visible';
   contextStory.style.opacity = (enter * endFade).toFixed(3);
 
@@ -720,6 +759,80 @@ function renderContextStory(time) {
   clarifyIndicator.style.transform = `translate(-50%, ${lerp(16, 0, clarifyIn).toFixed(2)}px)`;
 }
 
+function renderModelStory(time) {
+  if (time < SECTION_FOUR_START) {
+    modelStory.style.opacity = '0';
+    modelStory.style.visibility = 'hidden';
+    return;
+  }
+  const local = time - SECTION_FOUR_START;
+  const endFade = 1 - smoothstep(DURATION - 0.22, DURATION, time);
+  const enter = smoothstep(0, 1.15, local);
+  modelStory.style.visibility = 'visible';
+  modelStory.style.opacity = (enter * endFade).toFixed(3);
+
+  const promptIn = smoothstep(0.35, 1.5, local);
+  const networkIn = smoothstep(0.45, 1.8, local);
+  llmPrompt.style.opacity = promptIn.toFixed(3);
+  llmPrompt.style.transform = `translateX(${lerp(-1.4, 0, promptIn)}cqw)`;
+  llmNetwork.style.opacity = networkIn.toFixed(3);
+  llmNetwork.style.transform = `scale(${(1 + 0.012 * Math.sin(local * 1.25) ** 2).toFixed(3)})`;
+  llmNetwork.querySelectorAll('.neural-column i').forEach((node, index) => {
+    const glow = 0.28 + 0.52 * (0.5 + 0.5 * Math.sin(local * 1.8 - index * 0.62));
+    node.style.opacity = String((networkIn * glow).toFixed(3));
+    node.style.transform = `scale(${(0.78 + 0.38 * glow).toFixed(3)})`;
+  });
+
+  const candidateIn = smoothstep(11.2, 12.4, local) * (1 - smoothstep(52.0, 54.0, local));
+  llmCandidates.style.opacity = candidateIn.toFixed(3);
+  llmCandidates.style.transform = `translateX(${lerp(1.3, 0, candidateIn)}cqw)`;
+  const selected = smoothstep(20.0, 20.9, local);
+  llmCandidates.querySelectorAll('.candidate-row').forEach((row, index) => {
+    row.classList.toggle('selected', index === 0 && selected > 0.5);
+    row.style.opacity = (candidateIn * (index === 0 ? lerp(0.78, 1, selected) : 0.68)).toFixed(3);
+  });
+
+  const responseIn = smoothstep(19.9, 21.1, local);
+  llmResponse.style.opacity = responseIn.toFixed(3);
+  llmResponse.style.transform = `translateY(${lerp(1.2, 0, responseIn)}cqw)`;
+  const tokenTimes = [20.25, 23.35, 26.35, 29.35, 32.25];
+  const phraseTokens = [...llmResponse.querySelectorAll('.generated-token')];
+  let visibleTokens = 0;
+  phraseTokens.forEach((token, index) => {
+    const p = smoothstep(tokenTimes[index], tokenTimes[index] + 0.72, local);
+    token.style.opacity = p.toFixed(3);
+    token.style.transform = `translateY(${lerp(0.55, 0, p)}cqw) scale(${lerp(0.96, 1, p).toFixed(3)})`;
+    if (p > 0.02) visibleTokens = index + 1;
+  });
+  const contextCopy = document.querySelector('#context-output-copy');
+  contextCopy.textContent = phraseTokens.slice(0, visibleTokens).map((token) => token.textContent).join(' ');
+  const contextReturnIn = smoothstep(25.1, 27.0, local);
+  llmContextReturn.style.opacity = contextReturnIn.toFixed(3);
+  llmContextReturn.style.transform = `translateY(${lerp(0.8, 0, contextReturnIn)}cqw)`;
+
+  const cacheIn = smoothstep(39.0, 40.7, local) * (1 - smoothstep(47.6, 49.1, local));
+  llmCache.style.opacity = cacheIn.toFixed(3);
+  llmCache.style.transform = `translateY(${lerp(0.6, 0, cacheIn)}cqw)`;
+  const shelfIn = smoothstep(48.5, 50.0, local) * (1 - smoothstep(52.4, 53.8, local));
+  llmShelf.style.opacity = (shelfIn * 0.78).toFixed(3);
+  llmShelf.style.transform = `translateY(${lerp(0.8, 0, shelfIn)}cqw) scale(${lerp(0.97, 1, shelfIn).toFixed(3)})`;
+  const patternsIn = smoothstep(53.4, 55.3, local);
+  llmPatterns.style.opacity = patternsIn.toFixed(3);
+  llmPatterns.querySelectorAll('i').forEach((node, index) => {
+    node.style.opacity = String((patternsIn * (0.42 + 0.58 * (0.5 + 0.5 * Math.sin(local * 1.9 + index)))).toFixed(3));
+    node.style.transform = `scale(${(0.72 + 0.4 * (0.5 + 0.5 * Math.sin(local * 1.35 + index * 0.7))).toFixed(3)})`;
+  });
+  const externalIn = smoothstep(58.6, 60.2, local);
+  llmExternal.style.opacity = externalIn.toFixed(3);
+  llmExternal.style.transform = `translateY(${lerp(0.8, 0, externalIn)}cqw)`;
+
+  drawLink(modelEdges[0].path, modelEdges[0].from, modelEdges[0].to, smoothstep(0.6, 2.0, local), promptIn * networkIn);
+  drawLink(modelEdges[1].path, modelEdges[1].from, modelEdges[1].to, smoothstep(11.1, 13.2, local), candidateIn);
+  drawLink(modelEdges[2].path, modelEdges[2].from, modelEdges[2].to, smoothstep(19.0, 21.0, local), responseIn);
+  const loopIn = smoothstep(25.2, 27.0, local);
+  drawLink(modelEdges[3].path, modelEdges[3].from, modelEdges[3].to, loopIn, loopIn * 0.72);
+}
+
 function updateParticleField(time, sectionTwoTime) {
   if (!sparkCloud || !sparkMaterial) return;
   const assistantBurst = smoothstep(9.45, 10.25, time) * (1 - smoothstep(16.0, 17.5, time));
@@ -754,8 +867,9 @@ function renderAt(seconds) {
   const sectionOneOpacity = 1 - smoothstep(PROMPT_TRANSITION_START, 24.95, t);
   sceneOne.style.opacity = sectionOneOpacity.toFixed(3);
   sceneOne.style.visibility = t >= 24.96 ? 'hidden' : 'visible';
-  tokenStory.style.opacity = t < PROMPT_TRANSITION_START ? '0' : '1';
-  tokenStory.style.visibility = t < PROMPT_TRANSITION_START ? 'hidden' : 'visible';
+  const tokenStoryFade = 1 - smoothstep(SECTION_FOUR_START - 0.72, SECTION_FOUR_START + 0.42, t);
+  tokenStory.style.opacity = t < PROMPT_TRANSITION_START ? '0' : tokenStoryFade.toFixed(3);
+  tokenStory.style.visibility = t < PROMPT_TRANSITION_START || t > SECTION_FOUR_START + 0.48 ? 'hidden' : 'visible';
 
   // Section 01: assemble the assistant, type in the fixed bottom composer, send, then receive.
   const cardEntry = smoothstep(0.0, 1.55, t);
@@ -855,6 +969,7 @@ function renderAt(seconds) {
 
   if (t < SECTION_THREE_START) updateFlights(sectionTwoTime);
   renderContextStory(t);
+  renderModelStory(t);
   const focus = smoothstep(0, 11.5, sectionTwoTime) * (1 - smoothstep(26.5, 30.5, sectionTwoTime));
   tokenParticleGlow.style.opacity = (focus * 0.82).toFixed(3);
   tokenParticleGlow.style.transform = `translate(-50%, -50%) scale(${lerp(0.55, 1.35, smoothstep(0, 12, sectionTwoTime)).toFixed(3)})`;
