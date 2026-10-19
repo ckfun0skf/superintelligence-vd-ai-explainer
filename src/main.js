@@ -131,7 +131,7 @@ const smoothstep = (start, end, value) => {
   return x * x * (3 - 2 * x);
 };
 const lerp = (a, b, t) => a + (b - a) * t;
-const tokenFontSize = () => Math.max(13, Math.min(stage.clientWidth * 0.019, 38));
+const tokenFontSize = () => Math.min(stage.clientWidth * 0.019, 38);
 const fmtTime = (seconds) => {
   const safe = Math.max(0, Number.isFinite(seconds) ? seconds : 0);
   const mins = Math.floor(safe / 60);
@@ -509,8 +509,8 @@ function renderTokenCopies(sectionTwoTime) {
     copyNode.style.position = 'absolute';
     copyNode.style.left = `${(centerX - width / 2).toFixed(2)}px`;
     copyNode.style.top = `${(centerY - height / 2).toFixed(2)}px`;
-    copyNode.style.width = `${Math.max(1, width).toFixed(2)}px`;
-    copyNode.style.height = `${Math.max(1, height).toFixed(2)}px`;
+    copyNode.style.width = `${Math.max(0.1, width).toFixed(2)}px`;
+    copyNode.style.height = `${Math.max(0.1, height).toFixed(2)}px`;
     copyNode.style.minHeight = '0';
     copyNode.style.fontSize = `${lerp(sourceFontSize, targetFontSize, progress).toFixed(2)}px`;
     copyNode.style.padding = animation.key === 'taipei'

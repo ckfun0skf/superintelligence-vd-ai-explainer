@@ -12,6 +12,7 @@ video:
   fps: 24
   width: 1920
   height: 1080
+  responsive_scaling: "The browser frame preserves 16:9 and fits available viewport width and height; in-frame typography, spacing, borders, and animation geometry scale with the frame. Review captions and play/seek controls stay outside the frame."
   frame_range: "[0, 2640)"
   narration_or_master_audio: "public/audio/section-01-03-preview-mix.mp3"
   audio_codec: "MP3 review mix; final master format TBD"
@@ -39,7 +40,7 @@ scenes:
       - "00:44.0–00:48.9 tokens map to illustrative numeric IDs"
       - "00:48.9–00:55.6 tokens are building blocks, not complete ideas"
     visual_intent: "Enlarge the complete submitted-message bubble near the center and preserve its sentence; create separate, larger and more widely spaced word copies below it one by one while dimming each source word; after every copy has arrived, fade the bubble away; then move selected copies into WHOLE WORD, WORD PIECES, and PUNCTUATION bins, with illustrative numeric-ID cells expanding beneath selected tokens."
-    review_status: "updated locally; token row, spacing, bubble fade, flights, and ID keyframes checked"
+    review_status: "token row, spacing, bubble fade, flights, and ID keyframes checked locally at desktop and mobile frame sizes"
   - id: "scene-03"
     start_seconds: 55.6
     end_seconds: 110.0
@@ -54,7 +55,7 @@ scenes:
       - "01:37.3–01:44.5 best-fit inference is not mind-reading"
       - "01:44.5–01:49.8 ask when the distinction matters"
     visual_intent: "Fade the category rack while the original two token rows reappear; draw animated curves from the words into four concept cards for duration, location, budget, and preference; bring in a CONTEXT core, relabel it ATTENTION, and move a focus frame across the relationship cards; transition to a separate typo example, highlight ‘quite’, reveal surrounding contextual words and a ‘quiet place’ likely-reading card, then add best-fit uncertainty and a clarification cue."
-    review_status: "local Vite production preview checked at 65.5s, 76.5s, 89.0s, and 106.2s; awaiting public review"
+    review_status: "local Vite production preview checked at 65.5s, 76.5s, 89.0s, and 106.2s; mobile-scaled keyframes checked at 65.5s and 89.0s; awaiting public deployment"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
@@ -67,11 +68,23 @@ quality_checks:
   browser_errors: "no runtime errors observed in the final local Vite production preview; Three.js/WebGL initialized"
   preview_seek_and_handoff: "pass locally: audio duration 110 seconds, MP3 byte-range request returned HTTP 206, and actual seeks rendered at 32.5s (token copies settled and bubble faded), 65.5s (four concept cards and token links), 76.5s (attention focus), 89.0s (typo and likely reading), and 106.2s (uncertainty/clarification); selected element bounds showed no final cue overlap"
   keyframes_reviewed: [6.5, 10.8, 13.8, 24.2, 29.0, 32.5, 45.5, 55.6, 65.5, 76.5, 89.0, 106.2]
+  responsive_viewports:
+    - viewport: "1280x720"
+      frame: "1031.11x579.98"
+      aspect_ratio: "16:9"
+      result: "pass"
+    - viewport: "390x844 at DPR 3"
+      frame: "374x210.38"
+      aspect_ratio: "16:9"
+      checked_keyframes_seconds: [6.5, 32.5, 45.5, 65.5, 89.0]
+      page_horizontal_overflow: false
+      result: "pass"
   ffprobe_verified: true
   full_decode_verified: true
   notes:
     - "Approved narration voice retained; the Section 01–03 mix uses the approved recording with a 1.2-second music lead-in and sidechain-ducked background music."
     - "The 1920×1080 Three.js canvas is rendered at fixed resolution; frame composition remains 16:9."
+    - "CSS and JavaScript-generated token sizes use the stage width as their scaling reference; live browser QA confirmed in-frame text and motion remain proportional on phone and desktop viewports."
     - "No review captions or section titles are rendered inside the 16:9 film frame; synchronized English review captions sit below the frame, outside the movie composition."
     - "The preview page contains only the film frame, the review-only caption line, and necessary play/seek controls."
     - "All animation states are driven by absolute audio time, including curved token flights, relationship paths, attention focus, and seeded particle motion."
