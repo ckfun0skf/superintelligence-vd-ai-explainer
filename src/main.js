@@ -50,6 +50,7 @@ const clarifyIndicator = document.querySelector('#clarify-indicator');
 const modelStory = document.querySelector('#model-story');
 const llmPrompt = document.querySelector('#llm-prompt');
 const llmNetwork = document.querySelector('#llm-network');
+const neuralWires = document.querySelector('#neural-wires');
 const llmCandidates = document.querySelector('#llm-candidates');
 const llmResponse = document.querySelector('#llm-response');
 const llmContextReturn = document.querySelector('#llm-context-return');
@@ -152,6 +153,43 @@ const modelEdges = [
   { from: llmCandidates, to: llmResponse, className: 'llm-edge edge-choice' },
   { from: llmResponse, to: llmContextReturn, className: 'llm-edge edge-return' },
 ].map((edge) => ({ ...edge, path: svgPath(modelLines, edge.className) }));
+const neuralWireNodes = [];
+const neuralSignalNodes = [];
+const NEURAL_LAYER_X = [9.5, 35.5, 61.5, 87.5];
+const NEURAL_NODE_Y = [18, 39.3, 60.7, 82];
+
+function buildNeuralMesh() {
+  const namespace = 'http://www.w3.org/2000/svg';
+  for (let layer = 0; layer < NEURAL_LAYER_X.length - 1; layer += 1) {
+    NEURAL_NODE_Y.forEach((sourceY) => {
+      const nearestTargets = NEURAL_NODE_Y
+        .map((targetY, index) => ({ targetY, index, distance: Math.abs(targetY - sourceY) }))
+        .sort((a, b) => a.distance - b.distance)
+        .slice(0, 3);
+      nearestTargets.forEach(({ targetY }) => {
+        const line = document.createElementNS(namespace, 'line');
+        line.setAttribute('x1', NEURAL_LAYER_X[layer]);
+        line.setAttribute('y1', sourceY);
+        line.setAttribute('x2', NEURAL_LAYER_X[layer + 1]);
+        line.setAttribute('y2', targetY);
+        line.dataset.layer = String(layer);
+        line.classList.add('neural-wire');
+        neuralWires.append(line);
+        neuralWireNodes.push(line);
+      });
+    });
+  }
+  for (let index = 0; index < 3; index += 1) {
+    const signal = document.createElementNS(namespace, 'circle');
+    signal.setAttribute('r', '1.18');
+    signal.classList.add('neural-signal');
+    signal.dataset.phase = String(index / 3);
+    neuralWires.append(signal);
+    neuralSignalNodes.push(signal);
+  }
+}
+
+buildNeuralMesh();
 
 const clamp = (value, min = 0, max = 1) => Math.max(min, Math.min(max, value));
 const smoothstep = (start, end, value) => {
@@ -778,9 +816,32 @@ function renderModelStory(time) {
   llmNetwork.style.opacity = networkIn.toFixed(3);
   llmNetwork.style.transform = `scale(${(1 + 0.012 * Math.sin(local * 1.25) ** 2).toFixed(3)})`;
   llmNetwork.querySelectorAll('.neural-column i').forEach((node, index) => {
-    const glow = 0.28 + 0.52 * (0.5 + 0.5 * Math.sin(local * 1.8 - index * 0.62));
-    node.style.opacity = String((networkIn * glow).toFixed(3));
-    node.style.transform = `scale(${(0.78 + 0.38 * glow).toFixed(3)})`;
+    const layer = Math.floor(index / NEURAL_NODE_Y.length);
+    const row = index % NEURAL_NODE_Y.length;
+    const wave = (local * 0.18) % 1;
+    const travelingActivation = Math.max(0, 1 - Math.abs(wave - (layer / (NEURAL_LAYER_X.length - 1))) * 4.2);
+    const shimmer = 0.5 + 0.5 * Math.sin(local * 2.4 - layer * 0.9 + row * 0.55);
+    const glow = 0.2 + 0.58 * travelingActivation + 0.14 * shimmer;
+    node.style.opacity = (networkIn * glow).toFixed(3);
+    node.style.transform = `translate(-50%, -50%) scale(${(0.78 + 0.46 * glow).toFixed(3)})`;
+    node.style.boxShadow = `0 0 ${(0.34 + glow * 0.72).toFixed(2)}cqw rgba(112,222,210,${(0.16 + glow * 0.44).toFixed(3)})`;
+  });
+  const networkWave = (local * 0.18) % 1;
+  neuralWireNodes.forEach((wire, index) => {
+    const layer = Number(wire.dataset.layer);
+    const connectionCenter = (layer + 0.5) / (NEURAL_LAYER_X.length - 1);
+    const pulse = Math.max(0, 1 - Math.abs(networkWave - connectionCenter) * 3.6);
+    const shimmer = 0.5 + 0.5 * Math.sin(local * 2.2 + index * 0.61);
+    wire.style.opacity = (networkIn * (0.12 + 0.53 * pulse + 0.12 * shimmer)).toFixed(3);
+    wire.style.strokeDashoffset = `${(-local * 1.4 - index * 0.16).toFixed(2)}`;
+  });
+  neuralSignalNodes.forEach((signal, index) => {
+    const progress = (networkWave + Number(signal.dataset.phase)) % 1;
+    const x = lerp(NEURAL_LAYER_X[0], NEURAL_LAYER_X.at(-1), progress);
+    const y = 50 + Math.sin(local * 1.25 + index * 2.1) * 13;
+    signal.setAttribute('cx', x.toFixed(2));
+    signal.setAttribute('cy', y.toFixed(2));
+    signal.style.opacity = (networkIn * (0.62 + 0.3 * (0.5 + 0.5 * Math.sin(local * 2.6 + index)))).toFixed(3);
   });
 
   const candidateIn = smoothstep(11.2, 12.4, local) * (1 - smoothstep(52.0, 54.0, local));
@@ -820,7 +881,9 @@ function renderModelStory(time) {
   llmPatterns.style.opacity = patternsIn.toFixed(3);
   llmPatterns.querySelectorAll('i').forEach((node, index) => {
     node.style.opacity = String((patternsIn * (0.42 + 0.58 * (0.5 + 0.5 * Math.sin(local * 1.9 + index)))).toFixed(3));
-    node.style.transform = `scale(${(0.72 + 0.4 * (0.5 + 0.5 * Math.sin(local * 1.35 + index * 0.7))).toFixed(3)})`;
+    const driftX = Math.sin(local * 0.72 + index * 1.15) * 0.42;
+    const driftY = Math.cos(local * 0.58 + index * 0.83) * 0.34;
+    node.style.transform = `translate(${driftX.toFixed(2)}cqw, ${driftY.toFixed(2)}cqw) scale(${(0.72 + 0.4 * (0.5 + 0.5 * Math.sin(local * 1.35 + index * 0.7))).toFixed(3)})`;
   });
   const externalIn = smoothstep(58.6, 60.2, local);
   llmExternal.style.opacity = externalIn.toFixed(3);
@@ -828,7 +891,8 @@ function renderModelStory(time) {
 
   drawLink(modelEdges[0].path, modelEdges[0].from, modelEdges[0].to, smoothstep(0.6, 2.0, local), promptIn * networkIn);
   drawLink(modelEdges[1].path, modelEdges[1].from, modelEdges[1].to, smoothstep(11.1, 13.2, local), candidateIn);
-  drawLink(modelEdges[2].path, modelEdges[2].from, modelEdges[2].to, smoothstep(19.0, 21.0, local), responseIn);
+  const choiceToResponse = smoothstep(19.0, 21.0, local) * candidateIn * responseIn;
+  drawLink(modelEdges[2].path, modelEdges[2].from, modelEdges[2].to, choiceToResponse, choiceToResponse);
   const loopIn = smoothstep(25.2, 27.0, local);
   drawLink(modelEdges[3].path, modelEdges[3].from, modelEdges[3].to, loopIn, loopIn * 0.72);
 }

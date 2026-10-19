@@ -73,20 +73,20 @@ scenes:
       - "02:38.4–02:43.5 the model is not simply retrieving one perfect stored answer"
       - "02:43.5–02:48.8 generation draws on learned patterns and supplied context"
       - "02:48.8–02:57.2 current facts and interacting with services require more than the LLM alone"
-    visual_intent: "Let the attention/typo scene fade into a compact network model. Show possible next-token candidates, highlight an illustrative choice, append tokens to an example response one by one, then reconnect the original prompt with the generated sequence to show the repeated prediction loop. Introduce a restrained cache metaphor, dissolve a static answer-shelf motif into learned pattern particles, and finish with muted live-map/calendar modules outside the model boundary. No heading or review subtitles inside the frame."
-    review_status: "published and live-checked at the definition, candidate, generated-response, context-loop, and external-service cues; public player audio and captions work"
+    visual_intent: "Let the attention/typo scene fade into a visibly layered neural network labeled 'LLM = NEURAL NETWORK'. Send moving signal pulses across four neuron columns. Connect the network to candidate next tokens, fade the candidate-to-response curve together with the candidate panel, append chosen tokens to an example response, and reconnect the original prompt with the growing output. Introduce a restrained cache metaphor, dissolve a static answer-shelf motif into moving pattern particles, and finish with muted live-map/calendar modules outside the model boundary. No title card or review subtitles inside the frame."
+    review_status: "production preview locally verified at the layer-activation, token-choice, and learned-pattern cues; public deployment of this visual revision pending"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: "9d022644ffb2b13cca6dbcd916c49ac295f7a0ad"
+  git_commit: "pending Section 4 network revision"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "none after favicon fix; desktop and mobile Chromium passes and live Pages runtime check reported no JavaScript/console errors or failed HTTP resources"
-  preview_seek_and_handoff: "Local production preview loaded the 177.4-second MP3 and 24 fps canvas. Absolute-time direct seeks rebuilt prompt copies, Section 3 relationships, attention/typo states, LLM candidates, generated tokens, cache metaphor, and final service-boundary frame; reverse seek preserved token identity and the takeoff position had zero initial offset. The local play control advanced the audio clock, slider input sought to 131 seconds and updated its caption, and live Pages loaded/played the MP3 with matching captions."
-  keyframes_reviewed: [0.0, 24.4, 32.5, 36.4, 36.65, 37.3, 38.1, 45.5, 55.6, 65.5, 76.5, 89.0, 106.2, 109.6, 110.0, 115.0, 122.0, 131.0, 138.0, 151.0, 160.0, 167.0, 172.0, 177.2]
+  browser_errors: "none after favicon fix; the revised desktop and mobile Chromium production preview reported no JavaScript/console errors or failed HTTP resources"
+  preview_seek_and_handoff: "Local production preview loaded the 177.4-second MP3 and 24 fps canvas. Absolute-time seeks exercised all four scenes. Section 4 was reviewed at the first network definition, next-token choice, and the 163–164s candidate-panel exit; the 36 synapse lines, 16 neurons, and 3 traveling signal particles rebuild deterministically, and the candidate-to-response edge reaches zero opacity with the candidate panel. The mobile frame remains 16:9 without horizontal overflow."
+  keyframes_reviewed: [0.0, 24.4, 32.5, 36.4, 36.65, 37.3, 38.1, 45.5, 55.6, 65.5, 76.5, 89.0, 106.2, 109.6, 110.0, 115.0, 122.0, 131.0, 138.0, 151.0, 160.0, 162.0, 163.0, 164.0, 167.0, 172.0, 177.2]
   responsive_viewports:
     - viewport: "1280x720 Chromium desktop"
       aspect_ratio: "stage 1031.11x579.98 CSS px; backing canvas 1920x1080; no page overflow"
@@ -94,13 +94,14 @@ quality_checks:
     - viewport: "390x844 at DPR 3"
       aspect_ratio: "stage 374x210.375 CSS px; 16:9; no page overflow"
       result: "pass"
-  public_deployment: "success: GitHub Actions run 39217968270 deployed commit 9d022644ffb2b13cca6dbcd916c49ac295f7a0ad; Pages, favicon, and MP3 return HTTP 200; MP3 byte-range returns 206; live browser confirms PROMPT CONTEXT, 1920x1080 canvas, 16:9 stage, 177.36s decoded audio, and playback/caption synchronization"
+  public_deployment: "pending latest Section 4 network revision and public keyframe check"
   ffprobe_verified: true
   full_decode_verified: true
   notes:
     - "Approved narration is unchanged. The preview mix has a 1.2-second music-led opening, approved voice part 1, a 1.5-second chapter pause, approved voice part 2, and the same cyber/space BGM sidechain-ducked beneath speech."
     - "Measured audio duration is approximately 177.398 seconds, stereo, 44.1 kHz, MP3 at 192 kbps; complete ffmpeg decode succeeds."
     - "The Three.js canvas is rendered at 1920×1080 with deterministic absolute-time states and seeded particles."
+    - "The neural layers and activations are a simplified visual metaphor for an LLM, not a diagram of any specific model's full architecture."
     - "CSS and JavaScript scene geometry use stage-relative units; the film composition stays 16:9 and player/review captions remain outside the film frame."
     - "Token boundaries, token-ID examples, and next-token candidate bar lengths are illustrative rather than a report of a specific model's tokenizer or probabilities."
     - "Punctuation token tiles no longer use the former brown placeholder treatment."
