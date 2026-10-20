@@ -112,7 +112,7 @@ quality_checks:
   responsive_typography: "One fixed film composition. Typography and all graphics use stage-relative units only; removed the prior phone-only Section 4 font floors and Section 05 layout/font overrides. The outer preview player alone has touch-sized controls."
   fullscreen_preview: "Local Chromium verified fullscreen enter/exit on desktop and mobile, 16:9 stage preservation, synchronized seek controls, review captions outside the picture (hidden in landscape fullscreen), and landscape-fit on a simulated 844x390 mobile viewport. The page requests landscape orientation where the browser supports it."
   denied_tool_line: "At 225.0s through 226.5s, the ANY TOOL badge and denied connector were checked on forward and reverse seeks; both share the same fade and are fully transparent by 226.0s, with no line left behind."
-  public_deployment: "success: GitHub Actions run 39402090956 deployed commit 403b1be253d0ae841abe50c7730005ff3674a33e; Pages and favicon HTTP 200, five-section MP3 HTTP 200 and Range 206, live desktop/mobile keyframes and audio seek/caption verified"
+  public_deployment: "success: GitHub Actions run 39405441497 deployed commit d130ec50f2d3d9b2250af7815974d7e6a48ed3f4; Pages HTTP 200, five-section MP3 HTTP 200 and Range 206, live desktop/mobile 16:9 stage, fullscreen enter/exit, synchronized 03:46 seek, cleared ANY TOOL connector, and review caption verified"
   ffprobe_verified: true
   full_decode_verified: true
   notes:
