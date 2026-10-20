@@ -12,7 +12,7 @@ video:
   fps: 24
   width: 1920
   height: 1080
-  responsive_scaling: "The browser frame preserves 16:9 and fits available viewport width and height; in-frame typography, spacing, borders, and animation geometry scale with the frame. Review captions and play/seek controls stay outside the frame."
+  responsive_scaling: "Single 1920x1080 master composition at every viewport: the 16:9 film stage scales proportionally, with no phone-specific typography floors or in-frame reflow. Only the external player shell adapts. Fullscreen preview fits the 16:9 frame to the available screen and requests landscape orientation where supported. Review captions and controls remain outside the film frame (controls overlay in fullscreen)."
   frame_range: "[0, 5469)"
   narration_or_master_audio: "public/audio/section-01-05-preview-mix.mp3"
   audio_codec: "MP3 review mix; final master format TBD"
@@ -89,7 +89,7 @@ scenes:
       - "03:34.48–03:40.08 a booking action can pause pending user approval"
       - "03:40.08–03:47.56 the model may choose only from application-exposed tools"
     visual_intent: "Start with an AI model and bus/clock live-data need icons; delay the model-to-product connector until the application appears. A builder badge assembles an AI-product capability boundary. Four icon-led map/search/calendar/booking cards animate into the catalog and connect to distinct external route, web, date, and reservation software icons. Highlight the map tool and reveal DOES / NEEDS / RETURNS values as its interface contract. Highlight booking and pause a reservation action at an amber human-approval gate; it is never depicted as approved. Finally, show an imagined ANY TOOL outside the application being stopped by a lock at the boundary. All text stays in-film as functional interface labels; English review captions remain outside."
-    review_status: "narration generated at 49.04s with approved voice style; local and live Pages desktop/mobile 16:9 preview, captions, audio playback/seek, reverse seek determinism, no overflow, and boundary timings checked"
+    review_status: "narration generated at 49.04s with approved voice style; icon-led scene and ANY TOOL denied connector share one fade curve; local/live desktop and mobile preview checked using one 16:9 master; fullscreen, audio seek, and boundary timings tested"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
@@ -108,8 +108,10 @@ quality_checks:
       result: "pass"
     - viewport: "390x844 at DPR 3; film stage 374x210 CSS px"
       aspect_ratio: "stage 1.781:1; backing canvas 1920x1080; service heading and tool cards remain within the film-safe boundary"
-      result: "pass; no page overflow"
-  responsive_typography: "Section 4 keeps its previously QA-checked phone text floors. Section 05 uses stage-relative typography and icon-driven tool cards; the map definition, amber pending-approval gate, and unknown-tool lock are legible on phone screenshots. The separate-software heading was reduced/centered so it stays completely inside the phone film-safe boundary."
+      result: "pass; same relative scene layout as desktop; 1920x1080 backing canvas; no page overflow"
+  responsive_typography: "One fixed film composition. Typography and all graphics use stage-relative units only; removed the prior phone-only Section 4 font floors and Section 05 layout/font overrides. The outer preview player alone has touch-sized controls."
+  fullscreen_preview: "Local Chromium verified fullscreen enter/exit on desktop and mobile, 16:9 stage preservation, synchronized seek controls, review captions outside the picture (hidden in landscape fullscreen), and landscape-fit on a simulated 844x390 mobile viewport. The page requests landscape orientation where the browser supports it."
+  denied_tool_line: "At 225.0s through 226.5s, the ANY TOOL badge and denied connector were checked on forward and reverse seeks; both share the same fade and are fully transparent by 226.0s, with no line left behind."
   public_deployment: "success: GitHub Actions run 39402090956 deployed commit 403b1be253d0ae841abe50c7730005ff3674a33e; Pages and favicon HTTP 200, five-section MP3 HTTP 200 and Range 206, live desktop/mobile keyframes and audio seek/caption verified"
   ffprobe_verified: true
   full_decode_verified: true

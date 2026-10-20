@@ -6,7 +6,7 @@ A section-by-section, audio-synchronized 16:9 motion-design film preview. The cu
 
 Published preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/
 
-The film frame itself has no title cards or review subtitles. The synchronized English review caption sits below the 16:9 frame, outside the film composition; the page otherwise keeps only the frame and basic play/seek controls. The Three.js canvas renders at **1920×1080** and **24 fps**. In the browser, the frame fits the available viewport width and height while preserving 16:9; all in-frame text, spacing, borders, and animation geometry scale with it as one composition.
+The film frame itself has no title cards or review subtitles. The synchronized English review caption sits below the 16:9 frame, outside the film composition; the page otherwise keeps only the frame and basic play/seek/fullscreen controls. The Three.js canvas renders one **1920×1080** master at **24 fps**. On phones, the exact same composition is scaled as a whole to fit the available space: there is no phone-specific reflow or in-frame font enlargement. Use the fullscreen button for an immersive preview; rotate to landscape to see the 16:9 frame at its largest size.
 
 Section 01 types the request into the compact composer at the bottom of an assistant interface, sends it into a user bubble, shows an AI loading state, and reveals a nature-first Taipei itinerary. Section 02 enlarges the submitted bubble and keeps its original sentence visible while separate, larger and more widely spaced word copies emerge below it. Once all copies have arrived, the bubble fades away; selected tokens then travel into **WHOLE WORD**, **WORD PIECES**, and **PUNCTUATION**, with illustrative numeric-ID cells expanding below selected tokens. Section 03 reconnects the prompt pieces to duration, location, budget, and preference cards, animates an attention focus across those relationships, then uses “Find me a quite place near Taipei” to show how context can suggest “quiet place” as a likely reading without guaranteeing it. Section 04 turns the same prompt into a stream of possible next tokens, selects and appends an example token at a time, feeds the original prompt plus generated text back into the next step, visualizes reuse of earlier computation, and distinguishes learned generation from live data or service access. Section 05 uses icons and a clear application boundary to show that product builders define which tools are available; it animates map/search/calendar/booking capabilities, explains a map tool's purpose, inputs and returned results, and shows a booking action paused behind an approval gate.
 
@@ -17,7 +17,7 @@ npm install
 npm run dev
 ```
 
-Use the player below the frame to play, pause, or seek. Animation timing is driven by the audio clock, so seeking reconstructs the same scene state.
+Use the player below the frame to play, pause, seek, or enter fullscreen (`F` also toggles fullscreen on a keyboard). Animation timing is driven by the audio clock, so seeking reconstructs the same scene state. On a phone, fullscreen requests landscape orientation where supported; otherwise rotate the device manually for the largest 16:9 preview.
 
 ## Build
 

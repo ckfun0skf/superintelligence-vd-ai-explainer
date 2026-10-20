@@ -1,0 +1,51 @@
+[
+  {
+    "mobile_portrait": {
+      "time": "03:46",
+      "stage": [
+        374,
+        210.375,
+        1.77778
+      ],
+      "canvas": [
+        1920,
+        1080
+      ],
+      "ghost": 0,
+      "edge": 0,
+      "ghostDisplay": "flex",
+      "caption": "1"
+    },
+    "fullscreen_portrait": {
+      "active": true,
+      "pressed": "true",
+      "stage": [
+        358,
+        201.375,
+        1.77778
+      ],
+      "orientation": "portrait-primary"
+    },
+    "fullscreen_landscape": {
+      "active": true,
+      "stage": [
+        693.328125,
+        389.984375,
+        1.77784
+      ],
+      "captionDisplay": "none",
+      "controls": {
+        "x": 75.3359375,
+        "y": 332,
+        "w": 693.328125,
+        "h": 50
+      },
+      "stageInViewport": true
+    },
+    "exit": {
+      "active": false,
+      "pressed": "false"
+    },
+    "errors": []
+  }
+]

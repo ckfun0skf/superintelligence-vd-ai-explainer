@@ -4,11 +4,14 @@ import './style.css';
 const stage = document.querySelector('#stage');
 const canvas = document.querySelector('#scene-canvas');
 const audio = document.querySelector('#preview-audio');
+const previewColumn = document.querySelector('.preview-column');
 const sceneOne = document.querySelector('#scene-one');
 const tokenStory = document.querySelector('#token-story');
 const playButton = document.querySelector('#play-button');
 const playLabel = document.querySelector('#play-label');
 const playGlyph = document.querySelector('#play-glyph');
+const fullscreenButton = document.querySelector('#fullscreen-button');
+const fullscreenLabel = document.querySelector('#fullscreen-label');
 const timeline = document.querySelector('#timeline');
 const currentTimeReadout = document.querySelector('#current-time');
 const totalTimeReadout = document.querySelector('#total-time');
@@ -1019,8 +1022,11 @@ function renderToolOriginStory(time) {
 
   originEdges.forEach((edge) => {
     const draw = smoothstep(edge.revealAt, edge.revealAt + (edge.className.includes('denied') ? .75 : 1.15), local);
-    const hold = edge.stay ? 1 : 1 - smoothstep(edge.revealAt + (edge.className.includes('service') ? 24 : 8.5), edge.revealAt + (edge.className.includes('service') ? 27 : 10.0), local);
-    const opacity = edge.className.includes('denied') ? draw * hold * .78 : draw * hold * (edge.className.includes('builder') ? .52 : .58);
+    const denied = edge.className.includes('denied');
+    const hold = edge.stay ? 1 : denied
+      ? ghostIn
+      : 1 - smoothstep(edge.revealAt + (edge.className.includes('service') ? 24 : 8.5), edge.revealAt + (edge.className.includes('service') ? 27 : 10.0), local);
+    const opacity = denied ? draw * ghostIn * .78 : draw * hold * (edge.className.includes('builder') ? .52 : .58);
     drawLink(edge.path, edge.from, edge.to, edge.stay ? 1 : draw, opacity);
   });
 }
@@ -1221,6 +1227,47 @@ audio.addEventListener('pause', updatePlayer);
 audio.addEventListener('ended', updatePlayer);
 audio.addEventListener('error', () => console.error('Preview audio failed to load:', audio.error));
 
+function isPreviewFullscreen() {
+  return document.fullscreenElement === previewColumn || previewColumn.classList.contains('is-preview-fullscreen');
+}
+
+function updateFullscreenButton() {
+  const active = isPreviewFullscreen();
+  fullscreenButton.setAttribute('aria-pressed', String(active));
+  fullscreenButton.setAttribute('aria-label', `${active ? 'Exit' : 'Enter'} fullscreen preview`);
+  fullscreenButton.title = `${active ? 'Exit' : 'Enter'} fullscreen (F)`;
+  fullscreenLabel.textContent = active ? 'Exit fullscreen' : 'Enter fullscreen';
+}
+
+fullscreenButton.addEventListener('click', async () => {
+  if (isPreviewFullscreen()) {
+    if (document.fullscreenElement === previewColumn && document.exitFullscreen) {
+      await document.exitFullscreen();
+    } else {
+      previewColumn.classList.remove('is-preview-fullscreen');
+      screen.orientation?.unlock?.();
+      updateFullscreenButton();
+    }
+    return;
+  }
+
+  try {
+    if (previewColumn.requestFullscreen) await previewColumn.requestFullscreen();
+    else previewColumn.classList.add('is-preview-fullscreen');
+  } catch {
+    previewColumn.classList.add('is-preview-fullscreen');
+  }
+  if (document.fullscreenElement === previewColumn && screen.orientation?.lock) {
+    try { await screen.orientation.lock('landscape'); } catch { /* Orientation lock is optional. */ }
+  }
+  updateFullscreenButton();
+});
+
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) screen.orientation?.unlock?.();
+  updateFullscreenButton();
+});
+
 timeline.addEventListener('input', () => {
   const nextTime = Number(timeline.value);
   audio.currentTime = nextTime;
@@ -1229,6 +1276,18 @@ timeline.addEventListener('input', () => {
 });
 
 document.addEventListener('keydown', (event) => {
+  if (event.code === 'KeyF' && !event.ctrlKey && !event.metaKey && !event.altKey
+      && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+    event.preventDefault();
+    fullscreenButton.click();
+    return;
+  }
+  if (event.code === 'Escape' && previewColumn.classList.contains('is-preview-fullscreen')) {
+    previewColumn.classList.remove('is-preview-fullscreen');
+    screen.orientation?.unlock?.();
+    updateFullscreenButton();
+    return;
+  }
   if (event.code !== 'Space' || ['BUTTON', 'INPUT', 'SELECT'].includes(document.activeElement?.tagName)) return;
   event.preventDefault();
   playButton.click();
