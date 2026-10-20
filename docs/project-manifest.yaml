@@ -89,18 +89,19 @@ scenes:
       - "03:34.48–03:40.08 a booking action can pause pending user approval"
       - "03:40.08–03:47.56 the model may choose only from application-exposed tools"
     visual_intent: "Start with an AI model and bus/clock live-data need icons; delay the model-to-product connector until the application appears. A builder badge assembles an AI-product capability boundary. Four icon-led map/search/calendar/booking cards animate into the catalog and connect to distinct external route, web, date, and reservation software icons. Highlight the map tool and reveal DOES / NEEDS / RETURNS values as its interface contract. Highlight booking and pause a reservation action at an amber human-approval gate; it is never depicted as approved. Finally, show an imagined ANY TOOL outside the application being stopped by a lock at the boundary. All text stays in-film as functional interface labels; English review captions remain outside."
-    review_status: "narration generated at 49.04s with approved voice style; local desktop/mobile 16:9 preview, captions, audio playback, reverse seek determinism, no overflow, and boundary timings checked; awaiting push and live Pages verification"
+    review_status: "narration generated at 49.04s with approved voice style; local and live Pages desktop/mobile 16:9 preview, captions, audio playback/seek, reverse seek determinism, no overflow, and boundary timings checked"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: "pending"
+  git_commit: "403b1be253d0ae841abe50c7730005ff3674a33e"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "Local Section 05 production preview reported no JavaScript or console errors. The master audio metadata loads, plays, advances the clock, and pauses; ERR_ABORTED events occurred only when automated pages were closed after testing."
-  preview_seek_and_handoff: "Production preview checked at desktop 1280x900 and phone 390x844 DPR3. Section 05 keyframes at 177.38, 180.5, 185, 192.3, 198, 207, 211, 216, 222, 225, and 227.55 seconds reproduce via absolute-time render; reverse seek back to 198 seconds produces the same state. New 49-second master is playable and keeps review captions synchronized."
+  browser_errors: "Local and live Section 05 Chromium previews reported no JavaScript/console errors and no non-abort resource failures. The master audio metadata loads, plays, advances the clock, and pauses; the two local ERR_ABORTED events occurred only when automated pages were closed after testing."
+  preview_seek_and_handoff: "Production preview checked locally and on public Pages at desktop 1280x900 and phone 390x844 DPR3. Section 05 keyframes at 177.38, 180.5, 185, 192.3, 198, 207, 211, 216, 222, 225, and 227.55 seconds reproduce via absolute-time render; reverse seek back to 198 seconds produces the same state. Live player was sought to 216 seconds; narration advanced to 216.74s with the booking-approval caption synchronized."
+  keyframes_reviewed: [177.38, 180.5, 185.0, 192.3, 198.0, 207.0, 211.0, 216.0, 222.0, 225.0, 227.55]
   responsive_viewports:
     - viewport: "1280x900 Chromium desktop; film stage 1256x707 CSS px"
       aspect_ratio: "stage 1.7765:1; backing canvas 1920x1080; no page or tool-card overflow"
@@ -109,7 +110,7 @@ quality_checks:
       aspect_ratio: "stage 1.781:1; backing canvas 1920x1080; service heading and tool cards remain within the film-safe boundary"
       result: "pass; no page overflow"
   responsive_typography: "Section 4 keeps its previously QA-checked phone text floors. Section 05 uses stage-relative typography and icon-driven tool cards; the map definition, amber pending-approval gate, and unknown-tool lock are legible on phone screenshots. The separate-software heading was reduced/centered so it stays completely inside the phone film-safe boundary."
-  public_deployment: "pending; prior four-section Pages preview remains published until this revision is pushed"
+  public_deployment: "success: GitHub Actions run 39402090956 deployed commit 403b1be253d0ae841abe50c7730005ff3674a33e; Pages and favicon HTTP 200, five-section MP3 HTTP 200 and Range 206, live desktop/mobile keyframes and audio seek/caption verified"
   ffprobe_verified: true
   full_decode_verified: true
   notes:
