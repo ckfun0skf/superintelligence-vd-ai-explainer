@@ -1,6 +1,6 @@
 project:
   title: "From Prompt to Action: How AI Turns Words into Work"
-  purpose: "An audio-synchronized 16:9 explainer that follows a request from an assistant interface through tokenization, context, attention, intent inference, and next-token generation."
+  purpose: "An audio-synchronized 16:9 explainer that follows a request from an assistant interface through tokenization, context, attention, intent inference, next-token generation, and tool access."
   repository_or_workspace: "https://github.com/ckfun0skf/superintelligence-vd-ai-explainer"
   delivery_choices:
     source: "existing GitHub repository, main branch"
@@ -8,13 +8,13 @@ project:
     final_video: "not rendered yet"
 
 video:
-  duration_seconds: 177.4
+  duration_seconds: 227.866
   fps: 24
   width: 1920
   height: 1080
   responsive_scaling: "The browser frame preserves 16:9 and fits available viewport width and height; in-frame typography, spacing, borders, and animation geometry scale with the frame. Review captions and play/seek controls stay outside the frame."
-  frame_range: "[0, 4258)"
-  narration_or_master_audio: "public/audio/section-01-04-preview-mix.mp3"
+  frame_range: "[0, 5469)"
+  narration_or_master_audio: "public/audio/section-01-05-preview-mix.mp3"
   audio_codec: "MP3 review mix; final master format TBD"
   audio_sample_rate_hz: 44100
   audio_channels: 2
@@ -30,7 +30,7 @@ scenes:
       - "00:01.5–00:20.0 Taipei prompt, itinerary response, and tool question"
       - "00:20.0–00:24.4 handoff into the request-processing explanation"
     visual_intent: "Assemble an unbranded assistant interface with a compact composer fixed at the bottom; type and send the prompt into a user bubble; animate an AI loading state; reveal the nature-first Taipei title and two itinerary cards in sequence."
-    review_status: "previously published; retained in the four-section regression preview"
+    review_status: "previously published; retained in the five-section regression preview"
   - id: "scene-02"
     start_seconds: 24.4
     end_seconds: 55.6
@@ -60,7 +60,7 @@ scenes:
     review_status: "rechecked locally at 55.6s, 65.5s, 76.5s, 89.0s, 106.2s, and the 110s handoff"
   - id: "scene-04"
     start_seconds: 110.0
-    end_seconds: 177.4
+    end_seconds: 177.38
     module: "src/main.js"
     narration_cues:
       - "01:50–02:01.4 an LLM is a trained neural network that recognizes patterns in token sequences"
@@ -75,38 +75,49 @@ scenes:
       - "02:48.8–02:57.2 current facts and interacting with services require more than the LLM alone"
     visual_intent: "Let the attention/typo scene fade into a visibly layered neural network labeled 'LLM = NEURAL NETWORK'. Send moving signal pulses across four neuron columns. Connect the network to candidate next tokens, fade the candidate-to-response curve with the candidate panel, append chosen tokens to the response, and reconnect the original prompt with the growing output. Move the cache to a clear right-side lane after the candidate panel exits. Before the 02:39 narration beat, temporarily clear response/context cards and show one explicit 'SAVED ANSWER' card, horizontally aligned to the right of the network; strike it through and dissolve it as the neural pattern cloud becomes visible, then restore the generated response and updated context. Finish with muted live-map/calendar modules outside the model boundary. No title card or review subtitles inside the frame."
     review_status: "public version checked around 02:11–02:53 after mobile typography refinement; Section 4 prompt, response, context and tool labels are larger while staying inside the 16:9 layout"
+  - id: "scene-05"
+    start_seconds: 177.38
+    end_seconds: 227.866
+    module: "src/main.js"
+    narration_cues:
+      - "02:57.38–02:58.88 chapter pause over the continuing score"
+      - "02:58.88–03:03.90 current transit times/opening-hour information may be needed"
+      - "03:03.90–03:11.60 the product can provide separate tools where the model lacks reliable live information"
+      - "03:11.60–03:20.04 a tool is separate software: map, search, calendar, or booking"
+      - "03:20.04–03:31.60 product builders define availability, function, required inputs, and returned results"
+      - "03:31.60–03:34.48 permissions can be configured"
+      - "03:34.48–03:40.08 a booking action can pause pending user approval"
+      - "03:40.08–03:47.56 the model may choose only from application-exposed tools"
+    visual_intent: "Start with an AI model and bus/clock live-data need icons; delay the model-to-product connector until the application appears. A builder badge assembles an AI-product capability boundary. Four icon-led map/search/calendar/booking cards animate into the catalog and connect to distinct external route, web, date, and reservation software icons. Highlight the map tool and reveal DOES / NEEDS / RETURNS values as its interface contract. Highlight booking and pause a reservation action at an amber human-approval gate; it is never depicted as approved. Finally, show an imagined ANY TOOL outside the application being stopped by a lock at the boundary. All text stays in-film as functional interface labels; English review captions remain outside."
+    review_status: "narration generated at 49.04s with approved voice style; local desktop/mobile 16:9 preview, captions, audio playback, reverse seek determinism, no overflow, and boundary timings checked; awaiting push and live Pages verification"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: "05eecae2225183ee8dd7c9831963b0d24e7a90b7"
+  git_commit: "pending"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "none after favicon fix; updated desktop/mobile Chromium preview and live Pages check reported no JavaScript/console errors or failed HTTP resources"
-  preview_seek_and_handoff: "Production preview checked at desktop 1280x720 and mobile 390x844, then checked live on GitHub Pages at 131, 159.5, 161, 163.5, and 173 seconds. After token selection, candidates exit before cache appears in the right lane. At 158.0–163.5s the old response/context cards clear, a labeled SAVED ANSWER card appears on the same horizontal axis as the prompt and neural network, is struck through and dissolves while the neural pattern cloud emerges, then generated response/context return for the 163.52s narration cue. Section 4 typography uses stage-relative clamp values with phone-size floors; prompt, saved-answer and external-service chips fit within their cards. Absolute-time seek restores the same states. Both viewports preserve the 1920x1080 canvas and have no page/chip overflow."
-  keyframes_reviewed: [0.0, 24.4, 32.5, 36.4, 36.65, 37.3, 38.1, 45.5, 55.6, 65.5, 76.5, 89.0, 106.2, 109.6, 110.0, 115.0, 122.0, 131.0, 138.0, 144.0, 145.0, 149.32, 154.0, 157.8, 158.0, 158.36, 159.5, 161.0, 162.0, 163.0, 163.5, 164.0, 168.76, 172.0, 177.2]
+  browser_errors: "Local Section 05 production preview reported no JavaScript or console errors. The master audio metadata loads, plays, advances the clock, and pauses; ERR_ABORTED events occurred only when automated pages were closed after testing."
+  preview_seek_and_handoff: "Production preview checked at desktop 1280x900 and phone 390x844 DPR3. Section 05 keyframes at 177.38, 180.5, 185, 192.3, 198, 207, 211, 216, 222, 225, and 227.55 seconds reproduce via absolute-time render; reverse seek back to 198 seconds produces the same state. New 49-second master is playable and keeps review captions synchronized."
   responsive_viewports:
-    - viewport: "1280x720 Chromium desktop"
-      aspect_ratio: "stage 1031.11x579.98 CSS px; backing canvas 1920x1080; no page overflow"
+    - viewport: "1280x900 Chromium desktop; film stage 1256x707 CSS px"
+      aspect_ratio: "stage 1.7765:1; backing canvas 1920x1080; no page or tool-card overflow"
       result: "pass"
-    - viewport: "390x844 at DPR 3"
-      aspect_ratio: "stage 374x210.375 CSS px; 16:9; no page overflow"
-      result: "pass"
-  responsive_typography: "Section 4 only: phone-size floors of 8px for metadata labels and 10px for prompt/response chips, with stage-relative scaling above the floor. Tested live at 390x844 DPR3 and 1280x720; label/token sizes read clearly, prompt fits in two rows, SAVED ANSWER fits without clipping, and external-service chips have zero horizontal overflow."
-  public_deployment: "success: GitHub Actions run 39395448786 deployed commit 05eecae2225183ee8dd7c9831963b0d24e7a90b7; Pages returns HTTP 200; live browser confirms updated 8px/10px typography, correct SAVED ANSWER handoff, and 1920x1080 backing canvas"
+    - viewport: "390x844 at DPR 3; film stage 374x210 CSS px"
+      aspect_ratio: "stage 1.781:1; backing canvas 1920x1080; service heading and tool cards remain within the film-safe boundary"
+      result: "pass; no page overflow"
+  responsive_typography: "Section 4 keeps its previously QA-checked phone text floors. Section 05 uses stage-relative typography and icon-driven tool cards; the map definition, amber pending-approval gate, and unknown-tool lock are legible on phone screenshots. The separate-software heading was reduced/centered so it stays completely inside the phone film-safe boundary."
+  public_deployment: "pending; prior four-section Pages preview remains published until this revision is pushed"
   ffprobe_verified: true
   full_decode_verified: true
   notes:
-    - "Approved narration is unchanged. The preview mix has a 1.2-second music-led opening, approved voice part 1, a 1.5-second chapter pause, approved voice part 2, and the same cyber/space BGM sidechain-ducked beneath speech."
-    - "Measured audio duration is approximately 177.398 seconds, stereo, 44.1 kHz, MP3 at 192 kbps; complete ffmpeg decode succeeds."
+    - "The five-section mix keeps the approved narration for Sections 01–04, adds the approved-voice-style Section 05 narration WAV, uses the same cyber/space score with voice-forward sidechain ducking, and includes 1.2 seconds of music-led opening plus 1.5-second chapter pauses."
+    - "The five-section MP3 is approximately 227.866 seconds, stereo, 44.1 kHz, MP3 at 192 kbps; full FFmpeg decode succeeds. Browser duration metadata reports approximately 227.84 seconds due to MP3 frame rounding."
     - "The Three.js canvas is rendered at 1920×1080 with deterministic absolute-time states and seeded particles."
     - "The neural layers and activations are a simplified visual metaphor for an LLM, not a diagram of any specific model's full architecture."
     - "CSS and JavaScript scene geometry use stage-relative units; the film composition stays 16:9 and player/review captions remain outside the film frame."
     - "Token boundaries, token-ID examples, and next-token candidate bar lengths are illustrative rather than a report of a specific model's tokenizer or probabilities."
-    - "Punctuation token tiles no longer use the former brown placeholder treatment."
-    - "A bundled SVG favicon eliminates the browser's default /favicon.ico 404 request."
-    - "The preview page contains only the film frame, a review-only caption line, and necessary play/seek controls."
-    - "Section 4 UI text has responsive minimum readable sizes for phone previews without changing the 16:9 master canvas."
+    - "Section 05 illustrates product-configured tool access: the model is not shown inventing tools, and the booking action stays at a pending approval gate."
     - "The final MP4 has not been rendered; this is a browser preview and source-project update."

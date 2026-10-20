@@ -154,6 +154,62 @@
                 <div><span>MAP</span><span>CALENDAR</span></div>
               </div>
             </div>
+
+            <div class="tool-origin-story" id="tool-origin-story" aria-label="How an AI product defines and exposes tools">
+              <svg class="tool-origin-lines" id="tool-origin-lines" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"></svg>
+              <div class="origin-model" id="origin-model">
+                <span class="origin-model-orb" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b></span>
+                <small>AI MODEL</small>
+                <span class="model-live-need" id="model-live-need"><span class="live-data-icons" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M5 18h22l-2-8H9zM7 18v6h18v-6M10 24v2M22 24v2"/><circle cx="11" cy="20.5" r="1.5"/><circle cx="21" cy="20.5" r="1.5"/></svg><svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="11"/><path d="M16 9v7l5 3M7 6l-3 3M25 6l3 3"/></svg></span><i class="live-dot"></i> LIVE DATA</span>
+              </div>
+              <div class="builder-badge" id="builder-badge">
+                <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="15" r="7"/><path d="M10 39c1.5-8.4 6.2-12.5 14-12.5S36.5 30.6 38 39M35 8l2.2-3 2.2 3 3.6.4-2.1 3 1 3.5-3.5-.7-2.7 2.3-.7-3.5-3.2-1.7 3.2-1.8z"/></svg>
+                <span>PRODUCT BUILDER</span>
+                <i class="builder-beam" aria-hidden="true"></i>
+              </div>
+              <div class="ai-product-boundary" id="ai-product-boundary">
+                <div class="product-heading"><span class="product-icon" aria-hidden="true"><i></i><i></i><i></i></span><strong>AI PRODUCT</strong><small>available capabilities</small></div>
+                <div class="tool-definition-grid">
+                  <div class="origin-tool-card" id="origin-tool-map" data-tool="map">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><path d="m5 12 12-5 14 5 12-5v29l-12 5-14-5-12 5zM17 7v29M31 12v29"/><path d="M24 15c-4 0-7 3-7 7 0 5 7 12 7 12s7-7 7-12c0-4-3-7-7-7z"/><circle cx="24" cy="22" r="2"/></svg>
+                    <span>MAP</span><i class="tool-port"></i>
+                  </div>
+                  <div class="origin-tool-card" id="origin-tool-search" data-tool="search">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="20" cy="20" r="11"/><path d="m28 28 12 12M14 20h12M20 14v12"/></svg>
+                    <span>SEARCH</span><i class="tool-port"></i>
+                  </div>
+                  <div class="origin-tool-card" id="origin-tool-calendar" data-tool="calendar">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="10" width="34" height="31" rx="4"/><path d="M15 6v9M33 6v9M7 19h34M15 26h5M28 26h5M15 33h5"/></svg>
+                    <span>CALENDAR</span><i class="tool-port"></i>
+                  </div>
+                  <div class="origin-tool-card" id="origin-tool-booking" data-tool="booking">
+                    <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 12h32v24H8zM8 19h32M15 7v10M33 7v10M15 27h8M15 32h15"/><path d="m31 27 3 3 6-7"/></svg>
+                    <span>BOOKING</span><i class="tool-port"></i>
+                  </div>
+                </div>
+                <div class="map-tool-definition" id="map-tool-definition">
+                  <div class="definition-top"><span class="definition-pin" aria-hidden="true"><i></i></span><strong>MAP TOOL</strong><span class="definition-gear" aria-hidden="true">✳</span></div>
+                  <div class="definition-flow"><span><small>DOES</small>find a route</span><b aria-hidden="true">→</b><span><small>NEEDS</small>places + time</span><b aria-hidden="true">→</b><span><small>RETURNS</small>routes + ETA</span></div>
+                  <i class="definition-scan" aria-hidden="true"></i>
+                </div>
+                <div class="booking-approval" id="booking-approval">
+                  <span class="approval-user" aria-hidden="true"><i></i><b></b></span>
+                  <span class="approval-copy"><small>BOOKING ACTION</small><strong>Needs your approval</strong></span>
+                  <span class="approval-shield" aria-hidden="true">!</span>
+                </div>
+              </div>
+              <div class="external-service-cluster" id="external-service-cluster">
+                <span class="service-boundary-label">SEPARATE SOFTWARE</span>
+                <div class="service-orb service-map" id="service-map"><i></i><span>ROUTES</span></div>
+                <div class="service-orb service-search" id="service-search"><i></i><span>WEB</span></div>
+                <div class="service-orb service-calendar" id="service-calendar"><i></i><span>DATES</span></div>
+                <div class="service-orb service-booking" id="service-booking"><i></i><span>RESERVE</span></div>
+              </div>
+              <div class="unavailable-tool" id="unavailable-tool">
+                <span class="unavailable-symbol" aria-hidden="true">?</span><span>ANY TOOL</span><i aria-hidden="true">×</i>
+              </div>
+              <div class="access-lock" id="access-lock" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="9" y="21" width="30" height="22" rx="4"/><path d="M15 21v-7a9 9 0 0 1 18 0v7M24 29v6"/></svg></div>
+            </div>
           </div>
         </div>
 
@@ -164,10 +220,10 @@
             <span class="visually-hidden" id="play-label">Play</span>
           </button>
           <span class="time-readout" id="current-time">00:00</span>
-          <input id="timeline" type="range" min="0" max="177.4" value="0" step="0.01" aria-label="Seek through the video preview" />
-          <span class="time-readout" id="total-time">02:57</span>
+          <input id="timeline" type="range" min="0" max="227.866" value="0" step="0.01" aria-label="Seek through the video preview" />
+          <span class="time-readout" id="total-time">03:47</span>
         </div>
-        <audio id="preview-audio" preload="metadata" src="./audio/section-01-04-preview-mix.mp3"></audio>
+        <audio id="preview-audio" preload="metadata" src="./audio/section-01-05-preview-mix.mp3"></audio>
       </section>
     </main>
     <script type="module" src="./src/main.js"></script>

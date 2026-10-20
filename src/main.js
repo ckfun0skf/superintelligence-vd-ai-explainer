@@ -59,13 +59,28 @@ const llmStoredAnswer = document.querySelector('#llm-stored-answer');
 const storedAnswerStrike = document.querySelector('.stored-answer-strike');
 const llmPatterns = document.querySelector('#llm-patterns');
 const llmExternal = document.querySelector('#llm-external');
+const toolOriginStory = document.querySelector('#tool-origin-story');
+const originModel = document.querySelector('#origin-model');
+const modelLiveNeed = document.querySelector('#model-live-need');
+const builderBadge = document.querySelector('#builder-badge');
+const aiProductBoundary = document.querySelector('#ai-product-boundary');
+const mapToolDefinition = document.querySelector('#map-tool-definition');
+const bookingApproval = document.querySelector('#booking-approval');
+const externalServiceCluster = document.querySelector('#external-service-cluster');
+const unavailableTool = document.querySelector('#unavailable-tool');
+const accessLock = document.querySelector('#access-lock');
+const toolOriginLineSvg = document.querySelector('#tool-origin-lines');
+const originToolCards = [...document.querySelectorAll('.origin-tool-card')];
+const serviceOrbs = [...document.querySelectorAll('.service-orb')];
 
-const DURATION = 177.4;
+const DURATION = 227.866;
 const FPS = 24;
 const SECTION_TWO_START = 24.4;
 const SECTION_TWO_DURATION = 31.2;
 const SECTION_THREE_START = 55.6;
 const SECTION_FOUR_START = 110.0;
+const SECTION_FIVE_START = 177.38;
+const SECTION_FIVE_NARRATION_START = 178.88;
 const PROMPT_TRANSITION_START = 23.8;
 const TOKENIZE_START = 3.0;
 const TOKEN_COPY_STAGGER = 0.16;
@@ -104,6 +119,15 @@ const CAPTIONS = [
   { start: 158.36, end: 163.52, text: 'So an LLM is not usually retrieving one perfect answer from a shelf.' },
   { start: 163.52, end: 168.76, text: 'It is generating a response based on learned patterns and the context it has received.' },
   { start: 168.76, end: 177.2, text: 'That can work well for many requests, but it does not automatically give the model current facts or the ability to interact with other services.' },
+  { start: 179.24, end: 184.0, text: 'Suppose our itinerary needs current transit times or opening hours.' },
+  { start: 184.0, end: 192.22, text: 'The model may not have reliable live information in the conversation, so the AI product can provide tools to help.' },
+  { start: 192.22, end: 200.04, text: 'A tool is a separate piece of software: a map, a search service, a calendar, or a booking system.' },
+  { start: 200.04, end: 210.3, text: 'The people who build the AI product decide which tools are available and define how each one works, what it can do, what information it needs,' },
+  { start: 210.3, end: 211.6, text: 'and what result it returns.' },
+  { start: 211.6, end: 214.48, text: 'They can also set rules about permission.' },
+  { start: 214.48, end: 220.08, text: 'For example, a booking tool may require your approval before it confirms a reservation.' },
+  { start: 220.08, end: 223.64, text: 'The model cannot call any tool it imagines.' },
+  { start: 223.64, end: 227.56, text: 'It can choose only from the tools the application has made available.' },
 ];
 
 const WORD_ROWS = [
@@ -154,6 +178,16 @@ const modelEdges = [
   { from: llmCandidates, to: llmResponse, className: 'llm-edge edge-choice' },
   { from: llmResponse, to: llmContextReturn, className: 'llm-edge edge-return' },
 ].map((edge) => ({ ...edge, path: svgPath(modelLines, edge.className) }));
+const originEdges = [
+  { from: originModel, to: aiProductBoundary, className: 'origin-link', revealAt: 6.0, stay: true },
+  { from: builderBadge, to: aiProductBoundary, className: 'origin-link link-builder', revealAt: 7.0, stay: true },
+  { from: document.querySelector('#origin-tool-map'), to: document.querySelector('#service-map'), className: 'origin-link link-service', revealAt: 15.0 },
+  { from: document.querySelector('#origin-tool-search'), to: document.querySelector('#service-search'), className: 'origin-link link-service', revealAt: 15.4 },
+  { from: document.querySelector('#origin-tool-calendar'), to: document.querySelector('#service-calendar'), className: 'origin-link link-service', revealAt: 15.8 },
+  { from: document.querySelector('#origin-tool-booking'), to: document.querySelector('#service-booking'), className: 'origin-link link-service', revealAt: 16.2 },
+  { from: document.querySelector('#origin-tool-booking'), to: bookingApproval, className: 'origin-link link-approval', revealAt: 35.5 },
+  { from: unavailableTool, to: accessLock, className: 'origin-link link-denied', revealAt: 42.8 },
+].map((edge) => ({ ...edge, path: svgPath(toolOriginLineSvg, edge.className) }));
 const neuralWireNodes = [];
 const neuralSignalNodes = [];
 const NEURAL_LAYER_X = [9.5, 35.5, 61.5, 87.5];
@@ -805,7 +839,7 @@ function renderModelStory(time) {
     return;
   }
   const local = time - SECTION_FOUR_START;
-  const endFade = 1 - smoothstep(DURATION - 0.22, DURATION, time);
+  const endFade = 1 - smoothstep(SECTION_FIVE_START - 0.75, SECTION_FIVE_START + 0.28, time);
   const enter = smoothstep(0, 1.15, local);
   modelStory.style.visibility = 'visible';
   modelStory.style.opacity = (enter * endFade).toFixed(3);
@@ -901,6 +935,94 @@ function renderModelStory(time) {
   drawLink(modelEdges[2].path, modelEdges[2].from, modelEdges[2].to, choiceToResponse, choiceToResponse);
   const loopIn = smoothstep(25.2, 27.0, local) * responseOpacity;
   drawLink(modelEdges[3].path, modelEdges[3].from, modelEdges[3].to, loopIn, loopIn * 0.72);
+}
+
+function renderToolOriginStory(time) {
+  if (time < SECTION_FIVE_START) {
+    toolOriginStory.style.opacity = '0';
+    toolOriginStory.style.visibility = 'hidden';
+    return;
+  }
+  const local = time - SECTION_FIVE_START;
+  const enter = smoothstep(0.0, 1.15, local);
+  const endFade = 1 - smoothstep(DURATION - 0.42, DURATION, time);
+  toolOriginStory.style.visibility = 'visible';
+  toolOriginStory.style.opacity = (enter * endFade).toFixed(3);
+
+  const modelIn = smoothstep(0.2, 1.25, local);
+  originModel.style.opacity = modelIn.toFixed(3);
+  originModel.style.transform = `translateX(${lerp(-1.1, 0, modelIn)}cqw) scale(${lerp(0.93, 1, modelIn).toFixed(3)})`;
+  const liveNeed = smoothstep(2.1, 3.0, local);
+  modelLiveNeed.style.opacity = liveNeed.toFixed(3);
+  modelLiveNeed.style.transform = `scale(${(0.96 + 0.04 * Math.sin(local * 2.7) ** 2).toFixed(3)})`;
+
+  const productIn = smoothstep(6.4, 7.8, local);
+  aiProductBoundary.style.opacity = productIn.toFixed(3);
+  aiProductBoundary.style.transform = `translateY(${lerp(1.1, 0, productIn)}cqw) scale(${lerp(0.97, 1, productIn).toFixed(3)})`;
+  const builderIn = smoothstep(7.0, 8.0, local);
+  builderBadge.style.opacity = builderIn.toFixed(3);
+  builderBadge.style.transform = `translateY(${lerp(-.5, 0, builderIn)}cqw) scale(${lerp(.93, 1, builderIn).toFixed(3)})`;
+  const buildPulse = 0.5 + 0.5 * Math.sin(local * 4.2) ** 2;
+  builderBadge.style.boxShadow = `0 0 ${(0.5 + buildPulse * 0.85).toFixed(2)}cqw rgba(220,173,112,${(builderIn * 0.16).toFixed(3)})`;
+  const builderBeam = builderBadge.querySelector('.builder-beam');
+  builderBeam.style.transform = `scaleY(${(0.34 + 0.66 * buildPulse).toFixed(3)})`;
+  builderBeam.style.opacity = String((builderIn * (0.36 + 0.5 * buildPulse)).toFixed(3));
+
+  originToolCards.forEach((card, index) => {
+    const p = smoothstep(14.3 + index * 0.44, 15.25 + index * 0.44, local);
+    card.style.opacity = (productIn * p).toFixed(3);
+    const floatY = Math.sin(local * 1.45 + index * 1.3) * 0.12;
+    card.style.transform = `translateY(${(lerp(.72, 0, p) + floatY * p).toFixed(3)}cqw) scale(${lerp(.93, 1, p).toFixed(3)})`;
+  });
+  const servicesIn = smoothstep(14.8, 16.2, local);
+  externalServiceCluster.style.opacity = (servicesIn * productIn).toFixed(3);
+  serviceOrbs.forEach((orb, index) => {
+    const p = smoothstep(15.3 + index * 0.42, 16.2 + index * 0.42, local);
+    orb.style.opacity = (p * productIn).toFixed(3);
+    orb.style.transform = `scale(${lerp(.78, 1, p).toFixed(3)}) translateY(${(Math.sin(local * 1.5 + index) * .1 * p).toFixed(3)}cqw)`;
+  });
+
+  const mapDefinitionIn = smoothstep(22.0, 23.1, local) * (1 - smoothstep(34.3, 35.3, local));
+  mapToolDefinition.style.opacity = (productIn * mapDefinitionIn).toFixed(3);
+  mapToolDefinition.style.transform = `translateY(${lerp(.7, 0, mapDefinitionIn)}cqw) scale(${lerp(.97, 1, mapDefinitionIn).toFixed(3)})`;
+  const scanY = ((local - 22.0) * 0.45) % 1.2;
+  mapToolDefinition.querySelector('.definition-scan').style.transform = `translateY(${scanY.toFixed(2)}cqw)`;
+
+  const bookingIn = smoothstep(34.25, 35.45, local) * (1 - smoothstep(42.1, 43.1, local));
+  bookingApproval.style.opacity = (productIn * bookingIn).toFixed(3);
+  bookingApproval.style.transform = `translateY(${lerp(.55, 0, bookingIn)}cqw) scale(${lerp(.97, 1, bookingIn).toFixed(3)})`;
+  bookingApproval.style.boxShadow = `0 0 ${(0.55 + .55 * Math.sin(local * 3.2) ** 2).toFixed(2)}cqw rgba(206,166,112,${(.12 + .08 * Math.sin(local * 3.2) ** 2).toFixed(3)})`;
+
+  const mapHot = local >= 20.9 && local < 35.6;
+  const bookingHot = local >= 34.0 && local < 43.0;
+  originToolCards.forEach((card) => {
+    const isMap = card.dataset.tool === 'map';
+    const isBooking = card.dataset.tool === 'booking';
+    card.classList.toggle('is-hot', (isMap && mapHot) || (isBooking && bookingHot));
+    const dim = mapHot && !isMap ? 0.42 : bookingHot && !isBooking ? 0.55 : 1;
+    card.style.filter = `brightness(${dim})`;
+  });
+  aiProductBoundary.style.borderColor = mapHot || bookingHot
+    ? `rgba(144,226,207,${(0.38 + 0.22 * buildPulse).toFixed(3)})`
+    : 'rgba(121,202,206,.35)';
+  aiProductBoundary.style.boxShadow = mapHot || bookingHot
+    ? `0 0 ${(1.35 + buildPulse * .85).toFixed(2)}cqw rgba(89,203,185,.14), inset 0 0 2.4cqw rgba(83,174,190,.04)`
+    : '0 0 2.1cqw rgba(74,188,198,.09), inset 0 0 2.4cqw rgba(83,174,190,.035)';
+
+  const ghostIn = smoothstep(42.4, 43.3, local) * (1 - smoothstep(47.2, 48.4, local));
+  unavailableTool.style.opacity = ghostIn.toFixed(3);
+  unavailableTool.style.transform = `translateX(${lerp(-.5, 0, ghostIn)}cqw) scale(${lerp(.9, 1, ghostIn).toFixed(3)})`;
+  accessLock.style.opacity = ghostIn.toFixed(3);
+  accessLock.style.transform = `scale(${(lerp(.78, 1, ghostIn) + .045 * ghostIn * Math.sin(local * 8) ** 2).toFixed(3)})`;
+  const denyPulse = smoothstep(42.8, 43.8, local) * (1 - smoothstep(46.6, 47.5, local));
+  accessLock.style.borderColor = `rgba(235,${Math.round(147 + 32 * denyPulse)},${Math.round(127 + 31 * denyPulse)},${(0.42 + .35 * denyPulse).toFixed(3)})`;
+
+  originEdges.forEach((edge) => {
+    const draw = smoothstep(edge.revealAt, edge.revealAt + (edge.className.includes('denied') ? .75 : 1.15), local);
+    const hold = edge.stay ? 1 : 1 - smoothstep(edge.revealAt + (edge.className.includes('service') ? 24 : 8.5), edge.revealAt + (edge.className.includes('service') ? 27 : 10.0), local);
+    const opacity = edge.className.includes('denied') ? draw * hold * .78 : draw * hold * (edge.className.includes('builder') ? .52 : .58);
+    drawLink(edge.path, edge.from, edge.to, edge.stay ? 1 : draw, opacity);
+  });
 }
 
 function updateParticleField(time, sectionTwoTime) {
@@ -1040,6 +1162,7 @@ function renderAt(seconds) {
   if (t < SECTION_THREE_START) updateFlights(sectionTwoTime);
   renderContextStory(t);
   renderModelStory(t);
+  renderToolOriginStory(t);
   const focus = smoothstep(0, 11.5, sectionTwoTime) * (1 - smoothstep(26.5, 30.5, sectionTwoTime));
   tokenParticleGlow.style.opacity = (focus * 0.82).toFixed(3);
   tokenParticleGlow.style.transform = `translate(-50%, -50%) scale(${lerp(0.55, 1.35, smoothstep(0, 12, sectionTwoTime)).toFixed(3)})`;
