@@ -253,3 +253,28 @@ button { color: inherit; }
   .play-button { width: 30px; height: 30px; flex-basis: 30px; }
   .time-readout { min-width: 33px; font-size: 9px; }
 }
+
+/* Section 4 labels and token chips stay tied to the 16:9 stage, with a phone-size floor. */
+.llm-story small, .llm-prompt small, .llm-candidates small, .llm-response small,
+.llm-context-return small, .llm-external small, .llm-cache span { font-size: clamp(8px, .9cqw, 16px); }
+.prompt-token-strip span { font-size: clamp(10px, 1.1cqw, 21px); }
+.network-label { font-size: clamp(8px, .95cqw, 18px); }
+.candidate-row { font-size: clamp(10px, 1.1cqw, 21px); }
+.generated-token { font-size: clamp(10px, 1.2cqw, 23px); }
+.llm-context-return { font-size: clamp(9px, .95cqw, 19px); }
+.llm-context-return b { font-size: clamp(11px, 1.25cqw, 24px); }
+.llm-stored-answer small { font-size: clamp(8px, .95cqw, 18px); }
+.stored-answer-copy { font-size: clamp(10px, 1.2cqw, 24px); }
+.llm-external div span { font-size: clamp(9px, .9cqw, 17px); }
+
+@container (max-width: 520px) {
+  .llm-prompt { width: 34.5%; }
+  .prompt-token-strip { gap: .25cqw; margin-top: .45cqw; }
+  .prompt-token-strip span { padding: .25cqw .34cqw; }
+  .llm-network { left: 40.5%; width: 20.5%; }
+  .llm-response { left: 31.5%; top: 60%; width: 39%; }
+  .llm-stored-answer { right: 4.5%; width: 25%; }
+  .llm-external, .llm-context-return { bottom: 5%; }
+  .llm-external div { gap: .16cqw; }
+  .llm-external div span { padding: .2cqw .22cqw; font-size: clamp(8px, .85cqw, 16px); }
+}
