@@ -55,7 +55,8 @@ const llmCandidates = document.querySelector('#llm-candidates');
 const llmResponse = document.querySelector('#llm-response');
 const llmContextReturn = document.querySelector('#llm-context-return');
 const llmCache = document.querySelector('#llm-cache');
-const llmShelf = document.querySelector('#llm-shelf');
+const llmStoredAnswer = document.querySelector('#llm-stored-answer');
+const storedAnswerStrike = document.querySelector('.stored-answer-strike');
 const llmPatterns = document.querySelector('#llm-patterns');
 const llmExternal = document.querySelector('#llm-external');
 
@@ -844,7 +845,7 @@ function renderModelStory(time) {
     signal.style.opacity = (networkIn * (0.62 + 0.3 * (0.5 + 0.5 * Math.sin(local * 2.6 + index)))).toFixed(3);
   });
 
-  const candidateIn = smoothstep(11.2, 12.4, local) * (1 - smoothstep(52.0, 54.0, local));
+  const candidateIn = smoothstep(11.2, 12.4, local) * (1 - smoothstep(34.0, 36.0, local));
   llmCandidates.style.opacity = candidateIn.toFixed(3);
   llmCandidates.style.transform = `translateX(${lerp(1.3, 0, candidateIn)}cqw)`;
   const selected = smoothstep(20.0, 20.9, local);
@@ -853,8 +854,10 @@ function renderModelStory(time) {
     row.style.opacity = (candidateIn * (index === 0 ? lerp(0.78, 1, selected) : 0.68)).toFixed(3);
   });
 
+  const retrievalDim = smoothstep(48.0, 49.0, local) * (1 - smoothstep(52.5, 53.5, local));
   const responseIn = smoothstep(19.9, 21.1, local);
-  llmResponse.style.opacity = responseIn.toFixed(3);
+  const responseOpacity = responseIn * (1 - retrievalDim);
+  llmResponse.style.opacity = responseOpacity.toFixed(3);
   llmResponse.style.transform = `translateY(${lerp(1.2, 0, responseIn)}cqw)`;
   const tokenTimes = [20.25, 23.35, 26.35, 29.35, 32.25];
   const phraseTokens = [...llmResponse.querySelectorAll('.generated-token')];
@@ -867,17 +870,20 @@ function renderModelStory(time) {
   });
   const contextCopy = document.querySelector('#context-output-copy');
   contextCopy.textContent = phraseTokens.slice(0, visibleTokens).map((token) => token.textContent).join(' ');
-  const contextReturnIn = smoothstep(25.1, 27.0, local);
+  const contextReturnIn = smoothstep(25.1, 27.0, local) * (1 - retrievalDim);
   llmContextReturn.style.opacity = contextReturnIn.toFixed(3);
   llmContextReturn.style.transform = `translateY(${lerp(0.8, 0, contextReturnIn)}cqw)`;
 
-  const cacheIn = smoothstep(39.0, 40.7, local) * (1 - smoothstep(47.6, 49.1, local));
+  const cacheIn = smoothstep(37.4, 38.8, local) * (1 - smoothstep(46.8, 48.1, local));
   llmCache.style.opacity = cacheIn.toFixed(3);
   llmCache.style.transform = `translateY(${lerp(0.6, 0, cacheIn)}cqw)`;
-  const shelfIn = smoothstep(48.5, 50.0, local) * (1 - smoothstep(52.4, 53.8, local));
-  llmShelf.style.opacity = (shelfIn * 0.78).toFixed(3);
-  llmShelf.style.transform = `translateY(${lerp(0.8, 0, shelfIn)}cqw) scale(${lerp(0.97, 1, shelfIn).toFixed(3)})`;
-  const patternsIn = smoothstep(53.4, 55.3, local);
+  const storedIn = smoothstep(48.4, 49.5, local) * (1 - smoothstep(52.0, 53.25, local));
+  const storedStrikeIn = smoothstep(50.1, 50.9, local);
+  const storedDissolve = smoothstep(51.3, 53.25, local);
+  llmStoredAnswer.style.opacity = (storedIn * (1 - storedDissolve)).toFixed(3);
+  llmStoredAnswer.style.transform = `translateX(${(lerp(1.1, 0, storedIn) + 0.2 * storedDissolve).toFixed(3)}cqw) scale(${(lerp(0.97, 1, storedIn) * (1 - 0.035 * storedDissolve)).toFixed(3)})`;
+  storedAnswerStrike.style.transform = `scaleX(${storedStrikeIn.toFixed(3)}) rotate(-7deg)`;
+  const patternsIn = smoothstep(51.5, 53.5, local);
   llmPatterns.style.opacity = patternsIn.toFixed(3);
   llmPatterns.querySelectorAll('i').forEach((node, index) => {
     node.style.opacity = String((patternsIn * (0.42 + 0.58 * (0.5 + 0.5 * Math.sin(local * 1.9 + index)))).toFixed(3));
@@ -891,9 +897,9 @@ function renderModelStory(time) {
 
   drawLink(modelEdges[0].path, modelEdges[0].from, modelEdges[0].to, smoothstep(0.6, 2.0, local), promptIn * networkIn);
   drawLink(modelEdges[1].path, modelEdges[1].from, modelEdges[1].to, smoothstep(11.1, 13.2, local), candidateIn);
-  const choiceToResponse = smoothstep(19.0, 21.0, local) * candidateIn * responseIn;
+  const choiceToResponse = smoothstep(19.0, 21.0, local) * candidateIn * responseOpacity;
   drawLink(modelEdges[2].path, modelEdges[2].from, modelEdges[2].to, choiceToResponse, choiceToResponse);
-  const loopIn = smoothstep(25.2, 27.0, local);
+  const loopIn = smoothstep(25.2, 27.0, local) * responseOpacity;
   drawLink(modelEdges[3].path, modelEdges[3].from, modelEdges[3].to, loopIn, loopIn * 0.72);
 }
 
