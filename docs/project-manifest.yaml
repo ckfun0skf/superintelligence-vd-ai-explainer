@@ -74,18 +74,18 @@ scenes:
       - "02:43.5–02:48.8 generation draws on learned patterns and supplied context"
       - "02:48.8–02:57.2 current facts and interacting with services require more than the LLM alone"
     visual_intent: "Let the attention/typo scene fade into a visibly layered neural network labeled 'LLM = NEURAL NETWORK'. Send moving signal pulses across four neuron columns. Connect the network to candidate next tokens, fade the candidate-to-response curve with the candidate panel, append chosen tokens to the response, and reconnect the original prompt with the growing output. Move the cache to a clear right-side lane after the candidate panel exits. Before the 02:39 narration beat, temporarily clear response/context cards and show one explicit 'SAVED ANSWER' card, horizontally aligned to the right of the network; strike it through and dissolve it as the neural pattern cloud becomes visible, then restore the generated response and updated context. Finish with muted live-map/calendar modules outside the model boundary. No title card or review subtitles inside the frame."
-    review_status: "updated public version checked around 02:29–02:49; the unclear lower-right bookshelf is removed, and the labeled saved-answer card sits on the prompt→network horizontal reading axis"
+    review_status: "public version checked around 02:11–02:53 after mobile typography refinement; Section 4 prompt, response, context and tool labels are larger while staying inside the 16:9 layout"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: "0cb12446b2668d5b5e2b8a0b32e1a2e19afedf3f"
+  git_commit: "05eecae2225183ee8dd7c9831963b0d24e7a90b7"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "none after favicon fix; revised desktop/mobile Chromium preview and live Pages check reported no JavaScript/console errors or failed HTTP resources"
-  preview_seek_and_handoff: "Production preview checked at desktop 1280x720 and mobile 390x844, then checked live on GitHub Pages at 159.5, 161, 163.5, and 164 seconds. After token selection, candidates exit before cache appears in the right lane. At 158.0–163.5s the old response/context cards clear, a labeled SAVED ANSWER card appears on the same horizontal axis as the prompt and neural network, is struck through and dissolves while the neural pattern cloud emerges, then generated response/context return for the 163.52s narration cue. Absolute-time reverse seek restores the same states. Both viewports preserve the 1920x1080 canvas and have no horizontal overflow."
+  browser_errors: "none after favicon fix; updated desktop/mobile Chromium preview and live Pages check reported no JavaScript/console errors or failed HTTP resources"
+  preview_seek_and_handoff: "Production preview checked at desktop 1280x720 and mobile 390x844, then checked live on GitHub Pages at 131, 159.5, 161, 163.5, and 173 seconds. After token selection, candidates exit before cache appears in the right lane. At 158.0–163.5s the old response/context cards clear, a labeled SAVED ANSWER card appears on the same horizontal axis as the prompt and neural network, is struck through and dissolves while the neural pattern cloud emerges, then generated response/context return for the 163.52s narration cue. Section 4 typography uses stage-relative clamp values with phone-size floors; prompt, saved-answer and external-service chips fit within their cards. Absolute-time seek restores the same states. Both viewports preserve the 1920x1080 canvas and have no page/chip overflow."
   keyframes_reviewed: [0.0, 24.4, 32.5, 36.4, 36.65, 37.3, 38.1, 45.5, 55.6, 65.5, 76.5, 89.0, 106.2, 109.6, 110.0, 115.0, 122.0, 131.0, 138.0, 144.0, 145.0, 149.32, 154.0, 157.8, 158.0, 158.36, 159.5, 161.0, 162.0, 163.0, 163.5, 164.0, 168.76, 172.0, 177.2]
   responsive_viewports:
     - viewport: "1280x720 Chromium desktop"
@@ -94,7 +94,8 @@ quality_checks:
     - viewport: "390x844 at DPR 3"
       aspect_ratio: "stage 374x210.375 CSS px; 16:9; no page overflow"
       result: "pass"
-  public_deployment: "success: GitHub Actions run 39393166692 deployed commit 0cb12446b2668d5b5e2b8a0b32e1a2e19afedf3f; Pages and favicon return HTTP 200, MP3 byte-range returns 206; live browser confirms the horizontally aligned SAVED ANSWER at 159.5s and response/context fade-back at 163.5s"
+  responsive_typography: "Section 4 only: phone-size floors of 8px for metadata labels and 10px for prompt/response chips, with stage-relative scaling above the floor. Tested live at 390x844 DPR3 and 1280x720; label/token sizes read clearly, prompt fits in two rows, SAVED ANSWER fits without clipping, and external-service chips have zero horizontal overflow."
+  public_deployment: "success: GitHub Actions run 39395448786 deployed commit 05eecae2225183ee8dd7c9831963b0d24e7a90b7; Pages returns HTTP 200; live browser confirms updated 8px/10px typography, correct SAVED ANSWER handoff, and 1920x1080 backing canvas"
   ffprobe_verified: true
   full_decode_verified: true
   notes:
@@ -107,4 +108,5 @@ quality_checks:
     - "Punctuation token tiles no longer use the former brown placeholder treatment."
     - "A bundled SVG favicon eliminates the browser's default /favicon.ico 404 request."
     - "The preview page contains only the film frame, a review-only caption line, and necessary play/seek controls."
+    - "Section 4 UI text has responsive minimum readable sizes for phone previews without changing the 16:9 master canvas."
     - "The final MP4 has not been rendered; this is a browser preview and source-project update."
