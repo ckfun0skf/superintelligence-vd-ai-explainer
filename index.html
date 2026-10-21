@@ -210,8 +210,61 @@
               </div>
               <div class="access-lock" id="access-lock" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="9" y="21" width="30" height="22" rx="4"/><path d="M15 21v-7a9 9 0 0 1 18 0v7M24 29v6"/></svg></div>
             </div>
+
+            <div class="tool-call-story" id="tool-call-story" aria-label="How an AI application executes a model-requested tool call">
+              <svg class="tool-call-lines" id="tool-call-lines" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"><defs><marker id="tool-call-arrow" markerWidth="16" markerHeight="16" refX="12" refY="8" orient="auto" markerUnits="userSpaceOnUse"><path d="M2 2 L12 8 L2 14" fill="none" stroke="#9ee2d5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></marker></defs></svg>
+              <div class="call-need" id="call-need">
+                <span class="call-need-icons" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M5 27h38l-4-13H13zM8 27v10h32V27M14 37v4M34 37v4"/><circle cx="15" cy="30" r="2"/><circle cx="33" cy="30" r="2"/></svg><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="18"/><path d="M24 12v12l9 6M12 6 7 11M36 6l5 5"/></svg></span>
+                <span><small>THE TASK NEEDS</small><strong>CURRENT TRANSIT</strong></span>
+              </div>
+              <div class="call-model" id="call-model">
+                <span class="call-model-orb" aria-hidden="true"><i></i><i></i><i></i><i></i><b></b></span>
+                <small>LLM <span>·</span> PROPOSES</small>
+              </div>
+              <div class="call-catalog" id="call-catalog">
+                <div class="call-catalog-head"><span class="call-app-icon" aria-hidden="true"><i></i><i></i><i></i></span><strong>AVAILABLE TOOLS</strong><small>descriptions + inputs</small></div>
+                <div class="call-tool-grid">
+                  <div class="call-tool-card" id="call-map-card" data-call-tool="map"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="m5 12 12-5 14 5 12-5v29l-12 5-14-5-12 5zM17 7v29M31 12v29"/><path d="M24 15c-4 0-7 3-7 7 0 5 7 12 7 12s7-7 7-12c0-4-3-7-7-7z"/><circle cx="24" cy="22" r="2"/></svg><span><strong>MAP</strong><small>find routes</small></span><i class="call-match-check" aria-hidden="true">✓</i></div>
+                  <div class="call-tool-card" data-call-tool="search"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="20" cy="20" r="11"/><path d="m28 28 12 12M14 20h12M20 14v12"/></svg><span><strong>SEARCH</strong><small>find pages</small></span></div>
+                  <div class="call-tool-card" data-call-tool="calendar"><svg viewBox="0 0 48 48" aria-hidden="true"><rect x="7" y="10" width="34" height="31" rx="4"/><path d="M15 6v9M33 6v9M7 19h34M15 26h5M28 26h5M15 33h5"/></svg><span><strong>CALENDAR</strong><small>check dates</small></span></div>
+                  <div class="call-tool-card" data-call-tool="booking"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 12h32v24H8zM8 19h32M15 7v10M33 7v10M15 27h8M15 32h15"/></svg><span><strong>BOOKING</strong><small>reserve</small></span></div>
+                </div>
+              </div>
+              <div class="call-guidance" id="call-guidance"><span class="guidance-icons" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M11 20a13 13 0 1 1 23 8c-3 3-4 5-4 8H18c0-3-1-5-4-8a12 12 0 0 1-3-8zM19 41h10M20 36v-5l4-4 4 4v5M24 8v4M6 20h5M37 20h5M10 10l4 4M34 14l4-4"/></svg><svg viewBox="0 0 48 48"><rect x="10" y="7" width="28" height="34" rx="4"/><path d="M17 17h14M17 24h14M17 31h9"/></svg></span><span><small>GUIDANCE</small><strong>instructions + examples</strong></span></div>
+              <div class="call-request" id="call-request">
+                <div class="call-request-head"><span class="call-envelope" aria-hidden="true"><svg viewBox="0 0 48 48"><rect x="5" y="10" width="38" height="28" rx="4"/><path d="m7 13 17 14 17-14"/></svg></span><span><small>STRUCTURED REQUEST</small><strong>MAP ROUTE</strong></span><i class="request-sent-dot" aria-hidden="true"></i></div>
+                <div class="call-request-fields"><span><i class="pin-icon" aria-hidden="true"></i><small>FROM</small><strong>Taipei Main</strong></span><b aria-hidden="true">→</b><span><i class="pin-icon destination" aria-hidden="true"></i><small>TO</small><strong>Yangmingshan</strong></span></div>
+              </div>
+              <div class="call-orchestrator" id="call-orchestrator">
+                <span class="orchestrator-icon" aria-hidden="true"><i></i><i></i><i></i><b>↔</b></span>
+                <small>AI APPLICATION</small><strong>ORCHESTRATOR</strong>
+                <div class="orchestrator-checks"><span id="call-check-origin"><i aria-hidden="true">✓</i> origin</span><span id="call-check-destination"><i aria-hidden="true">✓</i> destination</span></div>
+                <div class="execute-label" id="call-execute-label"><i aria-hidden="true">▶</i> EXECUTES TOOL</div>
+              </div>
+              <div class="call-map-service" id="call-map-service">
+                <span class="call-map-icon" aria-hidden="true"><i></i><b></b></span>
+                <small>SEPARATE SOFTWARE</small><strong>MAP SERVICE</strong>
+                <span class="map-loading" id="call-map-loading"><i></i><i></i><i></i></span>
+              </div>
+              <div class="call-result" id="call-result">
+                <small>SAMPLE TOOL RESULT</small>
+                <div class="result-route-icon" aria-hidden="true"><i></i><i></i><b></b></div>
+                <strong>Route options</strong><span><i aria-hidden="true">◷</i> ETA returned</span>
+              </div>
+              <div class="call-context" id="call-context">
+                <small>NEW MESSAGE IN CONTEXT</small>
+                <div><span class="context-message-icon" aria-hidden="true">↩</span><span>Tool result added</span><i class="context-pulse" aria-hidden="true"></i></div>
+              </div>
+              <div class="call-response" id="call-response">
+                <small>MODEL CONTINUES</small>
+                <div><span class="response-spark" aria-hidden="true">✦</span><strong id="call-response-text"></strong></div>
+              </div>
+              <div class="call-cautions" id="call-cautions">
+                <span class="call-warning" aria-hidden="true">!</span><span class="caution-copy"><small>CHECK THE RESULT</small><strong>Tools can be wrong or incomplete</strong></span>
+                <span class="call-approval-shield" aria-hidden="true"><i></i></span><span class="caution-copy approval-copy"><small>BOOKING</small><strong>Wait for permission</strong></span>
+              </div>
+            </div>
           </div>
-        </div>
 
         <div class="review-caption" id="review-caption" aria-live="polite"></div>
         <div class="player-controls" aria-label="Preview playback controls">
@@ -220,15 +273,15 @@
             <span class="visually-hidden" id="play-label">Play</span>
           </button>
           <span class="time-readout" id="current-time">00:00</span>
-          <input id="timeline" type="range" min="0" max="227.866" value="0" step="0.01" aria-label="Seek through the video preview" />
-          <span class="time-readout" id="total-time">03:47</span>
+          <input id="timeline" type="range" min="0" max="305.206" value="0" step="0.01" aria-label="Seek through the video preview" />
+          <span class="time-readout" id="total-time">05:05</span>
           <button class="fullscreen-button" id="fullscreen-button" type="button" aria-label="Enter fullscreen preview" aria-pressed="false" title="Enter fullscreen (F)">
             <svg class="fullscreen-enter-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5" /></svg>
             <svg class="fullscreen-exit-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h5V3M16 3v5h5M21 16h-5v5M8 21v-5H3" /></svg>
             <span class="visually-hidden" id="fullscreen-label">Enter fullscreen</span>
           </button>
         </div>
-        <audio id="preview-audio" preload="metadata" src="./audio/section-01-05-preview-mix.mp3"></audio>
+        <audio id="preview-audio" preload="metadata" src="./audio/section-01-06-preview-mix.mp3"></audio>
       </section>
     </main>
     <script type="module" src="./src/main.js"></script>

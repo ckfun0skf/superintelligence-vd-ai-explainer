@@ -8,13 +8,13 @@ project:
     final_video: "not rendered yet"
 
 video:
-  duration_seconds: 227.866
+  duration_seconds: 305.206
   fps: 24
   width: 1920
   height: 1080
   responsive_scaling: "Single 1920x1080 master composition at every viewport: the 16:9 film stage scales proportionally, with no phone-specific typography floors or in-frame reflow. Only the external player shell adapts. Fullscreen preview fits the 16:9 frame to the available screen and requests landscape orientation where supported. Review captions and controls remain outside the film frame (controls overlay in fullscreen)."
-  frame_range: "[0, 5469)"
-  narration_or_master_audio: "public/audio/section-01-05-preview-mix.mp3"
+  frame_range: "[0, 7325)"
+  narration_or_master_audio: "public/audio/section-01-06-preview-mix.mp3"
   audio_codec: "MP3 review mix; final master format TBD"
   audio_sample_rate_hz: 44100
   audio_channels: 2
@@ -30,7 +30,7 @@ scenes:
       - "00:01.5–00:20.0 Taipei prompt, itinerary response, and tool question"
       - "00:20.0–00:24.4 handoff into the request-processing explanation"
     visual_intent: "Assemble an unbranded assistant interface with a compact composer fixed at the bottom; type and send the prompt into a user bubble; animate an AI loading state; reveal the nature-first Taipei title and two itinerary cards in sequence."
-    review_status: "previously published; retained in the five-section regression preview"
+    review_status: "previously published; retained in the six-section regression preview"
   - id: "scene-02"
     start_seconds: 24.4
     end_seconds: 55.6
@@ -90,6 +90,20 @@ scenes:
       - "03:40.08–03:47.56 the model may choose only from application-exposed tools"
     visual_intent: "Start with an AI model and bus/clock live-data need icons; delay the model-to-product connector until the application appears. A builder badge assembles an AI-product capability boundary. Four icon-led map/search/calendar/booking cards animate into the catalog and connect to distinct external route, web, date, and reservation software icons. Highlight the map tool and reveal DOES / NEEDS / RETURNS values as its interface contract. Highlight booking and pause a reservation action at an amber human-approval gate; it is never depicted as approved. Finally, show an imagined ANY TOOL outside the application being stopped by a lock at the boundary. All text stays in-film as functional interface labels; English review captions remain outside."
     review_status: "narration generated at 49.04s with approved voice style; icon-led scene and ANY TOOL denied connector share one fade curve; local/live desktop and mobile preview checked using one 16:9 master; fullscreen, audio seek, and boundary timings tested"
+  - id: "scene-06"
+    start_seconds: 227.866
+    end_seconds: 305.206
+    module: "src/main.js"
+    narration_cues:
+      - "227.866–229.366 music-led chapter pause"
+      - "229.366–239.606 available-tool descriptions matched to the current-transit task"
+      - "239.606–255.946 map-tool fit, training examples, and product instructions"
+      - "255.946–264.306 model emits a structured route request with origin and destination"
+      - "264.306–274.686 the application/orchestrator checks and executes the request; separate map software returns a result"
+      - "274.686–287.826 the result enters conversation context and the model continues generating"
+      - "287.826–304.966 tool selection may fail, results can be incomplete, and consequential actions may require confirmation and permission"
+    visual_intent: "Carry the current-transit need into a four-card available-tools catalogue and animate a match signal to MAP. Pair descriptions/expected inputs with a product-instructions and training-example cue. The model sends a structured Taipei Main→Yangmingshan route request to an AI-application/orchestrator card; origin and destination checks animate before an execution pulse crosses to a separate MAP SERVICE card. A result card with route options/ETA travels into the conversation as a new context message, then the model resumes a short in-frame response. Finish with tool-error and booking-permission cautions; do not depict a consequential action as approved. No in-frame titles or review subtitles."
+    review_status: "Section 06 75.84-second narration integrated; local desktop 1528.9×860 and phone 374×210.4 Chromium QA passed with one 1920×1080 backing canvas, 16:9 frame, all content inside safe bounds, seven animated SVG links/signals, deterministic repeated seeks, audio playback and no JavaScript or failed-asset errors"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
@@ -99,8 +113,8 @@ delivery:
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "Local and live Section 05 Chromium previews reported no JavaScript/console errors and no non-abort resource failures. The master audio metadata loads, plays, advances the clock, and pauses; the two local ERR_ABORTED events occurred only when automated pages were closed after testing."
-  preview_seek_and_handoff: "Production preview checked locally and on public Pages at desktop 1280x900 and phone 390x844 DPR3. Section 05 keyframes at 177.38, 180.5, 185, 192.3, 198, 207, 211, 216, 222, 225, and 227.55 seconds reproduce via absolute-time render; reverse seek back to 198 seconds produces the same state. Live player was sought to 216 seconds; narration advanced to 216.74s with the booking-approval caption synchronized."
+  browser_errors: "Local six-section Chromium production preview reported no JavaScript/console errors or non-abort asset failures. Six-section MP3 metadata loads and playback advances the audio clock; automated page-close ERR_ABORTED events are filtered as expected cancellation. Live Pages deployment remains pending."
+  preview_seek_and_handoff: "Earlier Section 05 checks remain recorded below. Local Section 06 preview was sought at 229.9, 236.9, 242.8, 252, 261, 268, 273, 278, 286, 299, and 304.7 seconds in desktop 1600×1000 and phone 390×844 viewports. Repeated direct seek to 273 seconds produced identical state; map selection matched at 242.8; player/audio clock advanced; all scene content remained inside the same 16:9 stage."
   keyframes_reviewed: [177.38, 180.5, 185.0, 192.3, 198.0, 207.0, 211.0, 216.0, 222.0, 225.0, 227.55]
   responsive_viewports:
     - viewport: "1280x900 Chromium desktop; film stage 1256x707 CSS px"
@@ -112,15 +126,17 @@ quality_checks:
   responsive_typography: "One fixed film composition. Typography and all graphics use stage-relative units only; removed the prior phone-only Section 4 font floors and Section 05 layout/font overrides. The outer preview player alone has touch-sized controls."
   fullscreen_preview: "Local Chromium verified fullscreen enter/exit on desktop and mobile, 16:9 stage preservation, synchronized seek controls, review captions outside the picture (hidden in landscape fullscreen), and landscape-fit on a simulated 844x390 mobile viewport. The page requests landscape orientation where the browser supports it."
   denied_tool_line: "At 225.0s through 226.5s, the ANY TOOL badge and denied connector were checked on forward and reverse seeks; both share the same fade and are fully transparent by 226.0s, with no line left behind."
-  public_deployment: "success: GitHub Actions run 39405441497 deployed commit d130ec50f2d3d9b2250af7815974d7e6a48ed3f4; Pages HTTP 200, five-section MP3 HTTP 200 and Range 206, live desktop/mobile 16:9 stage, fullscreen enter/exit, synchronized 03:46 seek, cleared ANY TOOL connector, and review caption verified"
+  section_06_keyframes: [227.3, 227.866, 228.2, 229.9, 236.9, 242.8, 252.0, 261.0, 268.0, 273.0, 278.0, 286.0, 299.0, 304.7]
+  section_06_local_status: "pass: seven deterministic SVG connections with traveling signal dots; selected MAP state matches the current-transit task; orchestrator and MAP SERVICE are separated without overlap; result returns to context and response; phone and desktop use the same fixed master composition; no page overflow or JavaScript/asset errors"
+  public_deployment: "Section 06 implementation and six-section audio are locally verified; publication to the existing main/GitHub Pages destination is pending."
   ffprobe_verified: true
   full_decode_verified: true
   notes:
-    - "The five-section mix keeps the approved narration for Sections 01–04, adds the approved-voice-style Section 05 narration WAV, uses the same cyber/space score with voice-forward sidechain ducking, and includes 1.2 seconds of music-led opening plus 1.5-second chapter pauses."
-    - "The five-section MP3 is approximately 227.866 seconds, stereo, 44.1 kHz, MP3 at 192 kbps; full FFmpeg decode succeeds. Browser duration metadata reports approximately 227.84 seconds due to MP3 frame rounding."
+    - "The six-section mix keeps the approved narration for Sections 01–05, adds the approved-voice-style Section 06 narration WAV, uses the same cyber/space score with voice-forward sidechain ducking, and includes 1.2 seconds of music-led opening plus 1.5-second chapter pauses."
+    - "The six-section MP3 is approximately 305.267 seconds, stereo, 44.1 kHz, MP3 at 192 kbps; full FFmpeg decode succeeds. Scene timing is 305.206 seconds; browser duration metadata reports approximately 305.22 seconds because of MP3 frame/padding behavior."
     - "The Three.js canvas is rendered at 1920×1080 with deterministic absolute-time states and seeded particles."
     - "The neural layers and activations are a simplified visual metaphor for an LLM, not a diagram of any specific model's full architecture."
     - "CSS and JavaScript scene geometry use stage-relative units; the film composition stays 16:9 and player/review captions remain outside the film frame."
     - "Token boundaries, token-ID examples, and next-token candidate bar lengths are illustrative rather than a report of a specific model's tokenizer or probabilities."
-    - "Section 05 illustrates product-configured tool access: the model is not shown inventing tools, and the booking action stays at a pending approval gate."
+    - "Sections 05–06 illustrate product-configured tool access: the model is not shown inventing tools, the orchestrator handles requests, external tools return results into context, and booking remains behind a pending approval gate."
     - "The final MP4 has not been rendered; this is a browser preview and source-project update."

@@ -1,6 +1,6 @@
 # Section 05 — Where Tools Come From
 
-**Status:** Approved narration; generated with the approved Charon voice style and synchronized in the current five-section preview.
+**Status:** Approved narration; generated with the approved Charon voice style and synchronized in the current six-section preview.
 
 **Language:** English
 

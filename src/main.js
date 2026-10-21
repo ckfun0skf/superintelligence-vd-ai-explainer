@@ -75,8 +75,29 @@ const accessLock = document.querySelector('#access-lock');
 const toolOriginLineSvg = document.querySelector('#tool-origin-lines');
 const originToolCards = [...document.querySelectorAll('.origin-tool-card')];
 const serviceOrbs = [...document.querySelectorAll('.service-orb')];
+const toolCallStory = document.querySelector('#tool-call-story');
+const callNeed = document.querySelector('#call-need');
+const callModel = document.querySelector('#call-model');
+const callCatalog = document.querySelector('#call-catalog');
+const callToolCards = [...document.querySelectorAll('.call-tool-card')];
+const callMapCard = document.querySelector('#call-map-card');
+const callGuidance = document.querySelector('#call-guidance');
+const callRequest = document.querySelector('#call-request');
+const callOrchestrator = document.querySelector('#call-orchestrator');
+const callMapService = document.querySelector('#call-map-service');
+const callMapLoading = document.querySelector('#call-map-loading');
+const callResult = document.querySelector('#call-result');
+const callContext = document.querySelector('#call-context');
+const callContextPulse = document.querySelector('.context-pulse');
+const callResponse = document.querySelector('#call-response');
+const callResponseText = document.querySelector('#call-response-text');
+const callCautions = document.querySelector('#call-cautions');
+const callLinesSvg = document.querySelector('#tool-call-lines');
 
-const DURATION = 227.866;
+const SECTION_SIX_START = 227.866;
+const SECTION_SIX_NARRATION_START = 229.366;
+const SECTION_SIX_NARRATION_DURATION = 75.84;
+const DURATION = SECTION_SIX_NARRATION_START + SECTION_SIX_NARRATION_DURATION;
 const FPS = 24;
 const SECTION_TWO_START = 24.4;
 const SECTION_TWO_DURATION = 31.2;
@@ -131,6 +152,19 @@ const CAPTIONS = [
   { start: 214.48, end: 220.08, text: 'For example, a booking tool may require your approval before it confirms a reservation.' },
   { start: 220.08, end: 223.64, text: 'The model cannot call any tool it imagines.' },
   { start: 223.64, end: 227.56, text: 'It can choose only from the tools the application has made available.' },
+  { start: 229.786, end: 230.706, text: 'How does it choose?' },
+  { start: 230.706, end: 236.306, text: 'The model receives descriptions of the available tools and their expected inputs.' },
+  { start: 236.306, end: 239.606, text: 'It compares those descriptions with the task.' },
+  { start: 239.606, end: 247.926, text: 'If it has learned that a map tool can find routes, and the user asks for current transit options, that tool looks relevant.' },
+  { start: 247.926, end: 255.946, text: "Training examples and the product's instructions can also teach the model what kinds of requests belong with which tools." },
+  { start: 255.946, end: 264.306, text: 'The model then produces a structured tool request—for example, asking the map service for a route between two places.' },
+  { start: 264.306, end: 271.066, text: 'The surrounding application, sometimes called the orchestrator, checks and executes that request.' },
+  { start: 271.066, end: 274.686, text: 'The tool runs as software and returns its result.' },
+  { start: 274.686, end: 279.226, text: 'That result is added to the conversation context as a new message.' },
+  { start: 279.226, end: 287.826, text: 'The model then continues from the updated context, generating the next part of its reply—or, if needed, another tool request.' },
+  { start: 287.826, end: 292.446, text: 'The model proposes the tool call; the application runs it.' },
+  { start: 292.446, end: 294.166, text: 'This distinction matters.' },
+  { start: 294.166, end: 304.966, text: 'Tool selection can be mistaken, tool results can be incomplete, and consequential actions—such as making a reservation—may require confirmation and permission.' },
 ];
 
 const WORD_ROWS = [
@@ -191,6 +225,23 @@ const originEdges = [
   { from: document.querySelector('#origin-tool-booking'), to: bookingApproval, className: 'origin-link link-approval', revealAt: 35.5 },
   { from: unavailableTool, to: accessLock, className: 'origin-link link-denied', revealAt: 42.8 },
 ].map((edge) => ({ ...edge, path: svgPath(toolOriginLineSvg, edge.className) }));
+const callEdges = [
+  { from: callNeed, to: callMapCard, className: 'call-line call-match-line' },
+  { from: callModel, to: callRequest, className: 'call-line' },
+  { from: callRequest, to: callOrchestrator, className: 'call-line' },
+  { from: callOrchestrator, to: callMapService, className: 'call-line call-service-line' },
+  { from: callMapService, to: callResult, className: 'call-line call-result-line' },
+  { from: callResult, to: callContext, className: 'call-line call-result-line' },
+  { from: callContext, to: callResponse, className: 'call-line' },
+].map((edge) => ({ ...edge, path: svgPath(callLinesSvg, edge.className) }));
+const callSignalNodes = callEdges.map(() => {
+  const signal = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  signal.setAttribute('r', '7');
+  signal.classList.add('call-signal');
+  signal.style.opacity = '0';
+  callLinesSvg.append(signal);
+  return signal;
+});
 const neuralWireNodes = [];
 const neuralSignalNodes = [];
 const NEURAL_LAYER_X = [9.5, 35.5, 61.5, 87.5];
@@ -948,7 +999,7 @@ function renderToolOriginStory(time) {
   }
   const local = time - SECTION_FIVE_START;
   const enter = smoothstep(0.0, 1.15, local);
-  const endFade = 1 - smoothstep(DURATION - 0.42, DURATION, time);
+  const endFade = 1 - smoothstep(SECTION_SIX_START - 0.48, SECTION_SIX_START + 0.24, time);
   toolOriginStory.style.visibility = 'visible';
   toolOriginStory.style.opacity = (enter * endFade).toFixed(3);
 
@@ -1028,6 +1079,138 @@ function renderToolOriginStory(time) {
       : 1 - smoothstep(edge.revealAt + (edge.className.includes('service') ? 24 : 8.5), edge.revealAt + (edge.className.includes('service') ? 27 : 10.0), local);
     const opacity = denied ? draw * ghostIn * .78 : draw * hold * (edge.className.includes('builder') ? .52 : .58);
     drawLink(edge.path, edge.from, edge.to, edge.stay ? 1 : draw, opacity);
+  });
+}
+
+function renderToolCallStory(time) {
+  if (time < SECTION_SIX_START) {
+    toolCallStory.style.opacity = '0';
+    toolCallStory.style.visibility = 'hidden';
+    callEdges.forEach(({ path }, index) => {
+      path.style.opacity = '0';
+      callSignalNodes[index].style.opacity = '0';
+    });
+    return;
+  }
+
+  const local = time - SECTION_SIX_START;
+  const voice = time - SECTION_SIX_NARRATION_START;
+  const sceneIn = smoothstep(SECTION_SIX_START, SECTION_SIX_START + 0.38, time);
+  const sceneOut = 1 - smoothstep(DURATION - 0.72, DURATION, time);
+  toolCallStory.style.visibility = 'visible';
+  toolCallStory.style.opacity = (sceneIn * sceneOut).toFixed(3);
+
+  const needIn = smoothstep(0.04, 0.58, local);
+  callNeed.style.opacity = needIn.toFixed(3);
+  callNeed.style.transform = `translateY(${lerp(0.7, 0, needIn).toFixed(3)}cqw) scale(${lerp(.97, 1, needIn).toFixed(3)})`;
+  callNeed.querySelector('.call-need-icons').style.transform = `scale(${(1 + .035 * Math.sin(local * 2.1) ** 2).toFixed(3)})`;
+
+  const modelIn = smoothstep(0.08, 0.68, local);
+  callModel.style.opacity = modelIn.toFixed(3);
+  callModel.style.transform = `translateY(${lerp(.65, 0, modelIn).toFixed(3)}cqw)`;
+  callModel.querySelector('.call-model-orb').style.transform = `scale(${(1 + .022 * Math.sin(local * 2.8) ** 2).toFixed(3)})`;
+
+  const catalogIn = smoothstep(0.6, 1.7, voice);
+  const catalogSettle = 1 - .3 * smoothstep(26.58, 33.0, voice);
+  callCatalog.style.opacity = (catalogIn * catalogSettle).toFixed(3);
+  callCatalog.style.transform = `translateY(${lerp(.7, 0, catalogIn).toFixed(3)}cqw) scale(${lerp(.98, 1, catalogIn).toFixed(3)})`;
+  const match = smoothstep(9.9, 11.0, voice) * (1 - smoothstep(27.0, 29.0, voice));
+  callToolCards.forEach((card, index) => {
+    const cardIn = smoothstep(1.35 + index * .22, 2.65 + index * .22, voice);
+    const isMap = card.dataset.callTool === 'map';
+    const dim = match > .02 && !isMap ? lerp(1, .46, match) : 1;
+    card.style.opacity = (catalogIn * catalogSettle * cardIn).toFixed(3);
+    card.style.transform = `translateY(${lerp(.55, 0, cardIn).toFixed(3)}cqw) scale(${lerp(.97, 1, cardIn).toFixed(3)})`;
+    card.style.filter = `brightness(${dim.toFixed(3)})`;
+    card.classList.toggle('is-match', isMap && match > .12);
+  });
+  callMapCard.querySelector('.call-match-check').style.opacity = match.toFixed(3);
+  callMapCard.querySelector('.call-match-check').style.transform = `scale(${lerp(.76, 1, match).toFixed(3)})`;
+
+  const guidanceIn = smoothstep(18.56, 20.0, voice) * (1 - smoothstep(25.0, 27.4, voice));
+  callGuidance.style.opacity = guidanceIn.toFixed(3);
+  callGuidance.style.transform = `translateX(${lerp(-.45, 0, guidanceIn).toFixed(3)}cqw)`;
+  callGuidance.querySelector('.guidance-icons').style.transform = `rotate(${(Math.sin(local * 1.8) * 1.8 * guidanceIn).toFixed(2)}deg)`;
+
+  const requestIn = smoothstep(26.58, 28.25, voice) * (1 - smoothstep(39.4, 42.0, voice));
+  callRequest.style.opacity = requestIn.toFixed(3);
+  callRequest.style.transform = `translate(${lerp(-.55, 0, smoothstep(26.58, 28.25, voice)).toFixed(3)}cqw, ${lerp(.7, 0, requestIn).toFixed(3)}cqw) scale(${lerp(.97, 1, requestIn).toFixed(3)})`;
+  const packetPulse = .5 + .5 * Math.sin(local * 4.2) ** 2;
+  callRequest.querySelector('.request-sent-dot').style.opacity = String((requestIn * packetPulse).toFixed(3));
+
+  const orchestratorIn = smoothstep(34.94, 36.4, voice);
+  callOrchestrator.style.opacity = orchestratorIn.toFixed(3);
+  callOrchestrator.style.transform = `translateY(${lerp(.8, 0, orchestratorIn).toFixed(3)}cqw) scale(${lerp(.98, 1, orchestratorIn).toFixed(3)})`;
+  const originChecked = smoothstep(35.3, 36.8, voice);
+  const destinationChecked = smoothstep(37.0, 38.5, voice);
+  [originChecked, destinationChecked].forEach((check, index) => {
+    const row = callOrchestrator.querySelectorAll('.orchestrator-checks span')[index];
+    row.style.opacity = (orchestratorIn * (.38 + .62 * check)).toFixed(3);
+    row.style.transform = `translateX(${lerp(-.25, 0, check).toFixed(3)}cqw)`;
+  });
+  const executeIn = smoothstep(38.2, 39.6, voice) * (1 - smoothstep(44.8, 46.0, voice));
+  callOrchestrator.querySelector('.execute-label').style.opacity = executeIn.toFixed(3);
+
+  const serviceIn = smoothstep(41.7, 43.1, voice);
+  callMapService.style.opacity = serviceIn.toFixed(3);
+  callMapService.style.transform = `translateX(${lerp(.65, 0, serviceIn).toFixed(3)}cqw) scale(${lerp(.97, 1, serviceIn).toFixed(3)})`;
+  const searchPulse = smoothstep(41.7, 42.3, voice) * (1 - smoothstep(44.7, 45.5, voice));
+  callMapLoading.style.opacity = searchPulse.toFixed(3);
+  callMapLoading.querySelectorAll('i').forEach((dot, index) => {
+    const beat = .55 + .45 * Math.sin(local * 7.5 - index * 1.35) ** 2;
+    dot.style.transform = `translateY(${(-.2 * beat).toFixed(3)}cqw) scale(${(.72 + .42 * beat).toFixed(3)})`;
+    dot.style.opacity = String((searchPulse * beat).toFixed(3));
+  });
+  callMapService.querySelector('.call-map-icon').style.boxShadow = `0 0 ${(0.65 + 1.2 * searchPulse).toFixed(2)}cqw rgba(100,197,209,${(.11 + .2 * searchPulse).toFixed(3)})`;
+
+  const resultIn = smoothstep(45.32, 46.8, voice);
+  callResult.style.opacity = resultIn.toFixed(3);
+  callResult.style.transform = `translateY(${lerp(.75, 0, resultIn).toFixed(3)}cqw) scale(${lerp(.97, 1, resultIn).toFixed(3)})`;
+  callResult.querySelector('.result-route-icon').style.transform = `translateX(${(Math.sin(local * 1.25) * .1 * resultIn).toFixed(3)}cqw)`;
+
+  const contextIn = smoothstep(45.32, 48.0, voice);
+  callContext.style.opacity = contextIn.toFixed(3);
+  callContext.style.transform = `translateY(${lerp(.65, 0, contextIn).toFixed(3)}cqw) scale(${lerp(.98, 1, contextIn).toFixed(3)})`;
+  const contextPulse = .4 + .6 * Math.sin(local * 2.6) ** 2;
+  callContextPulse.style.opacity = String((contextIn * contextPulse).toFixed(3));
+  callContextPulse.style.transform = `scale(${(.82 + .35 * contextPulse).toFixed(3)})`;
+
+  const responseIn = smoothstep(49.86, 52.0, voice);
+  callResponse.style.opacity = responseIn.toFixed(3);
+  callResponse.style.transform = `translateY(${lerp(.65, 0, responseIn).toFixed(3)}cqw) scale(${lerp(.98, 1, responseIn).toFixed(3)})`;
+  const responseCopy = 'Transit options are ready to compare.';
+  callResponseText.textContent = responseCopy.slice(0, Math.floor(responseCopy.length * smoothstep(50.0, 56.0, voice)));
+
+  const cautionIn = smoothstep(63.08, 65.0, voice);
+  callCautions.style.opacity = cautionIn.toFixed(3);
+  callCautions.style.transform = `translateY(${lerp(.7, 0, cautionIn).toFixed(3)}cqw)`;
+  callCautions.querySelector('.call-warning').style.filter = `drop-shadow(0 0 ${(0.25 + .5 * Math.sin(local * 3.2) ** 2).toFixed(2)}cqw rgba(238,174,105,.55))`;
+
+  const edgeStates = [
+    [smoothstep(10.24, 11.7, voice), match * .78],
+    [smoothstep(26.58, 28.0, voice), requestIn * .7],
+    [smoothstep(34.94, 36.5, voice), requestIn * orchestratorIn * .72],
+    [smoothstep(41.7, 43.0, voice), serviceIn * executeIn * .72],
+    [smoothstep(45.32, 46.6, voice), resultIn * .72],
+    [smoothstep(46.2, 47.7, voice), resultIn * contextIn * .68],
+    [smoothstep(49.86, 51.2, voice), contextIn * responseIn * .7],
+  ];
+  callEdges.forEach((edge, index) => {
+    const [reveal, opacity] = edgeStates[index];
+    drawLink(edge.path, edge.from, edge.to, reveal, opacity);
+    const pulseStarts = [10.24, 26.58, 34.94, 41.7, 45.32, 46.2, 49.86];
+    const pulseSpeeds = [1.15, 1.3, 1.15, 1.55, 1.35, 1.05, 1.1];
+    const signal = callSignalNodes[index];
+    if (opacity <= .02 || reveal <= .02 || !edge.path.getAttribute('d')) {
+      signal.style.opacity = '0';
+      return;
+    }
+    const total = edge.path.getTotalLength();
+    const phase = .12 + ((Math.max(0, voice - pulseStarts[index]) * pulseSpeeds[index]) % .76);
+    const point = edge.path.getPointAtLength(total * phase);
+    signal.setAttribute('cx', point.x.toFixed(1));
+    signal.setAttribute('cy', point.y.toFixed(1));
+    signal.style.opacity = String(Math.min(.96, opacity * 1.3).toFixed(3));
   });
 }
 
@@ -1169,6 +1352,7 @@ function renderAt(seconds) {
   renderContextStory(t);
   renderModelStory(t);
   renderToolOriginStory(t);
+  renderToolCallStory(t);
   const focus = smoothstep(0, 11.5, sectionTwoTime) * (1 - smoothstep(26.5, 30.5, sectionTwoTime));
   tokenParticleGlow.style.opacity = (focus * 0.82).toFixed(3);
   tokenParticleGlow.style.transform = `translate(-50%, -50%) scale(${lerp(0.55, 1.35, smoothstep(0, 12, sectionTwoTime)).toFixed(3)})`;
