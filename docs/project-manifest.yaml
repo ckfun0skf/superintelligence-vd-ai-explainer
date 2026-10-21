@@ -109,12 +109,12 @@ delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: "403b1be253d0ae841abe50c7730005ff3674a33e"
+  git_commit: "475601335fa4ec7c50d5c3f61d187e233de3c777"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "Local six-section Chromium production preview reported no JavaScript/console errors or non-abort asset failures. Six-section MP3 metadata loads and playback advances the audio clock; automated page-close ERR_ABORTED events are filtered as expected cancellation. Live Pages deployment remains pending."
-  preview_seek_and_handoff: "Earlier Section 05 checks remain recorded below. Local Section 06 preview was sought at 229.9, 236.9, 242.8, 252, 261, 268, 273, 278, 286, 299, and 304.7 seconds in desktop 1600×1000 and phone 390×844 viewports. Repeated direct seek to 273 seconds produced identical state; map selection matched at 242.8; player/audio clock advanced; all scene content remained inside the same 16:9 stage."
+  browser_errors: "Local and live six-section Chromium previews reported no JavaScript/console errors or non-abort asset failures. Audio metadata and playback work; test-page close produced only expected MP3 ERR_ABORTED cancellations. Live Pages audio returned HTTP 200 and Range 206."
+  preview_seek_and_handoff: "Earlier Section 05 checks remain recorded below. Local Section 06 preview was sought at 227.3, 227.866, 228.2, 229.9, 236.9, 242.8, 252, 261, 268, 273, 278, 286, 299, and 304.7 seconds in desktop 1600×1000 and phone 390×844 viewports. Repeated direct seek to 273 seconds produced identical state; the live player advanced from 242.0 to 242.5 seconds with MAP selected and the matching review caption; all scene content stayed inside one 16:9 stage."
   keyframes_reviewed: [177.38, 180.5, 185.0, 192.3, 198.0, 207.0, 211.0, 216.0, 222.0, 225.0, 227.55]
   responsive_viewports:
     - viewport: "1280x900 Chromium desktop; film stage 1256x707 CSS px"
@@ -128,7 +128,8 @@ quality_checks:
   denied_tool_line: "At 225.0s through 226.5s, the ANY TOOL badge and denied connector were checked on forward and reverse seeks; both share the same fade and are fully transparent by 226.0s, with no line left behind."
   section_06_keyframes: [227.3, 227.866, 228.2, 229.9, 236.9, 242.8, 252.0, 261.0, 268.0, 273.0, 278.0, 286.0, 299.0, 304.7]
   section_06_local_status: "pass: seven deterministic SVG connections with traveling signal dots; selected MAP state matches the current-transit task; orchestrator and MAP SERVICE are separated without overlap; result returns to context and response; phone and desktop use the same fixed master composition; no page overflow or JavaScript/asset errors"
-  public_deployment: "Section 06 implementation and six-section audio are locally verified; publication to the existing main/GitHub Pages destination is pending."
+  section_06_live_status: "pass: GitHub Pages live desktop/mobile; 1920×1080 backing canvas and 16:9 film stage; Section 06 audio clock advanced with synchronized review caption and MAP match; fullscreen entered and exited on both; landscape mobile fullscreen preserved the 16:9 stage; no page or console errors"
+  public_deployment: "success: GitHub Actions run 39586666630 deployed commit 475601335fa4ec7c50d5c3f61d187e233de3c777; Pages HTTP 200; six-section MP3 HTTP 200 and Range 206; live desktop/mobile seek/caption/audio checks and fullscreen stage ratio verified"
   ffprobe_verified: true
   full_decode_verified: true
   notes:
