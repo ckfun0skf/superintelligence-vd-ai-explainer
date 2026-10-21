@@ -13,6 +13,9 @@ const playGlyph = document.querySelector('#play-glyph');
 const fullscreenButton = document.querySelector('#fullscreen-button');
 const fullscreenLabel = document.querySelector('#fullscreen-label');
 const timeline = document.querySelector('#timeline');
+const chapterToggle = document.querySelector('#chapter-toggle');
+const chapterNav = document.querySelector('#chapter-nav');
+const chapterButtons = [...document.querySelectorAll('.chapter-button')];
 const currentTimeReadout = document.querySelector('#current-time');
 const totalTimeReadout = document.querySelector('#total-time');
 const assistantCard = document.querySelector('#assistant-card');
@@ -522,6 +525,7 @@ let sparkGeometry;
 let sparkMaterial;
 let sparkParams = [];
 let failedWebGL = false;
+let activeChapterButton = null;
 
 try {
   renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true, powerPreference: 'low-power' });
@@ -1222,9 +1226,16 @@ function updateParticleField(time, sectionTwoTime) {
     * (1 - smoothstep(SECTION_THREE_START + 20.0, SECTION_THREE_START + 25.0, time));
   const inferenceBurst = smoothstep(SECTION_THREE_START + 25.0, SECTION_THREE_START + 30.0, time)
     * (1 - smoothstep(SECTION_THREE_START + 49.0, SECTION_THREE_START + 53.0, time));
-  const intensity = Math.max(assistantBurst, tokenBurst * 0.92, relationBurst * 0.65, inferenceBurst * 0.42);
-  sparkMaterial.opacity = 0.68 * intensity;
-  sparkMaterial.size = 0.025 + 0.035 * intensity;
+  const generationFlow = smoothstep(SECTION_FOUR_START + 1.0, SECTION_FOUR_START + 5.0, time)
+    * (1 - smoothstep(SECTION_FIVE_START - 2.0, SECTION_FIVE_START + 1.5, time));
+  const toolDefinitionFlow = smoothstep(SECTION_FIVE_START + 1.0, SECTION_FIVE_START + 5.0, time)
+    * (1 - smoothstep(SECTION_SIX_START - 2.0, SECTION_SIX_START + 1.5, time));
+  const toolCallFlow = smoothstep(SECTION_SIX_START + 1.0, SECTION_SIX_START + 5.0, time)
+    * (1 - smoothstep(DURATION - 3.0, DURATION - 0.4, time));
+  const laterMotion = Math.max(generationFlow * 0.7, toolDefinitionFlow * 0.78, toolCallFlow * 0.86);
+  const intensity = Math.max(assistantBurst, tokenBurst * 0.92, relationBurst * 0.65, inferenceBurst * 0.42, laterMotion);
+  sparkMaterial.opacity = 0.58 * intensity + 0.14 * laterMotion;
+  sparkMaterial.size = 0.045 + 0.065 * intensity;
 
   const attr = sparkGeometry.attributes.position;
   for (let i = 0; i < sparkParams.length; i += 1) {
@@ -1365,13 +1376,19 @@ function renderAt(seconds) {
   reviewCaption.style.opacity = captionOpacity.toFixed(3);
 
   if (renderer && camera && !failedWebGL) {
-    stars.rotation.y = 0.0015 * t;
-    stars.rotation.x = 0.0015 * Math.sin(t * 0.18);
-    network.rotation.z = 0.0025 * Math.sin(t * 0.25);
-    network.material.opacity = 0.035 + 0.025 * Math.sin(t * 0.7) ** 2;
-    gridMaterial.opacity = 0.025 + 0.012 * Math.sin(t * 0.4) ** 2;
-    camera.position.z = 11 + 0.65 * smoothstep(20.4, 24.4, t);
-    camera.position.y = -0.035 * smoothstep(20.4, 24.4, t);
+    const cinematicDepth = smoothstep(SECTION_THREE_START + 4.0, SECTION_THREE_START + 15.0, t);
+    const depthPulse = 0.5 + 0.5 * Math.sin(t * 0.31);
+    stars.material.opacity = 0.46 + 0.1 * cinematicDepth * depthPulse;
+    stars.material.size = 0.035;
+    stars.rotation.y = 0.0015 * t + 0.0018 * Math.sin(t * 0.11) * cinematicDepth;
+    stars.rotation.x = 0.0015 * Math.sin(t * 0.18) + 0.0028 * Math.cos(t * 0.17) * cinematicDepth;
+    network.rotation.z = 0.03 * Math.sin(t * 0.22) * cinematicDepth;
+    network.rotation.x = 0.02 * Math.cos(t * 0.19) * cinematicDepth;
+    network.material.opacity = 0.045 + cinematicDepth * (0.06 + 0.035 * depthPulse);
+    gridMaterial.opacity = 0.027 + cinematicDepth * (0.015 + 0.015 * (1 - depthPulse));
+    camera.position.z = 11 + 0.65 * smoothstep(20.4, 24.4, t) - 0.46 * depthPulse * cinematicDepth;
+    camera.position.x = 0.16 * Math.sin(t * 0.12) * cinematicDepth;
+    camera.position.y = -0.035 * smoothstep(20.4, 24.4, t) + 0.11 * Math.cos(t * 0.14) * cinematicDepth;
     camera.lookAt(0, 0, -1.8);
     updateParticleField(t, sectionTwoTime);
     renderer.render(window.__sectionScene.scene, camera);
@@ -1385,6 +1402,7 @@ function updatePlayer() {
   timeline.value = String(Math.min(t, duration));
   currentTimeReadout.textContent = fmtTime(t);
   totalTimeReadout.textContent = fmtTime(duration);
+  updateActiveChapter(t);
   playLabel.textContent = audio.paused ? 'Play' : 'Pause';
   playGlyph.textContent = audio.paused ? '▶' : 'Ⅱ';
   playButton.setAttribute('aria-label', audio.paused ? 'Play video preview' : 'Pause video preview');
@@ -1410,6 +1428,41 @@ audio.addEventListener('play', updatePlayer);
 audio.addEventListener('pause', updatePlayer);
 audio.addEventListener('ended', updatePlayer);
 audio.addEventListener('error', () => console.error('Preview audio failed to load:', audio.error));
+
+function updateActiveChapter(time) {
+  let next = chapterButtons[0] || null;
+  for (const button of chapterButtons) {
+    if (time >= Number(button.dataset.time)) next = button;
+    else break;
+  }
+  if (next === activeChapterButton) return;
+  activeChapterButton = next;
+  chapterButtons.forEach((button) => {
+    const active = button === next;
+    button.classList.toggle('is-active', active);
+    button.setAttribute('aria-current', active ? 'location' : 'false');
+  });
+  if (next && chapterNav && !previewColumn.classList.contains('chapters-collapsed')) {
+    const left = next.offsetLeft - (chapterNav.clientWidth - next.offsetWidth) / 2;
+    chapterNav.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+  }
+}
+
+chapterButtons.forEach((button) => {
+  button.addEventListener('click', () => {
+    const time = Math.min(Number(button.dataset.time), DURATION);
+    audio.currentTime = time;
+    renderAt(time);
+    updatePlayer();
+  });
+});
+
+chapterToggle.addEventListener('click', () => {
+  const collapsed = previewColumn.classList.toggle('chapters-collapsed');
+  chapterToggle.setAttribute('aria-expanded', String(!collapsed));
+  chapterToggle.setAttribute('aria-label', `${collapsed ? 'Show' : 'Hide'} section navigation`);
+  chapterToggle.title = `${collapsed ? 'Show' : 'Hide'} sections`;
+});
 
 function isPreviewFullscreen() {
   return document.fullscreenElement === previewColumn || previewColumn.classList.contains('is-preview-fullscreen');

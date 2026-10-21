@@ -12,7 +12,7 @@ video:
   fps: 24
   width: 1920
   height: 1080
-  responsive_scaling: "Single 1920x1080 master composition at every viewport: the 16:9 film stage scales proportionally, with no phone-specific typography floors or in-frame reflow. Only the external player shell adapts. Fullscreen preview fits the 16:9 frame to the available screen and requests landscape orientation where supported. Review captions and controls remain outside the film frame (controls overlay in fullscreen)."
+  responsive_scaling: "Single 1920x1080 master composition at every viewport: the 16:9 film stage scales proportionally, with shared stage-relative typography and no phone-specific font or in-frame reflow. Browser text inflation is fixed at 100%. Only the external player shell adapts. Fullscreen preview fits the same 16:9 frame to the available screen and requests landscape orientation where supported. Review captions and controls remain outside the film frame (controls overlay in fullscreen)."
   frame_range: "[0, 7325)"
   narration_or_master_audio: "public/audio/section-01-06-preview-mix.mp3"
   audio_codec: "MP3 review mix; final master format TBD"
@@ -115,20 +115,22 @@ quality_checks:
   deterministic_random_seed: "0xA17E2026"
   browser_errors: "Local and live six-section Chromium previews reported no JavaScript/console errors or non-abort asset failures. Audio metadata and playback work; test-page close produced only expected MP3 ERR_ABORTED cancellations. Live Pages audio returned HTTP 200 and Range 206."
   preview_seek_and_handoff: "Earlier Section 05 checks remain recorded below. Local Section 06 preview was sought at 227.3, 227.866, 228.2, 229.9, 236.9, 242.8, 252, 261, 268, 273, 278, 286, 299, and 304.7 seconds in desktop 1600×1000 and phone 390×844 viewports. Repeated direct seek to 273 seconds produced identical state; the live player advanced from 242.0 to 242.5 seconds with MAP selected and the matching review caption; all scene content stayed inside one 16:9 stage."
-  keyframes_reviewed: [177.38, 180.5, 185.0, 192.3, 198.0, 207.0, 211.0, 216.0, 222.0, 225.0, 227.55]
+  keyframes_reviewed: [21.0, 37.3, 39.5, 65.5, 89.0, 106.2, 131.0, 149.3, 159.5, 173.0, 180.5, 198.0, 207.0, 216.0, 222.0, 242.8, 252.0, 261.0, 268.0, 273.0, 286.0, 299.0, 304.7]
   responsive_viewports:
     - viewport: "1280x900 Chromium desktop; film stage 1256x707 CSS px"
       aspect_ratio: "stage 1.7765:1; backing canvas 1920x1080; no page or tool-card overflow"
       result: "pass"
     - viewport: "390x844 at DPR 3; film stage 374x210 CSS px"
-      aspect_ratio: "stage 1.781:1; backing canvas 1920x1080; service heading and tool cards remain within the film-safe boundary"
+      aspect_ratio: "stage 1.778:1; backing canvas 1920x1080; service heading and tool cards remain within the film-safe boundary"
       result: "pass; same relative scene layout as desktop; 1920x1080 backing canvas; no page overflow"
-  responsive_typography: "One fixed film composition. Typography and all graphics use stage-relative units only; removed the prior phone-only Section 4 font floors and Section 05 layout/font overrides. The outer preview player alone has touch-sized controls."
-  fullscreen_preview: "Local Chromium verified fullscreen enter/exit on desktop and mobile, 16:9 stage preservation, synchronized seek controls, review captions outside the picture (hidden in landscape fullscreen), and landscape-fit on a simulated 844x390 mobile viewport. The page requests landscape orientation where the browser supports it."
+  responsive_typography: "One fixed film composition. A shared readability pass enlarged functional labels/body copy consistently across all viewports while keeping typography and graphics stage-relative; no phone-only floors, font overrides, or in-frame reflow. CSS text-size-adjust is fixed at 100% to reduce Android browser text inflation differences. The outer preview player alone adapts touch controls."
+  fullscreen_preview: "Local Chromium verified fullscreen enter/exit, 16:9 stage preservation, synchronized seek controls, review captions hidden in fullscreen, chapter rail overlay/toggle, portrait rotate hint, and landscape-fit on a simulated 844x390 viewport. The page requests landscape orientation where supported."
   denied_tool_line: "At 225.0s through 226.5s, the ANY TOOL badge and denied connector were checked on forward and reverse seeks; both share the same fade and are fully transparent by 226.0s, with no line left behind."
   section_06_keyframes: [227.3, 227.866, 228.2, 229.9, 236.9, 242.8, 252.0, 261.0, 268.0, 273.0, 278.0, 286.0, 299.0, 304.7]
   section_06_local_status: "pass: seven deterministic SVG connections with traveling signal dots; selected MAP state matches the current-transit task; orchestrator and MAP SERVICE are separated without overlap; result returns to context and response; phone and desktop use the same fixed master composition; no page overflow or JavaScript/asset errors"
   section_06_live_status: "pass: GitHub Pages live desktop/mobile; 1920×1080 backing canvas and 16:9 film stage; Section 06 audio clock advanced with synchronized review caption and MAP match; fullscreen entered and exited on both; landscape mobile fullscreen preserved the 16:9 stage; no page or console errors"
+  global_redesign_local: "pass: Chromium checked 23 representative keyframes across all six scenes at desktop 1600x1000, phone 390x844 DPR3, and landscape phone 844x390; the stage retained a 1920x1080 backing canvas and 16:9 ratio; body overflow and page/asset errors were zero; measured shared Section 04 type values were identical as cqw proportions across viewports; all six chapter buttons set the audio clock to the exact section start, the rail collapsed/expanded, live playback advanced captions/active section, and the native fullscreen button entered/exited successfully."
+  global_motion_local: "pass: Three.js particle size, neuron mesh visibility, and gentle camera parallax were strengthened after minute one; desktop/phone frames were reviewed across Sections 04–06 and varied with absolute time. Section 02 token landing now leaves clearer space below category labels."
   public_deployment: "success: GitHub Actions run 39586666630 deployed commit 475601335fa4ec7c50d5c3f61d187e233de3c777; Pages HTTP 200; six-section MP3 HTTP 200 and Range 206; live desktop/mobile seek/caption/audio checks and fullscreen stage ratio verified"
   ffprobe_verified: true
   full_decode_verified: true

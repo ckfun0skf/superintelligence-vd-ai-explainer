@@ -464,3 +464,247 @@ button { color: inherit; }
     background:linear-gradient(180deg,rgba(5,7,12,0),rgba(5,7,12,.88)); transform:translateX(-50%);
   }
 }
+
+
+/* SINGLE-MASTER LEGIBILITY — fixed 1920x1080 typography, never browser-inflated. */
+html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+.stage { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+#scene-canvas { z-index: 1; }
+
+/* These are functional labels, not decorative microtype; scale with the same film master. */
+#stage .assistant-identity strong { font-size: 1.25cqw; }
+#stage .assistant-identity small,
+#stage .online-indicator,
+#stage .message-label,
+#stage .zoomed-message .message-label,
+#stage .itinerary-item small,
+#stage .answer-footnote,
+#stage .tool-chip,
+#stage .category-label,
+#stage .concept-card small,
+#stage .likely-reading small,
+#stage .uncertainty-indicator,
+#stage .clarify-indicator,
+#stage .llm-story small,
+#stage .llm-prompt small,
+#stage .llm-candidates small,
+#stage .llm-response small,
+#stage .llm-context-return small,
+#stage .llm-external small,
+#stage .llm-cache span,
+#stage .llm-stored-answer small,
+#stage .product-heading small,
+#stage .definition-flow small,
+#stage .approval-copy small,
+#stage .service-boundary-label,
+#stage .service-orb > span,
+#stage .unavailable-tool,
+#stage .call-need small,
+#stage .call-catalog-head small,
+#stage .call-request small,
+#stage .call-orchestrator > small,
+#stage .call-map-service > small,
+#stage .call-result > small,
+#stage .call-context > small,
+#stage .call-response > small,
+#stage .call-guidance small,
+#stage .call-cautions small,
+#stage .call-request-fields > span > small,
+#stage .execute-label {
+  font-size: 1.2cqw;
+  line-height: 1.2;
+}
+#stage .user-message .prompt-text,
+#stage .composer-content,
+#stage .ai-working,
+#stage .itinerary-item span,
+#stage .concept-card strong,
+#stage .likely-reading span,
+#stage .llm-context-return,
+#stage .candidate-row,
+#stage .llm-external div span,
+#stage .origin-tool-card > span,
+#stage .definition-top strong,
+#stage .definition-flow > span,
+#stage .approval-copy strong,
+#stage .model-live-need,
+#stage .call-need strong,
+#stage .call-model > small,
+#stage .call-tool-card small,
+#stage .call-match-check,
+#stage .call-guidance strong,
+#stage .call-request-head strong,
+#stage .call-request-fields > span > strong,
+#stage .orchestrator-checks span,
+#stage .execute-label i,
+#stage .call-map-service > strong,
+#stage .call-result > strong,
+#stage .call-result > span,
+#stage .call-context > div,
+#stage .call-response strong,
+#stage .caution-copy strong {
+  font-size: 1.45cqw;
+  line-height: 1.25;
+}
+#stage .user-message .prompt-text { font-size: 1.7cqw; }
+#stage .ai-working { font-size: 1.5cqw; }
+#stage .answer-heading { font-size: 2cqw; }
+#stage .itinerary-item strong,
+#stage .likely-reading strong,
+#stage .generated-token,
+#stage .stored-answer-copy,
+#stage .product-heading strong,
+#stage .call-catalog-head strong,
+#stage .call-tool-card strong,
+#stage .call-orchestrator > strong,
+#stage .call-request-fields > b { font-size: 1.65cqw; line-height: 1.2; }
+#stage .composer-content { font-size: 1.55cqw; }
+#stage .zoom-text:not(.tokenized) { font-size: 2.25cqw; }
+#stage .category-label,
+#stage .context-core,
+#stage .network-label,
+#stage .llm-context-return b,
+#stage .builder-badge,
+#stage .definition-flow > b,
+#stage .approval-shield,
+#stage .call-model > small,
+#stage .call-warning,
+#stage .call-response .response-spark { font-size: 1.3cqw; }
+#stage .llm-prompt small,
+#stage .llm-candidates small,
+#stage .llm-response small,
+#stage .llm-context-return small,
+#stage .llm-external small,
+#stage .llm-stored-answer small,
+#stage .llm-cache span,
+#stage .network-label { font-size: 1.3cqw; }
+#stage .prompt-token-strip span,
+#stage .generated-token,
+#stage .stored-answer-copy,
+#stage .origin-tool-card > span,
+#stage .definition-top strong,
+#stage .definition-flow > span,
+#stage .call-tool-card strong,
+#stage .call-request-head strong,
+#stage .call-orchestrator > strong,
+#stage .call-map-service > strong,
+#stage .call-result > strong { font-size: 1.55cqw; }
+#stage .call-request-fields > span > small,
+#stage .call-orchestrator > small,
+#stage .call-map-service > small,
+#stage .call-result > small,
+#stage .call-cautions small,
+#stage .service-boundary-label,
+#stage .service-orb > span,
+#stage .definition-flow small,
+#stage .approval-copy small,
+#stage .call-need small,
+#stage .call-catalog-head small,
+#stage .call-request small,
+#stage .call-context > small,
+#stage .call-response > small,
+#stage .call-guidance small { font-size: 1.05cqw; }
+#stage .call-request-fields > span > strong,
+#stage .orchestrator-checks span,
+#stage .call-result > span,
+#stage .call-context > div,
+#stage .call-response strong,
+#stage .caution-copy strong { font-size: 1.35cqw; }
+
+/* Chapter rail lives in the player shell, not in the film composition. */
+.chapter-nav {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
+  width: 100%;
+  max-width: 1920px;
+  min-height: 40px;
+  padding: 2px 10px 7px;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(112, 157, 164, .3) transparent;
+  background: #05070c;
+}
+.chapter-button {
+  flex: 1 0 auto;
+  min-width: 112px;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border: 1px solid rgba(126, 163, 174, .14);
+  border-radius: 8px;
+  background: rgba(13, 21, 30, .86);
+  color: #98aab1;
+  font-size: 12px;
+  white-space: nowrap;
+  text-align: left;
+  cursor: pointer;
+  transition: color .2s ease, background .2s ease, border-color .2s ease;
+}
+.chapter-button > span:first-child { color: #6b8d92; font-size: 10px; font-variant-numeric: tabular-nums; }
+.chapter-button:hover { color: #e5f2f0; border-color: rgba(137, 207, 200, .34); }
+.chapter-button.is-active { color: #e9f7f2; border-color: rgba(129, 220, 207, .52); background: linear-gradient(120deg, rgba(24, 56, 58, .92), rgba(13, 28, 39, .95)); box-shadow: inset 0 0 14px rgba(111, 220, 207, .06); }
+.chapter-button.is-active > span:first-child { color: #93e7d8; }
+.chapter-toggle { width: 34px; height: 34px; flex: 0 0 34px; display: grid; place-items: center; padding: 0; border: 1px solid rgba(155,218,219,.28); border-radius: 8px; background: #12202a; color: #a7e7e0; cursor: pointer; }
+.chapter-toggle:hover { background: #1a303b; }
+.chapter-toggle svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.preview-column.chapters-collapsed .chapter-nav { display: none; }
+.fullscreen-orientation-hint { display: none; align-items: center; justify-content: center; gap: 8px; min-height: 28px; padding: 4px 12px; color: #93a8ae; font-size: 12px; text-align: center; }
+.fullscreen-orientation-hint svg { width: 17px; height: 17px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+
+@media (max-width: 640px) {
+  .app-shell { width: min(100%, 1920px, max(240px, calc((100dvh - 190px) * 16 / 9))); }
+  .player-controls { gap: 6px; }
+  .fullscreen-button, .chapter-toggle { width: 30px; height: 30px; flex-basis: 30px; border-radius: 7px; }
+  .chapter-nav { min-height: 38px; gap: 5px; padding: 2px 5px 6px; }
+  .chapter-button { min-width: 116px; min-height: 32px; padding: 4px 8px; font-size: 11px; }
+  .chapter-button > span:first-child { font-size: 9px; }
+}
+
+/* Fullscreen behaves like a video player: hide review-only copy; preserve the exact 16:9 master. */
+.preview-column:fullscreen, .preview-column.is-preview-fullscreen {
+  position: fixed; z-index: 9999; inset: 0; width: 100vw; max-width: none; height: 100vh; height: 100dvh;
+  margin: 0; padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px; overflow: hidden; background: #05070c;
+}
+.preview-column:fullscreen::backdrop { background: #05070c; }
+.preview-column:fullscreen .review-caption, .preview-column.is-preview-fullscreen .review-caption { display: none; }
+.preview-column:fullscreen .stage-frame, .preview-column.is-preview-fullscreen .stage-frame {
+  flex: 0 1 auto; width: min(100%, calc((100dvh - 160px) * 16 / 9)); max-width: 100vw; margin: 0;
+}
+.preview-column:fullscreen .stage, .preview-column.is-preview-fullscreen .stage { width: 100%; height: auto; }
+.preview-column:fullscreen .player-controls, .preview-column.is-preview-fullscreen .player-controls {
+  width: min(100%, 1200px); max-width: 100vw; flex: 0 0 auto; margin: 0; background: #05070c;
+}
+.preview-column:fullscreen .chapter-nav, .preview-column.is-preview-fullscreen .chapter-nav { width: min(100%, 1200px); max-width: 100vw; }
+@media (orientation: portrait) {
+  .preview-column:fullscreen .fullscreen-orientation-hint, .preview-column.is-preview-fullscreen .fullscreen-orientation-hint { display: flex; }
+  .preview-column:fullscreen .stage-frame, .preview-column.is-preview-fullscreen .stage-frame { width: min(100vw, calc((100dvh - 220px) * 16 / 9)); }
+}
+@media (orientation: landscape) {
+  .preview-column:fullscreen, .preview-column.is-preview-fullscreen { padding: 0; gap: 0; }
+  .preview-column:fullscreen .stage-frame, .preview-column.is-preview-fullscreen .stage-frame { width: min(100vw, calc(100dvh * 16 / 9)); max-width: 100vw; }
+  .preview-column:fullscreen .player-controls, .preview-column.is-preview-fullscreen .player-controls {
+    position: absolute; z-index: 20; left: 50%; bottom: max(7px, env(safe-area-inset-bottom));
+    width: min(100vw, calc(100dvh * 16 / 9)); max-width: 100vw; padding: 8px 14px;
+    background: linear-gradient(180deg, rgba(5,7,12,0), rgba(5,7,12,.9)); transform: translateX(-50%);
+  }
+  .preview-column:fullscreen .chapter-nav, .preview-column.is-preview-fullscreen .chapter-nav {
+    position: absolute; z-index: 19; left: 50%; bottom: calc(52px + env(safe-area-inset-bottom));
+    width: min(100vw, calc(100dvh * 16 / 9)); max-width: 100vw; padding: 4px 14px 8px;
+    background: linear-gradient(180deg, rgba(5,7,12,0), rgba(5,7,12,.82)); transform: translateX(-50%);
+  }
+  .preview-column:fullscreen.chapters-collapsed .chapter-nav, .preview-column.is-preview-fullscreen.chapters-collapsed .chapter-nav { display: none; }
+}
+
+
+/* Final fit pass: leave a full label-height above token landing slots. */
+#stage .category-content { margin-top: 1.65cqw; }
+.app-shell { width: min(100%, 1920px, max(240px, calc((100dvh - 168px) * 16 / 9))); }
+@media (max-width: 640px) {
+  .app-shell { width: min(100%, 1920px, max(240px, calc((100dvh - 168px) * 16 / 9))); }
+}

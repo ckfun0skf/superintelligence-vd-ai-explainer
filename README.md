@@ -6,7 +6,7 @@ A section-by-section, audio-synchronized 16:9 motion-design film preview. The cu
 
 Published preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/
 
-The film frame itself has no title cards or review subtitles. The synchronized English review caption sits below the 16:9 frame, outside the film composition; the page keeps only the frame and basic play/seek/fullscreen controls. The Three.js canvas renders one **1920×1080** master at **24 fps**. On phones, the exact same composition scales proportionally as a whole—there is no phone-specific reflow or in-frame font enlargement. Use the fullscreen button for an immersive preview; rotate to landscape for the largest 16:9 view.
+The film frame itself has no title cards or review subtitles. The synchronized English review caption sits below the 16:9 frame, outside the film composition. The Three.js canvas renders one **1920×1080** master at **24 fps**; phones show that exact same composition proportionally, with no mobile-specific font or layout variant. The player offers play/seek, fullscreen and a collapsible six-section jump rail; fullscreen hides review captions and fits the 16:9 picture to the screen, requesting landscape orientation where supported.
 
 Section 01 types the request into a compact assistant composer, sends it into a user bubble, shows an AI loading state, and reveals a nature-first Taipei itinerary. Section 02 enlarges the submitted bubble and keeps its original sentence visible while word copies emerge below; selected tokens travel into **WHOLE WORD**, **WORD PIECES**, and **PUNCTUATION**, with illustrative numeric-ID cells. Section 03 reconnects prompt pieces to duration, location, budget, and preference, visualizes attention, and shows how surrounding context can suggest “quiet place” when the user types “quite place.” Section 04 illustrates an LLM as a neural network that predicts and appends likely next tokens, incorporates its generated text back into context, and distinguishes learned patterns from live data. Section 05 shows that product builders expose and define tools such as map, search, calendar, and booking, including a human-approval gate. Section 06 uses icons and moving signal paths to show how the model matches the task to an available tool, emits a structured route request, and hands it to the application/orchestrator; a separate map service returns a result, which enters the conversation context before the model continues. It closes on possible tool-selection errors, incomplete results, and permission for consequential actions.
 
@@ -17,7 +17,7 @@ npm install
 npm run dev
 ```
 
-Use the player below the frame to play, pause, seek, or enter fullscreen (`F` also toggles fullscreen on a keyboard). Animation timing is driven by the audio clock, so seeking reconstructs the same scene state. On a phone, fullscreen requests landscape orientation where supported; otherwise rotate the device manually for the largest 16:9 preview.
+Use the player below the frame to play, pause, seek, enter fullscreen (`F` also toggles fullscreen on a keyboard), or open the chapter rail and jump directly to any of the six sections. Chapter jumps seek the synchronized audio master. On a phone, fullscreen requests landscape orientation where supported; otherwise rotate the device manually for the largest 16:9 preview. The film typography is shared across devices and cannot be enlarged independently on mobile without changing the final video master.
 
 ## Build
 
