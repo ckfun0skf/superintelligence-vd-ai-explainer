@@ -109,7 +109,7 @@ delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: "475601335fa4ec7c50d5c3f61d187e233de3c777"
+  git_commit: "56f9419a724c615ceb3257b9f44ce60838a1c495"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
@@ -130,8 +130,9 @@ quality_checks:
   section_06_local_status: "pass: seven deterministic SVG connections with traveling signal dots; selected MAP state matches the current-transit task; orchestrator and MAP SERVICE are separated without overlap; result returns to context and response; phone and desktop use the same fixed master composition; no page overflow or JavaScript/asset errors"
   section_06_live_status: "pass: GitHub Pages live desktop/mobile; 1920×1080 backing canvas and 16:9 film stage; Section 06 audio clock advanced with synchronized review caption and MAP match; fullscreen entered and exited on both; landscape mobile fullscreen preserved the 16:9 stage; no page or console errors"
   global_redesign_local: "pass: Chromium checked 23 representative keyframes across all six scenes at desktop 1600x1000, phone 390x844 DPR3, and landscape phone 844x390; the stage retained a 1920x1080 backing canvas and 16:9 ratio; body overflow and page/asset errors were zero; measured shared Section 04 type values were identical as cqw proportions across viewports; all six chapter buttons set the audio clock to the exact section start, the rail collapsed/expanded, live playback advanced captions/active section, and the native fullscreen button entered/exited successfully."
+  global_redesign_live_status: "pass: formal GitHub Pages version checked at desktop, portrait-phone DPR3, and landscape-phone profiles; 16:9 and 1920x1080 master retained; all six chapter jumps and synchronized live playback/caption/active section passed; native fullscreen entered/exited by button; no body overflow, JavaScript errors, or failed requests; master audio served HTTP 200 and Range 206."
   global_motion_local: "pass: Three.js particle size, neuron mesh visibility, and gentle camera parallax were strengthened after minute one; desktop/phone frames were reviewed across Sections 04–06 and varied with absolute time. Section 02 token landing now leaves clearer space below category labels."
-  public_deployment: "success: GitHub Actions run 39586666630 deployed commit 475601335fa4ec7c50d5c3f61d187e233de3c777; Pages HTTP 200; six-section MP3 HTTP 200 and Range 206; live desktop/mobile seek/caption/audio checks and fullscreen stage ratio verified"
+  public_deployment: "success: GitHub Actions run 39596144097 deployed commit 56f9419a724c615ceb3257b9f44ce60838a1c495; Pages HTTP 200; six-section MP3 HTTP 200 and Range 206; live desktop, portrait-phone, and landscape-phone seek/caption/audio, chapter rail, fullscreen enter/exit, 16:9 stage, 1920x1080 canvas, and zero-error checks passed"
   ffprobe_verified: true
   full_decode_verified: true
   notes:
