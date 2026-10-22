@@ -111,12 +111,13 @@ scenes:
     narration_cues:
       - "305.206–306.706 music-led chapter handoff"
       - "306.706–317.206 pre-training learns patterns from large collections of text"
-      - "317.206–327.906 next-token prediction is compared with a target; optimization adjusts model parameters"
-      - "327.906–343.206 repeated training passes make useful patterns more likely; the model is not a searchable answer list"
-      - "343.206–357.406 instruction examples, preference signals, and tool-use examples shape behavior"
-      - "357.406–371.706 training methods vary; models can still misunderstand, fabricate details, or select a poor tool"
-    visual_intent: "Animate illustrative text and token examples through a layered neural network; predict a next token, compare it with a target, and show repeated parameter adjustments; cross out a ready-made answer-list metaphor; then show familiar instruction/response, preference, and map-tool tuning examples before ending on concise limitations. Use moving signals, parameter dials, particles, and gentle camera parallax rather than static title cards. All examples are explicitly illustrative; review captions stay outside the 16:9 frame."
-    review_status: "65.32-second narration integrated; production Chromium preview checked at 305.2–370.5 seconds across desktop, portrait phone, and landscape phone; 27 post-minute sampled frames differed; section 07 audio playback/caption and active chapter synchronized"
+      - "317.206–321.906 next-token prediction continues the Taipei nature-weekend example: ‘My budget is…’ → guessed ‘five’"
+      - "321.906–333.306 target ‘eight’ mismatches the guess; the model's parameters are adjusted"
+      - "333.306–343.206 repeated updates become more likely patterns, not an answer database"
+      - "343.206–357.406 instruction, preference, and map-tool tuning examples appear in sequence"
+      - "357.406–371.706 methods vary; a Taipei response and sequential model-limit cautions close the section"
+    visual_intent: "Keep the Taipei nature-weekend/$8,000 context consistent. A compact training-text card feeds the layered model; the right-side prediction card shows ‘My budget is…’, candidate ‘five’, target ‘eight’, and a mismatch before parameters change and the candidate matches. The parameter card and later database/instruction/preference/tool/response examples hand off one at a time through a shared left-side slot, keeping the frame uncluttered. Finish with sequential misunderstanding, invented-detail, and wrong-tool cautions. Drive all motion from audio time; keep review captions outside the 16:9 frame."
+    review_status: "65.32-second narration integrated; revised Taipei/$8,000 prediction/target sequence, compact single-card layout, and sequential training examples pass local Chromium QA at the Section 07 keyframes; production build succeeds"
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
@@ -129,6 +130,7 @@ quality_checks:
   browser_errors: "Local and live seven-section Chromium previews reported no JavaScript/console errors or failed requests. Audio metadata/playback worked; Section 07 caption and active chapter followed the real audio clock. Pages and MP3 returned HTTP 200; the MP3 supports Range 206."
   preview_seek_and_handoff: "Earlier Section 05 checks remain recorded below. Local Section 06 preview was sought at 227.3, 227.866, 228.2, 229.9, 236.9, 242.8, 252, 261, 268, 273, 278, 286, 299, and 304.7 seconds in desktop 1600×1000 and phone 390×844 viewports. Repeated direct seek to 273 seconds produced identical state; the live player advanced from 242.0 to 242.5 seconds with MAP selected and the matching review caption; all scene content stayed inside one 16:9 stage."
   keyframes_reviewed: [21.0, 37.3, 39.5, 65.5, 89.0, 106.2, 131.0, 149.3, 159.5, 173.0, 180.5, 198.0, 207.0, 216.0, 222.0, 242.8, 252.0, 261.0, 268.0, 273.0, 286.0, 299.0, 304.7, 305.2, 307.4, 318.2, 323.0, 331.0, 341.0, 347.0, 354.0, 360.0, 365.0, 370.5]
+  section_07_keyframes: [305.2, 310.5, 318.5, 324.5, 330.5, 339.5, 344.5, 349.5, 353.5, 359.4, 363.2, 368.5, 370.5]
   responsive_viewports:
     - viewport: "1280x900 Chromium desktop; film stage 1256x707 CSS px"
       aspect_ratio: "stage 1.7765:1; backing canvas 1920x1080; no page or tool-card overflow"
@@ -148,8 +150,8 @@ quality_checks:
   global_redesign_local: "pass: Chromium checked 34 representative keyframes across seven scenes at desktop 1600x1000, phone 390x844 DPR3, and landscape phone 844x390; one 1920x1080 backing canvas/16:9 stage retained; no page overflow, failed requests, or JS errors; all seven chapter buttons seek to the exact start; rail toggle, live caption/active section, native fullscreen enter/exit and three-second controls auto-hide/tap toggle passed."
   global_redesign_live_status: "pass: live Pages checked at desktop 1600x1000, portrait phone 390x844 DPR3, and landscape phone 844x390; all seven chapter jumps sought exactly; synced Section 07 playback showed the matching caption and active chapter; fullscreen controls hid after idle and showed/toggled by tap; one 1920x1080/16:9 master, no overflow/errors/failed requests."
   global_motion_local: "pass: Three.js particles, layered neural activation, animated training signals, adjustable parameter dials and gentle camera parallax remain time-varying after minute one; 27 distinct post-minute samples; ambient background network/grid opacity reduced to keep explanatory cards dominant. Section 02 token landing retains clearance below category labels."
-  section_07_local_status: "pass: 34 keyframes reviewed across desktop/portrait phone/landscape phone; stage remains one 1920x1080 master without page overflow; seven chapter jumps exact; 340s real playback showed the matching training narration caption and active Section 07; 27 post-minute frames were distinct; native fullscreen controls auto-hide after idle, show/toggle by tap, and exit by button; no JS or failed asset requests."
-  section_07_live_status: "pass: live Pages playback at ~340.6s displayed the matching training narration caption and active chapter 07; 34 keyframes, desktop/portrait/landscape viewport layouts, seven chapter jumps, and fullscreen auto-hide/tap toggles passed; no errors or failed requests."
+  section_07_local_status: "pass: production build succeeds; local Chromium verified a 1920x1080 backing canvas, exact Section 07 chapter seek to 305.206s, real audio playback with synchronized caption/chapter, keyframe samples from 310.5s to 370.5s, and identical warning-card states after repeated 368.5s seeks; visible cards do not overlap at sampled beats; no failed assets or audio errors."
+  section_07_live_status: "pending: this Section 07 visual revision has not yet been deployed to GitHub Pages."
   public_deployment: "success: GitHub Actions run 39742013652 deployed commit 97090e1b1b02b5e2d748dda16eb030941b938f4a; Pages HTTP 200; seven-section MP3 HTTP 200 and Range 206 (8,930,786 bytes); live desktop/phone chapter, playback/caption, fullscreen, 16:9 and 1920x1080 canvas checks passed."
   ffprobe_verified: true
   full_decode_verified: true
@@ -161,5 +163,5 @@ quality_checks:
     - "CSS and JavaScript scene geometry use stage-relative units; the film composition stays 16:9 and player/review captions remain outside the film frame."
     - "Token boundaries, token-ID examples, and next-token candidate bar lengths are illustrative rather than a report of a specific model's tokenizer or probabilities."
     - "Sections 05–06 illustrate product-configured tool access: the model is not shown inventing tools, the orchestrator handles requests, external tools return results into context, and booking remains behind a pending approval gate."
-    - "Section 07 uses a deliberately simplified next-token/target example to explain optimization; it does not imply that a single update teaches a real model a fact. Training and post-training methods vary."
+    - "Section 07 uses a deliberately simplified Taipei nature-weekend next-token/target example (‘five’ vs. ‘eight’) to explain optimization; it does not imply that a single update teaches a real model a fact. Training and post-training methods vary."
     - "The final MP4 has not been rendered; this is a browser preview and source-project update."

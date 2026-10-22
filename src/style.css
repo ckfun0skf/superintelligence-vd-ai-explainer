@@ -826,6 +826,64 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 #stage .training-caution { display: flex; align-items: center; gap: .62cqw; color: #e0bbb0; font-size: .95cqw; letter-spacing: .035em; }
 #stage .training-caution i { width: 2.0cqw; height: 2.0cqw; display: grid; place-items: center; color: #ffb295; border: 1px solid rgba(240, 148, 121, .62); border-radius: 50%; box-shadow: 0 0 .65cqw rgba(234, 115, 92, .35); opacity: var(--risk-glow); font-size: 1.12cqw; font-style: normal; }
 
+/* Section 07 revision: one Taipei example, one active support card, deterministic motion. */
+#stage .learning-story *, #stage .learning-story *::before, #stage .learning-story *::after { animation: none !important; transition: none !important; }
+#stage .learning-edge.error-edge { stroke: rgba(239, 161, 104, .82); stroke-width: 2.4; }
+#stage .learning-signal { fill: #9df2df; }
+#stage .learning-signal.error-signal { fill: #ffbf82; filter: drop-shadow(0 0 8px rgba(255, 173, 97, .72)); }
+#stage .training-corpus { left: 4.5%; top: 33%; width: 27%; min-height: 21%; padding: 1.05cqw 1.2cqw; }
+#stage .training-pages { opacity: .72; transform: scale(.78) rotate(5deg); transform-origin: top right; }
+#stage .training-sample { width: 90%; margin-top: .9cqw; font-size: 1.12cqw; line-height: 1.35; }
+#stage .training-sample.secondary { margin-top: .48cqw; font-size: 1.02cqw; }
+#stage .training-model { left: 36%; top: 17%; width: 28%; height: 45%; }
+#stage .training-model-core i { animation: none; }
+#stage .training-prediction { left: 69%; top: 27%; width: 26.5%; min-height: 0; padding: 1.05cqw 1.2cqw; }
+#stage .training-prediction > div { margin-top: .65cqw; font-size: 1.2cqw; }
+#stage .prediction-chip { display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: .7cqw; padding: .48cqw .65cqw; font-size: .88cqw; }
+#stage .training-prediction .training-target,
+#stage .training-prediction .training-compare { position: relative; left: auto; top: auto; width: 100%; min-height: 0; }
+#stage .training-prediction .training-target { display: flex; align-items: center; justify-content: space-between; margin-top: .58cqw; padding: .42cqw .15cqw; border: 0; border-top: 1px solid rgba(138, 200, 168, .22); border-radius: 0; background: transparent; box-shadow: none; }
+#stage .training-prediction .training-target strong { margin: 0; font-size: 1.24cqw; }
+#stage .training-prediction .training-compare { display: flex; align-items: center; gap: .58cqw; margin-top: .28cqw; padding: .43cqw .58cqw; border-color: rgba(222, 155, 102, .28); border-radius: .42cqw; background: rgba(90, 60, 37, .12); box-shadow: none; }
+#stage .training-prediction .compare-icon { flex-basis: 1.75cqw; width: 1.75cqw; height: 1.75cqw; font-size: .9cqw; }
+#stage .training-prediction .compare-icon i { width: 2.15cqw; height: 2.15cqw; }
+#stage .training-prediction .training-compare strong { font-size: .88cqw; }
+#stage .training-prediction.is-correct .training-compare { border-color: rgba(127, 220, 174, .36); background: rgba(47, 128, 102, .12); }
+#stage .training-prediction.is-correct .training-compare strong { color: #a6f0d0; }
+#stage .training-parameters { left: 36%; top: 69%; width: 28%; min-height: 14%; padding: .8cqw 1.15cqw; }
+#stage .parameter-heading { gap: .68cqw; }
+#stage .parameter-heading strong { margin: 0; font-size: 1.05cqw; }
+#stage .parameter-icon { width: 2.0cqw; height: 2.0cqw; font-size: 1.1cqw; }
+#stage .parameter-dials { margin-top: .55cqw; }
+#stage .parameter-dial { width: 1.65cqw; height: 1.65cqw; }
+#stage .parameter-dial::after { height: .55cqw; }
+#stage .parameter-update { bottom: .55cqw; font-size: .78cqw; }
+#stage .training-example-slot { position: absolute; z-index: 2; left: 4.5%; top: 32%; width: 27%; height: 27%; pointer-events: none; }
+#stage .training-example-slot > .training-instruction,
+#stage .training-example-slot > .training-preference,
+#stage .training-example-slot > .training-tool-example,
+#stage .training-example-slot > .training-library,
+#stage .training-example-slot > .training-generated { left: 0; top: 0; width: 100%; height: 100%; min-height: 0; padding: 1.05cqw 1.15cqw; }
+#stage .training-example-slot > .training-instruction { align-items: center; gap: .72cqw; }
+#stage .training-instruction .instruction-user, #stage .training-instruction .instruction-assistant { margin-top: .52cqw; padding: .42cqw .52cqw; font-size: .96cqw; line-height: 1.25; }
+#stage .training-instruction .instruction-user { margin-left: .8cqw; }
+#stage .training-instruction .instruction-assistant { margin-right: .5cqw; }
+#stage .training-example-slot > .training-preference { display: flex; flex-direction: column; justify-content: center; }
+#stage .training-preference > div { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) auto; align-items: center; width: 100%; gap: .48cqw; margin-top: .72cqw; }
+#stage .preference-answer { display: flex; justify-content: center; min-width: 0; padding: .62cqw .48cqw; font-size: 1.04cqw; }
+#stage .preference-thumb { width: 1.55cqw; height: 1.55cqw; font-size: 1cqw; }
+#stage .training-example-slot > .training-tool-example { gap: .85cqw; }
+#stage .training-tool-example strong { font-size: 1.08cqw; }
+#stage .training-example-slot > .training-library { display: flex; flex-direction: column; justify-content: center; }
+#stage .training-library > div { height: 3.5cqw; margin-top: .45cqw; }
+#stage .training-library > div span { display: none; }
+#stage .training-library > div i { width: 1.05cqw; }
+#stage .training-example-slot > .training-generated { display: flex; flex-direction: column; justify-content: center; }
+#stage .training-generated-user, #stage .training-generated-answer { font-size: .96cqw; }
+#stage .training-cautions { left: 20%; top: 77%; width: 60%; min-height: 10%; gap: .8cqw; padding: .65cqw .9cqw; }
+#stage .training-caution { gap: .48cqw; font-size: .98cqw; }
+#stage .training-caution i { width: 1.8cqw; height: 1.8cqw; font-size: 1.02cqw; }
+
 /* Keep the film master unchanged; fullscreen controls float over it and auto-hide as a player overlay. */
 .chapter-nav { grid-template-columns: repeat(7, minmax(0, 1fr)); }
 .preview-column:fullscreen, .preview-column.is-preview-fullscreen {

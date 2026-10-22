@@ -268,11 +268,10 @@
             <div class="learning-story" id="learning-story" aria-label="How training adjusts a model's parameters">
               <svg class="learning-lines" id="learning-lines" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"></svg>
               <div class="training-corpus" id="training-corpus">
-                <small>ILLUSTRATIVE TEXT EXAMPLES</small>
+                <small>ILLUSTRATIVE TEXT</small>
                 <div class="training-pages" aria-hidden="true"><i></i><i></i><i></i></div>
-                <div class="training-sample">The capital of France is <b>Paris.</b></div>
-                <div class="training-sample secondary">A city can be known for its art, food, and history.</div>
-                <div class="training-token-ribbon" aria-hidden="true"><i>the</i><i>capital</i><i>of</i><i>France</i><i>is</i></div>
+                <div class="training-sample">Plan a two-day weekend in <b>Taipei.</b></div>
+                <div class="training-sample secondary">My budget is <b>$8,000</b>. I love nature.</div>
               </div>
               <div class="training-model" id="training-model">
                 <small>NEURAL MODEL</small>
@@ -286,47 +285,49 @@
                 <div class="training-model-core" aria-hidden="true"><i></i><i></i><i></i></div>
               </div>
               <div class="training-prediction" id="training-prediction">
-                <small>INPUT SEQUENCE</small>
-                <div>The capital of France is…</div>
-                <span class="prediction-chip">NEXT TOKEN <b id="training-prediction-word">London</b></span>
-              </div>
-              <div class="training-target" id="training-target">
-                <small>EXAMPLE CONTINUES WITH</small>
-                <strong id="training-target-word">Paris</strong>
-              </div>
-              <div class="training-compare" id="training-compare">
-                <span class="compare-icon" aria-hidden="true"><i></i><b>≠</b></span>
-                <span><small id="training-compare-label">COMPARE</small><strong id="training-compare-result">PREDICTION DIFFERS</strong></span>
+                <small>TAIPEI WEEKEND · NATURE</small>
+                <div>My budget is…</div>
+                <span class="prediction-chip">MODEL GUESSES <b id="training-prediction-word">five</b></span>
+                <div class="training-target" id="training-target">
+                  <small>TARGET</small>
+                  <strong id="training-target-word">eight</strong>
+                </div>
+                <div class="training-compare" id="training-compare">
+                  <span class="compare-icon" aria-hidden="true"><i></i><b>≠</b></span>
+                  <span><small id="training-compare-label">COMPARE</small><strong id="training-compare-result">MISMATCH</strong></span>
+                </div>
               </div>
               <div class="training-parameters" id="training-parameters">
-                <div class="parameter-heading"><span class="parameter-icon" aria-hidden="true">◉</span><span><small>ADJUSTABLE NUMERICAL SETTINGS</small><strong>MODEL PARAMETERS</strong></span></div>
-                <div class="parameter-dials" aria-hidden="true"><i class="parameter-dial"></i><i class="parameter-dial"></i><i class="parameter-dial"></i><i class="parameter-dial"></i><i class="parameter-dial"></i><i class="parameter-dial"></i><i class="parameter-dial"></i><i class="parameter-dial"></i></div>
-                <span class="parameter-update" id="training-update">NUDGE → TRY AGAIN</span>
+                <div class="parameter-heading"><span class="parameter-icon" aria-hidden="true">◉</span><strong>MODEL PARAMETERS</strong></div>
+                <div class="parameter-dials" aria-hidden="true"><i class="parameter-dial"></i><i class="parameter-dial"></i><i class="parameter-dial"></i></div>
+                <span class="parameter-update" id="training-update">NUDGE · TRY AGAIN</span>
               </div>
-              <div class="training-instruction" id="training-instruction">
-                <span class="instruction-icon" aria-hidden="true"><i></i><i></i><i></i></span>
-                <div><small>INSTRUCTION EXAMPLE</small><span class="instruction-user">Plan a nature-first weekend.</span><span class="instruction-assistant">Here is a two-day itinerary…</span></div>
-              </div>
-              <div class="training-preference" id="training-preference">
-                <small>PREFERENCE SIGNAL</small>
-                <div><span class="preference-answer muted">Too vague</span><span class="preference-thumb down" aria-hidden="true">▾</span><span class="preference-answer preferred">Useful and clear</span><span class="preference-thumb up" aria-hidden="true">♡</span></div>
-              </div>
-              <div class="training-tool-example" id="training-tool-example">
-                <span class="training-map-icon" aria-hidden="true"><i></i></span><span><small>SOME SYSTEMS ALSO LEARN</small><strong>TOOL-USE EXAMPLES</strong></span><b aria-hidden="true">↗</b>
-              </div>
-              <div class="training-library" id="training-library">
-                <small>NOT A SEARCHABLE ANSWER LIST</small>
-                <div><i></i><i></i><i></i><span>READY-MADE ANSWERS</span></div>
-                <b class="library-cross" aria-hidden="true"></b>
+              <div class="training-example-slot" id="training-example-slot">
+                <div class="training-instruction" id="training-instruction">
+                  <span class="instruction-icon" aria-hidden="true"><i></i><i></i><i></i></span>
+                  <div><small>INSTRUCTION</small><span class="instruction-user">Plan a nature-first weekend in Taipei.</span><span class="instruction-assistant">A two-day plan under $8,000.</span></div>
+                </div>
+                <div class="training-preference" id="training-preference">
+                  <small>PREFERENCE</small>
+                  <div><span class="preference-answer muted">Vague</span><span class="preference-thumb down" aria-hidden="true">▾</span><span class="preference-answer preferred">Helpful</span><span class="preference-thumb up" aria-hidden="true">♡</span></div>
+                </div>
+                <div class="training-tool-example" id="training-tool-example">
+                  <span class="training-map-icon" aria-hidden="true"><i></i></span><span><small>EXAMPLE</small><strong>MAP TOOL USE</strong></span>
+                </div>
+                <div class="training-library" id="training-library">
+                  <small>ANSWER DATABASE</small>
+                  <div><i></i><i></i><i></i></div>
+                  <b class="library-cross" aria-hidden="true"></b>
+                </div>
+                <div class="training-generated" id="training-generated">
+                  <div class="training-generated-user"><span class="tiny-user-icon" aria-hidden="true"></span><span>Plan a nature-first Taipei weekend.</span></div>
+                  <div class="training-generated-answer"><span class="tiny-model-icon" aria-hidden="true"><i></i><i></i><i></i></span><span>Two days, under $8,000.</span></div>
+                </div>
               </div>
               <div class="training-cautions" id="training-cautions">
                 <div class="training-caution"><i aria-hidden="true">?</i><span>MISUNDERSTAND</span></div>
-                <div class="training-caution"><i aria-hidden="true">✦</i><span>MAKE UP DETAILS</span></div>
-                <div class="training-caution"><i aria-hidden="true">↗</i><span>CHOOSE A POOR TOOL</span></div>
-              </div>
-              <div class="training-generated" id="training-generated">
-                <div class="training-generated-user"><span class="tiny-user-icon" aria-hidden="true"></span><span>Could you check this plan?</span></div>
-                <div class="training-generated-answer"><span class="tiny-model-icon" aria-hidden="true"><i></i><i></i><i></i></span><span>Here is a helpful next step…</span></div>
+                <div class="training-caution"><i aria-hidden="true">✦</i><span>INVENT DETAILS</span></div>
+                <div class="training-caution"><i aria-hidden="true">↗</i><span>WRONG TOOL</span></div>
               </div>
             </div>
           </div>

@@ -106,6 +106,7 @@ const trainingNetwork = document.querySelector('#training-network');
 const trainingNetworkWires = document.querySelector('#training-network-wires');
 const trainingPrediction = document.querySelector('#training-prediction');
 const trainingPredictionWord = document.querySelector('#training-prediction-word');
+const trainingTargetWord = document.querySelector('#training-target-word');
 const trainingTarget = document.querySelector('#training-target');
 const trainingCompare = document.querySelector('#training-compare');
 const trainingCompareLabel = document.querySelector('#training-compare-label');
@@ -115,6 +116,7 @@ const trainingUpdate = document.querySelector('#training-update');
 const trainingInstruction = document.querySelector('#training-instruction');
 const trainingPreference = document.querySelector('#training-preference');
 const trainingToolExample = document.querySelector('#training-tool-example');
+const trainingExampleSlot = document.querySelector('#training-example-slot');
 const trainingLibrary = document.querySelector('#training-library');
 const trainingCautions = document.querySelector('#training-cautions');
 const trainingGenerated = document.querySelector('#training-generated');
@@ -287,19 +289,16 @@ const callSignalNodes = callEdges.map(() => {
 const learningEdges = [
   { from: trainingCorpus, to: trainingModel, className: 'learning-edge data-edge' },
   { from: trainingModel, to: trainingPrediction, className: 'learning-edge forward-edge' },
-  { from: trainingPrediction, to: trainingCompare, className: 'learning-edge compare-edge' },
-  { from: trainingTarget, to: trainingCompare, className: 'learning-edge target-edge' },
-  { from: trainingCompare, to: trainingParameters, className: 'learning-edge error-edge' },
+  { from: trainingPrediction, to: trainingParameters, className: 'learning-edge error-edge' },
   { from: trainingParameters, to: trainingModel, className: 'learning-edge update-edge' },
-  { from: trainingInstruction, to: trainingModel, className: 'learning-edge posttrain-edge' },
-  { from: trainingPreference, to: trainingModel, className: 'learning-edge posttrain-edge' },
-  { from: trainingToolExample, to: trainingModel, className: 'learning-edge posttrain-edge' },
-  { from: trainingModel, to: trainingGenerated, className: 'learning-edge response-edge' },
+  { from: trainingExampleSlot, to: trainingModel, className: 'learning-edge posttrain-edge' },
+  { from: trainingModel, to: trainingExampleSlot, className: 'learning-edge response-edge' },
 ].map((edge) => ({ ...edge, path: svgPath(learningLines, edge.className) }));
-const learningSignals = learningEdges.map(() => {
+const learningSignals = learningEdges.map((edge) => {
   const signal = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  signal.setAttribute('r', '8');
+  signal.setAttribute('r', '6');
   signal.classList.add('learning-signal');
+  if (edge.className.includes('error-edge')) signal.classList.add('error-signal');
   signal.style.opacity = '0';
   learningLines.append(signal);
   return signal;
@@ -1313,117 +1312,116 @@ function renderTrainingStory(time) {
   const voice = time - SECTION_SEVEN_NARRATION_START;
   const sceneIn = smoothstep(SECTION_SEVEN_START, SECTION_SEVEN_START + 0.72, time);
   const sceneOut = 1 - smoothstep(DURATION - 0.62, DURATION, time);
-  const pretrain = 1 - smoothstep(34.0, 36.3, voice);
-  const posttrain = smoothstep(35.7, 37.2, voice);
-  const late = smoothstep(50.7, 52.3, voice);
   learningStory.style.visibility = 'visible';
   learningStory.style.opacity = (sceneIn * sceneOut).toFixed(3);
 
-  const corpusIn = smoothstep(0.18, 1.75, local) * pretrain;
+  const corpusIn = smoothstep(.4, 1.8, voice) * (1 - smoothstep(9.4, 10.5, voice));
   trainingCorpus.style.opacity = corpusIn.toFixed(3);
-  trainingCorpus.style.transform = `translateY(${(Math.sin(local * 1.2) * 0.11 * corpusIn).toFixed(3)}cqw) rotate(${(Math.sin(local * 0.62) * 0.28 * corpusIn).toFixed(2)}deg)`;
-  trainingCorpus.querySelectorAll('.training-sample, .training-token-ribbon').forEach((node, index) => {
-    node.style.transform = `translateX(${(Math.sin(local * 1.8 + index) * 0.08 * corpusIn).toFixed(3)}cqw)`;
+  trainingCorpus.style.transform = `translateY(${(Math.sin(local * 1.2) * .08 * corpusIn).toFixed(3)}cqw) rotate(${(Math.sin(local * .62) * .18 * corpusIn).toFixed(2)}deg)`;
+  trainingCorpus.querySelectorAll('.training-sample').forEach((node, index) => {
+    node.style.transform = `translateX(${(Math.sin(local * 1.3 + index) * .05 * corpusIn).toFixed(3)}cqw)`;
   });
 
-  const modelIn = smoothstep(0.0, 1.1, local);
+  const modelIn = smoothstep(0, .9, local);
+  const networkPulse = .5 + .5 * Math.sin(local * 2.2) ** 2;
   trainingModel.style.opacity = modelIn.toFixed(3);
-  trainingModel.style.transform = `translateY(${lerp(0.55, 0, modelIn).toFixed(3)}cqw) scale(${lerp(.96, 1, modelIn).toFixed(3)})`;
-  const networkPulse = 0.5 + 0.5 * Math.sin(local * 2.2) ** 2;
-  trainingNetwork.style.transform = `perspective(34cqw) rotateY(${(Math.sin(local * .42) * 4.2).toFixed(2)}deg) rotateX(${(Math.cos(local * .37) * 2.3).toFixed(2)}deg) scale(${(1 + .018 * networkPulse).toFixed(3)})`;
+  trainingModel.style.transform = `translateY(${lerp(.42, 0, modelIn).toFixed(3)}cqw) scale(${(1 + .012 * networkPulse).toFixed(3)})`;
+  trainingNetwork.style.transform = `perspective(34cqw) rotateY(${(Math.sin(local * .34) * 3.2).toFixed(2)}deg) rotateX(${(Math.cos(local * .3) * 1.8).toFixed(2)}deg) scale(${(1 + .014 * networkPulse).toFixed(3)})`;
   trainingNeurons.forEach((node, index) => {
     const layer = Math.floor(index / TRAINING_NODE_Y.length);
-    const wave = (local * .22) % 1;
-    const pass = Math.max(0, 1 - Math.abs(wave - layer / (TRAINING_LAYER_X.length - 1)) * 4.2);
-    const glow = .18 + .52 * pass + .22 * (.5 + .5 * Math.sin(local * 2.7 + index * .71));
+    const wave = (local * .2) % 1;
+    const pass = Math.max(0, 1 - Math.abs(wave - layer / (TRAINING_LAYER_X.length - 1)) * 4.0);
+    const glow = .16 + .58 * pass + .18 * (.5 + .5 * Math.sin(local * 2.45 + index * .71));
     node.style.opacity = (modelIn * glow).toFixed(3);
-    node.style.transform = `translate(-50%, -50%) scale(${(.78 + .45 * glow).toFixed(3)})`;
-    node.style.boxShadow = `0 0 ${(0.28 + .62 * glow).toFixed(2)}cqw rgba(112,222,210,${(.12 + .38 * glow).toFixed(3)})`;
+    node.style.transform = `translate(-50%, -50%) scale(${(.78 + .42 * glow).toFixed(3)})`;
+    node.style.boxShadow = `0 0 ${(0.25 + .52 * glow).toFixed(2)}cqw rgba(112,222,210,${(.1 + .3 * glow).toFixed(3)})`;
   });
   trainingNetworkWires.querySelectorAll('.training-wire').forEach((wire, index) => {
     const layer = Number(wire.dataset.layer);
-    const pulse = Math.max(0, 1 - Math.abs((local * .22) % 1 - (layer + .5) / 3) * 3.7);
-    wire.style.opacity = (modelIn * (.1 + .25 * networkPulse + .42 * pulse)).toFixed(3);
-    wire.style.strokeDashoffset = `${(-local * 2.1 - index * .18).toFixed(2)}`;
+    const pulse = Math.max(0, 1 - Math.abs((local * .2) % 1 - (layer + .5) / 3) * 3.5);
+    wire.style.opacity = (modelIn * (.08 + .2 * networkPulse + .36 * pulse)).toFixed(3);
+    wire.style.strokeDashoffset = `${(-local * 1.7 - index * .12).toFixed(2)}`;
   });
-  trainingModel.querySelector('.training-model-core').style.transform = `translate(-50%,-50%) scale(${(1 + .055 * networkPulse).toFixed(3)})`;
+  trainingModel.querySelector('.training-model-core').style.transform = `translate(-50%,-50%) scale(${(1 + .045 * networkPulse).toFixed(3)})`;
+  trainingModel.querySelectorAll('.training-model-core i').forEach((ring, index) => {
+    const speed = [15, -10, 7][index];
+    ring.style.transform = `rotate(${(local * speed).toFixed(2)}deg)`;
+  });
 
-  const predictionIn = smoothstep(8.3, 9.8, voice) * pretrain;
+  const predictionIn = smoothstep(10.1, 11.2, voice) * (1 - smoothstep(26.0, 27.1, voice));
   trainingPrediction.style.opacity = predictionIn.toFixed(3);
-  trainingPrediction.style.transform = `translateX(${lerp(.75, 0, predictionIn).toFixed(3)}cqw) scale(${lerp(.97, 1, predictionIn).toFixed(3)})`;
-  const targetIn = smoothstep(14.7, 16.0, voice) * pretrain;
-  trainingTarget.style.opacity = targetIn.toFixed(3);
-  trainingTarget.style.transform = `translateY(${lerp(.48, 0, targetIn).toFixed(3)}cqw) scale(${lerp(.95, 1, targetIn).toFixed(3)})`;
-  const compareIn = smoothstep(16.0, 17.2, voice) * pretrain;
-  trainingCompare.style.opacity = compareIn.toFixed(3);
-  trainingCompare.style.transform = `translateY(${lerp(.42, 0, compareIn).toFixed(3)}cqw) scale(${lerp(.94, 1, compareIn).toFixed(3)})`;
+  trainingPrediction.style.transform = `translateX(${lerp(.55, 0, predictionIn).toFixed(3)}cqw) scale(${lerp(.98, 1, predictionIn).toFixed(3)})`;
+  const targetIn = smoothstep(15.1, 16.0, voice) * (1 - smoothstep(26.0, 27.0, voice));
+  trainingTarget.style.opacity = (targetIn * predictionIn).toFixed(3);
+  trainingTarget.style.transform = `translateY(${lerp(.18, 0, targetIn).toFixed(3)}cqw)`;
+  const compareIn = smoothstep(16.0, 16.9, voice) * (1 - smoothstep(26.0, 27.0, voice));
+  trainingCompare.style.opacity = (compareIn * predictionIn).toFixed(3);
+  trainingCompare.style.transform = `translateY(${lerp(.16, 0, compareIn).toFixed(3)}cqw)`;
   const learningProgress = smoothstep(20.8, 25.6, voice);
   const corrected = learningProgress > .56;
-  trainingPredictionWord.textContent = corrected ? 'Paris' : 'London';
-  trainingCompareLabel.textContent = corrected ? 'AFTER AN UPDATE' : 'COMPARE';
-  trainingCompareResult.textContent = corrected ? 'CLOSER TO TARGET' : 'PREDICTION DIFFERS';
+  trainingPredictionWord.textContent = corrected ? 'eight' : 'five';
+  trainingCompareLabel.textContent = corrected ? 'AFTER UPDATE' : 'COMPARE';
+  trainingCompareResult.textContent = corrected ? 'MATCH' : 'MISMATCH';
   trainingCompare.classList.toggle('is-correct', corrected);
   trainingPrediction.classList.toggle('is-correct', corrected);
-  trainingUpdate.textContent = voice < 26 ? 'COMPARE → NUDGE → REPEAT' : 'REPEATED PASSES • PATTERNS SHIFT';
 
-  const parametersIn = smoothstep(18.0, 19.8, voice) * (1 - smoothstep(58.1, 60.0, voice));
+  const parametersIn = smoothstep(18.2, 19.5, voice) * (1 - smoothstep(30.6, 31.8, voice));
   trainingParameters.style.opacity = parametersIn.toFixed(3);
-  trainingParameters.style.transform = `translateY(${lerp(.62, 0, parametersIn).toFixed(3)}cqw) scale(${lerp(.97, 1, parametersIn).toFixed(3)})`;
+  trainingParameters.style.transform = `translateY(${lerp(.4, 0, parametersIn).toFixed(3)}cqw) scale(${lerp(.98, 1, parametersIn).toFixed(3)})`;
+  trainingUpdate.textContent = voice < 26.6 ? 'ADJUST · TRY AGAIN' : 'NUDGE · REPEAT';
   trainingDials.forEach((dial, index) => {
-    const adjustment = lerp(-38 + index * 9, 14 - index * 4, learningProgress);
-    const motion = Math.sin(local * 2.2 + index * 1.4) * (2.4 + 4.2 * learningProgress);
+    const adjustment = lerp(-34 + index * 18, 12 - index * 10, learningProgress);
+    const motion = Math.sin(local * 1.7 + index * 1.4) * (1.8 + 3.3 * learningProgress);
     dial.style.transform = `rotate(${(adjustment + motion).toFixed(2)}deg)`;
-    dial.style.setProperty('--dial-energy', (.22 + .7 * (0.5 + 0.5 * Math.sin(local * 2.5 + index))).toFixed(3));
+    dial.style.setProperty('--dial-energy', (.22 + .62 * (.5 + .5 * Math.sin(local * 2.0 + index))).toFixed(3));
   });
-  trainingCompare.querySelector('.compare-icon').style.transform = `scale(${(1 + .08 * Math.sin(local * 4.4) ** 2 * compareIn).toFixed(3)}) rotate(${(corrected ? 0 : Math.sin(local * 2.6) * 4).toFixed(2)}deg)`;
+  const compareIcon = trainingCompare.querySelector('.compare-icon');
+  compareIcon.style.transform = `scale(${(1 + .06 * Math.sin(local * 3.1) ** 2 * compareIn).toFixed(3)}) rotate(${(corrected ? 0 : Math.sin(local * 2.1) * 3).toFixed(2)}deg)`;
 
-  const instructionIn = smoothstep(36.0, 37.4, voice) * (1 - smoothstep(49.1, 50.4, voice));
+  const instructionIn = smoothstep(36.4, 37.3, voice) * (1 - smoothstep(39.9, 40.8, voice));
   trainingInstruction.style.opacity = instructionIn.toFixed(3);
-  trainingInstruction.style.transform = `translateX(${lerp(-.65, 0, instructionIn).toFixed(3)}cqw) scale(${lerp(.97, 1, instructionIn).toFixed(3)})`;
-  trainingInstruction.querySelector('.instruction-icon').style.transform = `rotate(${(Math.sin(local * 1.4) * 2.2 * instructionIn).toFixed(2)}deg)`;
-  const preferenceIn = smoothstep(36.0, 37.4, voice) * (1 - smoothstep(49.2, 50.5, voice));
+  trainingInstruction.style.transform = `translateX(${lerp(-.35, 0, instructionIn).toFixed(3)}cqw) scale(${lerp(.985, 1, instructionIn).toFixed(3)})`;
+  const preferenceIn = smoothstep(40.0, 40.8, voice) * (1 - smoothstep(43.9, 44.8, voice));
   trainingPreference.style.opacity = preferenceIn.toFixed(3);
-  trainingPreference.style.transform = `translateY(${lerp(.55, 0, preferenceIn).toFixed(3)}cqw)`;
-  trainingPreference.querySelector('.preference-thumb.up').style.transform = `scale(${(1 + .08 * Math.sin(local * 3.4) ** 2 * preferenceIn).toFixed(3)})`;
-  const toolExampleIn = smoothstep(44.5, 45.8, voice) * (1 - smoothstep(49.2, 50.5, voice));
+  trainingPreference.style.transform = `translateY(${lerp(.3, 0, preferenceIn).toFixed(3)}cqw)`;
+  const toolExampleIn = smoothstep(44.8, 45.6, voice) * (1 - smoothstep(49.0, 49.9, voice));
   trainingToolExample.style.opacity = toolExampleIn.toFixed(3);
-  trainingToolExample.style.transform = `translateX(${lerp(.6, 0, toolExampleIn).toFixed(3)}cqw) scale(${lerp(.97, 1, toolExampleIn).toFixed(3)})`;
-  trainingToolExample.querySelector('.training-map-icon').style.boxShadow = `0 0 ${(0.45 + .7 * Math.sin(local * 2.9) ** 2).toFixed(2)}cqw rgba(102,207,211,${(.12 + .16 * toolExampleIn).toFixed(3)})`;
+  trainingToolExample.style.transform = `translateX(${lerp(.35, 0, toolExampleIn).toFixed(3)}cqw) scale(${lerp(.985, 1, toolExampleIn).toFixed(3)})`;
+  trainingToolExample.querySelector('.training-map-icon').style.boxShadow = `0 0 ${(0.4 + .6 * Math.sin(local * 2.1) ** 2).toFixed(2)}cqw rgba(102,207,211,${(.1 + .14 * toolExampleIn).toFixed(3)})`;
 
-  const earlyLibrary = smoothstep(27.0, 28.4, voice) * (1 - smoothstep(34.7, 36.0, voice));
-  const lateLibrary = smoothstep(50.8, 52.2, voice) * (1 - smoothstep(55.4, 56.5, voice));
+  const earlyLibrary = smoothstep(32.4, 33.2, voice) * (1 - smoothstep(35.7, 36.4, voice));
+  const lateLibrary = smoothstep(51.3, 52.1, voice) * (1 - smoothstep(54.8, 55.5, voice));
   const libraryIn = Math.max(earlyLibrary, lateLibrary);
   trainingLibrary.style.opacity = libraryIn.toFixed(3);
-  trainingLibrary.style.left = earlyLibrary > lateLibrary ? '4.5%' : '69%';
-  trainingLibrary.style.top = earlyLibrary > lateLibrary ? '60%' : '35%';
-  trainingLibrary.style.transform = `translateX(${lerp(.55, 0, libraryIn).toFixed(3)}cqw) scale(${lerp(.97, 1, libraryIn).toFixed(3)})`;
-  const crossReveal = Math.max(smoothstep(29.0, 30.1, voice) * earlyLibrary, smoothstep(52.0, 53.1, voice) * lateLibrary);
-  trainingLibrary.querySelector('.library-cross').style.transform = `scaleX(${crossReveal.toFixed(3)}) rotate(-10deg)`;
+  trainingLibrary.style.transform = `translateY(${lerp(.28, 0, libraryIn).toFixed(3)}cqw) scale(${lerp(.985, 1, libraryIn).toFixed(3)})`;
+  const crossReveal = Math.max(smoothstep(33.3, 34.1, voice) * earlyLibrary, smoothstep(52.1, 52.9, voice) * lateLibrary);
+  trainingLibrary.querySelector('.library-cross').style.transform = `scaleX(${crossReveal.toFixed(3)}) rotate(-8deg)`;
   trainingLibrary.querySelectorAll('div i').forEach((item, index) => {
-    item.style.transform = `translateY(${(Math.sin(local * 2 + index) * .07 * libraryIn).toFixed(3)}cqw)`;
-  });
-  const generatedIn = smoothstep(55.0, 56.4, voice);
-  trainingGenerated.style.opacity = generatedIn.toFixed(3);
-  trainingGenerated.style.transform = `translateY(${lerp(.65, 0, generatedIn).toFixed(3)}cqw) scale(${lerp(.97, 1, generatedIn).toFixed(3)})`;
-  const cautionIn = smoothstep(59.2, 60.7, voice);
-  trainingCautions.style.opacity = cautionIn.toFixed(3);
-  trainingCautions.style.transform = `translateY(${lerp(.5, 0, cautionIn).toFixed(3)}cqw)`;
-  trainingCautions.querySelectorAll('.training-caution').forEach((card, index) => {
-    const glow = .5 + .5 * Math.sin(local * 3.2 + index * 1.6) ** 2;
-    card.style.setProperty('--risk-glow', glow.toFixed(3));
+    item.style.transform = `translateY(${(Math.sin(local * 1.6 + index) * .045 * libraryIn).toFixed(3)}cqw)`;
   });
 
+  const generatedIn = smoothstep(55.2, 56.1, voice) * (1 - smoothstep(59.2, 60.0, voice));
+  trainingGenerated.style.opacity = generatedIn.toFixed(3);
+  trainingGenerated.style.transform = `translateY(${lerp(.3, 0, generatedIn).toFixed(3)}cqw) scale(${lerp(.985, 1, generatedIn).toFixed(3)})`;
+  const cautionIn = smoothstep(59.5, 60.3, voice);
+  trainingCautions.style.opacity = cautionIn.toFixed(3);
+  trainingCautions.style.transform = `translateY(${lerp(.25, 0, cautionIn).toFixed(3)}cqw)`;
+  trainingCautions.querySelectorAll('.training-caution').forEach((card, index) => {
+    const starts = [59.7, 61.4, 63.1];
+    const itemIn = smoothstep(starts[index], starts[index] + .55, voice);
+    card.style.opacity = itemIn.toFixed(3);
+    card.style.transform = `translateY(${lerp(.18, 0, itemIn).toFixed(3)}cqw)`;
+    card.style.setProperty('--risk-glow', (.5 + .4 * Math.sin(local * 2.4 + index * 1.3) ** 2).toFixed(3));
+  });
+
+  const postExampleIn = Math.max(instructionIn, preferenceIn, toolExampleIn);
   const edgeStates = [
-    [smoothstep(.3, 1.9, voice), corpusIn * modelIn * .58, 0, .2],
-    [smoothstep(8.8, 10.4, voice), predictionIn * .64, 8.8, .23],
-    [smoothstep(14.5, 16.1, voice), compareIn * .74, 14.5, .28],
-    [smoothstep(14.5, 16.1, voice), targetIn * compareIn * .54, 14.5, .24],
-    [smoothstep(16.0, 17.5, voice), compareIn * parametersIn * .72, 16.0, .3],
-    [parametersIn > .02 ? 1 : 0, parametersIn * modelIn * (.36 + .14 * networkPulse), 18.0, .18],
-    [smoothstep(36.0, 37.5, voice), instructionIn * modelIn * .56, 36.0, .19],
-    [smoothstep(36.0, 37.5, voice), preferenceIn * modelIn * .56, 36.0, .2],
-    [smoothstep(44.5, 46.0, voice), toolExampleIn * modelIn * .56, 44.5, .21],
-    [smoothstep(55.0, 56.6, voice), generatedIn * modelIn * .58, 55.0, .25],
+    [smoothstep(.4, 1.9, voice), corpusIn * modelIn * .55, .4, .18],
+    [smoothstep(10.1, 11.4, voice), predictionIn * modelIn * .62, 10.1, .2],
+    [smoothstep(16.0, 17.2, voice), compareIn * parametersIn * .7, 16.0, .25],
+    [parametersIn > .02 ? 1 : 0, parametersIn * modelIn * (.34 + .12 * networkPulse), 18.2, .16],
+    [smoothstep(36.3, 37.5, voice), postExampleIn * modelIn * .52, 36.3, .18],
+    [smoothstep(55.1, 56.3, voice), generatedIn * modelIn * .56, 55.1, .22],
   ];
   learningEdges.forEach((edge, index) => {
     const [reveal, opacity, pulseStart, speed] = edgeStates[index];
@@ -1433,11 +1431,11 @@ function renderTrainingStory(time) {
       signal.style.opacity = '0';
       return;
     }
-    const phase = (Math.max(0, voice - pulseStart) * speed + index * .17) % 1;
+    const phase = (Math.max(0, voice - pulseStart) * speed + index * .13) % 1;
     const point = edge.path.getPointAtLength(edge.path.getTotalLength() * phase);
     signal.setAttribute('cx', point.x.toFixed(1));
     signal.setAttribute('cy', point.y.toFixed(1));
-    signal.style.opacity = String(Math.min(.96, opacity * (1.1 + .25 * networkPulse)).toFixed(3));
+    signal.style.opacity = String(Math.min(.82, opacity * (1.08 + .18 * networkPulse)).toFixed(3));
   });
 }
 

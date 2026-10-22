@@ -62,6 +62,6 @@ VOICE7_SOURCE=/path/to/section-07-training.wav \
 - Runtime: approximately **6 minutes 12 seconds**
 - Frame: **1920×1080**, 16:9, 24 fps
 - Audio: English narration with the restrained cyber/space score ducked beneath speech
-- Token boundaries, IDs, and the small Paris prediction example are illustrative; real tokenizer boundaries and training procedures vary
+- Token boundaries, IDs, and the Taipei nature-weekend “five” versus “eight” training example are illustrative; real tokenizer boundaries and training procedures vary
 
 This is a review preview, not the final MP4 render. Scene states derive from absolute audio time, so direct and reverse seeking reconstruct the same frames and transitions.
