@@ -13,7 +13,8 @@ OUT = Path(os.environ.get("QA_OUT", "/home/ubuntu/ai-explainer-redesign-qa"))
 OUT.mkdir(parents=True, exist_ok=True)
 TIMES = [21.0, 37.3, 39.5, 65.5, 89.0, 106.2, 131.0, 149.3, 159.5, 173.0,
          180.5, 198.0, 207.0, 216.0, 222.0, 242.8, 252.0, 261.0, 268.0,
-         273.0, 286.0, 299.0, 304.7]
+         273.0, 286.0, 299.0, 304.7, 305.2, 307.4, 318.2, 323.0, 331.0,
+         341.0, 347.0, 354.0, 360.0, 365.0, 370.5]
 ERRORS: list[str] = []
 FAILED: list[str] = []
 
@@ -81,12 +82,25 @@ def check_viewport(browser, name: str, width: int, height: int, dpr: float) -> d
     }""")
     page.evaluate("document.querySelector('.preview-column').classList.remove('is-preview-fullscreen')")
 
-    # Test actual Fullscreen API entry and the player's own exit control (not simulated CSS alone).
+    # Test native fullscreen plus the video-player auto-hide/tap-toggle behavior.
     page.locator('#fullscreen-button').click()
     page.wait_for_timeout(100)
     native_enter = page.evaluate("!!document.fullscreenElement")
+    auto_hide = {"initialVisible": False, "hiddenAfterIdle": False, "tapShows": False, "secondTapHides": False}
     if native_enter:
-        page.locator('#fullscreen-button').click()
+        auto_hide["initialVisible"] = page.evaluate("!document.querySelector('.preview-column').classList.contains('fullscreen-ui-hidden')")
+        page.wait_for_timeout(3200)
+        auto_hide["hiddenAfterIdle"] = page.evaluate("document.querySelector('.preview-column').classList.contains('fullscreen-ui-hidden')")
+        page.locator('#stage').click(position={"x": 90, "y": 70})
+        page.wait_for_timeout(80)
+        auto_hide["tapShows"] = page.evaluate("!document.querySelector('.preview-column').classList.contains('fullscreen-ui-hidden')")
+        page.locator('#stage').click(position={"x": 90, "y": 70})
+        page.wait_for_timeout(80)
+        auto_hide["secondTapHides"] = page.evaluate("document.querySelector('.preview-column').classList.contains('fullscreen-ui-hidden')")
+        if auto_hide["secondTapHides"]:
+            page.locator('#stage').click(position={"x": 90, "y": 70})
+            page.wait_for_timeout(80)
+        page.locator('#fullscreen-button').click(force=True)
         page.wait_for_timeout(100)
     native_exit = not page.evaluate("!!document.fullscreenElement")
 
@@ -100,14 +114,26 @@ def check_viewport(browser, name: str, width: int, height: int, dpr: float) -> d
       active:document.querySelector('.chapter-button.is-active')?.dataset.time})""")
     page.locator('#play-button').click()
 
+    # Verify Section 07's narration caption and chapter state follow the real audio clock too.
+    page.evaluate("document.querySelector('#preview-audio').currentTime=340.1")
+    page.locator('#play-button').click()
+    page.wait_for_timeout(550)
+    section7_playback = page.evaluate("""() => ({time:document.querySelector('#preview-audio').currentTime,
+      paused:document.querySelector('#preview-audio').paused,
+      caption:document.querySelector('#review-caption').textContent.trim(),
+      active:document.querySelector('.chapter-button.is-active')?.dataset.time})""")
+    page.locator('#play-button').click()
+
     motion_times = [131.0,149.3,159.5,173.0,180.5,198.0,207.0,216.0,222.0,
-                    242.8,252.0,261.0,268.0,273.0,286.0,299.0,304.7]
+                    242.8,252.0,261.0,268.0,273.0,286.0,299.0,304.7,
+                    307.4,318.2,323.0,331.0,341.0,347.0,354.0,360.0,365.0,370.5]
     distinct_post_minute = len({frames[str(t)] for t in motion_times})
     page.close()
     return {"viewportName":name,"base":base,"typographyAtSection4":typography,
             "chapterChecks":chapter_checks,"chapterToggle":{"collapsed":collapsed,"expanded":expanded},
-            "fullscreenFallback":fullscreen_fallback,"nativeFullscreen":{"entered":native_enter,"exitedByButton":native_exit},
-            "playback":playback,"postMinuteDistinctFrames":distinct_post_minute,"keyframes":TIMES}
+            "fullscreenFallback":fullscreen_fallback,"nativeFullscreen":{"entered":native_enter,"autoHide":auto_hide,"exitedByButton":native_exit},
+            "playback":playback,"section7Playback":section7_playback,
+            "postMinuteDistinctFrames":distinct_post_minute,"keyframes":TIMES}
 
 
 with sync_playwright() as p:

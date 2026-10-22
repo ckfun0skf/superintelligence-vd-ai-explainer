@@ -15,6 +15,8 @@ const fullscreenLabel = document.querySelector('#fullscreen-label');
 const timeline = document.querySelector('#timeline');
 const chapterToggle = document.querySelector('#chapter-toggle');
 const chapterNav = document.querySelector('#chapter-nav');
+const playerControls = document.querySelector('.player-controls');
+const fullscreenOrientationHint = document.querySelector('#fullscreen-orientation-hint');
 const chapterButtons = [...document.querySelectorAll('.chapter-button')];
 const currentTimeReadout = document.querySelector('#current-time');
 const totalTimeReadout = document.querySelector('#total-time');
@@ -96,11 +98,36 @@ const callResponse = document.querySelector('#call-response');
 const callResponseText = document.querySelector('#call-response-text');
 const callCautions = document.querySelector('#call-cautions');
 const callLinesSvg = document.querySelector('#tool-call-lines');
+const learningStory = document.querySelector('#learning-story');
+const learningLines = document.querySelector('#learning-lines');
+const trainingCorpus = document.querySelector('#training-corpus');
+const trainingModel = document.querySelector('#training-model');
+const trainingNetwork = document.querySelector('#training-network');
+const trainingNetworkWires = document.querySelector('#training-network-wires');
+const trainingPrediction = document.querySelector('#training-prediction');
+const trainingPredictionWord = document.querySelector('#training-prediction-word');
+const trainingTarget = document.querySelector('#training-target');
+const trainingCompare = document.querySelector('#training-compare');
+const trainingCompareLabel = document.querySelector('#training-compare-label');
+const trainingCompareResult = document.querySelector('#training-compare-result');
+const trainingParameters = document.querySelector('#training-parameters');
+const trainingUpdate = document.querySelector('#training-update');
+const trainingInstruction = document.querySelector('#training-instruction');
+const trainingPreference = document.querySelector('#training-preference');
+const trainingToolExample = document.querySelector('#training-tool-example');
+const trainingLibrary = document.querySelector('#training-library');
+const trainingCautions = document.querySelector('#training-cautions');
+const trainingGenerated = document.querySelector('#training-generated');
+const trainingDials = [...document.querySelectorAll('.parameter-dial')];
+const trainingNeurons = [...document.querySelectorAll('.training-layer i')];
 
 const SECTION_SIX_START = 227.866;
 const SECTION_SIX_NARRATION_START = 229.366;
 const SECTION_SIX_NARRATION_DURATION = 75.84;
-const DURATION = SECTION_SIX_NARRATION_START + SECTION_SIX_NARRATION_DURATION;
+const SECTION_SEVEN_START = SECTION_SIX_NARRATION_START + SECTION_SIX_NARRATION_DURATION;
+const SECTION_SEVEN_NARRATION_START = SECTION_SEVEN_START + 1.5;
+const SECTION_SEVEN_NARRATION_DURATION = 65.32;
+const DURATION = SECTION_SEVEN_NARRATION_START + SECTION_SEVEN_NARRATION_DURATION;
 const FPS = 24;
 const SECTION_TWO_START = 24.4;
 const SECTION_TWO_DURATION = 31.2;
@@ -168,6 +195,18 @@ const CAPTIONS = [
   { start: 287.826, end: 292.446, text: 'The model proposes the tool call; the application runs it.' },
   { start: 292.446, end: 294.166, text: 'This distinction matters.' },
   { start: 294.166, end: 304.966, text: 'Tool selection can be mistaken, tool results can be incomplete, and consequential actions—such as making a reservation—may require confirmation and permission.' },
+  { start: 307.106, end: 308.906, text: 'These abilities come from training.' },
+  { start: 308.906, end: 317.206, text: 'During pre-training, a model learns patterns from large collections of text, including how words and ideas tend to fit together.' },
+  { start: 317.206, end: 321.906, text: 'In a common training approach, it practices predicting the next token.' },
+  { start: 321.906, end: 327.906, text: 'When its prediction differs from the target, an optimization process adjusts the model’s parameters.' },
+  { start: 327.906, end: 333.306, text: 'You can picture those parameters as an enormous set of adjustable numerical settings.' },
+  { start: 333.306, end: 343.206, text: 'Training nudges them so the model becomes more likely to produce useful patterns in the right context, not by simply adding every training sentence to a searchable list.' },
+  { start: 343.206, end: 351.606, text: 'A model may then be further trained on examples of instructions and helpful responses, and on preference signals that encourage desired behavior.' },
+  { start: 351.606, end: 356.006, text: 'Some systems also train or tune models with examples of tool use.' },
+  { start: 356.006, end: 358.006, text: 'The exact process varies.' },
+  { start: 358.006, end: 361.906, text: 'The model is not simply a database containing every answer it has seen.' },
+  { start: 361.906, end: 366.406, text: 'Training changes its parameters so it can produce useful patterns of response.' },
+  { start: 366.406, end: 372.026, text: 'It can still misunderstand, make up details, or select an unsuitable tool.' },
 ];
 
 const WORD_ROWS = [
@@ -245,10 +284,32 @@ const callSignalNodes = callEdges.map(() => {
   callLinesSvg.append(signal);
   return signal;
 });
+const learningEdges = [
+  { from: trainingCorpus, to: trainingModel, className: 'learning-edge data-edge' },
+  { from: trainingModel, to: trainingPrediction, className: 'learning-edge forward-edge' },
+  { from: trainingPrediction, to: trainingCompare, className: 'learning-edge compare-edge' },
+  { from: trainingTarget, to: trainingCompare, className: 'learning-edge target-edge' },
+  { from: trainingCompare, to: trainingParameters, className: 'learning-edge error-edge' },
+  { from: trainingParameters, to: trainingModel, className: 'learning-edge update-edge' },
+  { from: trainingInstruction, to: trainingModel, className: 'learning-edge posttrain-edge' },
+  { from: trainingPreference, to: trainingModel, className: 'learning-edge posttrain-edge' },
+  { from: trainingToolExample, to: trainingModel, className: 'learning-edge posttrain-edge' },
+  { from: trainingModel, to: trainingGenerated, className: 'learning-edge response-edge' },
+].map((edge) => ({ ...edge, path: svgPath(learningLines, edge.className) }));
+const learningSignals = learningEdges.map(() => {
+  const signal = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  signal.setAttribute('r', '8');
+  signal.classList.add('learning-signal');
+  signal.style.opacity = '0';
+  learningLines.append(signal);
+  return signal;
+});
 const neuralWireNodes = [];
 const neuralSignalNodes = [];
 const NEURAL_LAYER_X = [9.5, 35.5, 61.5, 87.5];
 const NEURAL_NODE_Y = [18, 39.3, 60.7, 82];
+const TRAINING_LAYER_X = [8, 36, 64, 92];
+const TRAINING_NODE_Y = [17, 39, 61, 83];
 
 function buildNeuralMesh() {
   const namespace = 'http://www.w3.org/2000/svg';
@@ -282,6 +343,27 @@ function buildNeuralMesh() {
 }
 
 buildNeuralMesh();
+
+function buildTrainingNetwork() {
+  const namespace = 'http://www.w3.org/2000/svg';
+  for (let layer = 0; layer < TRAINING_LAYER_X.length - 1; layer += 1) {
+    TRAINING_NODE_Y.forEach((sourceY, sourceIndex) => {
+      TRAINING_NODE_Y.forEach((targetY, targetIndex) => {
+        if (Math.abs(sourceIndex - targetIndex) > 1) return;
+        const line = document.createElementNS(namespace, 'line');
+        line.setAttribute('x1', TRAINING_LAYER_X[layer]);
+        line.setAttribute('y1', sourceY);
+        line.setAttribute('x2', TRAINING_LAYER_X[layer + 1]);
+        line.setAttribute('y2', targetY);
+        line.dataset.layer = String(layer);
+        line.classList.add('training-wire');
+        trainingNetworkWires.append(line);
+      });
+    });
+  }
+}
+
+buildTrainingNetwork();
 
 const clamp = (value, min = 0, max = 1) => Math.max(min, Math.min(max, value));
 const smoothstep = (start, end, value) => {
@@ -562,7 +644,7 @@ try {
   for (const [a, b] of linkPairs) linePositions.push(...nodePoints[a], ...nodePoints[b]);
   const lineGeometry = new THREE.BufferGeometry();
   lineGeometry.setAttribute('position', new THREE.Float32BufferAttribute(linePositions, 3));
-  network = new THREE.LineSegments(lineGeometry, new THREE.LineBasicMaterial({ color: 0x5aa9ad, transparent: true, opacity: 0.09, depthWrite: false }));
+  network = new THREE.LineSegments(lineGeometry, new THREE.LineBasicMaterial({ color: 0x5aa9ad, transparent: true, opacity: 0.038, depthWrite: false }));
   scene.add(network);
 
   const gridPositions = [];
@@ -570,7 +652,7 @@ try {
   for (let y = -5; y <= 5; y += 1) gridPositions.push(-9, y, -3.5, 9, y, -3.5);
   const gridGeometry = new THREE.BufferGeometry();
   gridGeometry.setAttribute('position', new THREE.Float32BufferAttribute(gridPositions, 3));
-  gridMaterial = new THREE.LineBasicMaterial({ color: 0x456b7b, transparent: true, opacity: 0.035, depthWrite: false });
+  gridMaterial = new THREE.LineBasicMaterial({ color: 0x456b7b, transparent: true, opacity: 0.014, depthWrite: false });
   scene.add(new THREE.LineSegments(gridGeometry, gridMaterial));
 
   const sparkCount = 150;
@@ -1100,7 +1182,7 @@ function renderToolCallStory(time) {
   const local = time - SECTION_SIX_START;
   const voice = time - SECTION_SIX_NARRATION_START;
   const sceneIn = smoothstep(SECTION_SIX_START, SECTION_SIX_START + 0.38, time);
-  const sceneOut = 1 - smoothstep(DURATION - 0.72, DURATION, time);
+  const sceneOut = 1 - smoothstep(SECTION_SEVEN_START - 0.55, SECTION_SEVEN_START + 0.15, time);
   toolCallStory.style.visibility = 'visible';
   toolCallStory.style.opacity = (sceneIn * sceneOut).toFixed(3);
 
@@ -1218,6 +1300,147 @@ function renderToolCallStory(time) {
   });
 }
 
+function renderTrainingStory(time) {
+  if (time < SECTION_SEVEN_START) {
+    learningStory.style.opacity = '0';
+    learningStory.style.visibility = 'hidden';
+    learningSignals.forEach((signal) => { signal.style.opacity = '0'; });
+    learningEdges.forEach(({ path }) => { path.style.opacity = '0'; });
+    return;
+  }
+
+  const local = time - SECTION_SEVEN_START;
+  const voice = time - SECTION_SEVEN_NARRATION_START;
+  const sceneIn = smoothstep(SECTION_SEVEN_START, SECTION_SEVEN_START + 0.72, time);
+  const sceneOut = 1 - smoothstep(DURATION - 0.62, DURATION, time);
+  const pretrain = 1 - smoothstep(34.0, 36.3, voice);
+  const posttrain = smoothstep(35.7, 37.2, voice);
+  const late = smoothstep(50.7, 52.3, voice);
+  learningStory.style.visibility = 'visible';
+  learningStory.style.opacity = (sceneIn * sceneOut).toFixed(3);
+
+  const corpusIn = smoothstep(0.18, 1.75, local) * pretrain;
+  trainingCorpus.style.opacity = corpusIn.toFixed(3);
+  trainingCorpus.style.transform = `translateY(${(Math.sin(local * 1.2) * 0.11 * corpusIn).toFixed(3)}cqw) rotate(${(Math.sin(local * 0.62) * 0.28 * corpusIn).toFixed(2)}deg)`;
+  trainingCorpus.querySelectorAll('.training-sample, .training-token-ribbon').forEach((node, index) => {
+    node.style.transform = `translateX(${(Math.sin(local * 1.8 + index) * 0.08 * corpusIn).toFixed(3)}cqw)`;
+  });
+
+  const modelIn = smoothstep(0.0, 1.1, local);
+  trainingModel.style.opacity = modelIn.toFixed(3);
+  trainingModel.style.transform = `translateY(${lerp(0.55, 0, modelIn).toFixed(3)}cqw) scale(${lerp(.96, 1, modelIn).toFixed(3)})`;
+  const networkPulse = 0.5 + 0.5 * Math.sin(local * 2.2) ** 2;
+  trainingNetwork.style.transform = `perspective(34cqw) rotateY(${(Math.sin(local * .42) * 4.2).toFixed(2)}deg) rotateX(${(Math.cos(local * .37) * 2.3).toFixed(2)}deg) scale(${(1 + .018 * networkPulse).toFixed(3)})`;
+  trainingNeurons.forEach((node, index) => {
+    const layer = Math.floor(index / TRAINING_NODE_Y.length);
+    const wave = (local * .22) % 1;
+    const pass = Math.max(0, 1 - Math.abs(wave - layer / (TRAINING_LAYER_X.length - 1)) * 4.2);
+    const glow = .18 + .52 * pass + .22 * (.5 + .5 * Math.sin(local * 2.7 + index * .71));
+    node.style.opacity = (modelIn * glow).toFixed(3);
+    node.style.transform = `translate(-50%, -50%) scale(${(.78 + .45 * glow).toFixed(3)})`;
+    node.style.boxShadow = `0 0 ${(0.28 + .62 * glow).toFixed(2)}cqw rgba(112,222,210,${(.12 + .38 * glow).toFixed(3)})`;
+  });
+  trainingNetworkWires.querySelectorAll('.training-wire').forEach((wire, index) => {
+    const layer = Number(wire.dataset.layer);
+    const pulse = Math.max(0, 1 - Math.abs((local * .22) % 1 - (layer + .5) / 3) * 3.7);
+    wire.style.opacity = (modelIn * (.1 + .25 * networkPulse + .42 * pulse)).toFixed(3);
+    wire.style.strokeDashoffset = `${(-local * 2.1 - index * .18).toFixed(2)}`;
+  });
+  trainingModel.querySelector('.training-model-core').style.transform = `translate(-50%,-50%) scale(${(1 + .055 * networkPulse).toFixed(3)})`;
+
+  const predictionIn = smoothstep(8.3, 9.8, voice) * pretrain;
+  trainingPrediction.style.opacity = predictionIn.toFixed(3);
+  trainingPrediction.style.transform = `translateX(${lerp(.75, 0, predictionIn).toFixed(3)}cqw) scale(${lerp(.97, 1, predictionIn).toFixed(3)})`;
+  const targetIn = smoothstep(14.7, 16.0, voice) * pretrain;
+  trainingTarget.style.opacity = targetIn.toFixed(3);
+  trainingTarget.style.transform = `translateY(${lerp(.48, 0, targetIn).toFixed(3)}cqw) scale(${lerp(.95, 1, targetIn).toFixed(3)})`;
+  const compareIn = smoothstep(16.0, 17.2, voice) * pretrain;
+  trainingCompare.style.opacity = compareIn.toFixed(3);
+  trainingCompare.style.transform = `translateY(${lerp(.42, 0, compareIn).toFixed(3)}cqw) scale(${lerp(.94, 1, compareIn).toFixed(3)})`;
+  const learningProgress = smoothstep(20.8, 25.6, voice);
+  const corrected = learningProgress > .56;
+  trainingPredictionWord.textContent = corrected ? 'Paris' : 'London';
+  trainingCompareLabel.textContent = corrected ? 'AFTER AN UPDATE' : 'COMPARE';
+  trainingCompareResult.textContent = corrected ? 'CLOSER TO TARGET' : 'PREDICTION DIFFERS';
+  trainingCompare.classList.toggle('is-correct', corrected);
+  trainingPrediction.classList.toggle('is-correct', corrected);
+  trainingUpdate.textContent = voice < 26 ? 'COMPARE → NUDGE → REPEAT' : 'REPEATED PASSES • PATTERNS SHIFT';
+
+  const parametersIn = smoothstep(18.0, 19.8, voice) * (1 - smoothstep(58.1, 60.0, voice));
+  trainingParameters.style.opacity = parametersIn.toFixed(3);
+  trainingParameters.style.transform = `translateY(${lerp(.62, 0, parametersIn).toFixed(3)}cqw) scale(${lerp(.97, 1, parametersIn).toFixed(3)})`;
+  trainingDials.forEach((dial, index) => {
+    const adjustment = lerp(-38 + index * 9, 14 - index * 4, learningProgress);
+    const motion = Math.sin(local * 2.2 + index * 1.4) * (2.4 + 4.2 * learningProgress);
+    dial.style.transform = `rotate(${(adjustment + motion).toFixed(2)}deg)`;
+    dial.style.setProperty('--dial-energy', (.22 + .7 * (0.5 + 0.5 * Math.sin(local * 2.5 + index))).toFixed(3));
+  });
+  trainingCompare.querySelector('.compare-icon').style.transform = `scale(${(1 + .08 * Math.sin(local * 4.4) ** 2 * compareIn).toFixed(3)}) rotate(${(corrected ? 0 : Math.sin(local * 2.6) * 4).toFixed(2)}deg)`;
+
+  const instructionIn = smoothstep(36.0, 37.4, voice) * (1 - smoothstep(49.1, 50.4, voice));
+  trainingInstruction.style.opacity = instructionIn.toFixed(3);
+  trainingInstruction.style.transform = `translateX(${lerp(-.65, 0, instructionIn).toFixed(3)}cqw) scale(${lerp(.97, 1, instructionIn).toFixed(3)})`;
+  trainingInstruction.querySelector('.instruction-icon').style.transform = `rotate(${(Math.sin(local * 1.4) * 2.2 * instructionIn).toFixed(2)}deg)`;
+  const preferenceIn = smoothstep(36.0, 37.4, voice) * (1 - smoothstep(49.2, 50.5, voice));
+  trainingPreference.style.opacity = preferenceIn.toFixed(3);
+  trainingPreference.style.transform = `translateY(${lerp(.55, 0, preferenceIn).toFixed(3)}cqw)`;
+  trainingPreference.querySelector('.preference-thumb.up').style.transform = `scale(${(1 + .08 * Math.sin(local * 3.4) ** 2 * preferenceIn).toFixed(3)})`;
+  const toolExampleIn = smoothstep(44.5, 45.8, voice) * (1 - smoothstep(49.2, 50.5, voice));
+  trainingToolExample.style.opacity = toolExampleIn.toFixed(3);
+  trainingToolExample.style.transform = `translateX(${lerp(.6, 0, toolExampleIn).toFixed(3)}cqw) scale(${lerp(.97, 1, toolExampleIn).toFixed(3)})`;
+  trainingToolExample.querySelector('.training-map-icon').style.boxShadow = `0 0 ${(0.45 + .7 * Math.sin(local * 2.9) ** 2).toFixed(2)}cqw rgba(102,207,211,${(.12 + .16 * toolExampleIn).toFixed(3)})`;
+
+  const earlyLibrary = smoothstep(27.0, 28.4, voice) * (1 - smoothstep(34.7, 36.0, voice));
+  const lateLibrary = smoothstep(50.8, 52.2, voice) * (1 - smoothstep(55.4, 56.5, voice));
+  const libraryIn = Math.max(earlyLibrary, lateLibrary);
+  trainingLibrary.style.opacity = libraryIn.toFixed(3);
+  trainingLibrary.style.left = earlyLibrary > lateLibrary ? '4.5%' : '69%';
+  trainingLibrary.style.top = earlyLibrary > lateLibrary ? '60%' : '35%';
+  trainingLibrary.style.transform = `translateX(${lerp(.55, 0, libraryIn).toFixed(3)}cqw) scale(${lerp(.97, 1, libraryIn).toFixed(3)})`;
+  const crossReveal = Math.max(smoothstep(29.0, 30.1, voice) * earlyLibrary, smoothstep(52.0, 53.1, voice) * lateLibrary);
+  trainingLibrary.querySelector('.library-cross').style.transform = `scaleX(${crossReveal.toFixed(3)}) rotate(-10deg)`;
+  trainingLibrary.querySelectorAll('div i').forEach((item, index) => {
+    item.style.transform = `translateY(${(Math.sin(local * 2 + index) * .07 * libraryIn).toFixed(3)}cqw)`;
+  });
+  const generatedIn = smoothstep(55.0, 56.4, voice);
+  trainingGenerated.style.opacity = generatedIn.toFixed(3);
+  trainingGenerated.style.transform = `translateY(${lerp(.65, 0, generatedIn).toFixed(3)}cqw) scale(${lerp(.97, 1, generatedIn).toFixed(3)})`;
+  const cautionIn = smoothstep(59.2, 60.7, voice);
+  trainingCautions.style.opacity = cautionIn.toFixed(3);
+  trainingCautions.style.transform = `translateY(${lerp(.5, 0, cautionIn).toFixed(3)}cqw)`;
+  trainingCautions.querySelectorAll('.training-caution').forEach((card, index) => {
+    const glow = .5 + .5 * Math.sin(local * 3.2 + index * 1.6) ** 2;
+    card.style.setProperty('--risk-glow', glow.toFixed(3));
+  });
+
+  const edgeStates = [
+    [smoothstep(.3, 1.9, voice), corpusIn * modelIn * .58, 0, .2],
+    [smoothstep(8.8, 10.4, voice), predictionIn * .64, 8.8, .23],
+    [smoothstep(14.5, 16.1, voice), compareIn * .74, 14.5, .28],
+    [smoothstep(14.5, 16.1, voice), targetIn * compareIn * .54, 14.5, .24],
+    [smoothstep(16.0, 17.5, voice), compareIn * parametersIn * .72, 16.0, .3],
+    [parametersIn > .02 ? 1 : 0, parametersIn * modelIn * (.36 + .14 * networkPulse), 18.0, .18],
+    [smoothstep(36.0, 37.5, voice), instructionIn * modelIn * .56, 36.0, .19],
+    [smoothstep(36.0, 37.5, voice), preferenceIn * modelIn * .56, 36.0, .2],
+    [smoothstep(44.5, 46.0, voice), toolExampleIn * modelIn * .56, 44.5, .21],
+    [smoothstep(55.0, 56.6, voice), generatedIn * modelIn * .58, 55.0, .25],
+  ];
+  learningEdges.forEach((edge, index) => {
+    const [reveal, opacity, pulseStart, speed] = edgeStates[index];
+    drawLink(edge.path, edge.from, edge.to, reveal, opacity);
+    const signal = learningSignals[index];
+    if (opacity <= .015 || reveal <= .015 || !edge.path.getAttribute('d')) {
+      signal.style.opacity = '0';
+      return;
+    }
+    const phase = (Math.max(0, voice - pulseStart) * speed + index * .17) % 1;
+    const point = edge.path.getPointAtLength(edge.path.getTotalLength() * phase);
+    signal.setAttribute('cx', point.x.toFixed(1));
+    signal.setAttribute('cy', point.y.toFixed(1));
+    signal.style.opacity = String(Math.min(.96, opacity * (1.1 + .25 * networkPulse)).toFixed(3));
+  });
+}
+
 function updateParticleField(time, sectionTwoTime) {
   if (!sparkCloud || !sparkMaterial) return;
   const assistantBurst = smoothstep(9.45, 10.25, time) * (1 - smoothstep(16.0, 17.5, time));
@@ -1231,8 +1454,10 @@ function updateParticleField(time, sectionTwoTime) {
   const toolDefinitionFlow = smoothstep(SECTION_FIVE_START + 1.0, SECTION_FIVE_START + 5.0, time)
     * (1 - smoothstep(SECTION_SIX_START - 2.0, SECTION_SIX_START + 1.5, time));
   const toolCallFlow = smoothstep(SECTION_SIX_START + 1.0, SECTION_SIX_START + 5.0, time)
+    * (1 - smoothstep(SECTION_SEVEN_START - 2.0, SECTION_SEVEN_START + 0.3, time));
+  const trainingFlow = smoothstep(SECTION_SEVEN_START + 1.0, SECTION_SEVEN_START + 5.0, time)
     * (1 - smoothstep(DURATION - 3.0, DURATION - 0.4, time));
-  const laterMotion = Math.max(generationFlow * 0.7, toolDefinitionFlow * 0.78, toolCallFlow * 0.86);
+  const laterMotion = Math.max(generationFlow * 0.7, toolDefinitionFlow * 0.78, toolCallFlow * 0.86, trainingFlow * 0.9);
   const intensity = Math.max(assistantBurst, tokenBurst * 0.92, relationBurst * 0.65, inferenceBurst * 0.42, laterMotion);
   sparkMaterial.opacity = 0.58 * intensity + 0.14 * laterMotion;
   sparkMaterial.size = 0.045 + 0.065 * intensity;
@@ -1364,6 +1589,7 @@ function renderAt(seconds) {
   renderModelStory(t);
   renderToolOriginStory(t);
   renderToolCallStory(t);
+  renderTrainingStory(t);
   const focus = smoothstep(0, 11.5, sectionTwoTime) * (1 - smoothstep(26.5, 30.5, sectionTwoTime));
   tokenParticleGlow.style.opacity = (focus * 0.82).toFixed(3);
   tokenParticleGlow.style.transform = `translate(-50%, -50%) scale(${lerp(0.55, 1.35, smoothstep(0, 12, sectionTwoTime)).toFixed(3)})`;
@@ -1384,8 +1610,8 @@ function renderAt(seconds) {
     stars.rotation.x = 0.0015 * Math.sin(t * 0.18) + 0.0028 * Math.cos(t * 0.17) * cinematicDepth;
     network.rotation.z = 0.03 * Math.sin(t * 0.22) * cinematicDepth;
     network.rotation.x = 0.02 * Math.cos(t * 0.19) * cinematicDepth;
-    network.material.opacity = 0.045 + cinematicDepth * (0.06 + 0.035 * depthPulse);
-    gridMaterial.opacity = 0.027 + cinematicDepth * (0.015 + 0.015 * (1 - depthPulse));
+    network.material.opacity = 0.018 + cinematicDepth * (0.014 + 0.009 * depthPulse);
+    gridMaterial.opacity = 0.012 + cinematicDepth * (0.006 + 0.008 * (1 - depthPulse));
     camera.position.z = 11 + 0.65 * smoothstep(20.4, 24.4, t) - 0.46 * depthPulse * cinematicDepth;
     camera.position.x = 0.16 * Math.sin(t * 0.12) * cinematicDepth;
     camera.position.y = -0.035 * smoothstep(20.4, 24.4, t) + 0.11 * Math.cos(t * 0.14) * cinematicDepth;
@@ -1468,6 +1694,30 @@ function isPreviewFullscreen() {
   return document.fullscreenElement === previewColumn || previewColumn.classList.contains('is-preview-fullscreen');
 }
 
+const FULLSCREEN_AUTO_HIDE_MS = 3000;
+let fullscreenHideTimer = null;
+let mouseRevealAt = 0;
+
+function clearFullscreenHideTimer() {
+  if (fullscreenHideTimer !== null) window.clearTimeout(fullscreenHideTimer);
+  fullscreenHideTimer = null;
+}
+
+function hideFullscreenControls() {
+  if (!isPreviewFullscreen()) return;
+  previewColumn.classList.add('fullscreen-ui-hidden');
+}
+
+function showFullscreenControls() {
+  if (!isPreviewFullscreen()) return;
+  previewColumn.classList.remove('fullscreen-ui-hidden');
+  clearFullscreenHideTimer();
+  fullscreenHideTimer = window.setTimeout(() => {
+    fullscreenHideTimer = null;
+    hideFullscreenControls();
+  }, FULLSCREEN_AUTO_HIDE_MS);
+}
+
 function updateFullscreenButton() {
   const active = isPreviewFullscreen();
   fullscreenButton.setAttribute('aria-pressed', String(active));
@@ -1481,6 +1731,8 @@ fullscreenButton.addEventListener('click', async () => {
     if (document.fullscreenElement === previewColumn && document.exitFullscreen) {
       await document.exitFullscreen();
     } else {
+      clearFullscreenHideTimer();
+      previewColumn.classList.remove('fullscreen-ui-hidden');
       previewColumn.classList.remove('is-preview-fullscreen');
       screen.orientation?.unlock?.();
       updateFullscreenButton();
@@ -1498,12 +1750,46 @@ fullscreenButton.addEventListener('click', async () => {
     try { await screen.orientation.lock('landscape'); } catch { /* Orientation lock is optional. */ }
   }
   updateFullscreenButton();
+  showFullscreenControls();
 });
 
 document.addEventListener('fullscreenchange', () => {
-  if (!document.fullscreenElement) screen.orientation?.unlock?.();
+  if (!document.fullscreenElement) {
+    clearFullscreenHideTimer();
+    previewColumn.classList.remove('fullscreen-ui-hidden');
+    screen.orientation?.unlock?.();
+  } else if (document.fullscreenElement === previewColumn) {
+    showFullscreenControls();
+  }
   updateFullscreenButton();
 });
+
+previewColumn.addEventListener('click', (event) => {
+  if (!isPreviewFullscreen()) return;
+  const targetIsControl = event.target.closest('.player-controls, .chapter-nav, .fullscreen-orientation-hint');
+  if (targetIsControl) {
+    showFullscreenControls();
+    return;
+  }
+  if (performance.now() - mouseRevealAt < 260) {
+    mouseRevealAt = 0;
+    return;
+  }
+  if (previewColumn.classList.contains('fullscreen-ui-hidden')) showFullscreenControls();
+  else {
+    clearFullscreenHideTimer();
+    hideFullscreenControls();
+  }
+});
+
+previewColumn.addEventListener('pointermove', (event) => {
+  if (event.pointerType !== 'mouse' || !isPreviewFullscreen()) return;
+  const hidden = previewColumn.classList.contains('fullscreen-ui-hidden');
+  showFullscreenControls();
+  if (hidden) mouseRevealAt = performance.now();
+});
+playerControls.addEventListener('pointerdown', showFullscreenControls);
+chapterNav.addEventListener('pointerdown', showFullscreenControls);
 
 timeline.addEventListener('input', () => {
   const nextTime = Number(timeline.value);
@@ -1520,6 +1806,8 @@ document.addEventListener('keydown', (event) => {
     return;
   }
   if (event.code === 'Escape' && previewColumn.classList.contains('is-preview-fullscreen')) {
+    clearFullscreenHideTimer();
+    previewColumn.classList.remove('fullscreen-ui-hidden');
     previewColumn.classList.remove('is-preview-fullscreen');
     screen.orientation?.unlock?.();
     updateFullscreenButton();

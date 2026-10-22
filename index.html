@@ -264,6 +264,71 @@
                 <span class="call-approval-shield" aria-hidden="true"><i></i></span><span class="caution-copy approval-copy"><small>BOOKING</small><strong>Wait for permission</strong></span>
               </div>
             </div>
+
+            <div class="learning-story" id="learning-story" aria-label="How training adjusts a model's parameters">
+              <svg class="learning-lines" id="learning-lines" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"></svg>
+              <div class="training-corpus" id="training-corpus">
+                <small>ILLUSTRATIVE TEXT EXAMPLES</small>
+                <div class="training-pages" aria-hidden="true"><i></i><i></i><i></i></div>
+                <div class="training-sample">The capital of France is <b>Paris.</b></div>
+                <div class="training-sample secondary">A city can be known for its art, food, and history.</div>
+                <div class="training-token-ribbon" aria-hidden="true"><i>the</i><i>capital</i><i>of</i><i>France</i><i>is</i></div>
+              </div>
+              <div class="training-model" id="training-model">
+                <small>NEURAL MODEL</small>
+                <div class="training-network" id="training-network" aria-hidden="true">
+                  <div class="training-layer"><i></i><i></i><i></i><i></i></div>
+                  <div class="training-layer"><i></i><i></i><i></i><i></i></div>
+                  <div class="training-layer"><i></i><i></i><i></i><i></i></div>
+                  <div class="training-layer"><i></i><i></i><i></i><i></i></div>
+                  <svg class="training-network-wires" id="training-network-wires" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+                </div>
+                <div class="training-model-core" aria-hidden="true"><i></i><i></i><i></i></div>
+              </div>
+              <div class="training-prediction" id="training-prediction">
+                <small>INPUT SEQUENCE</small>
+                <div>The capital of France is…</div>
+                <span class="prediction-chip">NEXT TOKEN <b id="training-prediction-word">London</b></span>
+              </div>
+              <div class="training-target" id="training-target">
+                <small>EXAMPLE CONTINUES WITH</small>
+                <strong id="training-target-word">Paris</strong>
+              </div>
+              <div class="training-compare" id="training-compare">
+                <span class="compare-icon" aria-hidden="true"><i></i><b>≠</b></span>
+                <span><small id="training-compare-label">COMPARE</small><strong id="training-compare-result">PREDICTION DIFFERS</strong></span>
+              </div>
+              <div class="training-parameters" id="training-parameters">
+                <div class="parameter-heading"><span class="parameter-icon" aria-hidden="true">◉</span><span><small>ADJUSTABLE NUMERICAL SETTINGS</small><strong>MODEL PARAMETERS</strong></span></div>
+                <div class="parameter-dials" aria-hidden="true"><i class="parameter-dial"></i><i class="parameter-dial"></i><i class="parameter-dial"></i><i class="parameter-dial"></i><i class="parameter-dial"></i><i class="parameter-dial"></i><i class="parameter-dial"></i><i class="parameter-dial"></i></div>
+                <span class="parameter-update" id="training-update">NUDGE → TRY AGAIN</span>
+              </div>
+              <div class="training-instruction" id="training-instruction">
+                <span class="instruction-icon" aria-hidden="true"><i></i><i></i><i></i></span>
+                <div><small>INSTRUCTION EXAMPLE</small><span class="instruction-user">Plan a nature-first weekend.</span><span class="instruction-assistant">Here is a two-day itinerary…</span></div>
+              </div>
+              <div class="training-preference" id="training-preference">
+                <small>PREFERENCE SIGNAL</small>
+                <div><span class="preference-answer muted">Too vague</span><span class="preference-thumb down" aria-hidden="true">▾</span><span class="preference-answer preferred">Useful and clear</span><span class="preference-thumb up" aria-hidden="true">♡</span></div>
+              </div>
+              <div class="training-tool-example" id="training-tool-example">
+                <span class="training-map-icon" aria-hidden="true"><i></i></span><span><small>SOME SYSTEMS ALSO LEARN</small><strong>TOOL-USE EXAMPLES</strong></span><b aria-hidden="true">↗</b>
+              </div>
+              <div class="training-library" id="training-library">
+                <small>NOT A SEARCHABLE ANSWER LIST</small>
+                <div><i></i><i></i><i></i><span>READY-MADE ANSWERS</span></div>
+                <b class="library-cross" aria-hidden="true"></b>
+              </div>
+              <div class="training-cautions" id="training-cautions">
+                <div class="training-caution"><i aria-hidden="true">?</i><span>MISUNDERSTAND</span></div>
+                <div class="training-caution"><i aria-hidden="true">✦</i><span>MAKE UP DETAILS</span></div>
+                <div class="training-caution"><i aria-hidden="true">↗</i><span>CHOOSE A POOR TOOL</span></div>
+              </div>
+              <div class="training-generated" id="training-generated">
+                <div class="training-generated-user"><span class="tiny-user-icon" aria-hidden="true"></span><span>Could you check this plan?</span></div>
+                <div class="training-generated-answer"><span class="tiny-model-icon" aria-hidden="true"><i></i><i></i><i></i></span><span>Here is a helpful next step…</span></div>
+              </div>
+            </div>
           </div>
 
         <div class="fullscreen-orientation-hint" id="fullscreen-orientation-hint" role="status" aria-live="polite">
@@ -277,8 +342,8 @@
             <span class="visually-hidden" id="play-label">Play</span>
           </button>
           <span class="time-readout" id="current-time">00:00</span>
-          <input id="timeline" type="range" min="0" max="305.206" value="0" step="0.01" aria-label="Seek through the video preview" />
-          <span class="time-readout" id="total-time">05:05</span>
+          <input id="timeline" type="range" min="0" max="372.026" value="0" step="0.01" aria-label="Seek through the video preview" />
+          <span class="time-readout" id="total-time">06:12</span>
           <button class="fullscreen-button" id="fullscreen-button" type="button" aria-label="Enter fullscreen preview" aria-pressed="false" title="Enter fullscreen (F)">
             <svg class="fullscreen-enter-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5" /></svg>
             <svg class="fullscreen-exit-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h5V3M16 3v5h5M21 16h-5v5M8 21v-5H3" /></svg>
@@ -296,8 +361,9 @@
           <button type="button" class="chapter-button" data-time="110" aria-label="Go to section 4: How an LLM generates"><span>04</span><span>LLM generation</span></button>
           <button type="button" class="chapter-button" data-time="177.38" aria-label="Go to section 5: Where tools come from"><span>05</span><span>Where tools come from</span></button>
           <button type="button" class="chapter-button" data-time="227.866" aria-label="Go to section 6: How tool use works"><span>06</span><span>Tool use</span></button>
+          <button type="button" class="chapter-button" data-time="305.206" aria-label="Go to section 7: How models learn"><span>07</span><span>How models learn</span></button>
         </nav>
-        <audio id="preview-audio" preload="metadata" src="./audio/section-01-06-preview-mix.mp3"></audio>
+        <audio id="preview-audio" preload="metadata" src="./audio/section-01-07-preview-mix.mp3"></audio>
       </section>
     </main>
     <script type="module" src="./src/main.js"></script>
