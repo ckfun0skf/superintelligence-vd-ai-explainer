@@ -122,11 +122,11 @@ delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: "56f9419a724c615ceb3257b9f44ce60838a1c495"
+  git_commit: "97090e1b1b02b5e2d748dda16eb030941b938f4a"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "Local seven-section Chromium preview reported no JavaScript/console errors or failed requests. Audio metadata/playback worked; Section 07 caption and chapter state followed real audio playback. Live Pages retains prior six-section deployment checks; Section 07 awaits public deployment verification."
+  browser_errors: "Local and live seven-section Chromium previews reported no JavaScript/console errors or failed requests. Audio metadata/playback worked; Section 07 caption and active chapter followed the real audio clock. Pages and MP3 returned HTTP 200; the MP3 supports Range 206."
   preview_seek_and_handoff: "Earlier Section 05 checks remain recorded below. Local Section 06 preview was sought at 227.3, 227.866, 228.2, 229.9, 236.9, 242.8, 252, 261, 268, 273, 278, 286, 299, and 304.7 seconds in desktop 1600×1000 and phone 390×844 viewports. Repeated direct seek to 273 seconds produced identical state; the live player advanced from 242.0 to 242.5 seconds with MAP selected and the matching review caption; all scene content stayed inside one 16:9 stage."
   keyframes_reviewed: [21.0, 37.3, 39.5, 65.5, 89.0, 106.2, 131.0, 149.3, 159.5, 173.0, 180.5, 198.0, 207.0, 216.0, 222.0, 242.8, 252.0, 261.0, 268.0, 273.0, 286.0, 299.0, 304.7, 305.2, 307.4, 318.2, 323.0, 331.0, 341.0, 347.0, 354.0, 360.0, 365.0, 370.5]
   responsive_viewports:
@@ -146,10 +146,11 @@ quality_checks:
   section_06_local_status: "pass: seven deterministic SVG connections with traveling signal dots; selected MAP state matches the current-transit task; orchestrator and MAP SERVICE are separated without overlap; result returns to context and response; phone and desktop use the same fixed master composition; no page overflow or JavaScript/asset errors"
   section_06_live_status: "pass: GitHub Pages live desktop/mobile; 1920×1080 backing canvas and 16:9 film stage; Section 06 audio clock advanced with synchronized review caption and MAP match; fullscreen entered and exited on both; landscape mobile fullscreen preserved the 16:9 stage; no page or console errors"
   global_redesign_local: "pass: Chromium checked 34 representative keyframes across seven scenes at desktop 1600x1000, phone 390x844 DPR3, and landscape phone 844x390; one 1920x1080 backing canvas/16:9 stage retained; no page overflow, failed requests, or JS errors; all seven chapter buttons seek to the exact start; rail toggle, live caption/active section, native fullscreen enter/exit and three-second controls auto-hide/tap toggle passed."
-  global_redesign_live_status: "previous six-section version passed live desktop/phone chapter, fullscreen, audio and 16:9 checks; seven-section update awaits deployment and live verification."
+  global_redesign_live_status: "pass: live Pages checked at desktop 1600x1000, portrait phone 390x844 DPR3, and landscape phone 844x390; all seven chapter jumps sought exactly; synced Section 07 playback showed the matching caption and active chapter; fullscreen controls hid after idle and showed/toggled by tap; one 1920x1080/16:9 master, no overflow/errors/failed requests."
   global_motion_local: "pass: Three.js particles, layered neural activation, animated training signals, adjustable parameter dials and gentle camera parallax remain time-varying after minute one; 27 distinct post-minute samples; ambient background network/grid opacity reduced to keep explanatory cards dominant. Section 02 token landing retains clearance below category labels."
   section_07_local_status: "pass: 34 keyframes reviewed across desktop/portrait phone/landscape phone; stage remains one 1920x1080 master without page overflow; seven chapter jumps exact; 340s real playback showed the matching training narration caption and active Section 07; 27 post-minute frames were distinct; native fullscreen controls auto-hide after idle, show/toggle by tap, and exit by button; no JS or failed asset requests."
-  public_deployment: "pending: seven-section build awaits GitHub Pages deployment and live verification"
+  section_07_live_status: "pass: live Pages playback at ~340.6s displayed the matching training narration caption and active chapter 07; 34 keyframes, desktop/portrait/landscape viewport layouts, seven chapter jumps, and fullscreen auto-hide/tap toggles passed; no errors or failed requests."
+  public_deployment: "success: GitHub Actions run 39742013652 deployed commit 97090e1b1b02b5e2d748dda16eb030941b938f4a; Pages HTTP 200; seven-section MP3 HTTP 200 and Range 206 (8,930,786 bytes); live desktop/phone chapter, playback/caption, fullscreen, 16:9 and 1920x1080 canvas checks passed."
   ffprobe_verified: true
   full_decode_verified: true
   notes:
