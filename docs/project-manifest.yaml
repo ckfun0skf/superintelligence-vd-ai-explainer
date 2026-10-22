@@ -130,13 +130,13 @@ scenes:
       - "425.226–433.126 inconsistent outputs are harder to reproduce, compare, and trust"
       - "433.126–447.806 lower variation can help, but consistency is not accuracy; check and verify"
     visual_intent: "Keep the Taipei nature-weekend and under-$8,000 visible prompt unchanged. Feed one layered neural model and animate two possible next stops into alternative, constraint-preserving itinerary orders. Show an illustrative decoding-variation control, then add system, chat-history, live-map, and model-update context chips beside the same visible prompt. Let both responses lead to reproducibility/comparison/trust markers before clearing to a focused consistency-versus-accuracy card and current-fact/result verification actions. All transforms, opacity and signal paths derive from absolute audio time; no subtitles or title card inside the frame."
-    review_status: "74.28-second Charon narration generated and mixed; production build and local Chromium keyframe/seek/overlap QA pass. Live Pages verification pending deployment."
+    review_status: "74.28-second Charon narration generated and mixed; production build, local Chromium QA, and live GitHub Pages verification pass."
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: "d6ee6660345f4b7bd4042608f09529fd16156dd1"
+  git_commit: "bc0657876650cc28f528538fe0e4dec073dcb4a1"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
@@ -167,13 +167,13 @@ quality_checks:
   section_07_local_status: "pass: production build succeeds; local Chromium verified a 1920x1080 backing canvas, exact Section 07 chapter seek to 305.206s, real audio playback with synchronized caption/chapter, keyframe samples from 310.5s to 370.5s, and identical warning-card states after repeated 368.5s seeks; visible cards do not overlap at sampled beats; no failed assets or audio errors."
   section_07_live_status: "pass: GitHub Pages run 39764981431 succeeded for commit d6ee6660345f4b7bd4042608f09529fd16156dd1; live browser seeks at 324.5s (five/mismatch), 349.5s (eight/match/preference), and 368.5s (cautions) displayed synchronized captions with Section 07 selected; 1920x1080 canvas, 372.06s audio metadata, no media errors or failed assets."
   section_08_local_status: "pass: production build and 447.869-second stereo MP3 decode passed. Chromium sampled 13 audio-time keyframes (372.026–447.2s); 1920x1080 backing composition displayed at 1256x706.5 CSS px (16:9), key-caption text followed time, all major cards stayed in bounds with no pairwise overlap, and the prompt card expanded cleanly for context chips. Chapter 08 click sought to 372.026s; actual playback advanced to 374.54s with synchronized caption/player state. Re-rendering 444.0s twice produced identical DOM transforms and SVG paths; both verification actions appeared."
-  section_08_live_status: "pending: Section 08 has not yet been deployed."
-  public_deployment: "success: GitHub Actions run 39764981431 deployed commit d6ee6660345f4b7bd4042608f09529fd16156dd1; Pages HTTP 200 and new Taipei marker present; live browser confirmed the seven-section audio, caption, chapter, and 16:9 stage."
+  section_08_live_status: "pass: GitHub Pages run 39807926538 succeeded for commit bc0657876650cc28f528538fe0e4dec073dcb4a1. Live Chromium confirmed eight chapter buttons, 447.82s audio metadata, branch cards at 400s, expanded prompt/context at 416s, and the final consistency/verification card at 444s with synchronized caption and active Chapter 08."
+  public_deployment: "success: GitHub Actions run 39807926538 deployed commit bc0657876650cc28f528538fe0e4dec073dcb4a1; live Pages page loaded the eight-section player and current Taipei content, with the Section 08 400/416/444s frames verified in Chromium."
   ffprobe_verified: true
   full_decode_verified: true
   notes:
-    - "The seven-section mix keeps the approved earlier narration, adds the approved-voice-style Section 05–07 WAVs, uses the same cyber/space score with voice-forward sidechain ducking, and includes 1.2 seconds of music-led opening plus 1.5-second chapter pauses."
-    - "The seven-section MP3 is approximately 372.06 seconds, stereo, 44.1 kHz, MP3 at 192 kbps; ffprobe and complete FFmpeg decode pass. Deterministic scene timeline ends at 372.026 seconds."
+    - "The current eight-section mix keeps the approved earlier narration, adds the Section 05–08 WAVs, uses the same cyber/space score with voice-forward sidechain ducking, and includes 1.2 seconds of music-led opening plus 1.5-second chapter pauses."
+    - "The current eight-section MP3 is approximately 447.869 seconds, stereo, 44.1 kHz, MP3 at 192 kbps; ffprobe and complete FFmpeg decode pass. Deterministic scene timeline ends at 447.806 seconds."
     - "The Three.js canvas is rendered at 1920×1080 with deterministic absolute-time states and seeded particles."
     - "The neural layers and activations are a simplified visual metaphor for an LLM, not a diagram of any specific model's full architecture."
     - "CSS and JavaScript scene geometry use stage-relative units; the film composition stays 16:9 and player/review captions remain outside the film frame."
