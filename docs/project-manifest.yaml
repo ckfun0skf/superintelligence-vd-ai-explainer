@@ -123,7 +123,7 @@ delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: "97090e1b1b02b5e2d748dda16eb030941b938f4a"
+  git_commit: "d6ee6660345f4b7bd4042608f09529fd16156dd1"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
@@ -151,8 +151,8 @@ quality_checks:
   global_redesign_live_status: "pass: live Pages checked at desktop 1600x1000, portrait phone 390x844 DPR3, and landscape phone 844x390; all seven chapter jumps sought exactly; synced Section 07 playback showed the matching caption and active chapter; fullscreen controls hid after idle and showed/toggled by tap; one 1920x1080/16:9 master, no overflow/errors/failed requests."
   global_motion_local: "pass: Three.js particles, layered neural activation, animated training signals, adjustable parameter dials and gentle camera parallax remain time-varying after minute one; 27 distinct post-minute samples; ambient background network/grid opacity reduced to keep explanatory cards dominant. Section 02 token landing retains clearance below category labels."
   section_07_local_status: "pass: production build succeeds; local Chromium verified a 1920x1080 backing canvas, exact Section 07 chapter seek to 305.206s, real audio playback with synchronized caption/chapter, keyframe samples from 310.5s to 370.5s, and identical warning-card states after repeated 368.5s seeks; visible cards do not overlap at sampled beats; no failed assets or audio errors."
-  section_07_live_status: "pending: this Section 07 visual revision has not yet been deployed to GitHub Pages."
-  public_deployment: "success: GitHub Actions run 39742013652 deployed commit 97090e1b1b02b5e2d748dda16eb030941b938f4a; Pages HTTP 200; seven-section MP3 HTTP 200 and Range 206 (8,930,786 bytes); live desktop/phone chapter, playback/caption, fullscreen, 16:9 and 1920x1080 canvas checks passed."
+  section_07_live_status: "pass: GitHub Pages run 39764981431 succeeded for commit d6ee6660345f4b7bd4042608f09529fd16156dd1; live browser seeks at 324.5s (five/mismatch), 349.5s (eight/match/preference), and 368.5s (cautions) displayed synchronized captions with Section 07 selected; 1920x1080 canvas, 372.06s audio metadata, no media errors or failed assets."
+  public_deployment: "success: GitHub Actions run 39764981431 deployed commit d6ee6660345f4b7bd4042608f09529fd16156dd1; Pages HTTP 200 and new Taipei marker present; live browser confirmed the seven-section audio, caption, chapter, and 16:9 stage."
   ffprobe_verified: true
   full_decode_verified: true
   notes:
