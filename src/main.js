@@ -122,6 +122,20 @@ const trainingCautions = document.querySelector('#training-cautions');
 const trainingGenerated = document.querySelector('#training-generated');
 const trainingDials = [...document.querySelectorAll('.parameter-dial')];
 const trainingNeurons = [...document.querySelectorAll('.training-layer i')];
+const consistencyStory = document.querySelector('#consistency-story');
+const consistencyLines = document.querySelector('#consistency-lines');
+const consistencyPrompt = document.querySelector('#consistency-prompt');
+const contextAdditions = document.querySelector('#context-additions');
+const consistencyModel = document.querySelector('#consistency-model');
+const decodingCard = document.querySelector('#decoding-card');
+const candidateChoice = document.querySelector('.candidate-choice');
+const variationControl = document.querySelector('#variation-control');
+const variationNeedle = document.querySelector('#variation-needle');
+const answerBranchA = document.querySelector('#answer-branch-a');
+const answerBranchB = document.querySelector('#answer-branch-b');
+const consequenceRow = document.querySelector('#consequence-row');
+const consequenceCards = [...document.querySelectorAll('.consistency-consequence')];
+const reliabilityCard = document.querySelector('#reliability-card');
 
 const SECTION_SIX_START = 227.866;
 const SECTION_SIX_NARRATION_START = 229.366;
@@ -129,7 +143,10 @@ const SECTION_SIX_NARRATION_DURATION = 75.84;
 const SECTION_SEVEN_START = SECTION_SIX_NARRATION_START + SECTION_SIX_NARRATION_DURATION;
 const SECTION_SEVEN_NARRATION_START = SECTION_SEVEN_START + 1.5;
 const SECTION_SEVEN_NARRATION_DURATION = 65.32;
-const DURATION = SECTION_SEVEN_NARRATION_START + SECTION_SEVEN_NARRATION_DURATION;
+const SECTION_EIGHT_START = SECTION_SEVEN_NARRATION_START + SECTION_SEVEN_NARRATION_DURATION;
+const SECTION_EIGHT_NARRATION_START = SECTION_EIGHT_START + 1.5;
+const SECTION_EIGHT_NARRATION_DURATION = 74.28;
+const DURATION = SECTION_EIGHT_NARRATION_START + SECTION_EIGHT_NARRATION_DURATION;
 const FPS = 24;
 const SECTION_TWO_START = 24.4;
 const SECTION_TWO_DURATION = 31.2;
@@ -209,6 +226,17 @@ const CAPTIONS = [
   { start: 358.006, end: 361.906, text: 'The model is not simply a database containing every answer it has seen.' },
   { start: 361.906, end: 366.406, text: 'Training changes its parameters so it can produce useful patterns of response.' },
   { start: 366.406, end: 372.026, text: 'It can still misunderstand, make up details, or select an unsuitable tool.' },
+  { start: 373.926, end: 376.626, text: 'The same prompt can lead to different answers.' },
+  { start: 376.626, end: 386.726, text: 'Imagine asking for a two-day nature weekend in Taipei under eight thousand dollars.' },
+  { start: 386.726, end: 391.926, text: 'At some steps, several next tokens are plausible.' },
+  { start: 391.926, end: 394.826, text: 'A decoding method chooses among them.' },
+  { start: 394.826, end: 405.726, text: 'When it samples, a small early change can steer what follows.' },
+  { start: 405.726, end: 411.626, text: 'Temperature can make sampling more or less varied.' },
+  { start: 411.626, end: 420.326, text: 'System instructions, earlier chat messages, live tool results, or a model update can also change the response.' },
+  { start: 420.326, end: 425.226, text: 'The same visible message may not be the same complete input.' },
+  { start: 425.226, end: 433.126, text: 'That makes answers harder to reproduce, compare, and trust.' },
+  { start: 433.126, end: 439.326, text: 'Lower variation can improve consistency, but consistency is not accuracy.' },
+  { start: 439.326, end: 447.806, text: 'Keep context and model version stable, check current information, and verify the result.' },
 ];
 
 const WORD_ROWS = [
@@ -301,6 +329,21 @@ const learningSignals = learningEdges.map((edge) => {
   if (edge.className.includes('error-edge')) signal.classList.add('error-signal');
   signal.style.opacity = '0';
   learningLines.append(signal);
+  return signal;
+});
+const consistencyEdges = [
+  { from: consistencyPrompt, to: consistencyModel, className: 'consistency-edge' },
+  { from: consistencyModel, to: decodingCard, className: 'consistency-edge' },
+  { from: consistencyModel, to: answerBranchA, className: 'consistency-edge branch-edge' },
+  { from: consistencyModel, to: answerBranchB, className: 'consistency-edge branch-edge' },
+].map((edge) => ({ ...edge, path: svgPath(consistencyLines, edge.className) }));
+const consistencySignals = consistencyEdges.map((edge) => {
+  const signal = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+  signal.setAttribute('r', '7');
+  signal.classList.add('consistency-signal');
+  if (edge.className.includes('branch-edge')) signal.classList.add('branch-signal');
+  signal.style.opacity = '0';
+  consistencyLines.append(signal);
   return signal;
 });
 const neuralWireNodes = [];
@@ -1311,7 +1354,7 @@ function renderTrainingStory(time) {
   const local = time - SECTION_SEVEN_START;
   const voice = time - SECTION_SEVEN_NARRATION_START;
   const sceneIn = smoothstep(SECTION_SEVEN_START, SECTION_SEVEN_START + 0.72, time);
-  const sceneOut = 1 - smoothstep(DURATION - 0.62, DURATION, time);
+  const sceneOut = 1 - smoothstep(SECTION_EIGHT_START - 0.62, SECTION_EIGHT_START + 0.08, time);
   learningStory.style.visibility = 'visible';
   learningStory.style.opacity = (sceneIn * sceneOut).toFixed(3);
 
@@ -1439,6 +1482,115 @@ function renderTrainingStory(time) {
   });
 }
 
+function renderConsistencyStory(time) {
+  if (time < SECTION_EIGHT_START) {
+    consistencyStory.style.opacity = '0';
+    consistencyStory.style.visibility = 'hidden';
+    consistencyEdges.forEach(({ path }) => { path.style.opacity = '0'; });
+    consistencySignals.forEach((signal) => { signal.style.opacity = '0'; });
+    return;
+  }
+
+  const local = time - SECTION_EIGHT_START;
+  const voice = time - SECTION_EIGHT_NARRATION_START;
+  const enter = smoothstep(SECTION_EIGHT_START, SECTION_EIGHT_START + .78, time);
+  const outro = 1 - smoothstep(DURATION - .58, DURATION, time);
+  consistencyStory.style.visibility = 'visible';
+  consistencyStory.style.opacity = (enter * outro).toFixed(3);
+
+  const promptIn = smoothstep(.25, 1.35, local) * (1 - smoothstep(58.1, 59.3, voice));
+  consistencyPrompt.style.opacity = promptIn.toFixed(3);
+  consistencyPrompt.style.transform = `translateX(${lerp(-.65, 0, promptIn).toFixed(3)}cqw) rotateY(${(Math.sin(local * .38) * .35 * promptIn).toFixed(2)}deg)`;
+  consistencyPrompt.querySelector(':scope > p').style.transform = `translateX(${(Math.sin(local * .7) * .045 * promptIn).toFixed(3)}cqw)`;
+  const contextIn = smoothstep(38.0, 39.2, voice) * (1 - smoothstep(58.0, 59.25, voice));
+  consistencyPrompt.style.height = `${lerp(28, 35, contextIn).toFixed(2)}%`;
+  contextAdditions.style.opacity = contextIn.toFixed(3);
+  contextAdditions.style.transform = `translateY(${lerp(.35, 0, contextIn).toFixed(3)}cqw)`;
+  contextAdditions.querySelectorAll('span').forEach((chip, index) => {
+    const chipIn = smoothstep(38.0 + index * 1.05, 38.52 + index * 1.05, voice);
+    chip.style.opacity = chipIn.toFixed(3);
+    chip.style.transform = `translateY(${lerp(.16, 0, chipIn).toFixed(3)}cqw)`;
+  });
+
+  const modelIn = smoothstep(.4, 1.5, local) * (1 - smoothstep(57.0, 59.25, voice));
+  const pulse = .5 + .5 * Math.sin(local * 2.25) ** 2;
+  consistencyModel.style.opacity = modelIn.toFixed(3);
+  consistencyModel.style.transform = `translateY(${lerp(.38, 0, modelIn).toFixed(3)}cqw) scale(${(1 + .012 * pulse).toFixed(3)})`;
+  consistencyModel.querySelectorAll('.network-column b').forEach((node, index) => {
+    const column = Math.floor(index / 3);
+    const wave = (local * .22) % 1;
+    const signal = Math.max(0, 1 - Math.abs(wave - column / 3) * 3.8);
+    const glow = .22 + .56 * signal + .16 * Math.sin(local * 2.3 + index * .8) ** 2;
+    node.style.opacity = (modelIn * glow).toFixed(3);
+    node.style.transform = `scale(${(.78 + .38 * glow).toFixed(3)})`;
+  });
+  const modelPulse = consistencyModel.querySelector('.network-pulse');
+  modelPulse.style.transform = `translate(-50%, -50%) scale(${(1 + .055 * pulse).toFixed(3)})`;
+  modelPulse.style.boxShadow = `0 0 ${(1.6 + 1.1 * pulse).toFixed(2)}cqw rgba(72, 194, 185, .28)`;
+
+  const candidateIn = smoothstep(14.35, 15.15, voice) * (1 - smoothstep(31.7, 32.65, voice));
+  const variationIn = smoothstep(32.0, 32.85, voice) * (1 - smoothstep(37.35, 38.2, voice));
+  const decodeIn = Math.max(candidateIn, variationIn);
+  decodingCard.style.opacity = decodeIn.toFixed(3);
+  decodingCard.style.transform = `translateX(${lerp(.48, 0, decodeIn).toFixed(3)}cqw) scale(${lerp(.985, 1, decodeIn).toFixed(3)})`;
+  candidateChoice.style.opacity = candidateIn.toFixed(3);
+  candidateChoice.style.transform = `translateY(${lerp(.22, 0, candidateIn).toFixed(3)}cqw)`;
+  variationControl.style.opacity = variationIn.toFixed(3);
+  variationControl.style.transform = `translateY(${lerp(.24, 0, variationIn).toFixed(3)}cqw)`;
+  decodingCard.querySelector(':scope > small').textContent = variationIn > candidateIn ? 'SAMPLING SETTING' : 'NEXT TOKEN OPTIONS';
+  variationNeedle.style.left = `${lerp(24, 77, smoothstep(32.0, 37.0, voice)).toFixed(1)}%`;
+
+  const branchIn = smoothstep(21.15, 22.15, voice) * (1 - smoothstep(58.0, 59.25, voice));
+  [answerBranchA, answerBranchB].forEach((branch, index) => {
+    const offset = index === 0 ? -.28 : .28;
+    branch.style.opacity = branchIn.toFixed(3);
+    branch.style.transform = `translateY(${(lerp(.35, 0, branchIn) + Math.sin(local * .72 + index * 1.7) * .055 * branchIn).toFixed(3)}cqw) rotate(${(offset * pulse).toFixed(3)}deg)`;
+    branch.style.borderColor = index === 0
+      ? `rgba(130, 164, 211, ${(0.24 + .14 * pulse * branchIn).toFixed(3)})`
+      : `rgba(111, 193, 179, ${(0.24 + .14 * (1 - pulse) * branchIn).toFixed(3)})`;
+  });
+
+  const consequencesIn = smoothstep(51.5, 52.6, voice) * (1 - smoothstep(58.85, 59.45, voice));
+  consequenceRow.style.opacity = consequencesIn.toFixed(3);
+  consequenceRow.style.transform = `translateY(${lerp(.28, 0, consequencesIn).toFixed(3)}cqw)`;
+  consequenceCards.forEach((card, index) => {
+    const starts = [51.8, 53.7, 55.6];
+    const itemIn = smoothstep(starts[index], starts[index] + .62, voice);
+    card.style.opacity = itemIn.toFixed(3);
+    card.style.transform = `translateY(${lerp(.2, 0, itemIn).toFixed(3)}cqw) scale(${(1 + .035 * Math.sin(local * 2.0 + index) ** 2 * itemIn).toFixed(3)})`;
+  });
+
+  const reliabilityIn = smoothstep(59.65, 60.7, voice);
+  reliabilityCard.style.opacity = reliabilityIn.toFixed(3);
+  reliabilityCard.style.transform = `translateY(${lerp(.42, 0, reliabilityIn).toFixed(3)}cqw) scale(${lerp(.985, 1, reliabilityIn).toFixed(3)})`;
+  reliabilityCard.querySelectorAll(':scope > div span').forEach((item, index) => {
+    const itemIn = smoothstep(65.65 + index * .85, 66.55 + index * .85, voice);
+    item.style.opacity = itemIn.toFixed(3);
+    item.style.transform = `translateY(${lerp(.18, 0, itemIn).toFixed(3)}cqw)`;
+  });
+
+  const edgeStates = [
+    [smoothstep(.35, 1.9, local), promptIn * modelIn * .66, .35, .22],
+    [smoothstep(14.2, 15.4, voice), candidateIn * modelIn * .72, 14.2, .25],
+    [smoothstep(21.0, 22.4, voice), branchIn * modelIn * .62, 21.0, .19],
+    [smoothstep(21.0, 22.4, voice), branchIn * modelIn * .62, 21.0, .19],
+  ];
+  consistencyEdges.forEach((edge, index) => {
+    const [reveal, opacity, pulseStart, speed] = edgeStates[index];
+    drawLink(edge.path, edge.from, edge.to, reveal, opacity);
+    const signal = consistencySignals[index];
+    if (opacity <= .015 || reveal <= .015 || !edge.path.getAttribute('d')) {
+      signal.style.opacity = '0';
+      return;
+    }
+    const phase = (Math.max(0, (index === 0 ? local : voice) - pulseStart) * speed + index * .19) % 1;
+    const point = edge.path.getPointAtLength(edge.path.getTotalLength() * phase);
+    signal.setAttribute('cx', point.x.toFixed(1));
+    signal.setAttribute('cy', point.y.toFixed(1));
+    signal.style.opacity = String(Math.min(.9, opacity * 1.2).toFixed(3));
+  });
+}
+
 function updateParticleField(time, sectionTwoTime) {
   if (!sparkCloud || !sparkMaterial) return;
   const assistantBurst = smoothstep(9.45, 10.25, time) * (1 - smoothstep(16.0, 17.5, time));
@@ -1454,8 +1606,10 @@ function updateParticleField(time, sectionTwoTime) {
   const toolCallFlow = smoothstep(SECTION_SIX_START + 1.0, SECTION_SIX_START + 5.0, time)
     * (1 - smoothstep(SECTION_SEVEN_START - 2.0, SECTION_SEVEN_START + 0.3, time));
   const trainingFlow = smoothstep(SECTION_SEVEN_START + 1.0, SECTION_SEVEN_START + 5.0, time)
+    * (1 - smoothstep(SECTION_EIGHT_START - 3.0, SECTION_EIGHT_START - 0.4, time));
+  const consistencyFlow = smoothstep(SECTION_EIGHT_START + 1.0, SECTION_EIGHT_START + 5.0, time)
     * (1 - smoothstep(DURATION - 3.0, DURATION - 0.4, time));
-  const laterMotion = Math.max(generationFlow * 0.7, toolDefinitionFlow * 0.78, toolCallFlow * 0.86, trainingFlow * 0.9);
+  const laterMotion = Math.max(generationFlow * 0.7, toolDefinitionFlow * 0.78, toolCallFlow * 0.86, trainingFlow * 0.9, consistencyFlow * 0.88);
   const intensity = Math.max(assistantBurst, tokenBurst * 0.92, relationBurst * 0.65, inferenceBurst * 0.42, laterMotion);
   sparkMaterial.opacity = 0.58 * intensity + 0.14 * laterMotion;
   sparkMaterial.size = 0.045 + 0.065 * intensity;
@@ -1588,6 +1742,7 @@ function renderAt(seconds) {
   renderToolOriginStory(t);
   renderToolCallStory(t);
   renderTrainingStory(t);
+  renderConsistencyStory(t);
   const focus = smoothstep(0, 11.5, sectionTwoTime) * (1 - smoothstep(26.5, 30.5, sectionTwoTime));
   tokenParticleGlow.style.opacity = (focus * 0.82).toFixed(3);
   tokenParticleGlow.style.transform = `translate(-50%, -50%) scale(${lerp(0.55, 1.35, smoothstep(0, 12, sectionTwoTime)).toFixed(3)})`;

@@ -1,6 +1,6 @@
 project:
   title: "From Prompt to Action: How AI Turns Words into Work"
-  purpose: "An audio-synchronized 16:9 explainer that follows an AI request through tokenization, context, attention, next-token generation, tool access, and model training."
+  purpose: "An audio-synchronized 16:9 explainer that follows an AI request through tokenization, context, attention, next-token generation, tool access, model training, and output consistency."
   repository_or_workspace: "https://github.com/ckfun0skf/superintelligence-vd-ai-explainer"
   delivery_choices:
     source: "existing GitHub repository, main branch"
@@ -8,13 +8,13 @@ project:
     final_video: "not rendered yet"
 
 video:
-  duration_seconds: 372.026
+  duration_seconds: 447.806
   fps: 24
   width: 1920
   height: 1080
   responsive_scaling: "Single 1920x1080 master composition at every viewport: the 16:9 film stage scales proportionally, with shared stage-relative typography and no phone-specific font or in-frame reflow. Browser text inflation is fixed at 100%. Only the external player shell adapts. Fullscreen preview fits the same 16:9 frame to the available screen and requests landscape orientation where supported. Review captions and controls remain outside the film frame (controls overlay in fullscreen)."
-  frame_range: "[0, 8929)"
-  narration_or_master_audio: "public/audio/section-01-07-preview-mix.mp3"
+  frame_range: "[0, 10747)"
+  narration_or_master_audio: "public/audio/section-01-08-preview-mix.mp3"
   audio_codec: "MP3 review mix; final master format TBD"
   audio_sample_rate_hz: 44100
   audio_channels: 2
@@ -118,6 +118,19 @@ scenes:
       - "357.406–371.706 methods vary; a Taipei response and sequential model-limit cautions close the section"
     visual_intent: "Keep the Taipei nature-weekend/$8,000 context consistent. A compact training-text card feeds the layered model; the right-side prediction card shows ‘My budget is…’, candidate ‘five’, target ‘eight’, and a mismatch before parameters change and the candidate matches. The parameter card and later database/instruction/preference/tool/response examples hand off one at a time through a shared left-side slot, keeping the frame uncluttered. Finish with sequential misunderstanding, invented-detail, and wrong-tool cautions. Drive all motion from audio time; keep review captions outside the 16:9 frame."
     review_status: "65.32-second narration integrated; revised Taipei/$8,000 prediction/target sequence, compact single-card layout, and sequential training examples pass local Chromium QA at the Section 07 keyframes; production build succeeds"
+  - id: "scene-08"
+    start_seconds: 372.026
+    end_seconds: 447.806
+    module: "src/main.js"
+    narration_cues:
+      - "372.026–373.526 music-led chapter handoff"
+      - "373.526–394.826 same prompt, next-token candidates, and decoding choices"
+      - "394.826–411.626 sampling and variation can produce plausible branch differences"
+      - "411.626–425.226 instructions, chat history, tools, model versions, and the full-context distinction"
+      - "425.226–433.126 inconsistent outputs are harder to reproduce, compare, and trust"
+      - "433.126–447.806 lower variation can help, but consistency is not accuracy; check and verify"
+    visual_intent: "Keep the Taipei nature-weekend and under-$8,000 visible prompt unchanged. Feed one layered neural model and animate two possible next stops into alternative, constraint-preserving itinerary orders. Show an illustrative decoding-variation control, then add system, chat-history, live-map, and model-update context chips beside the same visible prompt. Let both responses lead to reproducibility/comparison/trust markers before clearing to a focused consistency-versus-accuracy card and current-fact/result verification actions. All transforms, opacity and signal paths derive from absolute audio time; no subtitles or title card inside the frame."
+    review_status: "74.28-second Charon narration generated and mixed; production build and local Chromium keyframe/seek/overlap QA pass. Live Pages verification pending deployment."
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
@@ -127,10 +140,11 @@ delivery:
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "Local and live seven-section Chromium previews reported no JavaScript/console errors or failed requests. Audio metadata/playback worked; Section 07 caption and active chapter followed the real audio clock. Pages and MP3 returned HTTP 200; the MP3 supports Range 206."
+  browser_errors: "Section 08 production build and MP3 decode passed. After correcting a DOM child-selector error found in the first local browser probe, final Chromium keyframe and playback checks produced no JavaScript errors or failed media loads."
   preview_seek_and_handoff: "Earlier Section 05 checks remain recorded below. Local Section 06 preview was sought at 227.3, 227.866, 228.2, 229.9, 236.9, 242.8, 252, 261, 268, 273, 278, 286, 299, and 304.7 seconds in desktop 1600×1000 and phone 390×844 viewports. Repeated direct seek to 273 seconds produced identical state; the live player advanced from 242.0 to 242.5 seconds with MAP selected and the matching review caption; all scene content stayed inside one 16:9 stage."
-  keyframes_reviewed: [21.0, 37.3, 39.5, 65.5, 89.0, 106.2, 131.0, 149.3, 159.5, 173.0, 180.5, 198.0, 207.0, 216.0, 222.0, 242.8, 252.0, 261.0, 268.0, 273.0, 286.0, 299.0, 304.7, 305.2, 307.4, 318.2, 323.0, 331.0, 341.0, 347.0, 354.0, 360.0, 365.0, 370.5]
+  keyframes_reviewed: [21.0, 37.3, 39.5, 65.5, 89.0, 106.2, 131.0, 149.3, 159.5, 173.0, 180.5, 198.0, 207.0, 216.0, 222.0, 242.8, 252.0, 261.0, 268.0, 273.0, 286.0, 299.0, 304.7, 305.2, 307.4, 318.2, 323.0, 331.0, 341.0, 347.0, 354.0, 360.0, 365.0, 370.5, 372.026, 375.0, 383.0, 390.0, 394.3, 400.0, 408.0, 416.0, 423.0, 430.0, 436.0, 444.0, 447.2]
   section_07_keyframes: [305.2, 310.5, 318.5, 324.5, 330.5, 339.5, 344.5, 349.5, 353.5, 359.4, 363.2, 368.5, 370.5]
+  section_08_keyframes: [372.026, 375.0, 383.0, 390.0, 397.0, 404.0, 408.0, 416.0, 423.0, 430.0, 436.0, 444.0, 447.2]
   responsive_viewports:
     - viewport: "1280x900 Chromium desktop; film stage 1256x707 CSS px"
       aspect_ratio: "stage 1.7765:1; backing canvas 1920x1080; no page or tool-card overflow"
@@ -142,7 +156,7 @@ quality_checks:
       aspect_ratio: "stage 1.778:1, fitted to available height with review caption hidden"
       result: "pass; fullscreen overlay controls and section rail auto-hide independently of the film frame"
   responsive_typography: "One fixed film composition. A shared readability pass enlarged functional labels/body copy consistently across all viewports while keeping typography and graphics stage-relative; no phone-only floors, font overrides, or in-frame reflow. CSS text-size-adjust is fixed at 100% to reduce Android browser text inflation differences. The outer preview player alone adapts touch controls."
-  fullscreen_preview: "Local Chromium verified fullscreen enter/exit, 16:9 stage preservation, synchronized seek controls, review captions hidden in fullscreen, seven-section rail overlay, and player-like auto-hide: controls appear on entry/tap, fade after three seconds, and reappear/toggle on tap. Portrait rotate hint and landscape-fit were checked at 844x390; orientation lock is requested where supported."
+  fullscreen_preview: "Local Chromium previously verified fullscreen enter/exit, 16:9 stage preservation, synchronized seek controls, review captions hidden in fullscreen, chapter rail overlay, and player-like auto-hide: controls appear on entry/tap, fade after three seconds, and reappear/toggle on tap. Portrait rotate hint and landscape-fit were checked at 844x390; orientation lock is requested where supported. Section 08 button selection has been tested in the normal player; fullscreen auto-hide code is unchanged."
   denied_tool_line: "At 225.0s through 226.5s, the ANY TOOL badge and denied connector were checked on forward and reverse seeks; both share the same fade and are fully transparent by 226.0s, with no line left behind."
   section_06_keyframes: [227.3, 227.866, 228.2, 229.9, 236.9, 242.8, 252.0, 261.0, 268.0, 273.0, 278.0, 286.0, 299.0, 304.7]
   section_06_local_status: "pass: seven deterministic SVG connections with traveling signal dots; selected MAP state matches the current-transit task; orchestrator and MAP SERVICE are separated without overlap; result returns to context and response; phone and desktop use the same fixed master composition; no page overflow or JavaScript/asset errors"
@@ -152,6 +166,8 @@ quality_checks:
   global_motion_local: "pass: Three.js particles, layered neural activation, animated training signals, adjustable parameter dials and gentle camera parallax remain time-varying after minute one; 27 distinct post-minute samples; ambient background network/grid opacity reduced to keep explanatory cards dominant. Section 02 token landing retains clearance below category labels."
   section_07_local_status: "pass: production build succeeds; local Chromium verified a 1920x1080 backing canvas, exact Section 07 chapter seek to 305.206s, real audio playback with synchronized caption/chapter, keyframe samples from 310.5s to 370.5s, and identical warning-card states after repeated 368.5s seeks; visible cards do not overlap at sampled beats; no failed assets or audio errors."
   section_07_live_status: "pass: GitHub Pages run 39764981431 succeeded for commit d6ee6660345f4b7bd4042608f09529fd16156dd1; live browser seeks at 324.5s (five/mismatch), 349.5s (eight/match/preference), and 368.5s (cautions) displayed synchronized captions with Section 07 selected; 1920x1080 canvas, 372.06s audio metadata, no media errors or failed assets."
+  section_08_local_status: "pass: production build and 447.869-second stereo MP3 decode passed. Chromium sampled 13 audio-time keyframes (372.026–447.2s); 1920x1080 backing composition displayed at 1256x706.5 CSS px (16:9), key-caption text followed time, all major cards stayed in bounds with no pairwise overlap, and the prompt card expanded cleanly for context chips. Chapter 08 click sought to 372.026s; actual playback advanced to 374.54s with synchronized caption/player state. Re-rendering 444.0s twice produced identical DOM transforms and SVG paths; both verification actions appeared."
+  section_08_live_status: "pending: Section 08 has not yet been deployed."
   public_deployment: "success: GitHub Actions run 39764981431 deployed commit d6ee6660345f4b7bd4042608f09529fd16156dd1; Pages HTTP 200 and new Taipei marker present; live browser confirmed the seven-section audio, caption, chapter, and 16:9 stage."
   ffprobe_verified: true
   full_decode_verified: true

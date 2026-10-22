@@ -1,12 +1,12 @@
 # From Prompt to Action — Video Preview
 
-A section-by-section, audio-synchronized 16:9 motion-design film preview. The current cut follows an AI request from an assistant interface through tokenization, context, attention, next-token generation, tool access, and model training.
+A section-by-section, audio-synchronized 16:9 motion-design film preview. The current cut follows an AI request from an assistant interface through tokenization, context, attention, next-token generation, tool access, model training, and why answers can vary.
 
 ## Preview
 
 Published preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/
 
-The film frame has no title cards or review subtitles. Synchronized English review captions sit below the frame, outside the film composition. The Three.js canvas renders one **1920×1080** master at **24 fps**; phones show that same composition proportionally, with no device-specific film typography or layout. The player offers play/seek, a seven-section jump rail, and fullscreen. In fullscreen, the chapter rail and playback controls overlay the picture, appear on entry or a screen tap, and fade after three seconds; tapping again toggles them. The player requests landscape orientation where supported and keeps the 16:9 frame fitted to the available display.
+The film frame has no title cards or review subtitles. Synchronized English review captions sit below the frame, outside the film composition. The Three.js canvas renders one **1920×1080** master at **24 fps**; phones show that same composition proportionally, with no device-specific film typography or layout. The player offers play/seek, an eight-section jump rail, and fullscreen. In fullscreen, the chapter rail and playback controls overlay the picture, appear on entry or a screen tap, and fade after three seconds; tapping again toggles them. The player requests landscape orientation where supported and keeps the 16:9 frame fitted to the available display.
 
 - **01 — The assistant:** Type the Taipei request in a compact chat composer, send it, show an AI loading state, then reveal a nature-first itinerary.
 - **02 — Tokens:** Keep the submitted sentence visible as word copies emerge and travel into whole-word, word-piece, and punctuation groups, with illustrative numeric IDs.
@@ -15,8 +15,10 @@ The film frame has no title cards or review subtitles. Synchronized English revi
 - **05 — Where tools come from:** Show product builders defining available map, search, calendar, and booking tools, including a human-approval gate.
 - **06 — Tool use:** Animate task-to-tool matching, a structured route request, application/orchestrator execution, an external map-service result returning to context, and realistic tool/permission risks.
 - **07 — How models learn:** Animate illustrative text examples flowing through a neural network, next-token prediction compared with a target, parameter adjustments/repeated passes, instruction/preference examples, tool-use tuning, and remaining limitations.
+- **08 — Why answers vary:** Follow two plausible Taipei itineraries from the same visible prompt through different token choices; show how decoding variation, full context, live data, and model changes affect repeatability, then distinguish consistency from accuracy.
 
 Section 07 review script and visual cues: [`docs/section-07-script-review.md`](docs/section-07-script-review.md).
+Section 08 review script and visual cues: [`docs/section-08-script-review.md`](docs/section-08-script-review.md).
 
 ## Run locally
 
@@ -38,16 +40,17 @@ GitHub Actions builds and publishes the production `dist/` output to GitHub Page
 
 ## Audio preview
 
-The seven-section mix is `public/audio/section-01-07-preview-mix.mp3` (stereo, 44.1 kHz, 192 kbps; approximately **6 minutes 12 seconds**). It retains the approved earlier narration, adds the approved-voice-style Section 05–07 narration WAVs, and uses the same restrained cyber/space score with voice-forward sidechain ducking. The master includes the 1.2-second music-led opening and 1.5-second chapter pauses. Section 06 narration is 75.84 seconds; Section 07 narration is 65.32 seconds.
+The eight-section mix is `public/audio/section-01-08-preview-mix.mp3` (stereo, 44.1 kHz, 192 kbps; approximately **7 minutes 28 seconds**). It retains the earlier narration, adds the Section 05–08 narration WAVs, and uses the same restrained cyber/space score with voice-forward sidechain ducking. The master includes the 1.2-second music-led opening and 1.5-second chapter pauses. Section 06 narration is 75.84 seconds; Section 07 is 65.32 seconds; Section 08 is 74.28 seconds.
 
-To rebuild the mix, provide the original approved audio directory and the generated Section 05–07 WAV files:
+To rebuild the eight-section mix, provide the original approved audio directory and the generated Section 05–08 WAV files:
 
 ```bash
 AUDIO_SOURCE=/path/to/ai-explainer-audio \
 VOICE5_SOURCE=/path/to/section-05-tools-origin.wav \
 VOICE6_SOURCE=/path/to/section-06-tool-use.wav \
 VOICE7_SOURCE=/path/to/section-07-training.wav \
-./scripts/build-preview-audio.sh
+VOICE8_SOURCE=/path/to/section-08-consistency.wav \
+./scripts/build-preview-audio-08.sh
 ```
 
 ## Current cut
@@ -59,9 +62,10 @@ VOICE7_SOURCE=/path/to/section-07-training.wav \
 - Section 05 — Where tools come from: builders define capabilities and permissions
 - Section 06 — A model requests a tool, the application executes it, and the result returns to context
 - Section 07 — How training adjusts model parameters and how post-training shapes behavior
-- Runtime: approximately **6 minutes 12 seconds**
+- Section 08 — Why the same prompt can produce different answers, what that affects, and how to verify results
+- Runtime: approximately **7 minutes 28 seconds**
 - Frame: **1920×1080**, 16:9, 24 fps
 - Audio: English narration with the restrained cyber/space score ducked beneath speech
 - Token boundaries, IDs, and the Taipei nature-weekend “five” versus “eight” training example are illustrative; real tokenizer boundaries and training procedures vary
 
-This is a review preview, not the final MP4 render. Scene states derive from absolute audio time, so direct and reverse seeking reconstruct the same frames and transitions.
+This is a review preview, not the final MP4 render. Scene states derive from absolute audio time, so direct and reverse seeking reconstruct the same frames and transitions. The Section 08 Taipei route branches and token choices are illustrative; a repeatable response is not automatically a correct one.

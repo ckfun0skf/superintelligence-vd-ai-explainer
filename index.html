@@ -330,6 +330,55 @@
                 <div class="training-caution"><i aria-hidden="true">↗</i><span>WRONG TOOL</span></div>
               </div>
             </div>
+
+            <div class="consistency-story" id="consistency-story" aria-label="Why the same visible prompt can produce different answers">
+              <svg class="consistency-lines" id="consistency-lines" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"></svg>
+              <div class="consistency-prompt" id="consistency-prompt">
+                <small>SAME VISIBLE PROMPT</small>
+                <p>Plan a two-day nature weekend in Taipei.</p>
+                <span class="consistency-budget">Under $8,000</span>
+                <div class="context-additions" id="context-additions">
+                  <small>OTHER INPUTS CAN CHANGE</small>
+                  <div><span>SYSTEM</span><span>CHAT HISTORY</span><span>LIVE MAP</span><span>MODEL UPDATE</span></div>
+                </div>
+              </div>
+              <div class="consistency-model" id="consistency-model">
+                <small>LANGUAGE MODEL</small>
+                <div class="consistency-network" aria-hidden="true">
+                  <svg viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M8 20 34 15 65 24 92 18M8 20 34 50 65 24 92 50M8 50 34 50 65 50 92 50M8 80 34 50 65 76 92 50M8 80 34 85 65 76 92 82"/><path d="M8 20 34 85 65 24 92 82M8 80 34 15 65 76 92 18"/></svg>
+                  <i class="network-column"><b></b><b></b><b></b></i><i class="network-column"><b></b><b></b><b></b></i><i class="network-column"><b></b><b></b><b></b></i><i class="network-column"><b></b><b></b><b></b></i>
+                  <span class="network-pulse"></span>
+                </div>
+              </div>
+              <div class="decoding-card" id="decoding-card">
+                <small>NEXT TOKEN OPTIONS</small>
+                <div class="candidate-choice"><span>Maokong</span><b>or</b><span>Yangmingshan</span></div>
+                <div class="variation-control" id="variation-control">
+                  <small>DECODING VARIATION</small>
+                  <div class="variation-scale"><span>LOW</span><i><b id="variation-needle"></b></i><span>HIGH</span></div>
+                </div>
+              </div>
+              <div class="answer-branch branch-a" id="answer-branch-a">
+                <small>ONE PLAUSIBLE REPLY</small>
+                <strong><span>DAY 01</span> Maokong <i>→</i> <span>DAY 02</span> Yangmingshan</strong>
+                <div>2 DAYS <b>·</b> NATURE <b>·</b> UNDER $8,000</div>
+              </div>
+              <div class="answer-branch branch-b" id="answer-branch-b">
+                <small>ANOTHER PLAUSIBLE REPLY</small>
+                <strong><span>DAY 01</span> Yangmingshan <i>→</i> <span>DAY 02</span> Maokong</strong>
+                <div>2 DAYS <b>·</b> NATURE <b>·</b> UNDER $8,000</div>
+              </div>
+              <div class="consequence-row" id="consequence-row">
+                <div class="consistency-consequence"><i aria-hidden="true">↻</i><span>REPRODUCE</span></div>
+                <div class="consistency-consequence"><i aria-hidden="true">≋</i><span>COMPARE</span></div>
+                <div class="consistency-consequence"><i aria-hidden="true">◇</i><span>TRUST</span></div>
+              </div>
+              <div class="reliability-card" id="reliability-card">
+                <small>LOWER VARIATION CAN HELP</small>
+                <strong>CONSISTENCY <span>≠</span> ACCURACY</strong>
+                <div><span><i aria-hidden="true">⌕</i> CHECK CURRENT FACTS</span><span><i aria-hidden="true">✓</i> VERIFY THE RESULT</span></div>
+              </div>
+            </div>
           </div>
 
         <div class="fullscreen-orientation-hint" id="fullscreen-orientation-hint" role="status" aria-live="polite">
@@ -343,7 +392,7 @@
             <span class="visually-hidden" id="play-label">Play</span>
           </button>
           <span class="time-readout" id="current-time">00:00</span>
-          <input id="timeline" type="range" min="0" max="372.026" value="0" step="0.01" aria-label="Seek through the video preview" />
+          <input id="timeline" type="range" min="0" max="447.806" value="0" step="0.01" aria-label="Seek through the video preview" />
           <span class="time-readout" id="total-time">06:12</span>
           <button class="fullscreen-button" id="fullscreen-button" type="button" aria-label="Enter fullscreen preview" aria-pressed="false" title="Enter fullscreen (F)">
             <svg class="fullscreen-enter-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5" /></svg>
@@ -363,8 +412,9 @@
           <button type="button" class="chapter-button" data-time="177.38" aria-label="Go to section 5: Where tools come from"><span>05</span><span>Where tools come from</span></button>
           <button type="button" class="chapter-button" data-time="227.866" aria-label="Go to section 6: How tool use works"><span>06</span><span>Tool use</span></button>
           <button type="button" class="chapter-button" data-time="305.206" aria-label="Go to section 7: How models learn"><span>07</span><span>How models learn</span></button>
+          <button type="button" class="chapter-button" data-time="372.026" aria-label="Go to section 8: Why answers can vary"><span>08</span><span>Why answers vary</span></button>
         </nav>
-        <audio id="preview-audio" preload="metadata" src="./audio/section-01-07-preview-mix.mp3"></audio>
+        <audio id="preview-audio" preload="metadata" src="./audio/section-01-08-preview-mix.mp3"></audio>
       </section>
     </main>
     <script type="module" src="./src/main.js"></script>
