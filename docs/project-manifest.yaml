@@ -136,7 +136,7 @@ delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
   final_video: null
-  git_commit: "bc0657876650cc28f528538fe0e4dec073dcb4a1"
+  git_commit: "d803f2c52481e81445bd80ff71edfe78d0e44d0d"
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
@@ -169,7 +169,8 @@ quality_checks:
   section_08_local_status: "pass: production build and 447.869-second stereo MP3 decode passed. Chromium sampled 13 audio-time keyframes (372.026–447.2s); 1920x1080 backing composition displayed at 1256x706.5 CSS px (16:9), key-caption text followed time, all major cards stayed in bounds with no pairwise overlap, and the prompt card expanded cleanly for context chips. Chapter 08 click sought to 372.026s; actual playback advanced to 374.54s with synchronized caption/player state. Re-rendering 444.0s twice produced identical DOM transforms and SVG paths; both verification actions appeared."
   section_08_live_status: "pass: GitHub Pages run 39807926538 succeeded for commit bc0657876650cc28f528538fe0e4dec073dcb4a1. Live Chromium confirmed eight chapter buttons, 447.82s audio metadata, branch cards at 400s, expanded prompt/context at 416s, and the final consistency/verification card at 444s with synchronized caption and active Chapter 08."
   full_film_visual_audit_local: "pass: reviewed representative frames in all eight sections; 1920×1080 backing canvas, 447.82s preview audio, eight chapters, no failed resources or browser errors. Route-mini-map at 14.5s, map-service route at 273/281s, training mismatch arrows at 327s, and both generated Taipei itinerary branches at 397.5s were checked. Repeated renders at the same sampled times returned identical route progress, arrow transforms, and branch-token transforms; map-service/result and branch-card bounds do not overlap."
-  public_deployment: "success: GitHub Actions run 39807926538 deployed commit bc0657876650cc28f528538fe0e4dec073dcb4a1; live Pages page loaded the eight-section player and current Taipei content, with the Section 08 400/416/444s frames verified in Chromium."
+  full_film_visual_audit_live_status: "pass: GitHub Pages run 39936766827 deployed feature commit d803f2c52481e81445bd80ff71edfe78d0e44d0d. Production Chromium verified the 1920×1080 canvas, 447.82s audio, eight chapters, the map route at 273/281s, directional training arrows at 327s, and complete branch tokens at 397.5s. Repeated direct seeks returned identical paths and transforms; no failed resources or browser errors."
+  public_deployment: "success: GitHub Actions run 39936766827 deployed commit d803f2c52481e81445bd80ff71edfe78d0e44d0d; live Pages loaded the updated eight-section player with route-map, training-feedback and branch-token effects verified in Chromium."
   ffprobe_verified: true
   full_decode_verified: true
   notes:
