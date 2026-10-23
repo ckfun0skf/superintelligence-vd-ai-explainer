@@ -56,8 +56,10 @@ const attentionFocus = document.querySelector('#attention-focus');
 const typoScene = document.querySelector('#typo-scene');
 const typoSource = document.querySelector('#typo-source');
 const likelyReading = document.querySelector('#likely-reading');
-const uncertaintyIndicator = document.querySelector('#uncertainty-indicator');
-const clarifyIndicator = document.querySelector('#clarify-indicator');
+const meaningOptions = document.querySelector('#meaning-options');
+const clarificationCard = document.querySelector('#clarification-card');
+const meaningLikelyMeter = document.querySelector('#meaning-likely-meter');
+const meaningOtherMeter = document.querySelector('#meaning-other-meter');
 const modelStory = document.querySelector('#model-story');
 const llmPrompt = document.querySelector('#llm-prompt');
 const llmNetwork = document.querySelector('#llm-network');
@@ -70,6 +72,10 @@ const llmStoredAnswer = document.querySelector('#llm-stored-answer');
 const storedAnswerStrike = document.querySelector('.stored-answer-strike');
 const llmPatterns = document.querySelector('#llm-patterns');
 const llmExternal = document.querySelector('#llm-external');
+const externalMapRoute = document.querySelector('#external-map-route');
+const externalMapSignal = document.querySelector('#external-map-signal');
+const externalMapRouteLength = externalMapRoute.getTotalLength();
+const calendarDays = [...document.querySelectorAll('#calendar-mini-grid i')];
 const toolOriginStory = document.querySelector('#tool-origin-story');
 const originModel = document.querySelector('#origin-model');
 const modelLiveNeed = document.querySelector('#model-live-need');
@@ -118,11 +124,18 @@ const trainingTarget = document.querySelector('#training-target');
 const trainingCompare = document.querySelector('#training-compare');
 const trainingCompareLabel = document.querySelector('#training-compare-label');
 const trainingCompareResult = document.querySelector('#training-compare-result');
+const trainingBudgetMeter = document.querySelector('#training-budget-meter');
+const trainingGuessFill = document.querySelector('#training-guess-fill');
+const trainingTargetFill = document.querySelector('#training-target-fill');
+const trainingGuessAmount = document.querySelector('#training-guess-amount');
 const trainingParameters = document.querySelector('#training-parameters');
 const trainingUpdate = document.querySelector('#training-update');
 const trainingInstruction = document.querySelector('#training-instruction');
 const trainingPreference = document.querySelector('#training-preference');
 const trainingToolExample = document.querySelector('#training-tool-example');
+const trainingMapRoute = document.querySelector('#training-map-route');
+const trainingMapSignal = document.querySelector('#training-map-signal');
+const trainingMapRouteLength = trainingMapRoute.getTotalLength();
 const trainingExampleSlot = document.querySelector('#training-example-slot');
 const trainingLibrary = document.querySelector('#training-library');
 const trainingCautions = document.querySelector('#training-cautions');
@@ -141,6 +154,9 @@ const variationNeedle = document.querySelector('#variation-needle');
 const answerBranchA = document.querySelector('#answer-branch-a');
 const answerBranchB = document.querySelector('#answer-branch-b');
 const branchChoiceTokens = [...document.querySelectorAll('.branch-choice-token')];
+const branchRoutePaths = [document.querySelector('#branch-route-a'), document.querySelector('#branch-route-b')];
+const branchRouteSignals = [document.querySelector('#branch-signal-a'), document.querySelector('#branch-signal-b')];
+const branchRouteLengths = branchRoutePaths.map((path) => path.getTotalLength());
 const consequenceRow = document.querySelector('#consequence-row');
 const consequenceCards = [...document.querySelectorAll('.consistency-consequence')];
 const reliabilityCard = document.querySelector('#reliability-card');
@@ -1016,12 +1032,17 @@ function renderContextStory(time) {
   });
   drawLink(typoSourceEdge, typoSource, likelyReading, smoothstep(30.0, 31.1, local), likelyIn * 0.82 * endFade);
 
-  const uncertaintyIn = smoothstep(41.5, 42.6, local);
-  uncertaintyIndicator.style.opacity = (uncertaintyIn * endFade).toFixed(3);
-  uncertaintyIndicator.style.transform = `translate(-50%, ${lerp(16, 0, uncertaintyIn).toFixed(2)}px)`;
-  const clarifyIn = smoothstep(48.7, 49.8, local);
-  clarifyIndicator.style.opacity = (clarifyIn * endFade).toFixed(3);
-  clarifyIndicator.style.transform = `translate(-50%, ${lerp(16, 0, clarifyIn).toFixed(2)}px)`;
+  const uncertaintyIn = smoothstep(41.5, 42.6, local) * (1 - smoothstep(47.8, 48.75, local));
+  meaningOptions.style.opacity = (uncertaintyIn * endFade).toFixed(3);
+  meaningOptions.style.transform = `translate(-50%, ${lerp(.65, 0, uncertaintyIn).toFixed(3)}cqw) scale(${lerp(.985, 1, uncertaintyIn).toFixed(3)})`;
+  const likelyStrength = smoothstep(41.8, 44.5, local);
+  meaningLikelyMeter.style.width = `${lerp(8, 82, likelyStrength).toFixed(1)}%`;
+  meaningOtherMeter.style.width = `${lerp(5, 28, likelyStrength).toFixed(1)}%`;
+  const clarifyIn = smoothstep(48.7, 49.8, local) * (1 - smoothstep(53.25, 54.25, local));
+  clarificationCard.style.opacity = (clarifyIn * endFade).toFixed(3);
+  clarificationCard.style.transform = `translate(-50%, ${lerp(.72, 0, clarifyIn).toFixed(3)}cqw) scale(${lerp(.985, 1, clarifyIn).toFixed(3)})`;
+  const cursorPulse = .5 + .5 * Math.sin(local * 5.2) ** 2;
+  clarificationCard.querySelector('.clarification-cursor').style.opacity = String((clarifyIn * (.35 + .65 * cursorPulse)).toFixed(3));
 }
 
 function renderModelStory(time) {
@@ -1120,6 +1141,25 @@ function renderModelStory(time) {
   const externalIn = smoothstep(58.6, 60.2, local);
   llmExternal.style.opacity = externalIn.toFixed(3);
   llmExternal.style.transform = `translateY(${lerp(0.8, 0, externalIn)}cqw)`;
+  const routeProgress = smoothstep(59.2, 62.1, local) * externalIn;
+  externalMapRoute.style.strokeDashoffset = (1 - routeProgress).toFixed(3);
+  externalMapRoute.style.opacity = String(routeProgress.toFixed(3));
+  const mapPoint = externalMapRoute.getPointAtLength(externalMapRouteLength * clamp(routeProgress, 0, .999));
+  externalMapSignal.setAttribute('cx', mapPoint.x.toFixed(1));
+  externalMapSignal.setAttribute('cy', mapPoint.y.toFixed(1));
+  externalMapSignal.style.opacity = String((routeProgress > .03 ? externalIn : 0).toFixed(3));
+  calendarDays.forEach((day, index) => {
+    const weekend = index >= 5;
+    const selectAt = 60.2 + Math.max(0, index - 5) * .9;
+    const dayIn = smoothstep(59.8 + index * .12, 60.2 + index * .12, local) * externalIn;
+    day.style.opacity = dayIn.toFixed(3);
+    day.style.transform = `scale(${(weekend && local >= selectAt ? 1.08 : 1).toFixed(3)})`;
+    day.classList.toggle('is-selected', weekend && local >= selectAt);
+  });
+  llmExternal.querySelectorAll('.external-app').forEach((app, index) => {
+    const drift = Math.sin(local * 1.6 + index * 1.3) * .035 * externalIn;
+    app.style.transform = `translateY(${drift.toFixed(3)}cqw)`;
+  });
 
   drawLink(modelEdges[0].path, modelEdges[0].from, modelEdges[0].to, smoothstep(0.6, 2.0, local), promptIn * networkIn);
   drawLink(modelEdges[1].path, modelEdges[1].from, modelEdges[1].to, smoothstep(11.1, 13.2, local), candidateIn);
@@ -1421,6 +1461,11 @@ function renderTrainingStory(time) {
   trainingCompare.style.transform = `translateY(${lerp(.16, 0, compareIn).toFixed(3)}cqw)`;
   const learningProgress = smoothstep(20.8, 25.6, voice);
   const corrected = learningProgress > .56;
+  trainingBudgetMeter.style.opacity = (compareIn * predictionIn).toFixed(3);
+  trainingBudgetMeter.style.transform = `translateY(${lerp(.2, 0, compareIn).toFixed(3)}cqw)`;
+  trainingGuessFill.style.width = `${lerp(50, 80, learningProgress).toFixed(1)}%`;
+  trainingTargetFill.style.width = '80%';
+  trainingGuessAmount.textContent = corrected ? '$8K' : '$5K';
   trainingPredictionWord.textContent = corrected ? 'eight' : 'five';
   trainingCompareLabel.textContent = corrected ? 'AFTER UPDATE' : 'COMPARE';
   trainingCompareResult.textContent = corrected ? 'MATCH' : 'MISMATCH';
@@ -1440,18 +1485,41 @@ function renderTrainingStory(time) {
     dial.style.boxShadow = `0 0 ${(0.3 + 1.05 * energy).toFixed(2)}cqw rgba(126,238,196,${(.16 + .48 * energy).toFixed(3)})`;
   });
   const compareIcon = trainingCompare.querySelector('.compare-icon');
+  compareIcon.querySelector('b').textContent = corrected ? '✓' : '≠';
   compareIcon.style.transform = `scale(${(1 + .06 * Math.sin(local * 3.1) ** 2 * compareIn).toFixed(3)}) rotate(${(corrected ? 0 : Math.sin(local * 2.1) * 3).toFixed(2)}deg)`;
 
   const instructionIn = smoothstep(36.4, 37.3, voice) * (1 - smoothstep(39.9, 40.8, voice));
   trainingInstruction.style.opacity = instructionIn.toFixed(3);
   trainingInstruction.style.transform = `translateX(${lerp(-.35, 0, instructionIn).toFixed(3)}cqw) scale(${lerp(.985, 1, instructionIn).toFixed(3)})`;
+  const instructionUserIn = smoothstep(36.5, 37.3, voice);
+  const instructionAssistantIn = smoothstep(37.45, 38.35, voice);
+  trainingInstruction.querySelector('.instruction-user').style.clipPath = `inset(0 ${(100 - instructionUserIn * 100).toFixed(2)}% 0 0 round .25cqw)`;
+  trainingInstruction.querySelector('.instruction-assistant').style.clipPath = `inset(0 ${(100 - instructionAssistantIn * 100).toFixed(2)}% 0 0 round .25cqw)`;
+  trainingInstruction.querySelector('.instruction-user').style.transform = `translateX(${lerp(-.25, 0, instructionUserIn).toFixed(3)}cqw)`;
+  trainingInstruction.querySelector('.instruction-assistant').style.transform = `translateX(${lerp(-.25, 0, instructionAssistantIn).toFixed(3)}cqw)`;
   const preferenceIn = smoothstep(40.0, 40.8, voice) * (1 - smoothstep(43.9, 44.8, voice));
   trainingPreference.style.opacity = preferenceIn.toFixed(3);
   trainingPreference.style.transform = `translateY(${lerp(.3, 0, preferenceIn).toFixed(3)}cqw)`;
+  const preferenceSignal = smoothstep(41.05, 42.05, voice);
+  trainingPreference.querySelectorAll('.preference-thumb').forEach((thumb, index) => {
+    const signal = index === 1 ? preferenceSignal : 1 - preferenceSignal * .6;
+    thumb.style.opacity = (preferenceIn * signal).toFixed(3);
+    thumb.style.transform = `scale(${(index === 1 ? 1 + .18 * preferenceSignal * (.5 + .5 * Math.sin(local * 4) ** 2) : 1 - .08 * preferenceSignal).toFixed(3)})`;
+    thumb.style.boxShadow = index === 1 && preferenceSignal > .05
+      ? `0 0 ${(0.25 + .72 * preferenceSignal).toFixed(2)}cqw rgba(112, 227, 173, ${(0.12 + .32 * preferenceSignal).toFixed(3)})`
+      : 'none';
+  });
+  trainingPreference.querySelector('.preferred').style.boxShadow = `0 0 ${(preferenceSignal * .85).toFixed(2)}cqw rgba(107, 218, 165, ${(preferenceSignal * .24).toFixed(3)})`;
   const toolExampleIn = smoothstep(44.8, 45.6, voice) * (1 - smoothstep(49.0, 49.9, voice));
   trainingToolExample.style.opacity = toolExampleIn.toFixed(3);
   trainingToolExample.style.transform = `translateX(${lerp(.35, 0, toolExampleIn).toFixed(3)}cqw) scale(${lerp(.985, 1, toolExampleIn).toFixed(3)})`;
   trainingToolExample.querySelector('.training-map-icon').style.boxShadow = `0 0 ${(0.4 + .6 * Math.sin(local * 2.1) ** 2).toFixed(2)}cqw rgba(102,207,211,${(.1 + .14 * toolExampleIn).toFixed(3)})`;
+  const trainingRouteProgress = smoothstep(45.2, 47.8, voice) * toolExampleIn;
+  trainingMapRoute.style.strokeDashoffset = (1 - trainingRouteProgress).toFixed(3);
+  const trainingRoutePoint = trainingMapRoute.getPointAtLength(trainingMapRouteLength * clamp(trainingRouteProgress, 0, .999));
+  trainingMapSignal.setAttribute('cx', trainingRoutePoint.x.toFixed(1));
+  trainingMapSignal.setAttribute('cy', trainingRoutePoint.y.toFixed(1));
+  trainingMapSignal.style.opacity = String((toolExampleIn * (trainingRouteProgress > .03 ? 1 : .35)).toFixed(3));
 
   const earlyLibrary = smoothstep(32.4, 33.2, voice) * (1 - smoothstep(35.7, 36.4, voice));
   const lateLibrary = smoothstep(51.3, 52.1, voice) * (1 - smoothstep(54.8, 55.5, voice));
@@ -1586,6 +1654,14 @@ function renderConsistencyStory(time) {
     branch.style.borderColor = index === 0
       ? `rgba(130, 164, 211, ${(0.24 + .14 * pulse * branchIn).toFixed(3)})`
       : `rgba(111, 193, 179, ${(0.24 + .14 * (1 - pulse) * branchIn).toFixed(3)})`;
+    const routeProgress = smoothstep(22.35, 24.85, voice) * branchIn;
+    const route = branchRoutePaths[index];
+    route.style.strokeDashoffset = (1 - routeProgress).toFixed(3);
+    route.style.opacity = routeProgress.toFixed(3);
+    const routePoint = route.getPointAtLength(branchRouteLengths[index] * clamp(routeProgress, 0, .999));
+    branchRouteSignals[index].setAttribute('cx', routePoint.x.toFixed(1));
+    branchRouteSignals[index].setAttribute('cy', routePoint.y.toFixed(1));
+    branchRouteSignals[index].style.opacity = (branchIn * (routeProgress > .03 ? .95 : 0)).toFixed(3);
   });
 
   const consequencesIn = smoothstep(51.5, 52.6, voice) * (1 - smoothstep(58.85, 59.45, voice));
