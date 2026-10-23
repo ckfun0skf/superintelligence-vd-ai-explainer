@@ -29,8 +29,8 @@ scenes:
       - "00:00–00:01.5 music-only assistant interface build"
       - "00:01.5–00:20.0 Taipei prompt, itinerary response, and tool question"
       - "00:20.0–00:24.4 handoff into the request-processing explanation"
-    visual_intent: "Assemble an unbranded assistant interface with a compact composer fixed at the bottom; type and send the prompt into a user bubble; animate an AI loading state; reveal the nature-first Taipei title and two itinerary cards in sequence."
-    review_status: "previously published; retained in the seven-section regression preview"
+    visual_intent: "Assemble an unbranded assistant interface with a compact composer fixed at the bottom; type and send the prompt into a user bubble; animate an AI loading state; reveal the nature-first Taipei title and two itinerary cards in sequence, with a small route trace beside the answer heading."
+    review_status: "rechecked in the eight-section master; compact route trace draws beside the itinerary heading without enlarging the response card"
   - id: "scene-02"
     start_seconds: 24.4
     end_seconds: 55.6
@@ -102,8 +102,8 @@ scenes:
       - "264.306–274.686 the application/orchestrator checks and executes the request; separate map software returns a result"
       - "274.686–287.826 the result enters conversation context and the model continues generating"
       - "287.826–304.966 tool selection may fail, results can be incomplete, and consequential actions may require confirmation and permission"
-    visual_intent: "Carry the current-transit need into a four-card available-tools catalogue and animate a match signal to MAP. Pair descriptions/expected inputs with a product-instructions and training-example cue. The model sends a structured Taipei Main→Yangmingshan route request to an AI-application/orchestrator card; origin and destination checks animate before an execution pulse crosses to a separate MAP SERVICE card. A result card with route options/ETA travels into the conversation as a new context message, then the model resumes a short in-frame response. Finish with tool-error and booking-permission cautions; do not depict a consequential action as approved. No in-frame titles or review subtitles."
-    review_status: "Section 06 75.84-second narration integrated; local desktop 1528.9×860 and phone 374×210.4 Chromium QA passed with one 1920×1080 backing canvas, 16:9 frame, all content inside safe bounds, seven animated SVG links/signals, deterministic repeated seeks, audio playback and no JavaScript or failed-asset errors"
+    visual_intent: "Carry the current-transit need into a four-card available-tools catalogue and animate a match signal to MAP. Pair descriptions/expected inputs with a product-instructions and training-example cue. The model sends a structured Taipei Main→Yangmingshan route request to an AI-application/orchestrator card; origin and destination checks animate before an execution pulse crosses to a separate MAP SERVICE card, where a mini-map draws the route as the tool loads. A result card with route options/ETA travels into the conversation as a new context message, then the model resumes a short in-frame response. Finish with tool-error and booking-permission cautions; do not depict a consequential action as approved. No in-frame titles or review subtitles."
+    review_status: "Section 06 narration and local Chromium QA passed; full-film pass adds a route-drawing map-service interface. At 273s the line is mid-draw; by 281s the map/result cards remain separate and non-overlapping."
   - id: "scene-07"
     start_seconds: 305.206
     end_seconds: 372.026
@@ -116,8 +116,8 @@ scenes:
       - "333.306–343.206 repeated updates become more likely patterns, not an answer database"
       - "343.206–357.406 instruction, preference, and map-tool tuning examples appear in sequence"
       - "357.406–371.706 methods vary; a Taipei response and sequential model-limit cautions close the section"
-    visual_intent: "Keep the Taipei nature-weekend/$8,000 context consistent. A compact training-text card feeds the layered model; the right-side prediction card shows ‘My budget is…’, candidate ‘five’, target ‘eight’, and a mismatch before parameters change and the candidate matches. The parameter card and later database/instruction/preference/tool/response examples hand off one at a time through a shared left-side slot, keeping the frame uncluttered. Finish with sequential misunderstanding, invented-detail, and wrong-tool cautions. Drive all motion from audio time; keep review captions outside the 16:9 frame."
-    review_status: "65.32-second narration integrated; revised Taipei/$8,000 prediction/target sequence, compact single-card layout, and sequential training examples pass local Chromium QA at the Section 07 keyframes; production build succeeds"
+    visual_intent: "Keep the Taipei nature-weekend/$8,000 context consistent. A compact training-text card feeds the layered model; the right-side prediction card shows ‘My budget is…’, candidate ‘five’, target ‘eight’, and a mismatch before parameters change and the candidate matches. Orange directional particles travel from the comparison toward adjustable parameters and back to the model, while the dials glow during the update. Later database/instruction/preference/tool/response examples hand off one at a time through a shared left-side slot. Finish with sequential misunderstanding, invented-detail, and wrong-tool cautions. Drive all motion from audio time; keep review captions outside the 16:9 frame."
+    review_status: "65.32-second narration and Taipei/$8,000 sequence retained; the full-film Chromium pass verified mismatch arrows and rotating parameter feedback at 327s, deterministic repeated arrow transforms, and no card collision."
   - id: "scene-08"
     start_seconds: 372.026
     end_seconds: 447.806
@@ -129,8 +129,8 @@ scenes:
       - "411.626–425.226 instructions, chat history, tools, model versions, and the full-context distinction"
       - "425.226–433.126 inconsistent outputs are harder to reproduce, compare, and trust"
       - "433.126–447.806 lower variation can help, but consistency is not accuracy; check and verify"
-    visual_intent: "Keep the Taipei nature-weekend and under-$8,000 visible prompt unchanged. Feed one layered neural model and animate two possible next stops into alternative, constraint-preserving itinerary orders. Show an illustrative decoding-variation control, then add system, chat-history, live-map, and model-update context chips beside the same visible prompt. Let both responses lead to reproducibility/comparison/trust markers before clearing to a focused consistency-versus-accuracy card and current-fact/result verification actions. All transforms, opacity and signal paths derive from absolute audio time; no subtitles or title card inside the frame."
-    review_status: "74.28-second Charon narration generated and mixed; production build, local Chromium QA, and live GitHub Pages verification pass."
+    visual_intent: "Keep the Taipei nature-weekend and under-$8,000 visible prompt unchanged. Feed one layered neural model and animate two possible next stops into alternative, constraint-preserving itinerary orders; reveal the Day 01 choice before Day 02 in both branches. Show an illustrative decoding-variation control, then add system, chat-history, live-map, and model-update context chips beside the same visible prompt. Let both responses lead to reproducibility/comparison/trust markers before clearing to a focused consistency-versus-accuracy card and current-fact/result verification actions. All transforms, opacity and signal paths derive from absolute audio time; no subtitles or title card inside the frame."
+    review_status: "74.28-second narration and Taipei example retained; full-film Chromium pass verified sequential route-token reveal and separated branch cards at 397.5s with deterministic repeated state."
 
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
@@ -140,9 +140,9 @@ delivery:
 
 quality_checks:
   deterministic_random_seed: "0xA17E2026"
-  browser_errors: "Section 08 production build and MP3 decode passed. After correcting a DOM child-selector error found in the first local browser probe, final Chromium keyframe and playback checks produced no JavaScript errors or failed media loads."
+  browser_errors: "Section 08 production build and MP3 decode passed. After correcting a DOM child-selector error found in the first local browser probe, subsequent Chromium keyframe/playback checks and this full-film visual pass produced no JavaScript errors, failed resources, or media-load errors."
   preview_seek_and_handoff: "Earlier Section 05 checks remain recorded below. Local Section 06 preview was sought at 227.3, 227.866, 228.2, 229.9, 236.9, 242.8, 252, 261, 268, 273, 278, 286, 299, and 304.7 seconds in desktop 1600×1000 and phone 390×844 viewports. Repeated direct seek to 273 seconds produced identical state; the live player advanced from 242.0 to 242.5 seconds with MAP selected and the matching review caption; all scene content stayed inside one 16:9 stage."
-  keyframes_reviewed: [21.0, 37.3, 39.5, 65.5, 89.0, 106.2, 131.0, 149.3, 159.5, 173.0, 180.5, 198.0, 207.0, 216.0, 222.0, 242.8, 252.0, 261.0, 268.0, 273.0, 286.0, 299.0, 304.7, 305.2, 307.4, 318.2, 323.0, 331.0, 341.0, 347.0, 354.0, 360.0, 365.0, 370.5, 372.026, 375.0, 383.0, 390.0, 394.3, 400.0, 408.0, 416.0, 423.0, 430.0, 436.0, 444.0, 447.2]
+  keyframes_reviewed: [14.5, 21.0, 31.5, 37.3, 39.5, 65.5, 89.0, 106.2, 120.0, 131.0, 149.3, 150.0, 159.5, 173.0, 180.5, 198.0, 207.0, 216.0, 222.0, 242.8, 252.0, 261.0, 268.0, 273.0, 281.0, 286.0, 299.0, 304.7, 305.2, 307.4, 318.2, 323.0, 327.0, 330.5, 331.0, 341.0, 347.0, 349.5, 354.0, 360.0, 365.0, 370.5, 372.026, 375.0, 383.0, 390.0, 394.3, 397.0, 397.5, 400.0, 408.0, 416.0, 423.0, 430.0, 436.0, 444.0, 447.2]
   section_07_keyframes: [305.2, 310.5, 318.5, 324.5, 330.5, 339.5, 344.5, 349.5, 353.5, 359.4, 363.2, 368.5, 370.5]
   section_08_keyframes: [372.026, 375.0, 383.0, 390.0, 397.0, 404.0, 408.0, 416.0, 423.0, 430.0, 436.0, 444.0, 447.2]
   responsive_viewports:
@@ -168,6 +168,7 @@ quality_checks:
   section_07_live_status: "pass: GitHub Pages run 39764981431 succeeded for commit d6ee6660345f4b7bd4042608f09529fd16156dd1; live browser seeks at 324.5s (five/mismatch), 349.5s (eight/match/preference), and 368.5s (cautions) displayed synchronized captions with Section 07 selected; 1920x1080 canvas, 372.06s audio metadata, no media errors or failed assets."
   section_08_local_status: "pass: production build and 447.869-second stereo MP3 decode passed. Chromium sampled 13 audio-time keyframes (372.026–447.2s); 1920x1080 backing composition displayed at 1256x706.5 CSS px (16:9), key-caption text followed time, all major cards stayed in bounds with no pairwise overlap, and the prompt card expanded cleanly for context chips. Chapter 08 click sought to 372.026s; actual playback advanced to 374.54s with synchronized caption/player state. Re-rendering 444.0s twice produced identical DOM transforms and SVG paths; both verification actions appeared."
   section_08_live_status: "pass: GitHub Pages run 39807926538 succeeded for commit bc0657876650cc28f528538fe0e4dec073dcb4a1. Live Chromium confirmed eight chapter buttons, 447.82s audio metadata, branch cards at 400s, expanded prompt/context at 416s, and the final consistency/verification card at 444s with synchronized caption and active Chapter 08."
+  full_film_visual_audit_local: "pass: reviewed representative frames in all eight sections; 1920×1080 backing canvas, 447.82s preview audio, eight chapters, no failed resources or browser errors. Route-mini-map at 14.5s, map-service route at 273/281s, training mismatch arrows at 327s, and both generated Taipei itinerary branches at 397.5s were checked. Repeated renders at the same sampled times returned identical route progress, arrow transforms, and branch-token transforms; map-service/result and branch-card bounds do not overlap."
   public_deployment: "success: GitHub Actions run 39807926538 deployed commit bc0657876650cc28f528538fe0e4dec073dcb4a1; live Pages page loaded the eight-section player and current Taipei content, with the Section 08 400/416/444s frames verified in Chromium."
   ffprobe_verified: true
   full_decode_verified: true

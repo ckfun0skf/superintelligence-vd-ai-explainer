@@ -33,6 +33,9 @@ const composerSend = document.querySelector('#composer-send');
 const aiWorking = document.querySelector('#ai-working');
 const thinkingOrb = document.querySelector('#thinking-orb');
 const answerMessage = document.querySelector('#answer-message');
+const answerMapRoute = document.querySelector('#answer-map-route');
+const answerMapSignal = document.querySelector('#answer-map-signal');
+const answerMapRouteLength = answerMapRoute.getTotalLength();
 const dayOne = document.querySelector('#day-one');
 const dayTwo = document.querySelector('#day-two');
 const answerFootnote = document.querySelector('#answer-footnote');
@@ -86,6 +89,10 @@ const callModel = document.querySelector('#call-model');
 const callCatalog = document.querySelector('#call-catalog');
 const callToolCards = [...document.querySelectorAll('.call-tool-card')];
 const callMapCard = document.querySelector('#call-map-card');
+const callRouteMap = document.querySelector('#call-route-map');
+const callRoutePath = document.querySelector('#call-route-path');
+const callRouteSignal = document.querySelector('#call-route-signal');
+const callRouteLength = callRoutePath.getTotalLength();
 const callGuidance = document.querySelector('#call-guidance');
 const callRequest = document.querySelector('#call-request');
 const callOrchestrator = document.querySelector('#call-orchestrator');
@@ -133,6 +140,7 @@ const variationControl = document.querySelector('#variation-control');
 const variationNeedle = document.querySelector('#variation-needle');
 const answerBranchA = document.querySelector('#answer-branch-a');
 const answerBranchB = document.querySelector('#answer-branch-b');
+const branchChoiceTokens = [...document.querySelectorAll('.branch-choice-token')];
 const consequenceRow = document.querySelector('#consequence-row');
 const consequenceCards = [...document.querySelectorAll('.consistency-consequence')];
 const reliabilityCard = document.querySelector('#reliability-card');
@@ -323,10 +331,12 @@ const learningEdges = [
   { from: trainingModel, to: trainingExampleSlot, className: 'learning-edge response-edge' },
 ].map((edge) => ({ ...edge, path: svgPath(learningLines, edge.className) }));
 const learningSignals = learningEdges.map((edge) => {
-  const signal = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-  signal.setAttribute('r', '6');
+  const feedback = edge.className.includes('error-edge') || edge.className.includes('update-edge');
+  const signal = document.createElementNS('http://www.w3.org/2000/svg', feedback ? 'path' : 'circle');
+  if (feedback) signal.setAttribute('d', 'M -12 -8 L 11 0 L -12 8 Z');
+  else signal.setAttribute('r', '6');
   signal.classList.add('learning-signal');
-  if (edge.className.includes('error-edge')) signal.classList.add('error-signal');
+  if (feedback) signal.classList.add('error-signal');
   signal.style.opacity = '0';
   learningLines.append(signal);
   return signal;
@@ -1218,6 +1228,8 @@ function renderToolCallStory(time) {
       path.style.opacity = '0';
       callSignalNodes[index].style.opacity = '0';
     });
+    callRoutePath.style.strokeDashoffset = '1';
+    callRouteSignal.style.opacity = '0';
     return;
   }
 
@@ -1283,6 +1295,13 @@ function renderToolCallStory(time) {
   callMapService.style.opacity = serviceIn.toFixed(3);
   callMapService.style.transform = `translateX(${lerp(.65, 0, serviceIn).toFixed(3)}cqw) scale(${lerp(.97, 1, serviceIn).toFixed(3)})`;
   const searchPulse = smoothstep(41.7, 42.3, voice) * (1 - smoothstep(44.7, 45.5, voice));
+  const routeProgress = smoothstep(42.15, 44.65, voice);
+  callRouteMap.style.opacity = (serviceIn * .94).toFixed(3);
+  callRoutePath.style.strokeDashoffset = (1 - routeProgress).toFixed(3);
+  const routePoint = callRoutePath.getPointAtLength(callRouteLength * routeProgress);
+  callRouteSignal.setAttribute('cx', routePoint.x.toFixed(2));
+  callRouteSignal.setAttribute('cy', routePoint.y.toFixed(2));
+  callRouteSignal.style.opacity = (serviceIn * smoothstep(42.2, 42.55, voice) * (1 - smoothstep(44.65, 45.08, voice))).toFixed(3);
   callMapLoading.style.opacity = searchPulse.toFixed(3);
   callMapLoading.querySelectorAll('i').forEach((dot, index) => {
     const beat = .55 + .45 * Math.sin(local * 7.5 - index * 1.35) ** 2;
@@ -1416,7 +1435,9 @@ function renderTrainingStory(time) {
     const adjustment = lerp(-34 + index * 18, 12 - index * 10, learningProgress);
     const motion = Math.sin(local * 1.7 + index * 1.4) * (1.8 + 3.3 * learningProgress);
     dial.style.transform = `rotate(${(adjustment + motion).toFixed(2)}deg)`;
+    const energy = parametersIn * (.22 + .68 * learningProgress) * (.5 + .5 * Math.sin(local * 2.2 + index * .8) ** 2);
     dial.style.setProperty('--dial-energy', (.22 + .62 * (.5 + .5 * Math.sin(local * 2.0 + index))).toFixed(3));
+    dial.style.boxShadow = `0 0 ${(0.3 + 1.05 * energy).toFixed(2)}cqw rgba(126,238,196,${(.16 + .48 * energy).toFixed(3)})`;
   });
   const compareIcon = trainingCompare.querySelector('.compare-icon');
   compareIcon.style.transform = `scale(${(1 + .06 * Math.sin(local * 3.1) ** 2 * compareIn).toFixed(3)}) rotate(${(corrected ? 0 : Math.sin(local * 2.1) * 3).toFixed(2)}deg)`;
@@ -1458,11 +1479,12 @@ function renderTrainingStory(time) {
   });
 
   const postExampleIn = Math.max(instructionIn, preferenceIn, toolExampleIn);
+  const feedbackWindow = smoothstep(18.1, 19.0, voice) * (1 - smoothstep(25.2, 26.0, voice));
   const edgeStates = [
     [smoothstep(.4, 1.9, voice), corpusIn * modelIn * .55, .4, .18],
     [smoothstep(10.1, 11.4, voice), predictionIn * modelIn * .62, 10.1, .2],
-    [smoothstep(16.0, 17.2, voice), compareIn * parametersIn * .7, 16.0, .25],
-    [parametersIn > .02 ? 1 : 0, parametersIn * modelIn * (.34 + .12 * networkPulse), 18.2, .16],
+    [smoothstep(16.0, 17.2, voice), compareIn * parametersIn * feedbackWindow * .96, 16.0, .33],
+    [parametersIn > .02 ? 1 : 0, parametersIn * modelIn * feedbackWindow * (.72 + .1 * networkPulse), 18.2, .33],
     [smoothstep(36.3, 37.5, voice), postExampleIn * modelIn * .52, 36.3, .18],
     [smoothstep(55.1, 56.3, voice), generatedIn * modelIn * .56, 55.1, .22],
   ];
@@ -1474,10 +1496,19 @@ function renderTrainingStory(time) {
       signal.style.opacity = '0';
       return;
     }
-    const phase = (Math.max(0, voice - pulseStart) * speed + index * .13) % 1;
-    const point = edge.path.getPointAtLength(edge.path.getTotalLength() * phase);
-    signal.setAttribute('cx', point.x.toFixed(1));
-    signal.setAttribute('cy', point.y.toFixed(1));
+    const cycle = (Math.max(0, voice - pulseStart) * speed + index * .13) % 1;
+    const feedback = index === 2 || index === 3;
+    const phase = feedback ? .18 + cycle * .64 : cycle;
+    const total = edge.path.getTotalLength();
+    const point = edge.path.getPointAtLength(total * phase);
+    if (feedback) {
+      const ahead = edge.path.getPointAtLength(Math.min(total, total * phase + 4));
+      const angle = Math.atan2(ahead.y - point.y, ahead.x - point.x) * 180 / Math.PI;
+      signal.setAttribute('transform', `translate(${point.x.toFixed(1)} ${point.y.toFixed(1)}) rotate(${angle.toFixed(1)})`);
+    } else {
+      signal.setAttribute('cx', point.x.toFixed(1));
+      signal.setAttribute('cy', point.y.toFixed(1));
+    }
     signal.style.opacity = String(Math.min(.82, opacity * (1.08 + .18 * networkPulse)).toFixed(3));
   });
 }
@@ -1541,6 +1572,13 @@ function renderConsistencyStory(time) {
   variationNeedle.style.left = `${lerp(24, 77, smoothstep(32.0, 37.0, voice)).toFixed(1)}%`;
 
   const branchIn = smoothstep(21.15, 22.15, voice) * (1 - smoothstep(58.0, 59.25, voice));
+  const firstChoiceProgress = smoothstep(21.35, 22.0, voice);
+  const secondChoiceProgress = smoothstep(22.1, 22.85, voice);
+  branchChoiceTokens.forEach((token, index) => {
+    const tokenProgress = index % 2 === 0 ? firstChoiceProgress : secondChoiceProgress;
+    token.style.opacity = (branchIn * tokenProgress).toFixed(3);
+    token.style.transform = `translateY(${lerp(.2, 0, tokenProgress).toFixed(3)}cqw) scale(${lerp(.96, 1, tokenProgress).toFixed(3)})`;
+  });
   [answerBranchA, answerBranchB].forEach((branch, index) => {
     const offset = index === 0 ? -.28 : .28;
     branch.style.opacity = branchIn.toFixed(3);
@@ -1685,6 +1723,12 @@ function renderAt(seconds) {
 
   const response = smoothstep(11.48, 12.25, t);
   reveal(answerMessage, response, 28, 0.96);
+  const answerRouteProgress = smoothstep(12.7, 14.25, t);
+  answerMapRoute.style.strokeDashoffset = (1 - answerRouteProgress).toFixed(3);
+  const answerRoutePoint = answerMapRoute.getPointAtLength(answerMapRouteLength * answerRouteProgress);
+  answerMapSignal.setAttribute('cx', answerRoutePoint.x.toFixed(2));
+  answerMapSignal.setAttribute('cy', answerRoutePoint.y.toFixed(2));
+  answerMapSignal.style.opacity = (smoothstep(12.7, 13.0, t) * (1 - smoothstep(14.25, 14.8, t))).toFixed(3);
   [dayOne, dayTwo, answerFootnote].forEach((element, index) => {
     const p = smoothstep(12.55 + index * 0.55, 13.35 + index * 0.55, t);
     element.style.opacity = p.toFixed(3);

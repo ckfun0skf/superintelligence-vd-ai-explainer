@@ -37,7 +37,7 @@
                   </div>
 
                   <div class="answer-message" id="answer-message">
-                    <div class="answer-heading"><span class="answer-orb" aria-hidden="true"></span><span>A nature-first weekend in Taipei</span><span class="answer-rule"></span></div>
+                    <div class="answer-heading"><span class="answer-orb" aria-hidden="true"></span><span>A nature-first weekend in Taipei</span><span class="answer-rule"></span><span class="answer-route" aria-hidden="true"><svg viewBox="0 0 120 34"><path class="answer-map-streets" d="M3 8 24 12 42 4 63 9 82 4 116 10M4 27 28 21 49 30 71 22 95 29 117 22M15 2 21 32M54 2 58 32M91 2 86 32"/><path class="answer-map-route" id="answer-map-route" pathLength="1" d="M10 25 C28 5 43 31 62 16 S91 8 109 10"/><circle class="answer-map-stop" cx="10" cy="25" r="2.4"/><circle class="answer-map-stop destination" cx="109" cy="10" r="2.4"/><circle class="answer-map-signal" id="answer-map-signal" cx="10" cy="25" r="2.2"/></svg><small>MAP</small></span></div>
                     <div class="itinerary-grid">
                       <div class="itinerary-item" id="day-one"><small>DAY 01</small><strong>Maokong ridge</strong><span>Forest trails · tea hills</span></div>
                       <div class="itinerary-item" id="day-two"><small>DAY 02</small><strong>Yangmingshan</strong><span>Mountain paths · hot springs</span></div>
@@ -244,6 +244,7 @@
               <div class="call-map-service" id="call-map-service">
                 <span class="call-map-icon" aria-hidden="true"><i></i><b></b></span>
                 <small>SEPARATE SOFTWARE</small><strong>MAP SERVICE</strong>
+                <svg class="call-route-map" id="call-route-map" viewBox="0 0 180 50" aria-hidden="true"><path class="call-map-roads" d="M4 10 32 17 56 6 83 13 111 5 145 13 176 7M3 42 28 33 55 45 84 31 112 40 144 30 177 39M20 3 25 47M72 3 77 47M128 3 123 47"/><path class="call-route-base" d="M10 39 C32 8 49 42 76 23 S124 12 168 9"/><path class="call-route-active" id="call-route-path" pathLength="1" d="M10 39 C32 8 49 42 76 23 S124 12 168 9"/><circle class="call-route-stop" cx="10" cy="39" r="3"/><circle class="call-route-stop end" cx="168" cy="9" r="3"/><circle class="call-route-signal" id="call-route-signal" cx="10" cy="39" r="3"/></svg>
                 <span class="map-loading" id="call-map-loading"><i></i><i></i><i></i></span>
               </div>
               <div class="call-result" id="call-result">
@@ -266,7 +267,7 @@
             </div>
 
             <div class="learning-story" id="learning-story" aria-label="How training adjusts a model's parameters">
-              <svg class="learning-lines" id="learning-lines" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"></svg>
+              <svg class="learning-lines" id="learning-lines" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"><defs><marker id="learning-error-arrow" markerWidth="18" markerHeight="18" refX="14" refY="9" orient="auto" markerUnits="userSpaceOnUse"><path d="M2 2 L13 9 L2 16" fill="none" stroke="#ffbd83" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></marker></defs></svg>
               <div class="training-corpus" id="training-corpus">
                 <small>ILLUSTRATIVE TEXT</small>
                 <div class="training-pages" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -360,12 +361,12 @@
               </div>
               <div class="answer-branch branch-a" id="answer-branch-a">
                 <small>ONE PLAUSIBLE REPLY</small>
-                <strong><span>DAY 01</span> Maokong <i>→</i> <span>DAY 02</span> Yangmingshan</strong>
+                <strong><span>DAY 01</span> <b class="branch-choice-token" id="branch-a-first">Maokong</b> <i>→</i> <span>DAY 02</span> <b class="branch-choice-token" id="branch-a-second">Yangmingshan</b></strong>
                 <div>2 DAYS <b>·</b> NATURE <b>·</b> UNDER $8,000</div>
               </div>
               <div class="answer-branch branch-b" id="answer-branch-b">
                 <small>ANOTHER PLAUSIBLE REPLY</small>
-                <strong><span>DAY 01</span> Yangmingshan <i>→</i> <span>DAY 02</span> Maokong</strong>
+                <strong><span>DAY 01</span> <b class="branch-choice-token" id="branch-b-first">Yangmingshan</b> <i>→</i> <span>DAY 02</span> <b class="branch-choice-token" id="branch-b-second">Maokong</b></strong>
                 <div>2 DAYS <b>·</b> NATURE <b>·</b> UNDER $8,000</div>
               </div>
               <div class="consequence-row" id="consequence-row">

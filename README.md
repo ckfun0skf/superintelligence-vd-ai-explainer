@@ -8,17 +8,18 @@ Published preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer
 
 The film frame has no title cards or review subtitles. Synchronized English review captions sit below the frame, outside the film composition. The Three.js canvas renders one **1920×1080** master at **24 fps**; phones show that same composition proportionally, with no device-specific film typography or layout. The player offers play/seek, an eight-section jump rail, and fullscreen. In fullscreen, the chapter rail and playback controls overlay the picture, appear on entry or a screen tap, and fade after three seconds; tapping again toggles them. The player requests landscape orientation where supported and keeps the 16:9 frame fitted to the available display.
 
-- **01 — The assistant:** Type the Taipei request in a compact chat composer, send it, show an AI loading state, then reveal a nature-first itinerary.
+- **01 — The assistant:** Type the Taipei request in a compact chat composer, send it, show an AI loading state, then reveal a nature-first itinerary with a compact route trace.
 - **02 — Tokens:** Keep the submitted sentence visible as word copies emerge and travel into whole-word, word-piece, and punctuation groups, with illustrative numeric IDs.
 - **03 — Context & attention:** Connect prompt pieces to duration, location, budget, and preference; visualize attention and show how context can suggest “quiet place” when the user types “quite place.”
 - **04 — LLM generation:** Show an LLM as a layered neural network predicting and appending likely next tokens while its working context grows.
 - **05 — Where tools come from:** Show product builders defining available map, search, calendar, and booking tools, including a human-approval gate.
-- **06 — Tool use:** Animate task-to-tool matching, a structured route request, application/orchestrator execution, an external map-service result returning to context, and realistic tool/permission risks.
-- **07 — How models learn:** Animate illustrative text examples flowing through a neural network, next-token prediction compared with a target, parameter adjustments/repeated passes, instruction/preference examples, tool-use tuning, and remaining limitations.
-- **08 — Why answers vary:** Follow two plausible Taipei itineraries from the same visible prompt through different token choices; show how decoding variation, full context, live data, and model changes affect repeatability, then distinguish consistency from accuracy.
+- **06 — Tool use:** Animate task-to-tool matching, a structured route request, application/orchestrator execution, a route drawing inside the external map-service UI, the result returning to context, and realistic tool/permission risks.
+- **07 — How models learn:** Animate a Taipei next-token mismatch, directional error feedback into parameters and back to the model, correction, instruction/preference examples, tool-use tuning, and remaining limitations.
+- **08 — Why answers vary:** Reveal two plausible Taipei itineraries token by token from the same visible prompt; show how decoding variation, full context, live data, and model changes affect repeatability, then distinguish consistency from accuracy.
 
 Section 07 review script and visual cues: [`docs/section-07-script-review.md`](docs/section-07-script-review.md).
 Section 08 review script and visual cues: [`docs/section-08-script-review.md`](docs/section-08-script-review.md).
+Full-film visual review and this pass's motion additions: [`docs/full-film-visual-audit.md`](docs/full-film-visual-audit.md).
 
 ## Run locally
 
