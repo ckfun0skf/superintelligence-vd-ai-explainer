@@ -31,3 +31,8 @@ The Taipei nature-weekend example remains consistent across the explainer. No la
 - Repeated seeks reconstructed the same route-path, feedback, and branch states; no JavaScript errors, failed resources, or media-load failures were detected during this local pass.
 
 This remains a browser preview and source-project update, not a rendered final MP4.
+
+## Live deployment verification
+
+- GitHub Pages deployment succeeded for feature commit `3614bcbf5e35c8dc9e162e0620a920996df8b1d9` (Actions run `39941413028`). The public page returned HTTP 200 and contains the clarification, external-map/calendar, budget-meter, and branch-route elements.
+- Live Chromium confirmed the 1920×1080 backing canvas and 447.82-second audio. Samples at 171.2s, 327.5s, 330.8s, 400s, and 416s showed all checked UI inside the single stage; the prediction update switched to ✓ and no JavaScript errors were observed.
