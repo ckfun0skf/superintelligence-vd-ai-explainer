@@ -139,6 +139,10 @@ const trainingMapRouteLength = trainingMapRoute.getTotalLength();
 const trainingExampleSlot = document.querySelector('#training-example-slot');
 const trainingLibrary = document.querySelector('#training-library');
 const trainingCautions = document.querySelector('#training-cautions');
+const trainingCautionCards = [...document.querySelectorAll('.training-caution')];
+const trainingCautionPaths = trainingCautionCards.map((card) => card.querySelector('.caution-motion-path'));
+const trainingCautionSignals = trainingCautionCards.map((card) => card.querySelector('.caution-signal'));
+const trainingCautionPathLengths = trainingCautionPaths.map((path) => path.getTotalLength());
 const trainingGenerated = document.querySelector('#training-generated');
 const trainingDials = [...document.querySelectorAll('.parameter-dial')];
 const trainingNeurons = [...document.querySelectorAll('.training-layer i')];
@@ -159,7 +163,15 @@ const branchRouteSignals = [document.querySelector('#branch-signal-a'), document
 const branchRouteLengths = branchRoutePaths.map((path) => path.getTotalLength());
 const consequenceRow = document.querySelector('#consequence-row');
 const consequenceCards = [...document.querySelectorAll('.consistency-consequence')];
+const consequenceMotionPaths = consequenceCards.map((card) => card.querySelector('.consequence-motion-path'));
+const consequenceSignals = consequenceCards.map((card) => card.querySelector('.consequence-signal'));
+const consequencePathLengths = consequenceMotionPaths.map((path) => path.getTotalLength());
 const reliabilityCard = document.querySelector('#reliability-card');
+const endingReflection = document.querySelector('#ending-reflection');
+const endingNodes = [...document.querySelectorAll('.ending-node')];
+const endingFlowPaths = [...document.querySelectorAll('.ending-flow-path')];
+const endingFlowSignals = [...document.querySelectorAll('.ending-flow-signal')];
+const endingFlowLengths = endingFlowPaths.map((path) => path.getTotalLength());
 
 const SECTION_SIX_START = 227.866;
 const SECTION_SIX_NARRATION_START = 229.366;
@@ -169,7 +181,10 @@ const SECTION_SEVEN_NARRATION_START = SECTION_SEVEN_START + 1.5;
 const SECTION_SEVEN_NARRATION_DURATION = 65.32;
 const SECTION_EIGHT_START = SECTION_SEVEN_NARRATION_START + SECTION_SEVEN_NARRATION_DURATION;
 const SECTION_EIGHT_NARRATION_START = SECTION_EIGHT_START + 1.5;
-const SECTION_EIGHT_NARRATION_DURATION = 74.28;
+const SECTION_EIGHT_MAIN_NARRATION_DURATION = 74.28;
+const SECTION_EIGHT_OUTRO_DURATION = 18.92;
+const SECTION_EIGHT_OUTRO_START = SECTION_EIGHT_NARRATION_START + SECTION_EIGHT_MAIN_NARRATION_DURATION;
+const SECTION_EIGHT_NARRATION_DURATION = SECTION_EIGHT_MAIN_NARRATION_DURATION + SECTION_EIGHT_OUTRO_DURATION;
 const DURATION = SECTION_EIGHT_NARRATION_START + SECTION_EIGHT_NARRATION_DURATION;
 const FPS = 24;
 const SECTION_TWO_START = 24.4;
@@ -261,6 +276,8 @@ const CAPTIONS = [
   { start: 425.226, end: 433.126, text: 'That makes answers harder to reproduce, compare, and trust.' },
   { start: 433.126, end: 439.326, text: 'Lower variation can improve consistency, but consistency is not accuracy.' },
   { start: 439.326, end: 447.806, text: 'Keep context and model version stable, check current information, and verify the result.' },
+  { start: 448.206, end: 457.706, text: 'One question to carry forward: when an AI gives you a confident answer, what would you want to verify before acting on it?' },
+  { start: 457.706, end: 466.406, text: 'AI can help us explore possibilities and use tools—but judgment and responsibility remain ours.' },
 ];
 
 const WORD_ROWS = [
@@ -1538,12 +1555,27 @@ function renderTrainingStory(time) {
   const cautionIn = smoothstep(59.5, 60.3, voice);
   trainingCautions.style.opacity = cautionIn.toFixed(3);
   trainingCautions.style.transform = `translateY(${lerp(.25, 0, cautionIn).toFixed(3)}cqw)`;
-  trainingCautions.querySelectorAll('.training-caution').forEach((card, index) => {
+  trainingCautionCards.forEach((card, index) => {
     const starts = [59.7, 61.4, 63.1];
     const itemIn = smoothstep(starts[index], starts[index] + .55, voice);
     card.style.opacity = itemIn.toFixed(3);
-    card.style.transform = `translateY(${lerp(.18, 0, itemIn).toFixed(3)}cqw)`;
-    card.style.setProperty('--risk-glow', (.5 + .4 * Math.sin(local * 2.4 + index * 1.3) ** 2).toFixed(3));
+    card.style.transform = `translateY(${(lerp(.22, 0, itemIn) + Math.sin(local * 2.1 + index) * .045 * itemIn).toFixed(3)}cqw) scale(${lerp(.96, 1, itemIn).toFixed(3)})`;
+    const trailProgress = smoothstep(starts[index] + .16, starts[index] + 1.25, voice);
+    const path = trainingCautionPaths[index];
+    const signal = trainingCautionSignals[index];
+    path.style.strokeDashoffset = (1 - trailProgress).toFixed(3);
+    const point = path.getPointAtLength(trainingCautionPathLengths[index] * clamp(trailProgress, 0, .999));
+    signal.setAttribute('cx', point.x.toFixed(1));
+    signal.setAttribute('cy', point.y.toFixed(1));
+    signal.style.opacity = (itemIn * (trailProgress > .02 ? 1 : 0)).toFixed(3);
+    const impact = smoothstep(starts[index] + .38, starts[index] + 1.05, voice);
+    card.querySelectorAll('.caution-wrong-mark, .caution-uncertain').forEach((mark) => {
+      mark.style.opacity = impact.toFixed(3);
+      mark.style.transform = `scale(${lerp(.65, 1, impact).toFixed(3)})`;
+      mark.style.transformOrigin = 'center';
+    });
+    const spark = card.querySelector('.caution-spark');
+    if (spark) spark.style.opacity = (itemIn * (.55 + .45 * Math.sin(local * 3.2) ** 2)).toFixed(3);
   });
 
   const postExampleIn = Math.max(instructionIn, preferenceIn, toolExampleIn);
@@ -1671,17 +1703,57 @@ function renderConsistencyStory(time) {
     const starts = [51.8, 53.7, 55.6];
     const itemIn = smoothstep(starts[index], starts[index] + .62, voice);
     card.style.opacity = itemIn.toFixed(3);
-    card.style.transform = `translateY(${lerp(.2, 0, itemIn).toFixed(3)}cqw) scale(${(1 + .035 * Math.sin(local * 2.0 + index) ** 2 * itemIn).toFixed(3)})`;
+    card.style.transform = `translateY(${(lerp(.2, 0, itemIn) + Math.sin(local * 1.8 + index) * .04 * itemIn).toFixed(3)}cqw) scale(${(1 + .045 * Math.sin(local * 2.0 + index) ** 2 * itemIn).toFixed(3)})`;
+    const path = consequenceMotionPaths[index];
+    const signal = consequenceSignals[index];
+    const trailProgress = smoothstep(starts[index] + .15, starts[index] + 1.6, voice);
+    path.style.strokeDashoffset = (1 - trailProgress).toFixed(3);
+    const phase = clamp((voice - starts[index] - .15) * .48, 0, .999);
+    const point = path.getPointAtLength(consequencePathLengths[index] * phase);
+    signal.setAttribute('cx', point.x.toFixed(1));
+    signal.setAttribute('cy', point.y.toFixed(1));
+    signal.style.opacity = (itemIn * (trailProgress > .03 ? 1 : 0)).toFixed(3);
+    const art = card.querySelector('.consequence-art');
+    art.style.transform = `scale(${(1 + .025 * Math.sin(local * 2.3 + index) ** 2 * itemIn).toFixed(3)})`;
   });
 
-  const reliabilityIn = smoothstep(59.65, 60.7, voice);
+  const reliabilityIn = smoothstep(59.65, 60.7, voice) * (1 - smoothstep(73.8, 75.2, voice));
   reliabilityCard.style.opacity = reliabilityIn.toFixed(3);
   reliabilityCard.style.transform = `translateY(${lerp(.42, 0, reliabilityIn).toFixed(3)}cqw) scale(${lerp(.985, 1, reliabilityIn).toFixed(3)})`;
   reliabilityCard.querySelectorAll(':scope > div span').forEach((item, index) => {
-    const itemIn = smoothstep(65.65 + index * .85, 66.55 + index * .85, voice);
+    const itemIn = smoothstep(65.65 + index * .85, 66.55 + index * .85, voice) * reliabilityIn;
     item.style.opacity = itemIn.toFixed(3);
     item.style.transform = `translateY(${lerp(.18, 0, itemIn).toFixed(3)}cqw)`;
   });
+
+  const reflectionIn = smoothstep(73.95, 75.45, voice);
+  endingReflection.style.visibility = reflectionIn > .01 ? 'visible' : 'hidden';
+  endingReflection.style.opacity = reflectionIn.toFixed(3);
+  const nodeStarts = [74.15, 77.35, 81.1, 84.8];
+  endingNodes.forEach((node, index) => {
+    const nodeIn = smoothstep(nodeStarts[index], nodeStarts[index] + 1.15, voice);
+    node.style.opacity = (nodeIn * reflectionIn).toFixed(3);
+    node.style.transform = `translateY(${lerp(.5, 0, nodeIn).toFixed(3)}cqw) scale(${lerp(.94, 1, nodeIn).toFixed(3)})`;
+  });
+  const linkStarts = [74.55, 78.25, 82.0];
+  endingFlowPaths.forEach((path, index) => {
+    const reveal = smoothstep(linkStarts[index], linkStarts[index] + 2.35, voice) * reflectionIn;
+    path.style.strokeDashoffset = (1 - reveal).toFixed(3);
+    const phase = clamp((voice - linkStarts[index]) * .42, 0, .999);
+    const point = path.getPointAtLength(endingFlowLengths[index] * phase);
+    endingFlowSignals[index].setAttribute('cx', point.x.toFixed(1));
+    endingFlowSignals[index].setAttribute('cy', point.y.toFixed(1));
+    endingFlowSignals[index].style.opacity = (reveal > .03 ? Math.min(.98, reflectionIn) : 0).toFixed(3);
+  });
+  const endingCheck = endingReflection.querySelector('.ending-check');
+  const checkProgress = smoothstep(82.0, 85.2, voice);
+  endingCheck.style.opacity = (checkProgress * reflectionIn).toFixed(3);
+  endingCheck.style.strokeDasharray = String(endingCheck.getTotalLength());
+  endingCheck.style.strokeDashoffset = (endingCheck.getTotalLength() * (1 - checkProgress)).toFixed(2);
+  const questionMark = endingReflection.querySelector('.ending-question-mark');
+  const questionIn = smoothstep(84.8, 86.1, voice) * reflectionIn;
+  questionMark.style.opacity = questionIn.toFixed(3);
+  questionMark.style.transform = `scale(${lerp(.5, 1, questionIn).toFixed(3)})`;
 
   const edgeStates = [
     [smoothstep(.35, 1.9, local), promptIn * modelIn * .66, .35, .22],

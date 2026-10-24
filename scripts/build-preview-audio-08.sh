@@ -7,6 +7,7 @@ VOICE5_SOURCE="${VOICE5_SOURCE:-${AUDIO_SOURCE}/section-05-tools-origin.wav}"
 VOICE6_SOURCE="${VOICE6_SOURCE:-${AUDIO_SOURCE}/section-06-tool-use.wav}"
 VOICE7_SOURCE="${VOICE7_SOURCE:-${AUDIO_SOURCE}/section-07-training.wav}"
 VOICE8_SOURCE="${VOICE8_SOURCE:-${AUDIO_SOURCE}/section-08-consistency.wav}"
+VOICE8_OUTRO_SOURCE="${VOICE8_OUTRO_SOURCE:-${AUDIO_SOURCE}/section-08-outro.wav}"
 OUTPUT="${OUTPUT:-${ROOT}/public/audio/section-01-08-preview-mix.mp3}"
 LEAD_IN="1.2"
 
@@ -14,7 +15,7 @@ probe_duration() {
   ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "$1"
 }
 
-VOICE_DURATION="$(python3 - "$(probe_duration "${AUDIO_SOURCE}/approved-voice-part-1.wav")" "$(probe_duration "${AUDIO_SOURCE}/chapter-pause.wav")" "$(probe_duration "${AUDIO_SOURCE}/approved-voice-part-2.wav")" "$(probe_duration "${AUDIO_SOURCE}/chapter-pause.wav")" "$(probe_duration "${VOICE5_SOURCE}")" "$(probe_duration "${AUDIO_SOURCE}/chapter-pause.wav")" "$(probe_duration "${VOICE6_SOURCE}")" "$(probe_duration "${AUDIO_SOURCE}/chapter-pause.wav")" "$(probe_duration "${VOICE7_SOURCE}")" "$(probe_duration "${AUDIO_SOURCE}/chapter-pause.wav")" "$(probe_duration "${VOICE8_SOURCE}")" "${LEAD_IN}" <<'PY'
+VOICE_DURATION="$(python3 - "$(probe_duration "${AUDIO_SOURCE}/approved-voice-part-1.wav")" "$(probe_duration "${AUDIO_SOURCE}/chapter-pause.wav")" "$(probe_duration "${AUDIO_SOURCE}/approved-voice-part-2.wav")" "$(probe_duration "${AUDIO_SOURCE}/chapter-pause.wav")" "$(probe_duration "${VOICE5_SOURCE}")" "$(probe_duration "${AUDIO_SOURCE}/chapter-pause.wav")" "$(probe_duration "${VOICE6_SOURCE}")" "$(probe_duration "${AUDIO_SOURCE}/chapter-pause.wav")" "$(probe_duration "${VOICE7_SOURCE}")" "$(probe_duration "${AUDIO_SOURCE}/chapter-pause.wav")" "$(probe_duration "${VOICE8_SOURCE}")" "$(probe_duration "${VOICE8_OUTRO_SOURCE}")" "${LEAD_IN}" <<'PY'
 import sys
 values = [float(value) for value in sys.argv[1:]]
 print(f"{sum(values):.3f}")
@@ -39,6 +40,7 @@ ffmpeg -y -v error \
   -i "${VOICE7_SOURCE}" \
   -i "${AUDIO_SOURCE}/chapter-pause.wav" \
   -i "${VOICE8_SOURCE}" \
+  -i "${VOICE8_OUTRO_SOURCE}" \
   -i "${AUDIO_SOURCE}/cyber-space-bgm-full.mp3" \
   -filter_complex "\
     [0:a]aresample=44100,aformat=sample_fmts=fltp:channel_layouts=stereo[v1];\
@@ -52,8 +54,9 @@ ffmpeg -y -v error \
     [8:a]aresample=44100,aformat=sample_fmts=fltp:channel_layouts=stereo[v7];\
     [9:a]aresample=44100,aformat=sample_fmts=fltp:channel_layouts=stereo[p5];\
     [10:a]aresample=44100,aformat=sample_fmts=fltp:channel_layouts=stereo[v8];\
-    [v1][p1][v2][p2][v5][p3][v6][p4][v7][p5][v8]concat=n=11:v=0:a=1,adelay=1200:all=1,asplit=2[voice][voicekey];\
-    [11:a]atrim=duration=${VOICE_DURATION},asetpts=PTS-STARTPTS,volume=0.10,highpass=f=65,equalizer=f=300:t=q:w=1:g=-2,afade=t=in:st=0:d=1.5,afade=t=out:st=${FADE_OUT_START}:d=1.58[bg];\
+    [11:a]aresample=44100,aformat=sample_fmts=fltp:channel_layouts=stereo[v8o];\
+    [v1][p1][v2][p2][v5][p3][v6][p4][v7][p5][v8][v8o]concat=n=12:v=0:a=1,adelay=1200:all=1,asplit=2[voice][voicekey];\
+    [12:a]atrim=duration=${VOICE_DURATION},asetpts=PTS-STARTPTS,volume=0.10,highpass=f=65,equalizer=f=300:t=q:w=1:g=-2,afade=t=in:st=0:d=1.5,afade=t=out:st=${FADE_OUT_START}:d=1.58[bg];\
     [bg][voicekey]sidechaincompress=threshold=0.20:ratio=4.5:attack=25:release=550:knee=3:detection=peak[duck];\
     [voice][duck]amix=inputs=2:duration=first:normalize=0,alimiter=limit=0.94,loudnorm=I=-16:TP=-1.5:LRA=11[mix]" \
   -map '[mix]' -t "${VOICE_DURATION}" -c:a libmp3lame -b:a 192k -ar 44100 "${OUTPUT}"

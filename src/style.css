@@ -1136,3 +1136,146 @@ html, body { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 #stage .budget-track { height: .6cqw; }
 #stage .calendar-event { font-size: .4cqw; }
 #stage .calendar-event span { font-size: .4cqw; }
+
+
+/* Closing pass: larger late-film typography, visualized risk/consequence cues, and a human-judgment outro. */
+#stage .learning-story small, #stage .consistency-story small { font-size: 1.02cqw; letter-spacing: .075em; }
+#stage .training-sample { font-size: 1.28cqw; line-height: 1.32; }
+#stage .training-sample.secondary { font-size: 1.15cqw; }
+#stage .training-prediction > div { font-size: 1.34cqw; }
+#stage .prediction-chip { font-size: 1.02cqw; }
+#stage .training-prediction .training-target strong { font-size: 1.42cqw; }
+#stage .training-prediction .training-compare strong { font-size: 1.02cqw; }
+#stage .training-compare small { font-size: .94cqw; }
+#stage .budget-meter-heading > small { font-size: .92cqw; }
+#stage .budget-meter-heading > span { font-size: .84cqw; }
+#stage .budget-meter-row > b { font-size: .94cqw; }
+#stage .budget-meter-row > strong { font-size: 1.08cqw; }
+#stage .parameter-heading strong { font-size: 1.18cqw; }
+#stage .parameter-update { font-size: .94cqw; }
+#stage .training-instruction .instruction-user, #stage .training-instruction .instruction-assistant { font-size: 1.12cqw; line-height: 1.28; }
+#stage .preference-answer { font-size: 1.16cqw; }
+#stage .training-tool-example strong { font-size: 1.2cqw; }
+#stage .training-generated-user, #stage .training-generated-answer { font-size: 1.12cqw; }
+
+#stage .training-cautions {
+  left: 8%; top: 75%; width: 84%; height: 18%; min-height: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: stretch; gap: 1.8cqw; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none;
+}
+#stage .training-caution {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .12cqw; min-width: 0;
+  padding: 0; border: 0; border-radius: 0; color: #d4e0e4; background: none; box-shadow: none;
+  font-size: 1.08cqw; line-height: 1.2; font-weight: 650; letter-spacing: .06em;
+}
+#stage .caution-art { width: 14cqw; height: 6.8cqw; overflow: visible; transform-origin: center; }
+#stage .caution-source, #stage .caution-outcome, #stage .caution-tool {
+  fill: rgba(18, 37, 48, .92); stroke: rgba(144, 196, 201, .76); stroke-width: 2;
+  filter: drop-shadow(0 0 5px rgba(100, 197, 191, .2));
+}
+#stage .caution-glyph { fill: #f1d5b5; font: 700 30px sans-serif; text-anchor: middle; }
+#stage .caution-glyph.small { font-size: 17px; }
+#stage .caution-motion-path { fill: none; stroke: #e5b382; stroke-width: 2.4; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 4px rgba(239, 177, 122, .55)); }
+#stage .caution-signal { fill: #ffe0a8; filter: drop-shadow(0 0 6px rgba(255, 204, 125, .9)); }
+#stage .caution-outcome.alternate, #stage .caution-tool.wrong-tool { fill: rgba(65, 33, 33, .72); stroke: rgba(239, 133, 111, .84); }
+#stage .caution-outcome-line, #stage .caution-page-lines, #stage .caution-tool-icon { fill: none; stroke: #b3d8d2; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+#stage .caution-wrong-mark { fill: none; stroke: #ff987e; stroke-width: 3.2; stroke-linecap: round; filter: drop-shadow(0 0 4px rgba(255, 116, 97, .65)); }
+#stage .caution-spark { fill: rgba(245, 177, 124, .22); stroke: #ffc188; stroke-width: 2; filter: drop-shadow(0 0 7px rgba(255, 163, 110, .75)); }
+#stage .caution-uncertain { fill: rgba(115, 57, 46, .52); stroke: rgba(245, 161, 125, .9); stroke-width: 2; }
+#stage .caution-pin { fill: rgba(29, 80, 77, .62); stroke: #9ce5cf; stroke-width: 2.4; }
+#stage .caution-pin-center { fill: #f4cd9b; stroke: #fff0d1; stroke-width: 1.5; }
+
+#stage .consistency-story small { font-size: 1.02cqw; letter-spacing: .075em; }
+#stage .consistency-prompt > p { font-size: 1.46cqw; line-height: 1.32; }
+#stage .consistency-budget { font-size: 1.16cqw; }
+#stage .context-additions span { font-size: .9cqw; }
+#stage .consistency-model > small { font-size: 1.02cqw; }
+#stage .candidate-choice span { font-size: 1.24cqw; }
+#stage .candidate-choice b { font-size: .94cqw; }
+#stage .variation-control > small { font-size: .98cqw; }
+#stage .variation-scale { font-size: .98cqw; }
+#stage .answer-branch > strong { font-size: 1.24cqw; }
+#stage .answer-branch > strong span { font-size: .94cqw; }
+#stage .answer-branch > strong .branch-choice-token { font-size: 1.24cqw; }
+#stage .answer-branch > div { font-size: .94cqw; letter-spacing: .07em; }
+
+#stage .consequence-row {
+  left: 10%; top: 80%; width: 80%; height: 17%; min-height: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center; justify-content: stretch; gap: 2.1cqw; padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none;
+}
+#stage .consistency-consequence {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .08cqw; min-width: 0;
+  color: #d5e1e4; font-size: 1.08cqw; line-height: 1.2; font-weight: 650; letter-spacing: .07em; opacity: 0;
+}
+#stage .consequence-art { display: block; width: 11.4cqw; height: 4.8cqw; overflow: visible; transform-origin: center; }
+#stage .consequence-motion-path { fill: none; stroke: #ecc08f; stroke-width: 2.3; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 4px rgba(235, 188, 129, .45)); }
+#stage .consequence-signal { fill: #ffe0aa; filter: drop-shadow(0 0 6px rgba(255, 210, 143, .85)); }
+#stage .reproduce-sheet, #stage .compare-pane { fill: rgba(19, 39, 51, .88); stroke: rgba(142, 188, 199, .76); stroke-width: 2; }
+#stage .reproduce-sheet.back { fill: rgba(35, 55, 64, .76); }
+#stage .reproduce-check, #stage .compare-lines, #stage .trust-source-line { fill: none; stroke: #badbd1; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+#stage .compare-pane.pane-b { stroke: rgba(130, 201, 173, .85); }
+#stage .compare-highlight { fill: rgba(238, 169, 113, .22); stroke: #ffc18a; stroke-width: 2; filter: drop-shadow(0 0 5px rgba(255, 175, 115, .75)); }
+#stage .trust-shield { fill: rgba(29, 69, 65, .54); stroke: rgba(150, 220, 191, .86); stroke-width: 2.4; }
+#stage .trust-lens { fill: rgba(35, 51, 57, .74); stroke: #f0c590; stroke-width: 2.2; }
+#stage .trust-question { fill: none; stroke: #ffe0aa; stroke-width: 2.2; stroke-linecap: round; }
+#stage .reliability-card > strong { font-size: 1.86cqw; }
+#stage .reliability-card > div span { font-size: 1cqw; }
+#stage .reliability-card > div i { font-size: 1.12cqw; }
+
+#stage .ending-reflection { position: absolute; z-index: 5; inset: 0; opacity: 0; visibility: hidden; pointer-events: none; }
+#stage .ending-flow-lines { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+#stage .ending-flow-path { fill: none; stroke: rgba(126, 218, 201, .62); stroke-width: 2.6; stroke-linecap: round; stroke-dasharray: 1; stroke-dashoffset: 1; vector-effect: non-scaling-stroke; filter: drop-shadow(0 0 7px rgba(105, 224, 196, .42)); }
+#stage .ending-flow-signal { fill: #d4ffdf; filter: drop-shadow(0 0 10px rgba(167, 255, 204, .98)); opacity: 0; }
+#stage .ending-node { position: absolute; top: 38%; width: 16%; height: 30%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: .62cqw; color: #d8e8e4; font-size: 1.18cqw; font-weight: 650; letter-spacing: .09em; opacity: 0; transform-origin: center; }
+#stage .ending-prompt { left: 8%; }
+#stage .ending-model { left: 31%; }
+#stage .ending-verify { left: 54%; }
+#stage .ending-human { left: 77%; color: #dff2e7; }
+#stage .ending-node::before { content: ''; position: absolute; z-index: -1; left: 50%; top: 6%; width: 8.8cqw; height: 8.8cqw; border: 1px solid rgba(112, 202, 193, .35); border-radius: 50%; background: radial-gradient(circle, rgba(43, 110, 105, .28), rgba(10, 22, 32, .08) 72%); box-shadow: 0 0 2.2cqw rgba(80, 196, 175, .13); transform: translateX(-50%); }
+#stage .ending-node > svg { width: 5.7cqw; height: 5.7cqw; overflow: visible; fill: none; stroke: #a9e8d1; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 .55cqw rgba(121, 231, 198, .3)); }
+#stage .ending-human > svg { stroke: #c4ebd7; }
+#stage .ending-node .ending-question-mark { position: absolute; top: 10%; right: 24%; width: 2.45cqw; height: 2.45cqw; display: grid; place-items: center; border: 1px solid rgba(246, 202, 143, .8); border-radius: 50%; color: #ffe0ad; background: rgba(73, 50, 35, .85); box-shadow: 0 0 1cqw rgba(239, 178, 108, .45); font-size: 1.45cqw; font-style: normal; }
+#stage .ending-check { opacity: 0; stroke: #bdf6ce; stroke-width: 3.2; }
+#stage .ending-choice-path { stroke: #f0c68b; stroke-dasharray: 24 28; }
+#stage .ending-reflection, #stage .ending-reflection * { animation: none !important; transition: none !important; }
+
+
+/* Final late-film legibility pass: enlarge semantic text and pictograms for the 1080p master. */
+#stage .learning-story small, #stage .consistency-story small { font-size: 1.2cqw; letter-spacing: .065em; }
+#stage .training-sample { font-size: 1.52cqw; line-height: 1.3; }
+#stage .training-sample.secondary { font-size: 1.34cqw; }
+#stage .training-prediction > div { font-size: 1.55cqw; }
+#stage .prediction-chip { font-size: 1.18cqw; }
+#stage .training-prediction .training-target strong { font-size: 1.62cqw; }
+#stage .training-prediction .training-compare strong { font-size: 1.18cqw; }
+#stage .training-compare small { font-size: 1.08cqw; }
+#stage .budget-meter-heading > small { font-size: 1.1cqw; }
+#stage .budget-meter-heading > span { font-size: 1cqw; }
+#stage .budget-meter-row > b { font-size: 1.12cqw; }
+#stage .budget-meter-row > strong { font-size: 1.3cqw; }
+#stage .parameter-heading strong { font-size: 1.38cqw; }
+#stage .parameter-update { font-size: 1.08cqw; }
+#stage .training-instruction .instruction-user, #stage .training-instruction .instruction-assistant { font-size: 1.28cqw; line-height: 1.27; }
+#stage .preference-answer { font-size: 1.3cqw; }
+#stage .training-tool-example strong { font-size: 1.34cqw; }
+#stage .training-generated-user, #stage .training-generated-answer { font-size: 1.27cqw; }
+#stage .training-caution { font-size: 1.24cqw; }
+#stage .caution-art { width: 15.2cqw; height: 7.5cqw; }
+
+#stage .consistency-prompt > p { font-size: 1.6cqw; line-height: 1.3; }
+#stage .consistency-budget { font-size: 1.28cqw; }
+#stage .context-additions span { font-size: 1.08cqw; }
+#stage .candidate-choice span { font-size: 1.48cqw; }
+#stage .candidate-choice b { font-size: 1.1cqw; }
+#stage .variation-control > small, #stage .variation-scale { font-size: 1.12cqw; }
+#stage .answer-branch > strong { font-size: 1.48cqw; }
+#stage .answer-branch > strong span { font-size: 1.12cqw; }
+#stage .answer-branch > strong .branch-choice-token { font-size: 1.48cqw; }
+#stage .answer-branch > div { font-size: 1.08cqw; letter-spacing: .055em; }
+#stage .consistency-consequence { font-size: 1.24cqw; }
+#stage .consequence-art { width: 13cqw; height: 5.7cqw; }
+#stage .reliability-card > strong { font-size: 2.05cqw; }
+#stage .reliability-card > div span { font-size: 1.16cqw; }
+#stage .reliability-card > div i { font-size: 1.28cqw; }
+#stage .ending-node { font-size: 1.42cqw; }
+#stage .ending-node > svg { width: 6.5cqw; height: 6.5cqw; }
+#stage .ending-node .ending-question-mark { font-size: 1.7cqw; }

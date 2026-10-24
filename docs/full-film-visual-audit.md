@@ -32,6 +32,14 @@ The Taipei nature-weekend example remains consistent across the explainer. No la
 
 This remains a browser preview and source-project update, not a rendered final MP4.
 
+## Late-section legibility and ending pass
+
+- Increased stage-relative type size across Sections 07 and 08, including the training prompt/prediction, target values, answer branches, consequence labels, and final four-step summary; enlarged the three model-risk pictograms and the reproduce/compare/trust animations.
+- Section 07 at 327.5s keeps the five-versus-eight mismatch, orange parameter feedback, and $0–$10K scale distinct; at 370.5s all three visual failure modes are legible and remain inside the stage.
+- Section 08 at 400s shows both larger itinerary branches without text overflow; at 431s the three consequence icons are fully present; at 464.5s the Prompt → Model → Verify → You Decide flow, completed check, and open question mark make the ending read as a deliberate conclusion.
+- Chromium confirmed an exact Chapter 08 seek to 372.026s and playback advancing to 374.94s with synchronized captions. Repeated direct rendering at 464.5s produced identical node transforms, SVG path states, check/question marks, and caption.
+- `npm run build`, `git diff --check`, `ffprobe`, and full MP3 decode passed. The MP3 file measures 466.808s; Chromium exposes 466.76s after decoding, while the deterministic visual timeline ends at 466.726s and holds the completed final composition.
+
 ## Live deployment verification
 
 - GitHub Pages deployment succeeded for feature commit `3614bcbf5e35c8dc9e162e0620a920996df8b1d9` (Actions run `39941413028`). The public page returned HTTP 200 and contains the clarification, external-map/calendar, budget-meter, and branch-route elements.

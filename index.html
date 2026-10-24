@@ -350,9 +350,35 @@
                 </div>
               </div>
               <div class="training-cautions" id="training-cautions">
-                <div class="training-caution"><i aria-hidden="true">?</i><span>MISUNDERSTAND</span></div>
-                <div class="training-caution"><i aria-hidden="true">✦</i><span>INVENT DETAILS</span></div>
-                <div class="training-caution"><i aria-hidden="true">↗</i><span>WRONG TOOL</span></div>
+                <div class="training-caution caution-misread">
+                  <svg class="caution-art" viewBox="0 0 180 88" aria-hidden="true">
+                    <rect class="caution-source" x="8" y="22" width="54" height="42" rx="10"/><text class="caution-glyph" x="35" y="51">?</text>
+                    <path class="caution-motion-path" pathLength="1" d="M63 43 C84 43 85 22 106 22 H126 M84 43 C99 43 98 65 117 65 H128"/>
+                    <circle class="caution-signal" cx="63" cy="43" r="4.5"/>
+                    <rect class="caution-outcome" x="128" y="10" width="43" height="25" rx="7"/><rect class="caution-outcome alternate" x="128" y="53" width="43" height="25" rx="7"/>
+                    <path class="caution-outcome-line" d="M137 22h24M137 65h18"/><path class="caution-wrong-mark" d="m158 56 8 8m0-8-8 8"/>
+                  </svg>
+                  <span>MISREAD INTENT</span>
+                </div>
+                <div class="training-caution caution-invented">
+                  <svg class="caution-art" viewBox="0 0 180 88" aria-hidden="true">
+                    <rect class="caution-source" x="10" y="12" width="47" height="64" rx="7"/><path class="caution-page-lines" d="M20 27h26M20 38h26M20 49h19M20 60h22"/>
+                    <path class="caution-motion-path" pathLength="1" d="M58 44 H85"/><circle class="caution-signal" cx="58" cy="44" r="4.5"/>
+                    <path class="caution-spark" d="m99 13 4 13 13 4-13 4-4 13-4-13-13-4 13-4z"/>
+                    <rect class="caution-outcome" x="123" y="24" width="46" height="43" rx="8"/><path class="caution-outcome-line" d="M132 37h27M132 48h21M132 58h12"/>
+                    <circle class="caution-uncertain" cx="157" cy="67" r="9"/><text class="caution-glyph small" x="157" y="72">?</text>
+                  </svg>
+                  <span>INVENTED DETAIL</span>
+                </div>
+                <div class="training-caution caution-tool-miss">
+                  <svg class="caution-art" viewBox="0 0 180 88" aria-hidden="true">
+                    <path class="caution-pin" d="M31 70S12 49 12 33a19 19 0 1 1 38 0c0 16-19 37-19 37Z"/><circle class="caution-pin-center" cx="31" cy="33" r="6"/>
+                    <path class="caution-motion-path" pathLength="1" d="M52 43 C72 43 77 22 98 22 H117"/><circle class="caution-signal" cx="52" cy="43" r="4.5"/>
+                    <rect class="caution-tool" x="120" y="8" width="42" height="31" rx="7"/><path class="caution-tool-icon map-tool" d="M132 17 141 14l9 3 9-3v16l-9 3-9-3-9 3zM141 14v19m9-16v16"/>
+                    <rect class="caution-tool wrong-tool" x="120" y="51" width="42" height="31" rx="7"/><path class="caution-tool-icon calendar-tool" d="M131 59h20v16h-20zM136 56v6m10-6v6M131 65h20"/><path class="caution-wrong-mark" d="m154 51 15 15m0-15-15 15"/>
+                  </svg>
+                  <span>WRONG TOOL</span>
+                </div>
               </div>
             </div>
 
@@ -401,14 +427,55 @@
                 <svg class="branch-mini-route" aria-hidden="true" viewBox="0 0 180 28"><path class="branch-route-base" d="M10 12 C42 27 75 3 108 17 S150 19 170 9"/><path class="branch-route-active" id="branch-route-b" pathLength="1" d="M10 12 C42 27 75 3 108 17 S150 19 170 9"/><circle cx="10" cy="12" r="4"/><circle cx="170" cy="9" r="4"/><circle class="branch-route-signal" id="branch-signal-b" cx="10" cy="12" r="3"/></svg>
               </div>
               <div class="consequence-row" id="consequence-row">
-                <div class="consistency-consequence"><i aria-hidden="true">↻</i><span>REPRODUCE</span></div>
-                <div class="consistency-consequence"><i aria-hidden="true">≋</i><span>COMPARE</span></div>
-                <div class="consistency-consequence"><i aria-hidden="true">◇</i><span>TRUST</span></div>
+                <div class="consistency-consequence consequence-reproduce">
+                  <svg class="consequence-art" viewBox="0 0 180 76" aria-hidden="true">
+                    <rect class="reproduce-sheet back" x="26" y="16" width="49" height="48" rx="6"/><rect class="reproduce-sheet front" x="54" y="9" width="50" height="51" rx="6"/>
+                    <path class="consequence-motion-path" pathLength="1" d="M108 22 C144 10 161 34 151 50 C144 62 126 63 113 55"/><circle class="consequence-signal" cx="108" cy="22" r="4.2"/>
+                    <path class="reproduce-check" d="m66 36 7 7 15-17m-15 31h18"/>
+                  </svg><span>REPRODUCE</span>
+                </div>
+                <div class="consistency-consequence consequence-compare">
+                  <svg class="consequence-art" viewBox="0 0 180 76" aria-hidden="true">
+                    <rect class="compare-pane pane-a" x="12" y="13" width="65" height="49" rx="6"/><rect class="compare-pane pane-b" x="103" y="13" width="65" height="49" rx="6"/>
+                    <path class="compare-lines" d="M23 25h39m-39 10h27m-27 10h38m25-20h39m-39 10h20m-20 10h35"/>
+                    <path class="consequence-motion-path" pathLength="1" d="M90 8 V66"/><circle class="consequence-signal" cx="90" cy="8" r="4.2"/>
+                    <circle class="compare-highlight" cx="135" cy="35" r="8"/>
+                  </svg><span>COMPARE</span>
+                </div>
+                <div class="consistency-consequence consequence-trust">
+                  <svg class="consequence-art" viewBox="0 0 180 76" aria-hidden="true">
+                    <path class="trust-shield" d="M90 8 122 19v19c0 16-12 25-32 33-20-8-32-17-32-33V19Z"/>
+                    <path class="consequence-motion-path" pathLength="1" d="M23 39 H52 M127 39 H157"/><circle class="consequence-signal" cx="23" cy="39" r="4.2"/>
+                    <circle class="trust-lens" cx="90" cy="37" r="13"/><path class="trust-question" d="M86 34c0-6 9-7 9 0 0 4-5 4-5 8m0 6v1"/>
+                    <path class="trust-source-line" d="M16 22h20m-20 8h15m113-8h20m-20 8h15"/>
+                  </svg><span>TRUST</span>
+                </div>
               </div>
               <div class="reliability-card" id="reliability-card">
                 <small>LOWER VARIATION CAN HELP</small>
                 <strong>CONSISTENCY <span>≠</span> ACCURACY</strong>
                 <div><span><i aria-hidden="true">⌕</i> CHECK CURRENT FACTS</span><span><i aria-hidden="true">✓</i> VERIFY THE RESULT</span></div>
+              </div>
+              <div class="ending-reflection" id="ending-reflection" aria-label="AI suggests, evidence helps, and people make the final judgment">
+                <svg class="ending-flow-lines" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true">
+                  <path class="ending-flow-path" pathLength="1" d="M315 516 C445 438 600 438 735 516"/>
+                  <path class="ending-flow-path" pathLength="1" d="M755 516 C890 438 1044 438 1180 516"/>
+                  <path class="ending-flow-path" pathLength="1" d="M1200 516 C1335 438 1490 438 1625 516"/>
+                  <circle class="ending-flow-signal" id="ending-flow-signal-1" r="8"/><circle class="ending-flow-signal" id="ending-flow-signal-2" r="8"/><circle class="ending-flow-signal" id="ending-flow-signal-3" r="8"/>
+                </svg>
+                <div class="ending-node ending-prompt">
+                  <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 12h44v31H30L17 54v-11h-7z"/><path d="M19 23h26M19 31h19"/></svg><span>PROMPT</span>
+                </div>
+                <div class="ending-node ending-model">
+                  <svg viewBox="0 0 64 64" aria-hidden="true"><path d="m14 18 17 12m-17 16 17-13m4-1 17-14m-17 14 17 14"/><circle cx="12" cy="16" r="5"/><circle cx="12" cy="48" r="5"/><circle cx="32" cy="32" r="6"/><circle cx="53" cy="15" r="5"/><circle cx="53" cy="49" r="5"/></svg><span>MODEL</span>
+                </div>
+                <div class="ending-node ending-verify">
+                  <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M12 8h28l12 12v36H12zM40 8v13h12M20 31h18M20 39h12"/><circle cx="43" cy="43" r="9"/><path d="m50 50 8 8"/><path class="ending-check" d="m39 43 3 3 6-7"/></svg><span>VERIFY</span>
+                </div>
+                <div class="ending-node ending-human">
+                  <svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="31" cy="20" r="9"/><path d="M13 55c1-12 7-19 18-19s17 7 18 19"/><path class="ending-choice-path" d="M39 47h13l6-6m-19 12h13"/></svg><span>YOU DECIDE</span>
+                  <i class="ending-question-mark" aria-hidden="true">?</i>
+                </div>
               </div>
             </div>
           </div>
@@ -424,8 +491,8 @@
             <span class="visually-hidden" id="play-label">Play</span>
           </button>
           <span class="time-readout" id="current-time">00:00</span>
-          <input id="timeline" type="range" min="0" max="447.806" value="0" step="0.01" aria-label="Seek through the video preview" />
-          <span class="time-readout" id="total-time">06:12</span>
+          <input id="timeline" type="range" min="0" max="466.726" value="0" step="0.01" aria-label="Seek through the video preview" />
+          <span class="time-readout" id="total-time">07:47</span>
           <button class="fullscreen-button" id="fullscreen-button" type="button" aria-label="Enter fullscreen preview" aria-pressed="false" title="Enter fullscreen (F)">
             <svg class="fullscreen-enter-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5" /></svg>
             <svg class="fullscreen-exit-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8h5V3M16 3v5h5M21 16h-5v5M8 21v-5H3" /></svg>
