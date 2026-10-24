@@ -1,6 +1,6 @@
 # AI Deep-Dive Series — Planning Hub
 
-**Status:** Planning only. No new video, narration, audio, or website page has been built yet.
+**Status:** Planning continues. Part 01 now has an English narration and visual-design draft; no voiceover audio, animation, or new website page has been built.
 
 ## Purpose
 
@@ -18,7 +18,7 @@ The existing film, *From Prompt to Action*, is the broad introduction. These are
 
 | Part | Working title | Main question | Planning status |
 |---|---|---|---|
-| 01 | **How Transformers Work: Self-Attention, Q/K/V & Context** | How can a model connect relevant tokens across a prompt and build contextual representations? | Deep outline started in [Part 01](./01-transformer-and-attention.md) |
+| 01 | **How Transformers Work: Self-Attention, Q/K/V & Context** | How can a model connect relevant tokens across a prompt and build contextual representations? | [English script + visual design](./01-transformer-and-attention-script.md) drafted; [deep-dive plan](./01-transformer-and-attention.md) |
 | 02 | **How LLMs Are Trained: Neural Networks, Prediction & Fine-Tuning** | How do a network's parameters get learned and then shaped into an assistant? | Initial outline in [Part 02](./02-neural-networks-and-llm-training.md) |
 | 03 | **AI Temperature Explained: Why Answers Can Vary** | How does temperature change next-token selection, and what does it not control? | Initial outline in [Part 03](./03-temperature-and-sampling.md) |
 
@@ -47,4 +47,4 @@ These are target placements to confirm in YouTube Studio after the deep-dive upl
 
 ## Recommended next step
 
-Review the Part 01 mechanism order, analogy, and worked example first. Once approved, turn its outline into a paced English narration draft and map each spoken beat to a visual action. Keep script, voice generation, and production as later approval steps rather than assuming them now.
+Review the Part 01 English script and visual design. Revise the example, formula depth, and pacing as needed; after approval, read it aloud or make a short voice sample to measure real timing. Voice generation and animation remain later steps, not yet started.
