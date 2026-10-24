@@ -5,18 +5,18 @@ project:
   delivery_choices:
     source: "existing GitHub repository, main branch"
     preview: "GitHub Pages published from GitHub Actions"
-    final_video: "not rendered yet"
+    final_video: "renders/from-prompt-to-action-final-1080p-24fps.mp4 (local artifact; excluded from Git)"
 
 video:
   duration_seconds: 466.726
-  audio_file_duration_seconds: 466.808
+  audio_file_duration_seconds: 466.808163
   fps: 24
   width: 1920
   height: 1080
   responsive_scaling: "Single 1920x1080 master composition at every viewport: the 16:9 film stage scales proportionally, with shared stage-relative typography and no phone-specific font or in-frame reflow. Browser text inflation is fixed at 100%. Only the external player shell adapts. Fullscreen preview fits the same 16:9 frame to the available screen and requests landscape orientation where supported. Review captions and controls remain outside the film frame (controls overlay in fullscreen)."
   frame_range: "[0, 11201)"
   narration_or_master_audio: "public/audio/section-01-08-preview-mix.mp3"
-  audio_codec: "MP3 review mix; final master format TBD"
+  audio_codec: "Final MP4 AAC stereo, 44.1 kHz, 256 kbps; sourced from the approved 192 kbps MP3 review mix"
   audio_sample_rate_hz: 44100
   audio_channels: 2
   audio_bitrate_kbps: 192
@@ -137,7 +137,7 @@ scenes:
 delivery:
   preview_url: "https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/"
   project_bundle: null
-  final_video: null
+  final_video: "renders/from-prompt-to-action-final-1080p-24fps.mp4"
   git_commit: "a0f163dcbb0c1d4cd20405df054acb5877e75a11"
 
 quality_checks:
@@ -177,6 +177,18 @@ quality_checks:
   public_deployment: "success: GitHub Actions run 40098253059 deployed commit a0f163dcbb0c1d4cd20405df054acb5877e75a11; public Pages returned HTTP 200 and the updated late-section visuals/outro were verified in Chromium."
   ffprobe_verified: true
   full_decode_verified: true
+  final_mp4_render:
+    status: "pass"
+    file: "renders/from-prompt-to-action-final-1080p-24fps.mp4"
+    container: "MP4"
+    video: "H.264 High, yuv420p, 1920x1080, 24/1 fps, 11201 frames, 466.708333 seconds"
+    audio: "AAC, 44.1 kHz, stereo, 256 kbps, 466.760 seconds"
+    output_duration_seconds: 466.760
+    output_size_bytes: 385831613
+    sha256: "801ae9ff38e4318d8b596f9cf06963fee56c03dd6e019c70dc753035f634cd64"
+    encoding: "CRF 17, ultrafast preset; deterministic absolute-frame capture from Chromium's 1920x1080 film stage; preview controls and review captions excluded"
+    verification: "ffprobe metadata passed; full FFmpeg decode to null passed without errors; extracted and inspected representative frames from all eight sections and the finale"
+    keyframes_reviewed: [14.2, 42.3, 95.0, 130.0, 200.0, 260.0, 327.5, 400.0, 464.5]
   notes:
     - "The eight-section mix keeps the approved earlier narration, adds the Section 05–08 WAVs and the 18.92-second Charon outro, uses the same cyber/space score with voice-forward sidechain ducking, and includes 1.2 seconds of music-led opening plus 1.5-second chapter pauses."
     - "The extended eight-section MP3 measures 466.808 seconds by ffprobe (browser-decoded duration 466.76 seconds), stereo, 44.1 kHz, MP3 at 192 kbps. The deterministic scene timeline ends at 466.726 seconds; the small tail difference is MP3/container padding, and the completed final visual frame is held through the end. Full decode verified."
@@ -186,4 +198,4 @@ quality_checks:
     - "Token boundaries, token-ID examples, and next-token candidate bar lengths are illustrative rather than a report of a specific model's tokenizer or probabilities."
     - "Sections 05–06 illustrate product-configured tool access: the model is not shown inventing tools, the orchestrator handles requests, external tools return results into context, and booking remains behind a pending approval gate."
     - "Section 07 uses a deliberately simplified Taipei nature-weekend next-token/target example (‘five’ vs. ‘eight’) to explain optimization; it does not imply that a single update teaches a real model a fact. Training and post-training methods vary."
-    - "The final MP4 has not been rendered; this is a browser preview and source-project update."
+    - "Final MP4 rendered locally; renders/ is excluded from Git because the finished H.264/AAC master is a separate downloadable artifact. Rebuild with scripts/render-final-mp4.py --preset ultrafast --crf 17."

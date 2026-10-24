@@ -39,6 +39,19 @@ npm run preview
 
 GitHub Actions builds and publishes the production `dist/` output to GitHub Pages when `main` changes.
 
+## Final MP4 export
+
+The offline renderer calls the same absolute-time `window.renderFrame(frame)` function as the preview, captures only the 1920×1080 film stage as JPEG frames, streams them directly into FFmpeg for H.264/yuv420p encoding at 24 fps, then muxes the approved narration/music mix as AAC. It does not record realtime browser playback: every frame is independently reconstructed from its absolute frame index, and preview controls/captions are excluded from the film crop.
+
+Requirements: Node/npm project dependencies, FFmpeg/ffprobe, system Chromium, and Python Playwright (`python3 -m pip install -r scripts/requirements-render.txt`). From the project root:
+
+```bash
+npm run dev -- --host 127.0.0.1 --port 4176
+python3 scripts/render-final-mp4.py --preset ultrafast --crf 17
+```
+
+The default output is `renders/from-prompt-to-action-final-1080p-24fps.mp4` (ignored by Git). The approved export uses H.264 High/yuv420p at 24 fps, CRF 17 (`ultrafast` preset), plus the narration/music mix encoded as AAC stereo 44.1 kHz/256 kbps. Set `CHROMIUM_BIN` if Chromium is installed at a non-standard path. The renderer verifies stage/canvas dimensions and identical repeated frames before starting the full export. The final 466.76-second, 1920×1080 MP4 has been rendered and fully decoded; see `docs/project-manifest.yaml` for QA details.
+
 ## Audio preview
 
 The eight-section mix is `public/audio/section-01-08-preview-mix.mp3` (stereo, 44.1 kHz, 192 kbps; 466.808-second encoded file, approximately **7 minutes 47 seconds**). The deterministic film scene timeline ends at 466.726 seconds; the small tail difference is normal MP3/container padding. The mix retains the earlier narration, adds the Section 05–08 narration WAVs and the 18.92-second Charon outro, and uses the same restrained cyber/space score with voice-forward sidechain ducking. The master includes the 1.2-second music-led opening and 1.5-second chapter pauses. Section 06 narration is 75.84 seconds; Section 07 is 65.32 seconds; Section 08 comprises 74.28 seconds of explanation plus the 18.92-second outro.
@@ -70,4 +83,4 @@ VOICE8_OUTRO_SOURCE=/path/to/section-08-outro.wav \
 - Audio: English narration with the restrained cyber/space score ducked beneath speech
 - Token boundaries, IDs, and the Taipei nature-weekend “five” versus “eight” training example are illustrative; real tokenizer boundaries and training procedures vary
 
-This is a review preview, not the final MP4 render. Scene states derive from absolute audio time, so direct and reverse seeking reconstruct the same frames and transitions. The Section 08 Taipei route branches and token choices are illustrative; a repeatable response is not automatically a correct one. Its new ending leaves a reflective question in the visual composition while keeping the final judgment with people.
+The hosted page remains the review preview; the finished MP4 is rendered with the export command above. Scene states derive from absolute audio time, so direct and reverse seeking reconstruct the same frames and transitions. The Section 08 Taipei route branches and token choices are illustrative; a repeatable response is not automatically a correct one. Its new ending leaves a reflective question in the visual composition while keeping the final judgment with people.
