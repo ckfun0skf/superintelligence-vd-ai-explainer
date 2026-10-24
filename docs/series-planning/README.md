@@ -4,11 +4,13 @@
 
 ## Purpose
 
-The existing film, *From Prompt to Action*, is the broad introduction. This follow-up series goes deeper into three ideas that the first film introduces but does not fully unpack: Transformer/self-attention, neural networks and LLM training, and temperature/sampling.
+The existing film, *From Prompt to Action*, is the broad introduction. These are three separate, standalone deep-dive videos on topics the first film introduces but does not fully unpack: Transformer/self-attention, neural networks and LLM training, and temperature/sampling. A viewer must be able to watch any one of them without first watching the other two.
 
 **Working series name:** *AI Under the Hood* (placeholder)
 
 **Working language assumption:** English narration and in-frame interface labels, matching the first film; planning notes are in Traditional Chinese. Review captions, if used, stay outside the 16:9 film frame.
+
+**Standalone rule:** Each episode gets its own hook, a brief context reset, plain-language definitions, one complete worked example, and a clear recap/ending. Avoid “as we explained in Part 1” dependencies. The suggested release order is editorial guidance, not a viewing prerequisite.
 
 **Continuity:** Reuse the Taipei nature-weekend request and the $8,000 budget as a familiar anchor, but introduce a small, purpose-built example in each episode when it makes a technical mechanism easier to see. Keep the established dark, polished, interactive-textbook visual language, with more continuous motion and recognizable app-like UI than static title cards.
 
@@ -30,6 +32,18 @@ The existing film, *From Prompt to Action*, is the broad introduction. This foll
 ## Suggested future page structure
 
 Keep the existing root preview page for the original film unchanged. When a new preview is approved, give each new film a separate URL/page under a series path (provisionally `/series/transformer-attention/`, `/series/llm-training/`, and `/series/temperature/`). The future pages can share the 16:9 player design while keeping each film's timeline, audio, chapters, and assets independent. This is a recommendation for the later implementation stage, not work done in this planning pass.
+
+## Reference buttons on the original YouTube video
+
+After each deep-dive video is available on YouTube, add a YouTube Card (the in-video reference button) to the original upload at the related spoken beat. The MP4 picture does not need to be re-rendered; these are YouTube publishing settings. Until a linked video is published, leave the Card unset and use a description/chapter link later as a fallback.
+
+| Deep-dive video | Suggested card placement in the original film | Why here |
+|---|---|---|
+| Transformer & Attention | **01:13.6** (73.6 s), as Section 03 names Transformer attention and starts explaining relationships | The viewer has just reached the mechanism this video unpacks. |
+| Neural Networks & LLM Training | **05:06.7** (306.7 s), at the first spoken pre-training explanation in Section 07 | This is the clearest point where the original film moves from model use to how models learn. |
+| Temperature & Sampling | **06:45.7** (405.7 s), when Section 08 explains that temperature changes variation | The Card appears at the exact concept rather than at the later general recap. |
+
+These are target placements to confirm in YouTube Studio after the deep-dive uploads exist. Add a matching link to the original video's description as a stable alternative.
 
 ## Recommended next step
 

@@ -10,6 +10,8 @@
 
 How does a neural network acquire useful behavior from data, and what changes when a base model is trained further into an instruction-following assistant?
 
+**Standalone requirement:** Begin with a self-contained hook and a short plain-language introduction to tokens, a neural network, and an LLM. Include the whole training arc and a complete recap; do not require the Transformer deep-dive first.
+
 **Provisional length:** 8–10 minutes, calm narration.
 
 ## Proposed scope
@@ -29,11 +31,15 @@ Build a continuous “signal lab”: input examples enter a neural-network stack
 
 Use animated loss meters, gradient pulses, parameter landscapes, checkpoint/version cards, and a simple model-evaluation dashboard. Avoid presenting a single training example as the entire learning process or a guarantee that one correction permanently teaches a fact.
 
-## Keep separate from Part 01 and Part 03
+## Keep the scope focused; make cross-references optional
 
-- Briefly remind viewers that Transformers contain learned projections and other parameters, but do not re-teach Q/K/V or the attention formula.
-- Explain that training shapes model parameters, not decoding temperature; defer logits, softmax sampling, and temperature controls to Part 03.
+- Briefly situate attention as one part of a neural-network forward pass, but do not require Q/K/V or the attention formula to follow this film.
+- Explain that training shapes model parameters, not decoding temperature. Mention that decoding settings exist, but keep logits, softmax sampling, and temperature controls out of the main explanation.
 - Distinguish **weights**, **conversation context**, **retrieved/tool data**, and **model versions** visually and verbally.
+
+## Parent-video reference button
+
+Suggested YouTube Card on the original film at **05:06.7** (306.7 s), when Section 07 first explains pre-training and how models learn. An earlier optional placement at **01:50** (110 s) could introduce the “LLM is a trained neural network” idea, but avoid two Cards for the same deep-dive unless both placements prove useful. Add the Card after this standalone video is published; include a matching description link as a fallback.
 
 ## Open planning questions
 

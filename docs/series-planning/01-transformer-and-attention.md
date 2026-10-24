@@ -8,6 +8,8 @@
 
 **Viewer promise:** By the end, viewers should be able to explain, in plain language, how a GPT-style Transformer turns tokens into contextual representations, how self-attention combines information from earlier tokens, why Query/Key/Value are useful projections, and how attention fits inside a larger Transformer block.
 
+**Standalone requirement:** Open with the real question and a 15–20-second reset of what an LLM receives; define every necessary term in this video. End with a complete recap. Viewers do not need either of the other deep-dive videos.
+
 **Audience:** Curious non-specialists who have watched (or can follow) the original *From Prompt to Action* film. Briefly refresh tokens, but do not spend a full chapter re-teaching tokenization.
 
 **Length target:** Roughly 8–10 minutes, with calm pacing and short visual holds after the densest mechanisms. Duration is provisional; clarity is more important than hitting a precise runtime.
@@ -84,11 +86,11 @@ These can be optional follow-up notes, not prerequisites for a clear first deep-
 3. Why does a GPT-style model need a causal mask?
 4. Why is an attention heatmap only a partial view of a model’s computation?
 
-## Bridge to the rest of the series
+## Optional cross-references (not prerequisites)
 
-- **From the original film:** The audience already saw tokens, broad attention relationships, and next-token generation. Start with the question “what calculation is behind those moving links?”
-- **To Part 02:** The Q/K/V projections, embeddings, and feed-forward layers contain learned parameters. Part 02 explains how training adjusts these values and how a general neural network is shaped into a useful LLM.
-- **To Part 03:** Once the final position has produced next-token scores, Part 03 explains how temperature changes the distribution used to choose a continuation.
+- **Context reset:** The original film briefly showed tokens, broad attention relationships, and next-token generation. Recap only what is needed; do not assume the audience remembers or has watched it.
+- **Parent-video reference button:** Suggest a YouTube Card on the original film at **01:13.6**, when the narration names Transformer attention and starts explaining relationships (Section 03). Add the Card after this deep-dive video is published; a description link is a fallback.
+- **Optional next watch:** Training and temperature are independent topics. They may be suggested at the end as optional related videos, but this film must reach a satisfying ending on its own.
 
 ## Proposed next step
 

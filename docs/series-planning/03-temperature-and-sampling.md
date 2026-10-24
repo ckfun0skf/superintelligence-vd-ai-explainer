@@ -10,6 +10,8 @@
 
 After a language model assigns scores to possible next tokens, how does temperature change the distribution used for selection—and why does that not explain every difference between answers?
 
+**Standalone requirement:** Start from the observable fact that one prompt can yield different continuations, then define scores, probabilities, and sampling as needed. Give this video its own complete explanation and takeaway; prior episodes are optional.
+
 **Provisional length:** 5–7 minutes; this mechanism may be shorter than the other two episodes.
 
 ## Proposed scope
@@ -41,3 +43,7 @@ Possible visual formula, introduced only after the intuition: `softmax(logits / 
 - Should top-k and top-p appear as a very short side-by-side comparison, or be saved for an additional decoding episode?
 - Should the practical ending give example low/medium/high settings, or avoid universal numeric advice because products and sampling implementations differ?
 - How tightly should this episode connect to the “same prompt, different answer” ending of the original film versus stand alone for search viewers?
+
+## Parent-video reference button
+
+Suggested YouTube Card on the original film at **06:45.7** (405.7 s), at the spoken line that temperature changes variation in Section 08. Add it after this deep-dive video is published; include a matching description link as a fallback. This Card should point directly to the temperature video, not require viewers to watch Parts 01 or 02 first.
