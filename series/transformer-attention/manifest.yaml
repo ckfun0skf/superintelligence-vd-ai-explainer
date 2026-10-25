@@ -1,6 +1,6 @@
 episode: 01
 title: "How Transformers Work: Self-Attention, Q/K/V & Context"
-status: visual_prototype_ready_voiceover_pending
+status: narration_ready_local_sync_verified
 standalone: true
 language:
   narration: en-US
@@ -14,60 +14,74 @@ video:
   deterministic_clock: audio.currentTime
   export_api: window.renderFrame(frame)
   export_status: not_started
-estimated_runtime_seconds: 535
-runtime_note: "Pacing estimate only; retime chapter boundaries and review transcript after successful narration generation."
+  runtime_seconds: 420.504
+  timeline_seconds: 420.48
+  runtime_note: "MP3 duration includes approximately 0.024 seconds of container/encoder padding; chapter boundaries come from exact WAV durations and 0.8-second inter-chapter gaps."
 voiceover:
   voice: Charon
   style: "warm, clear, measured"
+  language: en-US
   source_script: ../../docs/series-planning/01-transformer-and-attention-script.md
-  part_1: /public/series/transformer-attention/audio/voiceover-part-1.wav
-  part_2: /public/series/transformer-attention/audio/voiceover-part-2.wav
+  chapter_audio_directory: /public/series/transformer-attention/audio/
+  chapter_timing: /public/series/transformer-attention/audio/chapter-timing.json
   master: /public/series/transformer-attention/audio/voiceover.mp3
-  status: pending
-  generation_attempts: 2
-  result: "Both speech-generation requests returned a generic failure; no WAV files were produced."
+  status: generated
+  generation_method: "Eight approved-script chapters generated as separate Charon WAV calls, then assembled with 0.8-second gaps."
+  result: "All eight chapter WAVs generated and full-decoded; master MP3 assembled and full-decoded. The opening sample was only a service check and is not part of the master."
 chapters:
   - id: 01
     name: "Context window · coreference"
-    start_seconds: 0
-    end_seconds: 45
+    start_seconds: 0.0
+    end_seconds: 40.04
+    narration_seconds: 40.04
   - id: 02
     name: "Tokens · embeddings · position"
-    start_seconds: 45
-    end_seconds: 105
+    start_seconds: 40.84
+    end_seconds: 90.2
+    narration_seconds: 49.36
   - id: 03
     name: "Self-attention · context mix"
-    start_seconds: 105
-    end_seconds: 160
+    start_seconds: 91.0
+    end_seconds: 135.92
+    narration_seconds: 44.92
   - id: 04
     name: "Query · Key · Value"
-    start_seconds: 160
-    end_seconds: 265
+    start_seconds: 136.72
+    end_seconds: 216.16
+    narration_seconds: 79.44
   - id: 05
     name: "Multi-head attention"
-    start_seconds: 265
-    end_seconds: 315
+    start_seconds: 216.96
+    end_seconds: 256.8
+    narration_seconds: 39.84
   - id: 06
     name: "Transformer block · layers"
-    start_seconds: 315
-    end_seconds: 370
+    start_seconds: 257.6
+    end_seconds: 306.2
+    narration_seconds: 48.6
   - id: 07
     name: "Causal mask · next token"
-    start_seconds: 370
-    end_seconds: 450
+    start_seconds: 307.0
+    end_seconds: 360.88
+    narration_seconds: 53.88
   - id: 08
-    name: "Context → next-token scores"
-    start_seconds: 450
-    end_seconds: 535
+    name: "Context → next-token scores and closing"
+    start_seconds: 361.68
+    end_seconds: 420.504
+    narration_seconds: 58.8
 qa:
   production_build: passed
-  browser_preview: passed
+  browser_preview: passed_audio_sync_chromium
+  previous_visual_prototype_qa: passed
   checks:
-    - "Eight chapter scenes loaded in Chromium with 16:9 stage."
-    - "Chapter 05 button seek and active state verified at 04:25."
-    - "Visual-only play/pause fallback advances and pauses the preview clock."
-    - "Self-attention, Q/K/V, multi-head, Transformer block, causal mask, and recap keyframes manually inspected."
-    - "Generation scene appends 'short,' and 'too.' before updating next-token candidates."
+    - "All eight chapter WAV files exist and fully decode."
+    - "Chapter timing JSON generated from exact WAV metadata, with 0.8-second gaps."
+    - "Narration master MP3 fully decodes; 48 kHz stereo; encoded duration 420.504 seconds."
+    - "Chromium loaded narration metadata and timing JSON; all eight chapter buttons sought to their exact starts and activated the corresponding scene/transcript."
+    - "Play/pause advanced and stopped the audio clock; repeated rendering at the same timestamp produced identical scene states."
+    - "Preview stage retained 16:9 aspect ratio; canvas and page loaded without audio resource errors."
+    - "Visual prototype previously passed eight-scene Chromium checks at 16:9."
   pending:
-    - "Successful narration generation and audio-driven retiming."
-    - "Full-length browser playback and final MP4 export at 1920x1080, 24 fps."
+    - "Rebuild and verify audio-driven chapter navigation and transcript synchronization in Chromium."
+    - "Review chapter-to-chapter voice continuity and pacing by listening."
+    - "Full-length playback QA and final MP4 export at 1920x1080, 24 fps."

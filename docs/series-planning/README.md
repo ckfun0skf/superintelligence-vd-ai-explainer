@@ -1,6 +1,6 @@
 # AI Deep-Dive Series — Planning Hub
 
-**Status:** Planning continues. Part 01 now has an English narration/visual-design draft and a working standalone eight-scene preview page. Narration generation failed twice at the service and remains pending; no audio files have been produced.
+**Status:** Planning continues. Part 01 has an approved English narration/visual-design draft, a standalone eight-scene preview page, and an eight-chapter Charon voice track. Audio-driven chapter timing has been generated; full browser playback QA and MP4 export remain pending.
 
 ## Purpose
 
@@ -18,7 +18,7 @@ The existing film, *From Prompt to Action*, is the broad introduction. These are
 
 | Part | Working title | Main question | Planning status |
 |---|---|---|---|
-| 01 | **How Transformers Work: Self-Attention, Q/K/V & Context** | How can a model connect relevant tokens across a prompt and build contextual representations? | [Standalone visual preview](../../series/transformer-attention/); narration pending; [English script + visual design](./01-transformer-and-attention-script.md) |
+| 01 | **How Transformers Work: Self-Attention, Q/K/V & Context** | How can a model connect relevant tokens across a prompt and build contextual representations? | [Standalone preview with narration](../../series/transformer-attention/); about 7:00.5; [English script + visual design](./01-transformer-and-attention-script.md) |
 | 02 | **How LLMs Are Trained: Neural Networks, Prediction & Fine-Tuning** | How do a network's parameters get learned and then shaped into an assistant? | Initial outline in [Part 02](./02-neural-networks-and-llm-training.md) |
 | 03 | **AI Temperature Explained: Why Answers Can Vary** | How does temperature change next-token selection, and what does it not control? | Initial outline in [Part 03](./03-temperature-and-sampling.md) |
 
@@ -47,4 +47,4 @@ These are target placements to confirm in YouTube Studio after the deep-dive upl
 
 ## Recommended next step
 
-Retry the approved Charon narration for Part 01 when the speech-generation service is available. Then listen, retime the chapter/transcript boundaries to the real audio, finish browser QA, and export the video. The other two episodes remain at outline stage.
+Listen through the generated Part 01 Charon chapter joins, finish full-length browser QA and transcript synchronization, then export the video. The other two episodes remain at outline stage.

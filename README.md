@@ -6,7 +6,7 @@ A section-by-section, audio-synchronized 16:9 motion-design film preview. The cu
 
 Published preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/
 
-Standalone deep-dive preview — **How Transformers Work: Self-Attention, Q/K/V & Context**: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/series/transformer-attention/ (eight-scene visual prototype; Charon narration generation is pending).
+Standalone deep-dive preview — **How Transformers Work: Self-Attention, Q/K/V & Context**: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/series/transformer-attention/ (eight-scene visual prototype with Charon narration; actual audio is about 7:00.5, with full playback QA and MP4 export pending).
 
 The film frame has no title cards or review subtitles. Synchronized English review captions sit below the frame, outside the film composition. The Three.js canvas renders one **1920×1080** master at **24 fps**; phones show that same composition proportionally, with no device-specific film typography or layout. The player offers play/seek, an eight-section jump rail, and fullscreen. In fullscreen, the chapter rail and playback controls overlay the picture, appear on entry or a screen tap, and fade after three seconds; tapping again toggles them. The player requests landscape orientation where supported and keeps the 16:9 frame fitted to the available display.
 

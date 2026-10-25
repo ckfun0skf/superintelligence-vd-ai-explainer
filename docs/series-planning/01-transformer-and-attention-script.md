@@ -1,17 +1,17 @@
 # Part 01 — Transformer & Attention Mechanism
 ## English Narration Draft + Visual Design
 
-**Status:** Approved narration/visual-design draft. Eight-scene deterministic preview implemented. Two Charon narration-generation requests returned a generic service failure; no audio files were produced. Current timing remains provisional until audio is available.
+**Status:** Approved narration/visual-design draft. Eight-scene deterministic preview and eight-chapter Charon narration are generated. The assembled MP3 is 420.504 seconds (about 7:00.5); exact WAV chapter timing is stored in `series/transformer-attention/audio/chapter-timing.json`. Full-length playback QA and MP4 export remain pending.
 
 **Working title:** *How Transformers Work: Self-Attention, Q/K/V & Context*
 
-**Format:** Standalone deep-dive. English narration; Traditional Chinese production notes. About 1,004 spoken words; approximately 8:00–8:25 of speech at 120–125 words per minute, plus visual holds, for an estimated 8:30–9:00 total. Keep the established Charon voice as the working reference, subject to the user's review.
+**Format:** Standalone deep-dive. English narration; Traditional Chinese production notes. The generated narration is approximately 7:00.5 including 0.8-second chapter gaps. Keep the established Charon voice; review pacing and chapter joins by listening before final MP4 export.
 
 **Narration direction:** Warm, clear, measured. Aim for roughly 120–130 words per minute. Leave a short breath after the core mechanism, the formula, and the final recap. Section headings and design notes are not spoken.
 
 ---
 
-## 01 — Hook: follow one reference | target 00:00–00:45
+## 01 — Hook: follow one reference | actual 00:00–00:40
 
 ### Voice-over
 
@@ -31,7 +31,7 @@ The answer is not one magic connection. It is a series of computations that lets
 
 ---
 
-## 02 — From tokens to vectors | target 00:45–01:45
+## 02 — From tokens to vectors | actual 00:41–01:30
 
 ### Voice-over
 
@@ -53,7 +53,7 @@ Now we can look at the sentence as a row of token representations, each carrying
 
 ---
 
-## 03 — What self-attention does | target 01:45–02:40
+## 03 — What self-attention does | actual 01:31–02:16
 
 ### Voice-over
 
@@ -75,7 +75,7 @@ To see how the mixture is calculated, we need three names: Query, Key, and Value
 
 ---
 
-## 04 — Query, Key, Value | target 02:40–04:25
+## 04 — Query, Key, Value | actual 02:17–03:36
 
 ### Voice-over
 
@@ -105,7 +105,7 @@ A compact way to write the operation is: scale the Query–Key scores, apply sof
 
 ---
 
-## 05 — Why multiple heads? | target 04:25–05:15
+## 05 — Why multiple heads? | actual 03:37–04:17
 
 ### Voice-over
 
@@ -123,7 +123,7 @@ Q/K/V 輸出分成三至四條不同但同源的 parallel lanes。每條 lane �
 
 ---
 
-## 06 — Attention is inside a Transformer block | target 05:15–06:10
+## 06 — Attention is inside a Transformer block | actual 04:18–05:06
 
 ### Voice-over
 
@@ -145,7 +145,7 @@ As the sequence moves through those layers, each token’s representation become
 
 ---
 
-## 07 — Causal mask and next-token generation | target 06:10–07:30
+## 07 — Causal mask and next-token generation | actual 05:07–06:01
 
 ### Voice-over
 
@@ -167,7 +167,7 @@ During generation, the model starts with the prompt. Its final position produces
 
 ---
 
-## 08 — What the mechanism explains—and what it does not | target 07:30–08:35
+## 08 — What the mechanism explains—and what it does not | actual 06:02–07:00
 
 ### Voice-over
 
@@ -189,7 +189,7 @@ So when an AI connects a constraint to a suggestion, there is no single magic li
 
 ---
 
-## Closing / optional end card | target 08:35–08:55
+## Closing / optional end card | final beat within chapter 08
 
 ### Voice-over
 

@@ -19,6 +19,7 @@ const playbackRate = document.querySelector('#playback-rate');
 const FPS = 24;
 const plannedChapterSeconds = [45, 60, 55, 105, 50, 55, 80, 85];
 const plannedTotal = plannedChapterSeconds.reduce((a, b) => a + b, 0);
+let narrationTiming = null;
 const chapterNames = ['CONTEXT WINDOW · COREFERENCE', 'TOKENS · EMBEDDINGS · POSITION', 'SELF-ATTENTION · CONTEXT MIX', 'QUERY · KEY · VALUE', 'MULTI-HEAD ATTENTION', 'TRANSFORMER BLOCK · LAYERS', 'CAUSAL MASK · NEXT TOKEN', 'CONTEXT → NEXT-TOKEN SCORES'];
 const transcript = [
   'Imagine asking an AI to plan a nature weekend in Taipei, within an eight-thousand-dollar budget. In its answer, it may mention Maokong, a shaded trail, or a short hike. Now consider this sentence: “The trail near Maokong is shaded. It is short, too.” What information helps the model connect “it” with the trail? The answer is not one magic connection. It is a series of computations that lets each token build a representation using its surrounding context. A key mechanism is self-attention. And self-attention lives inside a larger architecture called the Transformer.',
@@ -169,11 +170,31 @@ function resizeRenderer(){const r=film.getBoundingClientRect();renderer.setSize(
 new ResizeObserver(resizeRenderer).observe(film);resizeRenderer();
 
 function calculateChapters(total) {
+  chapterStarts=[]; chapterEnds=[];
+  if(narrationTiming?.chapters?.length===plannedChapterSeconds.length){
+    let t=0;
+    narrationTiming.chapters.forEach((chapter,i)=>{
+      const start=Number(t.toFixed(3));
+      chapterStarts.push(start);
+      const end=Number((start+Number(chapter.duration_seconds)).toFixed(3));
+      chapterEnds.push(i===narrationTiming.chapters.length-1?total:end);
+      t=Number((end+(i<narrationTiming.chapters.length-1?Number(narrationTiming.gap_seconds||0):0)).toFixed(3));
+    });
+    return;
+  }
   chapterScale = total / plannedTotal;
-  chapterStarts=[]; chapterEnds=[]; let t=0;
+  let t=0;
   for(const w of plannedChapterSeconds){chapterStarts.push(t);t+=w*chapterScale;chapterEnds.push(t);}
 }
 calculateChapters(duration);
+fetch(new URL('./audio/chapter-timing.json', window.location.href))
+  .then(response=>{if(!response.ok)throw new Error('No chapter timing metadata');return response.json();})
+  .then(data=>{
+    if(data.chapters?.length!==plannedChapterSeconds.length)return;
+    narrationTiming=data;
+    if(Number.isFinite(audio.duration)&&audio.duration>0){duration=audio.duration;calculateChapters(duration);renderAt(audio.currentTime||0);}
+  })
+  .catch(()=>{});
 function activeSceneIndex(t){for(let i=chapterEnds.length-1;i>=0;i--) if(t>=chapterStarts[i]) return i; return 0;}
 function localProgress(t,i){const span=chapterEnds[i]-chapterStarts[i];return clamp((t-chapterStarts[i])/Math.max(.001,span));}
 function setSceneTransition(sceneIndex,p,t){const pulse=Math.exp(-Math.pow((p-.06)/.034,2))*.14;setOpacity(stageTransition,pulse);stageTransition.style.background=sceneIndex%2?'#b7f4ff':'#d2fff1';}
@@ -280,7 +301,12 @@ playButton.addEventListener('click',()=>{
 });
 audio.addEventListener('play',()=>{playButton.textContent='❚❚';playButton.setAttribute('aria-label','Pause');audioState.textContent='Narration playing';});
 audio.addEventListener('pause',()=>{playButton.textContent='▶';playButton.setAttribute('aria-label','Play');audioState.textContent='Narration paused';renderAt(audio.currentTime);});
-audio.addEventListener('loadedmetadata',()=>{duration=audio.duration;calculateChapters(duration);totalTimeEl.textContent=fmt(duration);audioState.textContent=`Narration ready · ${fmt(duration)}`;renderAt(0);});
+function applyAudioMetadata(){
+  if(audio.readyState<1||!Number.isFinite(audio.duration)||audio.duration<=0)return false;
+  previewOnly=false;duration=audio.duration;calculateChapters(duration);totalTimeEl.textContent=fmt(duration);
+  audioState.textContent=`Narration ready · ${fmt(duration)}`;renderAt(audio.currentTime||0);return true;
+}
+audio.addEventListener('loadedmetadata',applyAudioMetadata);
 audio.addEventListener('timeupdate',()=>renderAt(audio.currentTime));
 audio.addEventListener('seeked',()=>renderAt(audio.currentTime));
 audio.addEventListener('ended',()=>{renderAt(duration);audioState.textContent='Narration complete';});
@@ -295,4 +321,4 @@ shell.addEventListener('pointermove',showControls);shell.addEventListener('point
 window.addEventListener('keydown',e=>{if(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement)return;if(e.code==='Space'){e.preventDefault();playButton.click();}if(e.key==='f'||e.key==='F')document.querySelector('#fullscreen-toggle').click();if(e.key==='ArrowRight'){const t=Math.min(duration,(previewOnly?manualTime:audio.currentTime)+5);if(!previewOnly)audio.currentTime=t;renderAt(t);}if(e.key==='ArrowLeft'){const t=Math.max(0,(previewOnly?manualTime:audio.currentTime)-5);if(!previewOnly)audio.currentTime=t;renderAt(t);}});
 
 renderAt(0);
-if(audio.error){previewOnly=true;audioState.textContent='Visual preview · narration pending';totalTimeEl.textContent=fmt(duration);}
+if(!applyAudioMetadata()&&audio.error){previewOnly=true;audioState.textContent='Visual preview · narration pending';totalTimeEl.textContent=fmt(duration);}

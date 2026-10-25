@@ -1,0 +1,54 @@
+{
+  "gap_seconds": 0.8,
+  "total_duration_seconds": 420.48,
+  "chapters": [
+    {
+      "id": "01",
+      "duration_seconds": 40.04,
+      "start_seconds": 0.0,
+      "end_seconds": 40.04
+    },
+    {
+      "id": "02",
+      "duration_seconds": 49.36,
+      "start_seconds": 40.84,
+      "end_seconds": 90.2
+    },
+    {
+      "id": "03",
+      "duration_seconds": 44.92,
+      "start_seconds": 91.0,
+      "end_seconds": 135.92
+    },
+    {
+      "id": "04",
+      "duration_seconds": 79.44,
+      "start_seconds": 136.72,
+      "end_seconds": 216.16
+    },
+    {
+      "id": "05",
+      "duration_seconds": 39.84,
+      "start_seconds": 216.96,
+      "end_seconds": 256.8
+    },
+    {
+      "id": "06",
+      "duration_seconds": 48.6,
+      "start_seconds": 257.6,
+      "end_seconds": 306.2
+    },
+    {
+      "id": "07",
+      "duration_seconds": 53.88,
+      "start_seconds": 307.0,
+      "end_seconds": 360.88
+    },
+    {
+      "id": "08",
+      "duration_seconds": 58.8,
+      "start_seconds": 361.68,
+      "end_seconds": 420.48
+    }
+  ]
+}

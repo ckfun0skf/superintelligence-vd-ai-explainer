@@ -1,6 +1,6 @@
 # Part 01 — Transformer & Attention: Deep-Dive Plan
 
-**Status:** [Part 01 script](./01-transformer-and-attention-script.md) and the standalone [visual preview page](../../series/transformer-attention/) are available. The deterministic eight-scene prototype has passed local Chromium checks. Charon narration generation returned a generic service failure twice; no WAV is available yet, so chapter timings are still estimates.
+**Status:** [Part 01 script](./01-transformer-and-attention-script.md) and standalone [preview page](../../series/transformer-attention/) are available with an eight-chapter Charon narration. The assembled MP3 is about 7:00.5; exact chapter timing is generated from the source WAVs. Full-length audio/browser QA and MP4 export remain pending.
 
 ## Working title and promise
 
@@ -12,7 +12,7 @@
 
 **Audience:** Curious non-specialists who have watched (or can follow) the original *From Prompt to Action* film. Briefly refresh tokens, but do not spend a full chapter re-teaching tokenization.
 
-**Length target:** Roughly 8–10 minutes, with calm pacing and short visual holds after the densest mechanisms. Duration is provisional; clarity is more important than hitting a precise runtime.
+**Runtime:** The generated voice track is about 7:00.5 including chapter gaps. The voice pace and chapter joins still need a listening review; clarity takes priority over matching the earlier 8–10-minute estimate.
 
 ## The central question
 
@@ -38,17 +38,16 @@ Use **“it” → “the trail”** as an intuitive relationship, while showing
 
 | Approx. time | Beat | Visual action | Accuracy / pacing note |
 |---|---|---|---|
-| 00:00–00:45 | **Hook: follow the reference** | A compact assistant chat displays the Taipei/nature request. The follow-up sentence appears; the token “It” briefly has several possible paths, then the surrounding text narrows the illustrative trail connection. Camera dives into the message rather than cutting to a title card. | Frame this as a simplified example of context use, not a literal measurement from a production model. |
-| 00:45–01:45 | **Tokens and position** | The sentence separates into token tiles, then vector glyphs; reorder two phrases and a position ribbon changes with sequence order. | Embeddings are not word definitions; positional information is encoded differently across architectures. |
-| 01:45–02:40 | **What self-attention does** | One token position is selected. Potential links reach other positions; illustrative weights shift as the query position changes. | Lines are schematic, not permanent semantic links or measured weights from a production model. |
-| 02:40–03:45 | **Query, Key, Value** | Token representations pass through learned Q/K/V projection gates. The selected Query compares against available Keys; scores control the flow of Values. | Q/K/V are vectors from learned projections, not literal questions, database keys, or stored facts. |
-| 03:45–04:25 | **Scores become a new representation** | Score bars are scaled, normalized by softmax, and used to mix Value streams. Reveal `softmax(QKᵀ / √dₖ) V` after the animation. | Hold the formula after intuition; in decoder self-attention, a causal mask limits accessible positions. |
-| 04:25–05:15 | **Multi-head attention** | Several learned lanes process the same token row in parallel and recombine. | Do not assign fixed human-readable jobs to individual heads. |
-| 05:15–06:10 | **Inside a Transformer block** | Camera enters attention, residual/normalization and feed-forward sublayers; the block repeats into a stack. | Show a common GPT-style block without claiming every Transformer uses an identical layout. |
-| 06:10–07:30 | **Causal mask and next-token loop** | A triangular gate blocks future positions. Contrast parallel masked computation over a known training sequence with inference appending one selected token at a time. | Keep training detail brief; optional cache cue is illustrative, not a KV-cache optimization tutorial. |
-| 07:30–08:55 | **Recap and standalone ending** | Reassemble tokens → vectors/position → attention → Transformer blocks → next-token scores. Return to the Taipei prompt and resolve the visual journey without a cliffhanger. | Attention is one important computation, not a complete explanation of a model’s answer. Other deep-dives are optional. |
+| 00:00–00:40 | **Hook: follow the reference** | A compact assistant chat displays the Taipei/nature request. The follow-up sentence appears; the token “It” briefly has several possible paths, then the surrounding text narrows the illustrative trail connection. Camera dives into the message rather than cutting to a title card. | Frame this as a simplified example of context use, not a literal measurement from a production model. |
+| 00:41–01:30 | **Tokens and position** | The sentence separates into token tiles, then vector glyphs; reorder two phrases and a position ribbon changes with sequence order. | Embeddings are not word definitions; positional information is encoded differently across architectures. |
+| 01:31–02:16 | **What self-attention does** | One token position is selected. Potential links reach other positions; illustrative weights shift as the query position changes. | Lines are schematic, not permanent semantic links or measured weights from a production model. |
+| 02:17–03:36 | **Query, Key, Value** | Token representations pass through learned Q/K/V projection gates. The selected Query compares against available Keys; scores control the flow of Values. | Q/K/V are vectors from learned projections, not literal questions, database keys, or stored facts. |
+| 03:37–04:17 | **Multi-head attention** | Several learned lanes process the same token row in parallel and recombine. | Do not assign fixed human-readable jobs to individual heads. |
+| 04:18–05:06 | **Inside a Transformer block** | Camera enters attention, residual/normalization and feed-forward sublayers; the block repeats into a stack. | Show a common GPT-style block without claiming every Transformer uses an identical layout. |
+| 05:07–06:01 | **Causal mask and next-token loop** | A triangular gate blocks future positions. Contrast parallel masked computation over a known training sequence with inference appending one selected token at a time. | Keep training detail brief; optional cache cue is illustrative, not a KV-cache optimization tutorial. |
+| 06:02–07:00 | **Recap and standalone ending** | Reassemble tokens → vectors/position → attention → Transformer blocks → next-token scores. Return to the Taipei prompt and resolve the visual journey without a cliffhanger. | Attention is one important computation, not a complete explanation of a model’s answer. Other deep-dives are optional. |
 
-*The time ranges are a pacing sketch only. They can change after narration is drafted and read aloud.*
+*These are measured chapter ranges from the generated narration (including 0.8-second gaps between chapters); the final chapter ends at about 07:00.5 with a small MP3 encoder/container tail.*
 
 ## Visual grammar
 
@@ -93,4 +92,4 @@ These can be optional follow-up notes, not prerequisites for a clear first deep-
 
 ## Proposed next step
 
-After narration generation succeeds, listen through the full Charon read, measure its actual duration, retime chapters/transcript, and review the synchronized page. Then complete full-browser playback QA and export the final 1920×1080 MP4. The existing visual prototype and local build are ready for review; see its [production status](../../series/transformer-attention/README.md).
+Listen through the full Charon read and chapter joins, review transcript synchronization and the audio-driven page, then complete full-browser playback QA and export the final 1920×1080 MP4. See the current [production status](../../series/transformer-attention/README.md).

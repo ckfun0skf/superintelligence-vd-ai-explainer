@@ -7,4 +7,4 @@
 - [Part 02 — Neural networks, LLMs & training](./02-neural-networks-and-llm-training.md)
 - [Part 03 — Temperature & sampling](./03-temperature-and-sampling.md)
 
-Part 01 has an approved English narration/design draft and an eight-scene deterministic visual preview. Charon speech generation returned a generic service failure twice, so narration audio and final timing are pending. The original film preview at the site root remains untouched.
+Part 01 has an approved English narration/design draft, an eight-scene deterministic visual preview, and a generated eight-chapter Charon voice track. The actual chapter timing is stored with the audio assets; full-length playback QA and MP4 export remain pending. The original film preview at the site root remains untouched.
