@@ -1,6 +1,6 @@
 episode: 01
 title: "How Transformers Work: Self-Attention, Q/K/V & Context"
-status: narration_ready_local_sync_verified
+status: narration_ready_live_pages_verified
 standalone: true
 language:
   narration: en-US
@@ -14,6 +14,9 @@ video:
   deterministic_clock: audio.currentTime
   export_api: window.renderFrame(frame)
   export_status: not_started
+  deployed_commit: 50b6432cc342ced12ee2f6ee3fd54fb0a4b61f2b
+  pages_workflow_run: 40206843509
+  live_preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/series/transformer-attention/
   runtime_seconds: 420.504
   timeline_seconds: 420.48
   runtime_note: "MP3 duration includes approximately 0.024 seconds of container/encoder padding; chapter boundaries come from exact WAV durations and 0.8-second inter-chapter gaps."
@@ -80,8 +83,8 @@ qa:
     - "Chromium loaded narration metadata and timing JSON; all eight chapter buttons sought to their exact starts and activated the corresponding scene/transcript."
     - "Play/pause advanced and stopped the audio clock; repeated rendering at the same timestamp produced identical scene states."
     - "Preview stage retained 16:9 aspect ratio; canvas and page loaded without audio resource errors."
+    - "Live GitHub Pages page, MP3, timing JSON, opening WAV and final chapter WAV all returned HTTP 200; public browser playback was started successfully."
     - "Visual prototype previously passed eight-scene Chromium checks at 16:9."
   pending:
-    - "Rebuild and verify audio-driven chapter navigation and transcript synchronization in Chromium."
     - "Review chapter-to-chapter voice continuity and pacing by listening."
     - "Full-length playback QA and final MP4 export at 1920x1080, 24 fps."
