@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#070b13" />
+    <title>How Transformers Work — Self-Attention, Q/K/V &amp; Context</title>
+    <meta name="description" content="A visual deep dive into Transformer self-attention, Query, Key and Value, multi-head attention, causal masking and next-token generation." />
+    <link rel="icon" href="../../favicon.svg" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-heading">
+        <a class="back-link" href="../../">← From Prompt to Action</a>
+        <p class="series-label">AI UNDER THE HOOD · DEEP DIVE 01</p>
+        <h1>How Transformers Work</h1>
+        <p class="subtitle">Self-attention, Query · Key · Value, and context</p>
+      </header>
+
+      <section class="player-shell" aria-label="Transformer deep-dive video preview">
+        <div id="film" class="film" role="img" aria-label="Animated Transformer explainer frame">
+          <canvas id="webgl" aria-hidden="true"></canvas>
+          <div class="film-vignette" aria-hidden="true"></div>
+          <div class="film-grain" aria-hidden="true"></div>
+          <div class="top-status"><span class="status-dot"></span><span id="status-label">CONTEXT WINDOW · READY</span><span class="frame-counter" id="frame-counter">00:00</span></div>
+
+          <section class="scene scene-hook" data-scene="0" aria-hidden="true">
+            <div class="chat-app">
+              <div class="chat-top"><span class="app-mark">✳</span><span>Assistant</span><span class="chat-menu">···</span></div>
+              <div class="chat-question">Plan a nature weekend in Taipei. My budget is <b>$8,000</b>.</div>
+              <div class="chat-thinking"><i></i><i></i><i></i><span>Building a response</span></div>
+              <div class="chat-answer">A nature-first weekend in Taipei<span class="typing-caret"></span></div>
+            </div>
+            <div class="hook-sentence"><span>The</span><span>trail</span><span>near</span><span>Maokong</span><span>is</span><span>shaded.</span><span class="period-gap">It</span><span>is</span><span>short,</span><span>too.</span></div>
+            <svg class="hook-links" viewBox="0 0 1200 330" preserveAspectRatio="none" aria-hidden="true"><path id="hook-path-a" d="M 260 260 C 360 90, 760 90, 880 260"/><path id="hook-path-b" d="M 260 260 C 440 175, 590 175, 650 260"/></svg>
+            <div class="hook-prompt">What does <b>“it”</b> refer to?</div>
+            <div class="scene-tag" id="hook-tag">SELF-ATTENTION</div>
+          </section>
+
+          <section class="scene scene-vectors" data-scene="1" aria-hidden="true">
+            <div class="vector-heading"><span class="micro-label">TEXT BECOMES NUMERICAL INPUT</span><div class="token-phrase"><span>The</span><span>trail</span><span>near</span><span>Maokong</span><span>is</span><span>shaded</span></div></div>
+            <div class="vector-flow"><div class="flow-label">TOKEN ID</div><div class="id-cells" id="id-cells"></div><div class="flow-arrow">→</div><div class="flow-label">EMBEDDING</div><div class="embedding-cells" id="embedding-cells"></div></div>
+            <div class="position-lab"><div class="position-title">ORDER CHANGES THE CONTEXT</div><div class="order-row"><span>The</span><span>trail</span><span>is</span><span>near</span><span>Maokong</span></div><div class="position-ribbon" id="position-ribbon"></div><div class="order-row swapped"><span>Maokong</span><span>is</span><span>near</span><span>the</span><span>trail</span></div></div>
+            <div class="vector-note">Illustrative vector values · not a word definition</div>
+          </section>
+
+          <section class="scene scene-attention" data-scene="2" aria-hidden="true">
+            <div class="attention-title"><span class="micro-label">ONE POSITION, SURROUNDED BY CONTEXT</span><div class="attention-token-row" id="attention-token-row"></div></div>
+            <svg class="attention-web" id="attention-web" viewBox="0 0 1200 430" preserveAspectRatio="none" aria-hidden="true"><g id="attention-lines"></g></svg>
+            <div class="attention-focus-label" id="focus-label">CURRENT POSITION · “IT”</div>
+            <div class="context-result"><span>CONTEXTUAL MIXTURE</span><div class="context-orb"><i></i><i></i><i></i><i></i><i></i></div><b>representation updated</b></div>
+            <div class="schematic-stamp">SCHEMATIC · CONTEXT-DEPENDENT</div>
+          </section>
+
+          <section class="scene scene-qkv" data-scene="3" aria-hidden="true">
+            <div class="qkv-head"><span class="micro-label">FROM INPUT REPRESENTATIONS TO A CONTEXTUAL MIX</span><div class="qkv-focus">Focus position: <b>“it”</b></div></div>
+            <div class="qkv-origin" id="qkv-origin"></div>
+            <svg class="qkv-lines" viewBox="0 0 1200 580" preserveAspectRatio="none" aria-hidden="true"><g id="qkv-paths"></g></svg>
+            <div class="qkv-columns">
+              <div class="projection-col q-col"><div class="projection-title">QUERY <small>what this position matches against</small></div><div class="projection-stack" id="q-stack"></div></div>
+              <div class="projection-col k-col"><div class="projection-title">KEYS <small>available positions to compare</small></div><div class="projection-stack" id="k-stack"></div></div>
+              <div class="score-col"><div class="projection-title">SCORES → SOFTMAX <small>scaled, then normalized</small></div><div class="score-stack" id="score-stack"></div><div class="sum-label">weights sum to 1</div></div>
+              <div class="projection-col v-col"><div class="projection-title">VALUES <small>information to be mixed</small></div><div class="projection-stack" id="v-stack"></div></div>
+            </div>
+            <div class="mix-output"><span>WEIGHTED MIX</span><div class="mix-signal" id="mix-signal"></div><strong>new contextual vector</strong></div>
+            <div class="formula-panel" id="formula-panel"><span>Scaled dot-product attention</span><b>softmax ( QK<sup>T</sup> / √d<sub>k</sub> ) V</b></div>
+            <div class="mechanism-steps"><span>COMPARE</span><i></i><span>NORMALIZE</span><i></i><span>MIX</span></div>
+          </section>
+
+          <section class="scene scene-heads" data-scene="4" aria-hidden="true">
+            <div class="heads-heading"><span class="micro-label">PARALLEL LEARNED VIEWS</span><b>Multi-head attention</b></div>
+            <div class="head-source">same input representations</div>
+            <div class="head-lanes" id="head-lanes"></div>
+            <svg class="head-merge" viewBox="0 0 1200 530" preserveAspectRatio="none" aria-hidden="true"><path d="M120 85 C520 85 530 260 920 260 M120 205 C520 205 530 260 920 260 M120 325 C520 325 530 260 920 260 M120 445 C520 445 530 260 920 260"/></svg>
+            <div class="heads-output"><div class="heads-combine" id="heads-combine"><i></i><i></i><i></i><i></i></div><span>combined representation</span></div>
+            <div class="schematic-stamp">PATTERNS ARE ILLUSTRATIVE · NO FIXED “HEAD JOBS”</div>
+          </section>
+
+          <section class="scene scene-block" data-scene="5" aria-hidden="true">
+            <div class="block-heading"><span class="micro-label">ATTENTION IS ONE PART OF THE ARCHITECTURE</span><b>A GPT-style Transformer block</b></div>
+            <div class="block-flow">
+              <div class="block-token-stream" id="block-token-stream"></div>
+              <div class="transformer-stack" id="transformer-stack">
+                <div class="transformer-block block-back"><div class="block-face"><span>SELF-ATTENTION</span><i class="block-nodes"></i></div><div class="block-face"><span>RESIDUAL + NORM</span><i class="residual-loop"></i></div><div class="block-face"><span>FEED-FORWARD · MLP</span><i class="mlp-nodes"></i></div></div>
+                <div class="transformer-block block-middle"><div class="block-face"><span>SELF-ATTENTION</span><i class="block-nodes"></i></div><div class="block-face"><span>RESIDUAL + NORM</span><i class="residual-loop"></i></div><div class="block-face"><span>FEED-FORWARD · MLP</span><i class="mlp-nodes"></i></div></div>
+                <div class="transformer-block block-front"><div class="block-face"><span>SELF-ATTENTION</span><i class="block-nodes"></i></div><div class="block-face"><span>RESIDUAL + NORM</span><i class="residual-loop"></i></div><div class="block-face"><span>FEED-FORWARD · MLP</span><i class="mlp-nodes"></i></div></div>
+              </div>
+              <div class="block-explainer" id="block-explainer"><div class="explain-item" data-step="0"><i class="icon-network">↗</i><span>mix across positions</span></div><div class="explain-item" data-step="1"><i class="icon-residual">↺</i><span>preserve a signal path</span></div><div class="explain-item" data-step="2"><i class="icon-mlp">▦</i><span>transform each position</span></div></div>
+            </div>
+            <div class="block-stack-caption">repeated layers build richer contextual representations</div>
+          </section>
+
+          <section class="scene scene-mask" data-scene="6" aria-hidden="true">
+            <div class="mask-heading"><span class="micro-label">LEFT-TO-RIGHT PREDICTION</span><b>Causal mask</b></div>
+            <div class="mask-modes"><button class="mask-mode" data-mode="training">TRAINING · PARALLEL POSITIONS</button><button class="mask-mode" data-mode="generation">GENERATION · ONE TOKEN AT A TIME</button></div>
+            <div class="mask-content">
+              <div class="mask-grid" id="mask-grid"></div>
+              <div class="mask-explain"><div class="mask-gate">FUTURE<br/><b>BLOCKED</b></div><div class="mask-flow">earlier context <span>→</span> current token</div></div>
+            </div>
+            <div class="generation-track"><div class="generation-label">PROMPT</div><div class="generation-tokens" id="generation-tokens"></div><div class="next-candidates" id="next-candidates"><span>next token scores</span><b>trail</b><b>hike</b><b>park</b></div><div class="kv-cache" id="kv-cache"><small>KV CACHE</small><i></i><i></i><i></i></div></div>
+            <div class="mask-caption" id="mask-caption">Each position can use itself and earlier tokens—not the future.</div>
+          </section>
+
+          <section class="scene scene-recap" data-scene="7" aria-hidden="true">
+            <div class="recap-context"><span>TAIPEI · NATURE · $8,000</span><div class="recap-input">Plan a weekend. Keep it nature-first.</div></div>
+            <div class="recap-route" id="recap-route"><span>tokens</span><i></i><span>vectors<br/>+ position</span><i></i><span>self-<br/>attention</span><i></i><span>Transformer<br/>blocks</span><i></i><span>next-token<br/>scores</span></div>
+            <svg class="recap-flow" viewBox="0 0 1200 280" preserveAspectRatio="none" aria-hidden="true"><path id="recap-path" d="M 105 140 C 250 40, 330 240, 470 140 S 710 40, 840 140 S 1040 240, 1120 140"/></svg>
+            <div class="recap-copy" id="recap-copy"><span class="micro-label">THE WHOLE PASS</span><b>Context is built, one layer at a time.</b></div>
+            <div class="closing-line" id="closing-line">Before the next token is chosen.</div>
+          </section>
+
+          <div class="scene-transition" id="scene-transition" aria-hidden="true"></div>
+        </div>
+
+        <div class="external-captions"><span>REVIEW TRANSCRIPT</span><p id="review-transcript">The narration transcript will appear here when the voice track is ready.</p></div>
+        <div class="player-controls">
+          <button id="play-toggle" class="play-button" type="button" aria-label="Play">▶</button>
+          <span id="time-current" class="time-readout">00:00</span>
+          <input id="seek-bar" type="range" min="0" max="100" value="0" aria-label="Seek video" />
+          <span id="time-total" class="time-readout">--:--</span>
+          <select id="playback-rate" aria-label="Playback speed"><option value="1">1×</option><option value="0.75">0.75×</option><option value="0.5">0.5×</option></select>
+          <button id="fullscreen-toggle" class="fullscreen-button" type="button" aria-label="Enter fullscreen">⛶</button>
+        </div>
+        <nav class="chapter-rail" aria-label="Video chapters">
+          <button data-chapter="0">01 · Context</button><button data-chapter="1">02 · Vectors</button><button data-chapter="2">03 · Attention</button><button data-chapter="3">04 · Q/K/V</button><button data-chapter="4">05 · Heads</button><button data-chapter="5">06 · Blocks</button><button data-chapter="6">07 · Mask</button><button data-chapter="7">08 · Recap</button>
+        </nav>
+      </section>
+      <footer class="page-footer"><span>Standalone deep dive · 16:9 film frame</span><span id="audio-state">Loading narration…</span></footer>
+      <audio id="narration" preload="metadata" src="./audio/voiceover.mp3"></audio>
+    </main>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>

@@ -1,6 +1,6 @@
 # Part 01 — Transformer & Attention: Deep-Dive Plan
 
-**Status:** Deep-dive plan and first English narration/visual-design draft are available in [Part 01 script](./01-transformer-and-attention-script.md). Both remain under review; no narration audio or animation has been generated.
+**Status:** [Part 01 script](./01-transformer-and-attention-script.md) and the standalone [visual preview page](../../series/transformer-attention/) are available. The deterministic eight-scene prototype has passed local Chromium checks. Charon narration generation returned a generic service failure twice; no WAV is available yet, so chapter timings are still estimates.
 
 ## Working title and promise
 
@@ -93,4 +93,4 @@ These can be optional follow-up notes, not prerequisites for a clear first deep-
 
 ## Proposed next step
 
-Review the [English narration and visual-design draft](./01-transformer-and-attention-script.md), especially the “it → trail” example, the Q/K/V explanation, formula depth, and measured pace. After script approval, read it aloud or generate a short voice sample to set real timings; only then turn the approved beats into the production storyboard. No audio generation or implementation has started.
+After narration generation succeeds, listen through the full Charon read, measure its actual duration, retime chapters/transcript, and review the synchronized page. Then complete full-browser playback QA and export the final 1920×1080 MP4. The existing visual prototype and local build are ready for review; see its [production status](../../series/transformer-attention/README.md).

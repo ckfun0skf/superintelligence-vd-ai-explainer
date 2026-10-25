@@ -1,0 +1,73 @@
+episode: 01
+title: "How Transformers Work: Self-Attention, Q/K/V & Context"
+status: visual_prototype_ready_voiceover_pending
+standalone: true
+language:
+  narration: en-US
+  production_notes: zh-Hant
+video:
+  design_frame: 1920x1080
+  aspect_ratio: "16:9"
+  frame_rate: 24
+  preview_route: /series/transformer-attention/
+  preview_stage_selector: "#film"
+  deterministic_clock: audio.currentTime
+  export_api: window.renderFrame(frame)
+  export_status: not_started
+estimated_runtime_seconds: 535
+runtime_note: "Pacing estimate only; retime chapter boundaries and review transcript after successful narration generation."
+voiceover:
+  voice: Charon
+  style: "warm, clear, measured"
+  source_script: ../../docs/series-planning/01-transformer-and-attention-script.md
+  part_1: /public/series/transformer-attention/audio/voiceover-part-1.wav
+  part_2: /public/series/transformer-attention/audio/voiceover-part-2.wav
+  master: /public/series/transformer-attention/audio/voiceover.mp3
+  status: pending
+  generation_attempts: 2
+  result: "Both speech-generation requests returned a generic failure; no WAV files were produced."
+chapters:
+  - id: 01
+    name: "Context window · coreference"
+    start_seconds: 0
+    end_seconds: 45
+  - id: 02
+    name: "Tokens · embeddings · position"
+    start_seconds: 45
+    end_seconds: 105
+  - id: 03
+    name: "Self-attention · context mix"
+    start_seconds: 105
+    end_seconds: 160
+  - id: 04
+    name: "Query · Key · Value"
+    start_seconds: 160
+    end_seconds: 265
+  - id: 05
+    name: "Multi-head attention"
+    start_seconds: 265
+    end_seconds: 315
+  - id: 06
+    name: "Transformer block · layers"
+    start_seconds: 315
+    end_seconds: 370
+  - id: 07
+    name: "Causal mask · next token"
+    start_seconds: 370
+    end_seconds: 450
+  - id: 08
+    name: "Context → next-token scores"
+    start_seconds: 450
+    end_seconds: 535
+qa:
+  production_build: passed
+  browser_preview: passed
+  checks:
+    - "Eight chapter scenes loaded in Chromium with 16:9 stage."
+    - "Chapter 05 button seek and active state verified at 04:25."
+    - "Visual-only play/pause fallback advances and pauses the preview clock."
+    - "Self-attention, Q/K/V, multi-head, Transformer block, causal mask, and recap keyframes manually inspected."
+    - "Generation scene appends 'short,' and 'too.' before updating next-token candidates."
+  pending:
+    - "Successful narration generation and audio-driven retiming."
+    - "Full-length browser playback and final MP4 export at 1920x1080, 24 fps."

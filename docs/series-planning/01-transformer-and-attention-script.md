@@ -1,7 +1,7 @@
 # Part 01 — Transformer & Attention Mechanism
 ## English Narration Draft + Visual Design
 
-**Status:** Draft 01 for review. Narration/audio has not been generated; visual timing is a pacing estimate and will be retimed after a read-through or voice generation.
+**Status:** Approved narration/visual-design draft. Eight-scene deterministic preview implemented. Two Charon narration-generation requests returned a generic service failure; no audio files were produced. Current timing remains provisional until audio is available.
 
 **Working title:** *How Transformers Work: Self-Attention, Q/K/V & Context*
 
@@ -209,4 +209,4 @@ That is one forward pass through a Transformer: context is built, one layer at a
 - 概念範圍聚焦一般 GPT-style decoder-only Transformer；其他 Transformer 類型、位置編碼變體及 KV-cache 優化只作一句 caveat 或留待未來專題。
 - 不在影片中用裝飾性標題卡或畫內字幕；必要的功能標籤短、清楚、可讀，review captions 留在影片框外。
 - Original YouTube reference Card 建議位置：**01:13.6**，即原片 Section 03 開始點名 Transformer attention 的位置；等本片上架後再設定。
-- 下一步 review：先確認旁白例子、英文語氣、8–9 分鐘節奏和公式深度；未獲批前不生成語音或開始正式 Three.js 製作。
+- 下一步：重試旁白生成時沿用已確認的 Charon voice；成功後先實際聆聽、量度音訊、重設章節／review transcript 時間，再做全長 playback QA 和 1920×1080 MP4 export。

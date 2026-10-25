@@ -1,6 +1,6 @@
 # AI Deep-Dive Series — Planning Hub
 
-**Status:** Planning continues. Part 01 now has an English narration and visual-design draft; no voiceover audio, animation, or new website page has been built.
+**Status:** Planning continues. Part 01 now has an English narration/visual-design draft and a working standalone eight-scene preview page. Narration generation failed twice at the service and remains pending; no audio files have been produced.
 
 ## Purpose
 
@@ -18,7 +18,7 @@ The existing film, *From Prompt to Action*, is the broad introduction. These are
 
 | Part | Working title | Main question | Planning status |
 |---|---|---|---|
-| 01 | **How Transformers Work: Self-Attention, Q/K/V & Context** | How can a model connect relevant tokens across a prompt and build contextual representations? | [English script + visual design](./01-transformer-and-attention-script.md) drafted; [deep-dive plan](./01-transformer-and-attention.md) |
+| 01 | **How Transformers Work: Self-Attention, Q/K/V & Context** | How can a model connect relevant tokens across a prompt and build contextual representations? | [Standalone visual preview](../../series/transformer-attention/); narration pending; [English script + visual design](./01-transformer-and-attention-script.md) |
 | 02 | **How LLMs Are Trained: Neural Networks, Prediction & Fine-Tuning** | How do a network's parameters get learned and then shaped into an assistant? | Initial outline in [Part 02](./02-neural-networks-and-llm-training.md) |
 | 03 | **AI Temperature Explained: Why Answers Can Vary** | How does temperature change next-token selection, and what does it not control? | Initial outline in [Part 03](./03-temperature-and-sampling.md) |
 
@@ -31,7 +31,7 @@ The existing film, *From Prompt to Action*, is the broad introduction. These are
 
 ## Suggested future page structure
 
-Keep the existing root preview page for the original film unchanged. When a new preview is approved, give each new film a separate URL/page under a series path (provisionally `/series/transformer-attention/`, `/series/llm-training/`, and `/series/temperature/`). The future pages can share the 16:9 player design while keeping each film's timeline, audio, chapters, and assets independent. This is a recommendation for the later implementation stage, not work done in this planning pass.
+Keep the existing root preview page for the original film unchanged. Part 01 now has a separate page at `/series/transformer-attention/`, with its own 16:9 frame, eight-scene timeline, and chapter rail. Part 02 and Part 03 can use `/series/llm-training/` and `/series/temperature/` when their visual prototypes are ready; each film should keep its timeline, audio, chapters, and assets independent.
 
 ## Reference buttons on the original YouTube video
 
@@ -47,4 +47,4 @@ These are target placements to confirm in YouTube Studio after the deep-dive upl
 
 ## Recommended next step
 
-Review the Part 01 English script and visual design. Revise the example, formula depth, and pacing as needed; after approval, read it aloud or make a short voice sample to measure real timing. Voice generation and animation remain later steps, not yet started.
+Retry the approved Charon narration for Part 01 when the speech-generation service is available. Then listen, retime the chapter/transcript boundaries to the real audio, finish browser QA, and export the video. The other two episodes remain at outline stage.
