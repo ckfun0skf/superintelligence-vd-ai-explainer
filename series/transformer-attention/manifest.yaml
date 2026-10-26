@@ -85,6 +85,40 @@ qa:
     - "Preview stage retained 16:9 aspect ratio; canvas and page loaded without audio resource errors."
     - "Live GitHub Pages page, MP3, timing JSON, opening WAV and final chapter WAV all returned HTTP 200; public browser playback was started successfully."
     - "Visual prototype previously passed eight-scene Chromium checks at 16:9."
+  visual_development:
+    chapter_01:
+      status: opening_animation_refined_browser_qa_passed
+      duration_seconds: 40.04
+      timing_source: "Chapter-local progress derived from audio.currentTime; all visual values are seek-stable and deterministic."
+      reviewed_frames: [18, 23, 29, 37]
+      checks:
+        - "Chat prompt is typed in the bottom composer; after send, the composer resets and the submitted prompt remains as a message bubble."
+        - "The Taipei Maokong map card and chat UI stay above the expanding sentence, avoiding visual overlap."
+        - "Candidate links start at the actual 'it' word and terminate at candidate cards; the trail candidate becomes stronger while Maokong remains a subdued alternative."
+        - "The 'shaded' and 'short' context clues are visible before the closing concept beat."
+        - "SELF-ATTENTION is visually nested inside a TRANSFORMER frame; the signal pulse is driven by chapter progress."
+        - "Review transcript remains outside the 16:9 film frame; key labels and prompt stay within the 1920x1080 design canvas."
+      references_note: ../../docs/series-planning/01-transformer-visual-reference-notes.md
+    chapter_02:
+      status: token_embedding_position_motion_refined_browser_qa_passed
+      duration_seconds: 49.36
+      timing_source: "Chapter-local progress is derived from the narration audio clock; paths, stagger, and chip motion are seek-stable."
+      reviewed_frames: [45, 55, 74, 82]
+      checks:
+        - "A large sentence contracts into distinct word tiles; tile-to-ID curves align to the live DOM boxes and carry deterministic signal dots."
+        - "Token IDs appear in sequence, embedding cells grow into vector bars, and the explanatory note is delayed until the vector beat."
+        - "The order comparison enters after the token/embedding explanation; the lower sentence reorders via deterministic transforms over a positional ribbon."
+        - "The 16:9 composition retains open space and keeps section transcript outside the film frame."
+    chapter_03:
+      status: self_attention_paths_refined_browser_qa_passed
+      duration_seconds: 44.92
+      timing_source: "Chapter-local progress is derived from the narration audio clock; path geometry is recomputed from live token bounds at each frame."
+      reviewed_frames: [110, 120]
+      checks:
+        - "Attention paths terminate at actual token centers and form an incoming context fan into the focused word."
+        - "Mint, cyan, and violet paths plus traveling particles distinguish selected contextual signals without presenting them as ground-truth weights."
+        - "The contextual-mixture result appears in time with the explanation and remains visually separated from the token fan."
   pending:
+    - "Refine and browser-QA Chapters 04–08 to the same visual standard."
     - "Review chapter-to-chapter voice continuity and pacing by listening."
     - "Full-length playback QA and final MP4 export at 1920x1080, 24 fps."

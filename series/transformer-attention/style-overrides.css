@@ -1,0 +1,75 @@
+/* Refined opening composition and deterministic motion layers for Deep Dive 01. */
+
+/* Section 01 — chat-to-context transition. */
+.scene-hook .chat-app{top:14%;padding:1.1cqw 1.3cqw 4.7cqw}
+.hook-location-card{top:14%}
+.chat-input-bar{position:absolute;z-index:5;left:1.3cqw;right:1.3cqw;bottom:1cqw;height:2.8cqw;display:flex;align-items:center;padding:.55cqw 3.25cqw .55cqw 1cqw;border:1px solid #35485b;border-radius:.65cqw;background:linear-gradient(135deg,#111c28,#0b131d);box-shadow:inset 0 1px #ffffff08,0 .35cqw 1cqw #0005;overflow:hidden}
+.input-placeholder{position:absolute;left:1cqw;top:50%;transform:translateY(-50%);color:#728395;font-size:.88cqw;opacity:1;pointer-events:none;white-space:nowrap}
+.input-copy{position:absolute;z-index:1;left:1cqw;right:3.2cqw;top:50%;transform:translateY(-50%);color:#dce6ed;font-size:.82cqw;white-space:nowrap;overflow:hidden}
+.send-button{position:absolute;right:.45cqw;top:50%;display:grid;place-items:center;width:1.9cqw;height:1.9cqw;border:1px solid #4e8a79;border-radius:50%;background:#123027;color:var(--mint);font-size:1.15cqw;line-height:1;box-shadow:0 0 .8cqw #91f2d233}
+.candidate-chip{min-width:13.5cqw;padding:.68cqw .95cqw}
+.candidate-chip small{font-size:.58cqw}
+.candidate-chip b{font-size:1.02cqw}
+.candidate-icon{width:2.25cqw;height:2.25cqw}
+.scene-hook .hook-prompt{font-size:1.25cqw;color:#c5d4df}
+.scene-hook .hook-prompt b{font-size:1.14em}
+.scene-hook .transformer-frame{right:7%;top:7%;display:flex;flex-direction:column;gap:.32cqw;padding:.52cqw .62cqw;border:1px solid #3c566a;border-radius:.72cqw;background:linear-gradient(145deg,#101b29ee,#08111ce8);box-shadow:0 .45cqw 1.5cqw #0006}
+.transformer-label{color:#9aafc0;font:500 .65cqw var(--mono);letter-spacing:.12em}
+.attention-unit{display:flex;align-items:center;gap:.42cqw;padding:.36cqw .5cqw;border:1px solid #43695d;border-radius:.45cqw;background:#10251f;color:#dbfff2;font:600 .78cqw var(--mono);letter-spacing:.06em}
+.attention-signal{display:block;width:.46cqw;height:.46cqw;border-radius:50%;background:var(--mint);box-shadow:0 0 .65cqw #91f2d2aa}
+
+/* Section 01 — prominent Taipei map card and legible relationship candidates. */
+.scene-hook .chat-app{z-index:4;top:14%}
+.scene-hook .hook-location-card{position:absolute;z-index:3;top:14%;right:5.5%;width:47%;height:34%;padding:.8cqw 1cqw .55cqw;display:flex;flex-direction:column;overflow:hidden;border:1px solid #345064;border-radius:.9cqw;background:linear-gradient(150deg,#111e2beF,#08111bdd);box-shadow:0 .9cqw 2.6cqw #0008}
+.location-top{display:flex;align-items:center;gap:.48cqw;min-height:1.55cqw;color:#b5c8d4;font:500 .68cqw var(--mono);letter-spacing:.08em}
+.location-top .map-pin{display:grid;place-items:center;width:1.2cqw;height:1.2cqw;border:1px solid #5491a6;border-radius:50%;color:var(--mint);font-size:.86cqw}
+.location-top i{margin-left:auto;padding:.22cqw .45cqw;border:1px solid #2e4a56;border-radius:99px;background:#101d26;color:#9db3be;font:500 .52cqw var(--mono);font-style:normal;letter-spacing:.1em}
+.location-map{display:block;flex:1 1 auto;min-height:0;width:100%;margin:.28cqw 0 .16cqw;border-radius:.45cqw;background:linear-gradient(140deg,#0a1721c7,#0d1923ad)}
+.location-map .contour{fill:none;stroke:#396075;stroke-width:2.4;opacity:.72}
+.location-map .contour-b{stroke:#455b70;opacity:.58}
+.location-map .map-route{fill:none;stroke:var(--mint);stroke-width:4.5;stroke-linecap:round;stroke-dasharray:8 7;filter:drop-shadow(0 0 5px #91f2d2b0)}
+.location-map .map-stop{fill:#0d1720;stroke:#9ad8c6;stroke-width:3}
+.location-map .map-stop.end{fill:var(--amber);stroke:#fff0c7;stroke-width:2.6}
+.location-map .map-dot{fill:#f4fff9;stroke:var(--mint);stroke-width:3;filter:drop-shadow(0 0 6px #91f2d2)}
+.location-meta{display:flex;align-items:center;justify-content:space-between;gap:.6cqw;padding-top:.4cqw;border-top:1px solid #2c4150;color:#a9bac5;font-size:.68cqw}
+.location-meta b{color:#e2f5ef;font-size:.78cqw}
+.scene-hook .hook-sentence{z-index:4}
+.scene-hook .hook-links{z-index:5}
+.hook-candidates{position:absolute;z-index:6;left:0;right:0;top:69%;display:flex;justify-content:center;gap:1.1cqw;opacity:0;will-change:transform,opacity}
+.scene-hook .candidate-chip{display:flex;align-items:center;gap:.72cqw;min-width:13.5cqw;padding:.68cqw .95cqw;border:1px solid #324b5e;border-radius:.72cqw;background:linear-gradient(145deg,#111d29f2,#0a121ceF);box-shadow:0 .65cqw 1.6cqw #0007}
+.candidate-icon{display:grid;place-items:center;flex:0 0 auto;width:2.25cqw;height:2.25cqw;border:1px solid #4a7181;border-radius:.65cqw;background:#14222e;color:#a8d1dd;font-size:1.05cqw}
+.candidate-chip>span:last-child{display:flex;flex-direction:column;gap:.24cqw}
+.candidate-chip small{font:500 .58cqw var(--mono);letter-spacing:.1em;color:#89a0ad}
+.candidate-chip b{font-size:1.02cqw;color:#e0eaf0;white-space:nowrap}
+.candidate-trail{border-color:#477362!important;background:linear-gradient(145deg,#10251fee,#0a1518f2)!important;box-shadow:0 0 1.5cqw #91f2d222,0 .65cqw 1.6cqw #0007!important}
+.candidate-trail .candidate-icon{border-color:#4c8a71;background:#123126;color:var(--mint)}
+.candidate-trail b{color:#d9fff0}
+.hook-cues{position:absolute;z-index:6;left:0;right:0;top:81%;display:flex;justify-content:center;gap:.75cqw;opacity:0}
+.hook-cues span{padding:.34cqw .72cqw;border:1px solid #37564e;border-radius:99px;background:#0b1916;color:#9adac4;font:.68cqw var(--mono);letter-spacing:.04em}
+.hook-cues b{color:#d9f7ec;font-weight:600}
+.scene-hook .hook-prompt{z-index:6;bottom:5.5%;font-size:1.05cqw;opacity:0}
+.scene-hook .hook-prompt b{color:var(--mint);font-size:1.12em}
+.hook-motion-note{position:absolute;z-index:6;left:0;right:0;bottom:5.5%;text-align:center;color:#b6d1d0;font:500 .78cqw var(--mono);letter-spacing:.14em;opacity:0;transform:translateY(.3cqw)}
+.scene-hook .scene-tag{z-index:7;right:7%;top:8%;opacity:0;transform:translateY(-.4cqw);font-size:.7cqw;letter-spacing:.1em}
+
+/* Section 02 — token tiles, moving token-to-ID links, and order change. */
+.scene-vectors .vector-heading,.scene-vectors .vector-flow,.scene-vectors .position-lab{z-index:2}
+.scene-vectors .micro-label{opacity:0}
+.token-phrase span{font-size:inherit;border-color:transparent;background:transparent;box-shadow:none;will-change:transform,background,border-color}
+.vector-token-links{position:absolute;inset:0;width:100%;height:100%;z-index:1;overflow:visible;pointer-events:none}
+.vector-token-links path{fill:none;stroke:#72c8ff;stroke-width:1.8;stroke-linecap:round;opacity:0;filter:drop-shadow(0 0 5px #72c8ff88)}
+.vector-token-links circle{fill:#d8fff2;stroke:#91f2d2;stroke-width:1.5;opacity:0;filter:drop-shadow(0 0 7px #91f2d2)}
+.scene-vectors .vector-flow{z-index:2;will-change:transform,opacity}
+.scene-vectors .position-lab{z-index:2;will-change:transform,opacity}
+.scene-vectors .vector-note{opacity:0}
+.position-lab .position-title{font-size:.82cqw}
+.position-lab .order-row span{font-size:1.05cqw}
+.position-lab .order-row.swapped span{font-size:1.05cqw;padding:.42cqw .7cqw;will-change:transform,opacity}
+
+/* Section 03 — paths resolve to live token positions instead of fixed coordinates. */
+.scene-attention .attention-title,.scene-attention .attention-focus-label,.scene-attention .context-result,.scene-attention .schematic-stamp{z-index:2}
+.attention-web{inset:0;top:0;width:100%;height:100%;z-index:1;overflow:visible;pointer-events:none}
+.attention-web path{fill:none;stroke:#72c8ff;stroke-width:2.2;opacity:0;stroke-dasharray:8 10;stroke-linecap:round;filter:drop-shadow(0 0 6px #72c8ff88)}
+.attention-web circle{fill:#d8fff2;stroke:#91f2d2;stroke-width:1.6;opacity:0;filter:drop-shadow(0 0 7px #91f2d2)}
+.attention-token{font-size:1.42cqw;padding:.68cqw .82cqw;will-change:transform,opacity}
+.scene-attention .attention-focus-label{top:auto;bottom:27%;left:50%;padding:.45cqw .75cqw;border:1px solid #355265;border-radius:99px;background:#0a141ee8;color:#bfeee4;font-size:.76cqw;letter-spacing:.1em}

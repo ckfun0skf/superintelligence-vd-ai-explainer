@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import '../style.css';
+import '../style-overrides.css';
 
 const film = document.querySelector('#film');
 const audio = document.querySelector('#narration');
@@ -96,10 +97,16 @@ const embeddingCells = document.getElementById('embedding-cells');
 ['102','481','92','733','318','11'].forEach((v, i) => {
   const cell = document.createElement('div'); cell.className = 'id-cell'; cell.textContent = v; cell.style.opacity = '.35'; idCells.append(cell);
   const emb = document.createElement('div'); emb.className = 'embedding-cell';
-  for (let j = 0; j < 5; j++) { const line = document.createElement('i'); line.style.width = `${.45 + ((i * 7 + j * 5) % 8) * .12}cqw`; emb.append(line); }
+  for (let j = 0; j < 5; j++) { const line = document.createElement('i'); const width=.45 + ((i * 7 + j * 5) % 8) * .12; line.dataset.width=String(width); line.style.width = `${width}cqw`; emb.append(line); }
   embeddingCells.append(emb);
 });
 const positionRibbon = document.getElementById('position-ribbon');
+const vectorTokenPaths=[],vectorTokenParticles=[];
+const vectorPathRoot=document.getElementById('vector-link-paths'),vectorParticleRoot=document.getElementById('vector-link-particles');
+for(let i=0;i<idCells.children.length;i++){
+  const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.dataset.index=String(i);path.setAttribute('d','M 0 0 L 0 0');vectorPathRoot.append(path);vectorTokenPaths.push(path);
+  const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');dot.setAttribute('r','4');dot.dataset.index=String(i);vectorParticleRoot.append(dot);vectorTokenParticles.push(dot);
+}
 const headLanesRoot = document.getElementById('head-lanes');
 const headLanes = [];
 const headPatterns = [[0,2,3,5,6],[1,3,4,6,8],[0,1,5,6,9],[2,3,6,7,8]];
@@ -126,13 +133,15 @@ const recapPath = document.getElementById('recap-path');
 const recapPathLength = recapPath.getTotalLength?.() ?? 1800;
 const hookPaths = [...document.querySelectorAll('.hook-links path')];
 const attentionSvg = document.getElementById('attention-lines');
+const attentionParticleRoot=document.getElementById('attention-particles');
 const attentionPaths = [];
-const targetIndices = [1, 2, 3, 5, 7, 8];
+const attentionParticles=[];
+const targetIndices = [0, 1, 2, 3, 5, 6, 7, 8];
 for (let i=0;i<targetIndices.length;i++) {
   const p=document.createElementNS('http://www.w3.org/2000/svg','path');
-  const x1=340+i*36, x2=650+(targetIndices[i]-6)*48, y1=330, y2=70+(targetIndices[i]%3)*20;
-  p.setAttribute('d',`M ${x1} ${y1} C ${x1+40} ${y1-150}, ${x2-55} ${y2+130}, ${x2} ${y2}`);
+  p.setAttribute('d','M 0 0 L 0 0');
   p.dataset.target=String(targetIndices[i]); attentionSvg.append(p); attentionPaths.push(p);
+  const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');dot.setAttribute('r','4.5');dot.dataset.target=String(targetIndices[i]);attentionParticleRoot.append(dot);attentionParticles.push(dot);
 }
 
 // A seeded, absolute-time particle field gives the typography a quiet 3D depth layer.
@@ -200,25 +209,150 @@ function localProgress(t,i){const span=chapterEnds[i]-chapterStarts[i];return cl
 function setSceneTransition(sceneIndex,p,t){const pulse=Math.exp(-Math.pow((p-.06)/.034,2))*.14;setOpacity(stageTransition,pulse);stageTransition.style.background=sceneIndex%2?'#b7f4ff':'#d2fff1';}
 function setDash(path,progress){const len=path.getTotalLength?.()??1000;path.style.strokeDasharray=String(len);path.style.strokeDashoffset=String(len*(1-clamp(progress)));}
 function renderHook(p){
-  const chat=document.querySelector('.chat-app'),sentence=document.querySelector('.hook-sentence'),prompt=document.querySelector('.hook-prompt'),tag=document.querySelector('.scene-tag');
-  setOpacity(chat,1-smooth(.18,.5,p));chat.style.transform=`translateY(${(1-smooth(.18,.5,p))*.6}cqw) scale(${1+smooth(.22,.68,p)*.08})`;
-  setOpacity(sentence,smooth(.15,.38,p));sentence.style.transform=`translateY(${(1-smooth(.5,.8,p))*.2}cqw) scale(${1+smooth(.35,.68,p)*.12})`;
-  setOpacity(prompt,smooth(.48,.64,p)*(1-smooth(.88,.99,p)));setOpacity(tag,smooth(.64,.76,p));
-  hookPaths.forEach((path,i)=>{setDash(path,clamp((p-.43-i*.08)/.18));path.style.opacity=String(.12+smooth(.48,.75,p)*.55);});
+  const chat=document.querySelector('.scene-hook .chat-app');
+  const input=document.querySelector('.input-copy');
+  const placeholder=document.querySelector('.input-placeholder');
+  const send=document.querySelector('.send-button');
+  const userBubble=document.querySelector('.scene-hook .chat-question');
+  const thinking=document.querySelector('.scene-hook .chat-thinking');
+  const answer=document.querySelector('.scene-hook .chat-answer');
+  const mapCard=document.querySelector('.hook-location-card');
+  const mapRoute=document.getElementById('hook-map-route');
+  const mapDot=document.getElementById('hook-map-dot');
+  const sentence=document.querySelector('.scene-hook .hook-sentence');
+  const prompt=document.querySelector('.scene-hook .hook-prompt');
+  const tag=document.querySelector('.scene-hook .scene-tag');
+  const candidates=document.querySelector('.hook-candidates');
+  const cues=document.querySelector('.hook-cues');
+  const motionNote=document.getElementById('hook-motion-note');
+  const itWord=sentence.querySelector('[data-word="6"]');
+  const trailWord=sentence.querySelector('[data-word="1"]');
+  const placeCard=document.getElementById('candidate-place');
+  const trailCard=document.getElementById('candidate-trail');
+
+  const typing=smooth(.015,.105,p),sent=smooth(.105,.19,p),thinkingIn=smooth(.19,.25,p)*(1-smooth(.34,.42,p));
+  const answerIn=smooth(.24,.37,p)*(1-smooth(.39,.49,p));
+  const mapIn=smooth(.28,.42,p)*(1-smooth(.43,.54,p));
+  const sentenceIn=smooth(.34,.48,p);
+  const ambiguity=smooth(.48,.59,p)*(1-smooth(.76,.84,p));
+  const resolve=smooth(.64,.78,p);
+  const concept=smooth(.82,.94,p);
+
+  setOpacity(chat,1-smooth(.38,.55,p));
+  chat.style.transform=`translate(${(-smooth(.18,.46,p)*3.8)}cqw,${(smooth(.4,.56,p)*-.35)}cqw) scale(${1-smooth(.4,.58,p)*.08})`;
+  const composerVisible=typing*(1-smooth(.135,.19,p));
+  input.style.clipPath=`inset(0 ${(1-composerVisible)*100}% 0 0)`;
+  placeholder.style.opacity=String(clamp(1-smooth(.02,.08,p)+smooth(.13,.2,p)));
+  send.style.opacity=String(.35+smooth(.07,.13,p)*.65);
+  const sendPulse=Math.exp(-Math.pow((p-.145)/.024,2));
+  send.style.transform=`translateY(-50%) scale(${.82+.18*smooth(.08,.14,p)+.1*sendPulse}) translateY(${Math.sin(p*35)*.04}cqw)`;
+  setOpacity(userBubble,sent*(1-smooth(.4,.52,p)));
+  userBubble.style.transform=`translateY(${(1-sent)*.45}cqw) scale(${.97+.03*sent})`;
+  setOpacity(thinking,thinkingIn);
+  document.querySelectorAll('.scene-hook .chat-thinking i').forEach((dot,i)=>{dot.style.opacity=String(.3+.7*((Math.sin(p*52-i*1.7)+1)/2));dot.style.transform=`translateY(${Math.sin(p*48-i*1.9)*.09}cqw)`;});
+  setOpacity(answer,answerIn);
+  answer.style.transform=`translateY(${(1-answerIn)*.45}cqw)`;
+
+  setOpacity(mapCard,mapIn);
+  mapCard.style.transform=`translate(${(1-mapIn)*.7}cqw,${(1-mapIn)*.45}cqw) scale(${.94+.06*mapIn})`;
+  const routeLength=mapRoute.getTotalLength?.()??520;
+  const routeProgress=smooth(.3,.49,p)*(1-smooth(.51,.58,p));
+  mapRoute.style.strokeDasharray=String(routeLength);
+  mapRoute.style.strokeDashoffset=String(routeLength*(1-routeProgress));
+  const routePoint=mapRoute.getPointAtLength(routeLength*routeProgress);
+  mapDot.setAttribute('cx',String(routePoint.x));mapDot.setAttribute('cy',String(routePoint.y));
+  mapDot.style.opacity=String(mapIn*(routeProgress>.02?1:0));
+
+  setOpacity(sentence,sentenceIn*(1-smooth(.84,.94,p)*.3));
+  const focusScale=1+smooth(.49,.63,p)*.14+concept*.3;
+  const sentenceBox=sentence.getBoundingClientRect(),itBox=itWord.getBoundingClientRect();
+  sentence.style.transformOrigin=`${clamp(((itBox.left+itBox.width/2-sentenceBox.left)/Math.max(1,sentenceBox.width))*100,0,100)}% 50%`;
+  sentence.style.transform=`translateY(${(1-sentenceIn)*.9-smooth(.74,.86,p)*.35}cqw) scale(${focusScale})`;
+  sentence.querySelectorAll('[data-word]').forEach((word,i)=>{
+    const isTrail=i===1, isIt=i===6;
+    word.classList.toggle('word-focus',isIt&&ambiguity>.25||isTrail&&resolve>.35);
+    word.style.opacity=String(isIt||isTrail?1:.58+.42*(1-smooth(.77,.87,p)));
+    if(isIt&&ambiguity>.1)word.style.color=`rgb(${Math.round(210+resolve*20)},${Math.round(224+resolve*25)},${Math.round(236+resolve*10)})`;
+    else if(isIt)word.style.color='';
+  });
+
+  setOpacity(candidates,ambiguity);
+  candidates.style.transform=`translateY(${(1-ambiguity)*.55-smooth(.66,.8,p)*.15}cqw)`;
+  const placeAlpha=.42*(1-resolve)+.16;
+  const trailAlpha=.82+resolve*.18;
+  placeCard.style.opacity=String(ambiguity*placeAlpha);
+  trailCard.style.opacity=String(ambiguity*trailAlpha);
+  trailCard.style.transform=`scale(${.96+resolve*.04})`;
+  placeCard.style.transform=`scale(${1-resolve*.035})`;
+  setOpacity(cues,smooth(.62,.7,p)*(1-smooth(.83,.9,p)));
+  document.getElementById('hook-cue-shaded').style.opacity=String(.65+.35*smooth(.64,.74,p));
+  document.getElementById('hook-cue-short').style.opacity=String(smooth(.65,.74,p));
+  setOpacity(prompt,smooth(.51,.58,p)*(1-smooth(.79,.87,p)));
+  prompt.style.transform=`translateY(${(1-smooth(.53,.63,p))*.3}cqw)`;
+
+  // Draw current candidate links from the actual word/card positions, so resizing and seeking stay deterministic.
+  const filmRect=film.getBoundingClientRect();
+  const toView=(el,anchor='center')=>{const r=el.getBoundingClientRect();return {x:(r.left+r.width/2-filmRect.left)*1200/filmRect.width,y:((anchor==='top'?r.top:r.top+r.height/2)-filmRect.top)*675/filmRect.height};};
+  const start=toView(itWord),place=toView(placeCard,'top'),trail=toView(trailCard,'top');
+  const makeCurve=(end,drop)=>`M ${start.x.toFixed(1)} ${start.y.toFixed(1)} C ${(start.x-18).toFixed(1)} ${(start.y+drop).toFixed(1)}, ${(end.x+22).toFixed(1)} ${(end.y-drop*.28).toFixed(1)}, ${end.x.toFixed(1)} ${end.y.toFixed(1)}`;
+  const placePath=document.getElementById('hook-path-place'),trailPath=document.getElementById('hook-path-trail');
+  placePath.setAttribute('d',makeCurve(place,48));trailPath.setAttribute('d',makeCurve(trail,34));
+  const pathAlpha=ambiguity;
+  placePath.style.opacity=String(ambiguity*.22*(1-resolve));
+  trailPath.style.opacity=String(ambiguity*(.48+.52*resolve));
+  const placeLen=placePath.getTotalLength?.()??1,trailLen=trailPath.getTotalLength?.()??1;
+  const draw=smooth(.5,.61,p);
+  placePath.style.strokeDasharray=String(placeLen);placePath.style.strokeDashoffset=String(placeLen*(1-draw));
+  trailPath.style.strokeDasharray=String(trailLen);trailPath.style.strokeDashoffset=String(trailLen*(1-draw));
+  const placeParticle=document.getElementById('hook-particle-place'),trailParticle=document.getElementById('hook-particle-trail');
+  const placePoint=placePath.getPointAtLength(placeLen*((p*1.05)%1)),trailPoint=trailPath.getPointAtLength(trailLen*((p*1.28+.17)%1));
+  placeParticle.setAttribute('cx',String(placePoint.x));placeParticle.setAttribute('cy',String(placePoint.y));
+  trailParticle.setAttribute('cx',String(trailPoint.x));trailParticle.setAttribute('cy',String(trailPoint.y));
+  placeParticle.style.opacity=String(pathAlpha*.18*(1-resolve)*(draw>.1?1:0));
+  trailParticle.style.opacity=String(ambiguity*(.45+.55*resolve)*(draw>.1?1:0));
+
+  setOpacity(motionNote,concept*(1-smooth(.95,.99,p)));
+  setOpacity(tag,concept);
+  tag.style.transform=`translateY(${(1-concept)*-.35}cqw) scale(${.96+.04*concept})`;
+  const attentionSignal=tag.querySelector('.attention-signal');
+  const signalPulse=.5+.5*Math.sin(p*38);
+  attentionSignal.style.transform=`scale(${.78+.22*signalPulse})`;
+  attentionSignal.style.opacity=String(.62+.38*signalPulse);
+  // The ending reframes several moving candidate paths as contextual computation, never a single fixed arrow.
+  const quiet=1-smooth(.81,.9,p);
+  [placePath,trailPath].forEach(path=>{path.style.opacity=String(Number(path.style.opacity)*quiet);});
+  [placeParticle,trailParticle].forEach(dot=>{dot.style.opacity=String(Number(dot.style.opacity)*quiet);});
 }
 function renderVectors(p){
-  const ids=[...idCells.children],embs=[...embeddingCells.children];
-  ids.forEach((e,i)=>{setOpacity(e,.22+smooth(.08+i*.055,.2+i*.055,p)*.7);e.style.transform=`translateY(${Math.sin(p*8+i)*.06}cqw)`;});
-  embs.forEach((e,i)=>{setOpacity(e,smooth(.2+i*.05,.37+i*.05,p));e.style.transform=`translateY(${(1-smooth(.2+i*.04,.65+i*.04,p))*.35}cqw) scale(${.86+.14*smooth(.2,.6,p)})`;});
-  const ribbon=smooth(.34,.54,p)*(1-smooth(.9,1,p));positionRibbon.style.opacity=String(ribbon);positionRibbon.style.transform=`scaleX(${.2+.8*smooth(.38,.65,p)})`;
-  document.querySelectorAll('.order-row.swapped span').forEach((e,i)=>{e.style.transform=`translateX(${(1-smooth(.48,.77,p))*(i%2?-.2:.2)}cqw)`;e.style.opacity=String(.35+.45*smooth(.55,.82,p));});
+  const heading=document.querySelector('.vector-heading'),headingLabel=heading.querySelector('.micro-label'),phrase=heading.querySelector('.token-phrase');
+  const phraseTokens=[...phrase.children],ids=[...idCells.children],embs=[...embeddingCells.children];
+  const tokenize=smooth(.02,.27,p);
+  heading.style.top=`${40-25*tokenize}%`;headingLabel.style.opacity=String(tokenize);
+  phrase.style.fontSize=`${2.55-1.1*tokenize}cqw`;phrase.style.gap=`${.48+.17*tokenize}cqw`;phrase.style.marginTop=`${1.1+.9*tokenize}cqw`;
+  phraseTokens.forEach((e,i)=>{const tile=smooth(.05+i*.022,.22+i*.022,p);e.style.padding=`${.12+.53*tile}cqw ${.16+.74*tile}cqw`;e.style.borderColor=`rgba(71,107,131,${.05+.72*tile})`;e.style.backgroundColor=`rgba(16,26,40,${.12+.82*tile})`;e.style.boxShadow=`0 .6cqw 1.5cqw rgba(0,0,0,${tile*.25})`;e.style.transform=`translateY(${(1-tile)*.34}cqw) scale(${.94+.06*tile})`;});
+  const flow=document.querySelector('.vector-flow'),flowIn=smooth(.12,.24,p);setOpacity(flow,flowIn);flow.style.transform=`translateY(${(1-flowIn)*.65}cqw)`;
+  const arrow=document.querySelector('.vector-flow .flow-arrow');arrow.style.transform=`scale(${.9+.1*flowIn+.09*flowIn*(.5+.5*Math.sin(p*24))})`;
+  ids.forEach((e,i)=>{const reveal=smooth(.08+i*.055,.2+i*.055,p);setOpacity(e,.22+reveal*.7);e.style.transform=`translateY(${(1-reveal)*.28+Math.sin(p*8+i)*.04}cqw) scale(${.92+.08*reveal})`;});
+  embs.forEach((e,i)=>{const reveal=smooth(.2+i*.05,.37+i*.05,p);setOpacity(e,reveal);e.style.transform=`translateY(${(1-reveal)*.35}cqw) scale(${.82+.18*reveal})`;[...e.children].forEach(line=>{const width=Number(line.dataset.width)||.6;line.style.width=`${width*(.24+.76*reveal)}cqw`;line.style.opacity=String(.3+.7*reveal);});});
+  const filmRect=film.getBoundingClientRect(),point=(el,edge)=>{const r=el.getBoundingClientRect();return {x:((r.left+r.width/2-filmRect.left)/filmRect.width)*1200,y:(((edge==='bottom'?r.bottom:edge==='top'?r.top:r.top+r.height/2)-filmRect.top)/filmRect.height)*675};};
+  phraseTokens.forEach((token,i)=>{const path=vectorTokenPaths[i],dot=vectorTokenParticles[i],from=point(token,'bottom'),to=point(ids[i],'top'),reveal=smooth(.18+i*.035,.34+i*.035,p),bend=30+Math.abs(to.x-from.x)*.06;path.setAttribute('d',`M ${from.x.toFixed(1)} ${from.y.toFixed(1)} C ${from.x.toFixed(1)} ${(from.y+bend).toFixed(1)}, ${to.x.toFixed(1)} ${(to.y-bend).toFixed(1)}, ${to.x.toFixed(1)} ${to.y.toFixed(1)}`);const length=path.getTotalLength?.()??1;path.style.strokeDasharray=String(length);path.style.strokeDashoffset=String(length*(1-reveal));path.style.opacity=String(reveal*.62*(1-smooth(.94,.99,p)));const q=path.getPointAtLength(length*((p*1.35+i*.17)%1));dot.setAttribute('cx',String(q.x));dot.setAttribute('cy',String(q.y));dot.style.opacity=String(reveal*.82*(1-smooth(.94,.99,p)));});
+  const positionLab=document.querySelector('.position-lab'),posIn=smooth(.42,.55,p);setOpacity(positionLab,posIn);positionLab.style.transform=`translateY(${(1-posIn)*.65}cqw)`;
+  const baseRow=document.querySelector('.position-lab .order-row:not(.swapped)'),swapped=document.querySelector('.position-lab .order-row.swapped'),baseWords=[...baseRow.children],swappedWords=[...swapped.children],reorder=smooth(.52,.76,p);setOpacity(swapped,.2+.8*smooth(.47,.62,p));
+  const orderLanes=[-.82,.68,-.5,.92,-.78];
+  swappedWords.forEach((e,i)=>{const source=baseWords.find(word=>word.textContent.trim().toLowerCase()===e.textContent.trim().toLowerCase());const a=source.getBoundingClientRect(),b=e.getBoundingClientRect(),delta=(a.left+a.width/2)-(b.left+b.width/2),lift=Math.sin(reorder*Math.PI)*orderLanes[i];e.style.transform=`translate(${delta*(1-reorder)}px,${lift}cqw)`;e.style.opacity=String(.45+.55*smooth(.55,.7,p));});
+  const ribbon=smooth(.48,.64,p)*(1-smooth(.92,1,p));positionRibbon.style.opacity=String(ribbon);positionRibbon.style.transform=`scaleX(${.18+.82*smooth(.52,.74,p)})`;
+  setOpacity(document.querySelector('.vector-note'),smooth(.28,.43,p)*(1-smooth(.96,1,p)));
 }
 function renderAttention(p){
   const focusIndex=p<.56?6:1; const label=focusIndex===6?'CURRENT POSITION · “IT”':'ANOTHER POSITION · “TRAIL”';
   document.getElementById('focus-label').textContent=label;
-  attentionTokens.forEach((el,i)=>{el.classList.toggle('focus',i===focusIndex);el.style.opacity=String(i===focusIndex?1:.45+((i*13)%5)*.07);el.style.transform=`translateY(${i===focusIndex?-.3*Math.sin(p*8):0}cqw)`;});
-  attentionPaths.forEach((path,i)=>{const t=Number(path.dataset.target);const chosen=focusIndex===6?t===1||t===3||t===5:t===6||t===0;path.style.opacity=String((chosen?.1:.025)+smooth(.16+i*.06,.34+i*.06,p)*(chosen?.72:.13));path.style.strokeWidth=chosen?'2.6':'1.2';path.style.strokeDashoffset=String((1-p)*34);});
-  const orb=document.querySelector('.context-orb');orb.style.transform=`scale(${.85+.16*Math.sin(p*8)})`;document.querySelectorAll('.context-orb i').forEach((e,i)=>e.style.opacity=String(.42+.48*((Math.sin(p*13+i*1.5)+1)/2)));
+  attentionTokens.forEach((el,i)=>{el.classList.toggle('focus',i===focusIndex);el.style.opacity=String(i===focusIndex?1:.45+((i*13)%5)*.07);el.style.transform=`translateY(${i===focusIndex?-.3*Math.sin(p*8):0}cqw) scale(${i===focusIndex?1.04:1})`;});
+  const filmRect=film.getBoundingClientRect(),point=el=>{const r=el.getBoundingClientRect();return {x:((r.left+r.width/2-filmRect.left)/filmRect.width)*1200,y:((r.top+r.height/2-filmRect.top)/filmRect.height)*675};},focus=point(attentionTokens[focusIndex]);
+  attentionPaths.forEach((path,i)=>{const t=Number(path.dataset.target),target=point(attentionTokens[t]),chosen=focusIndex===6?[1,3,5,8].includes(t):[6,0].includes(t),active=t!==focusIndex,reveal=smooth(.13+i*.035,.31+i*.035,p),strength=focusIndex===6?(t===1?1:t===3?.75:t===5?.62:t===8?.52:.08):(t===6?.92:.65);const bend=78+(i%3)*18;path.setAttribute('d',`M ${target.x.toFixed(1)} ${target.y.toFixed(1)} C ${target.x.toFixed(1)} ${(target.y+bend).toFixed(1)}, ${focus.x.toFixed(1)} ${(focus.y+bend).toFixed(1)}, ${focus.x.toFixed(1)} ${focus.y.toFixed(1)}`);path.style.stroke=chosen?(focusIndex===6&&t===1?'#91f2d2':focusIndex===6&&t===3?'#72c8ff':focusIndex===6?'#ba9aff':'#91f2d2'):'#456274';path.style.strokeWidth=String(chosen?(t===1?3.2:2.5):1.25);path.style.opacity=String(active?reveal*(chosen?strength:.045):0);const length=path.getTotalLength?.()??1;path.style.strokeDasharray=String(length);path.style.strokeDashoffset=String(length*(1-reveal));const dot=attentionParticles[i],u=(p*1.55+i*.19)%1,q=path.getPointAtLength(length*u);dot.setAttribute('cx',String(q.x));dot.setAttribute('cy',String(q.y));dot.style.opacity=String(active?reveal*(chosen?.92:.025):0);});
+  setOpacity(document.querySelector('.attention-focus-label'),smooth(.08,.2,p));
+  const result=document.querySelector('.context-result'),mix=smooth(.28,.42,p);setOpacity(result,mix);result.style.transform=`translateX(-50%) scale(${.9+.1*mix})`;
+  const orb=document.querySelector('.context-orb');orb.style.transform=`scale(${.9+.12*Math.sin(p*8)})`;document.querySelectorAll('.context-orb i').forEach((e,i)=>e.style.opacity=String(.42+.48*((Math.sin(p*13+i*1.5)+1)/2)));
+  setOpacity(document.querySelector('.schematic-stamp'),smooth(.48,.62,p));
 }
 function renderQKV(p){
   const active=smooth(.06,.22,p),matrix=smooth(.14,.45,p),weights=smooth(.34,.59,p),mix=smooth(.55,.77,p),formula=smooth(.7,.82,p)*(1-smooth(.95,1,p));

@@ -27,18 +27,28 @@
           <section class="scene scene-hook" data-scene="0" aria-hidden="true">
             <div class="chat-app">
               <div class="chat-top"><span class="app-mark">✳</span><span>Assistant</span><span class="chat-menu">···</span></div>
+              <div class="chat-input-bar"><span class="input-placeholder">Ask anything…</span><span class="input-copy">Plan a nature weekend in Taipei. My budget is <b>$8,000</b>.</span><span class="send-button" aria-hidden="true">↑</span></div>
               <div class="chat-question">Plan a nature weekend in Taipei. My budget is <b>$8,000</b>.</div>
-              <div class="chat-thinking"><i></i><i></i><i></i><span>Building a response</span></div>
+              <div class="chat-thinking"><i></i><i></i><i></i><span>Checking the request</span></div>
               <div class="chat-answer">A nature-first weekend in Taipei<span class="typing-caret"></span></div>
             </div>
-            <div class="hook-sentence"><span>The</span><span>trail</span><span>near</span><span>Maokong</span><span>is</span><span>shaded.</span><span class="period-gap">It</span><span>is</span><span>short,</span><span>too.</span></div>
-            <svg class="hook-links" viewBox="0 0 1200 330" preserveAspectRatio="none" aria-hidden="true"><path id="hook-path-a" d="M 260 260 C 360 90, 760 90, 880 260"/><path id="hook-path-b" d="M 260 260 C 440 175, 590 175, 650 260"/></svg>
+            <div class="hook-location-card" aria-hidden="true">
+              <div class="location-top"><span class="map-pin">⌖</span><span>MAOKONG · TAIPEI</span><i>LIVE MAP</i></div>
+              <svg class="location-map" viewBox="0 0 420 190" preserveAspectRatio="none"><path class="contour contour-a" d="M-10 142 C48 96 60 151 111 111 S184 61 222 96 293 145 338 98 399 48 434 76"/><path class="contour contour-b" d="M-8 165 C40 126 79 177 132 135 S204 89 249 119 319 163 366 123 407 86 434 105"/><path class="map-route" id="hook-map-route" d="M30 142 C92 116 116 66 184 87 S269 134 309 92 S362 65 391 51"/><circle class="map-stop" cx="30" cy="142" r="6"/><circle class="map-stop end" cx="391" cy="51" r="7"/><circle id="hook-map-dot" class="map-dot" cx="30" cy="142" r="5"/></svg>
+              <div class="location-meta"><b>Shaded trail</b><span>Nature-first suggestion · within budget</span></div>
+            </div>
+            <div class="hook-sentence" aria-label="The trail near Maokong is shaded. It is short, too."><span data-word="0">The</span><span data-word="1">trail</span><span data-word="2">near</span><span data-word="3">Maokong</span><span data-word="4">is</span><span data-word="5">shaded.</span><span class="period-gap" data-word="6">It</span><span data-word="7">is</span><span data-word="8">short,</span><span data-word="9">too.</span></div>
+            <svg class="hook-links" id="hook-links" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><path id="hook-path-place"/><path id="hook-path-trail"/><circle id="hook-particle-place" r="5"/><circle id="hook-particle-trail" r="6"/></svg>
+            <div class="hook-candidates" aria-hidden="true"><div class="candidate-chip" id="candidate-place"><span class="candidate-icon">⌖</span><span><small>PLACE</small><b>Maokong</b></span></div><div class="candidate-chip candidate-trail" id="candidate-trail"><span class="candidate-icon">⌁</span><span><small>THING</small><b>the trail</b></span></div></div>
+            <div class="hook-cues" aria-hidden="true"><span id="hook-cue-shaded">☼ <b>shaded</b></span><span id="hook-cue-short">↔ <b>short</b></span></div>
             <div class="hook-prompt">What does <b>“it”</b> refer to?</div>
-            <div class="scene-tag" id="hook-tag">SELF-ATTENTION</div>
+            <div class="hook-motion-note" id="hook-motion-note">CONTEXT SHAPES THE REPRESENTATION</div>
+            <div class="scene-tag transformer-frame" id="hook-tag"><span class="transformer-label">TRANSFORMER</span><span class="attention-unit"><i class="attention-signal"></i>SELF-ATTENTION</span></div>
           </section>
 
           <section class="scene scene-vectors" data-scene="1" aria-hidden="true">
             <div class="vector-heading"><span class="micro-label">TEXT BECOMES NUMERICAL INPUT</span><div class="token-phrase"><span>The</span><span>trail</span><span>near</span><span>Maokong</span><span>is</span><span>shaded</span></div></div>
+            <svg class="vector-token-links" id="vector-token-links" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><g id="vector-link-paths"></g><g id="vector-link-particles"></g></svg>
             <div class="vector-flow"><div class="flow-label">TOKEN ID</div><div class="id-cells" id="id-cells"></div><div class="flow-arrow">→</div><div class="flow-label">EMBEDDING</div><div class="embedding-cells" id="embedding-cells"></div></div>
             <div class="position-lab"><div class="position-title">ORDER CHANGES THE CONTEXT</div><div class="order-row"><span>The</span><span>trail</span><span>is</span><span>near</span><span>Maokong</span></div><div class="position-ribbon" id="position-ribbon"></div><div class="order-row swapped"><span>Maokong</span><span>is</span><span>near</span><span>the</span><span>trail</span></div></div>
             <div class="vector-note">Illustrative vector values · not a word definition</div>
@@ -46,7 +56,7 @@
 
           <section class="scene scene-attention" data-scene="2" aria-hidden="true">
             <div class="attention-title"><span class="micro-label">ONE POSITION, SURROUNDED BY CONTEXT</span><div class="attention-token-row" id="attention-token-row"></div></div>
-            <svg class="attention-web" id="attention-web" viewBox="0 0 1200 430" preserveAspectRatio="none" aria-hidden="true"><g id="attention-lines"></g></svg>
+            <svg class="attention-web" id="attention-web" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><g id="attention-lines"></g><g id="attention-particles"></g></svg>
             <div class="attention-focus-label" id="focus-label">CURRENT POSITION · “IT”</div>
             <div class="context-result"><span>CONTEXTUAL MIXTURE</span><div class="context-orb"><i></i><i></i><i></i><i></i><i></i></div><b>representation updated</b></div>
             <div class="schematic-stamp">SCHEMATIC · CONTEXT-DEPENDENT</div>
