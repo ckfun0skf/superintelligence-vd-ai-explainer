@@ -44,6 +44,7 @@ let renderError = null;
 let previewOnly = false;
 let previewPlaying = false;
 let lastTick = 0;
+let lastPreviewFrame = -1;
 
 function clamp(x, a = 0, b = 1) { return Math.max(a, Math.min(b, x)); }
 function smooth(a, b, x) { const t = clamp((x - a) / (b - a)); return t * t * (3 - 2 * t); }
@@ -356,14 +357,20 @@ function renderAttention(p){
 }
 function renderQKV(p){
   const active=smooth(.06,.22,p),matrix=smooth(.14,.45,p),weights=smooth(.34,.59,p),mix=smooth(.55,.77,p),formula=smooth(.7,.82,p)*(1-smooth(.95,1,p));
+  const columns=[...document.querySelectorAll('.qkv-columns>div')],entry=[smooth(.02,.14,p),smooth(.07,.22,p),smooth(.27,.4,p),smooth(.43,.56,p)];
+  columns.forEach((el,i)=>{const q=entry[i];el.style.opacity=String(q);el.style.transform=`translateY(${(1-q)*.75}cqw) scale(${.975+.025*q})`;});
+  qkvOriginTokens.forEach((token,i)=>{const reveal=smooth(.025,.12,p),focus=i===6;token.classList.toggle('focus',focus&&p>.08);token.style.opacity=String(reveal*(focus?1:.58+.42*active));token.style.transform=`translateY(${(1-reveal)*.32}cqw) scale(${focus?1+.025*Math.sin(p*22):1})`;});
   [...qRows,...keyRows,...valueRows].forEach((row,i)=>{row.style.opacity=String(.25+.75*active);row.style.transform=`translateX(${(1-active)*.35}cqw)`;});
-  qkvPaths.querySelectorAll('path').forEach((path,i)=>{path.style.opacity=String(.06+matrix*(i===0||i===3?.55:.16));path.style.strokeDashoffset=String((1-matrix)*130+i*7);});
+  qkvPaths.querySelectorAll('path').forEach((path,i)=>{path.style.opacity=String(.04+matrix*(i===0||i===3?.42:.12));path.style.strokeDashoffset=String((1-matrix)*130-p*42+i*7);});
   const raw=[.55,.2,.16,.09];const softmax=raw.map((x,i)=>Math.pow(x,1.35+(1-p)*.3));const sum=softmax.reduce((a,b)=>a+b,0);
-  scoreRows.forEach((row,i)=>{const value=softmax[i]/sum;const fill=row.querySelector('.score-fill');fill.style.width=`${value*100}%`;fill.style.opacity=String(.18+weights*.82);row.querySelector('.score-value').textContent=(value*100).toFixed(0)+'%';row.style.opacity=String(.25+weights*.75);});
-  valueRows.forEach((row,i)=>{const value=softmax[i]/sum;row.style.opacity=String(.12+weights*(.2+value*.8));row.querySelector('i').style.width=`${24+value*68}%`;});
-  document.getElementById('mix-signal').style.transform=`translateX(${mix*2.7}cqw) scale(${.6+mix*.6})`;document.querySelector('.mix-output').style.opacity=String(mix);
+  qRows.forEach((row,i)=>{const pulse=.5+.5*Math.sin(p*18+i);const bar=row.querySelector('i');bar.style.boxShadow=`0 0 ${(.25+.65*pulse*matrix)}cqw #72c8ff88`;bar.style.filter=`brightness(${.85+.3*pulse*matrix})`;});
+  keyRows.forEach((row,i)=>{const sweep=Math.exp(-Math.pow((p-(.19+i*.055))/.038,2))*matrix;row.style.filter=`brightness(${.82+.5*sweep})`;row.querySelector('i').style.boxShadow=`0 0 ${(.15+.95*sweep)}cqw #ba9aff99`;});
+  scoreRows.forEach((row,i)=>{const value=softmax[i]/sum,fill=row.querySelector('.score-fill'),step=Math.exp(-Math.pow((p-(.39+i*.04))/.05,2));fill.style.width=`${value*100*weights}%`;fill.style.opacity=String(.18+weights*.82);fill.style.boxShadow=`0 0 ${(.2+step*.9+weights*.35)}cqw #91f2d2aa`;row.querySelector('.score-value').textContent=`${Math.round(value*100*weights)}%`;row.style.opacity=String(.25+weights*.75);row.style.transform=`translateX(${(1-weights)*.25}cqw) scale(${1+step*.018})`;});
+  valueRows.forEach((row,i)=>{const value=softmax[i]/sum,pulse=.5+.5*Math.sin(p*16-i*.8),bar=row.querySelector('i');row.style.opacity=String(.12+weights*(.2+value*.8));bar.style.width=`${(24+value*68)*weights}%`;bar.style.boxShadow=`0 0 ${(.2+value*weights*.9*pulse)}cqw #ffc77699`;bar.style.filter=`brightness(${.75+value*.55+weights*pulse*.25})`;});
+  document.querySelector('.sum-label').style.opacity=String(weights);
+  document.getElementById('mix-signal').style.transform=`translateX(${mix*2.7}cqw) scale(${.6+mix*.6})`;const output=document.querySelector('.mix-output');output.style.opacity=String(mix);output.style.transform=`translateY(${(1-mix)*.55}cqw) scale(${.96+.04*mix})`;output.style.boxShadow=`0 0 ${mix*1.4}cqw #91f2d244,0 .8cqw 2cqw #0005`;
   document.getElementById('formula-panel').style.opacity=String(formula);
-  document.querySelectorAll('.mechanism-steps span').forEach((e,i)=>{e.style.color=p>(.2+i*.22)?'#91f2d2':'#8092a2';e.style.textShadow=p>(.2+i*.22)?'0 0 .8cqw #91f2d2':'';});
+  document.querySelectorAll('.mechanism-steps span').forEach((e,i)=>{const beat=p>(.2+i*.22);e.style.color=beat?'#91f2d2':'#8092a2';e.style.textShadow=beat?'0 0 .8cqw #91f2d2':'';});
 }
 function renderHeads(p){
   headLanes.forEach((lane,i)=>{lane.style.opacity=String(.2+.8*smooth(.08+i*.11,.28+i*.11,p));lane.style.transform=`translateX(${(1-smooth(.1+i*.08,.5+i*.07,p))*1.3}cqw)`;lane.querySelectorAll('.head-node').forEach((node,j)=>{const active=node.classList.contains('active');node.style.boxShadow=active&&p>.3?`0 0 ${.35+((Math.sin(p*11+j+i)+1)*.42)}cqw currentColor`:'';});});
@@ -413,7 +420,9 @@ function renderAt(seconds){
 
 function previewTick(now){
   if(!previewPlaying)return;
-  if(lastTick){manualTime=Math.min(duration,manualTime+(now-lastTick)/1000*Number(playbackRate.value));renderAt(manualTime);}
+  if(lastTick)manualTime=Math.min(duration,manualTime+(now-lastTick)/1000*Number(playbackRate.value));
+  const frame=Math.round(manualTime*FPS);
+  if(frame!==lastPreviewFrame){renderAt(frame/FPS);lastPreviewFrame=frame;}
   lastTick=now;
   if(manualTime>=duration){previewPlaying=false;lastTick=0;playButton.textContent='▶';playButton.setAttribute('aria-label','Play');audioState.textContent='Visual preview complete · narration pending';return;}
   requestAnimationFrame(previewTick);
@@ -422,29 +431,47 @@ function previewTick(now){
 window.renderAt=renderAt;
 window.renderFrame=(frame)=>renderAt(frame/FPS);
 window.getChapterStarts=()=>[...chapterStarts];
+let audioFrameRaf=0;
+let lastAudioFrame=-1;
+function audioFrameTick(){
+  audioFrameRaf=0;
+  if(audio.paused||previewOnly)return;
+  const frame=Math.round(audio.currentTime*FPS);
+  if(frame!==lastAudioFrame){renderAt(frame/FPS);lastAudioFrame=frame;}
+  audioFrameRaf=requestAnimationFrame(audioFrameTick);
+}
+function startAudioFrameLoop(){
+  if(audioFrameRaf)return;
+  lastAudioFrame=-1;
+  audioFrameRaf=requestAnimationFrame(audioFrameTick);
+}
+function stopAudioFrameLoop(){
+  if(audioFrameRaf){cancelAnimationFrame(audioFrameRaf);audioFrameRaf=0;}
+  lastAudioFrame=-1;
+}
 
 function showControls(){film.closest('.player-shell').classList.remove('controls-hidden');window.clearTimeout(controlsTimer);if(film.closest('.player-shell').classList.contains('fullscreen')&&!audio.paused){controlsTimer=window.setTimeout(()=>film.closest('.player-shell').classList.add('controls-hidden'),2800);}}
 playButton.addEventListener('click',()=>{
   if(previewOnly){
     previewPlaying=!previewPlaying;
-    if(previewPlaying){playButton.textContent='❚❚';playButton.setAttribute('aria-label','Pause');audioState.textContent='Visual preview playing · narration pending';lastTick=0;requestAnimationFrame(previewTick);}
-    else{playButton.textContent='▶';playButton.setAttribute('aria-label','Play');audioState.textContent='Visual preview paused · narration pending';lastTick=0;}
+    if(previewPlaying){playButton.textContent='❚❚';playButton.setAttribute('aria-label','Pause');audioState.textContent='Visual preview playing · narration pending';lastTick=0;lastPreviewFrame=-1;requestAnimationFrame(previewTick);}
+    else{playButton.textContent='▶';playButton.setAttribute('aria-label','Play');audioState.textContent='Visual preview paused · narration pending';lastTick=0;lastPreviewFrame=-1;}
     return;
   }
   if(audio.paused)audio.play().catch(()=>{});else audio.pause();
 });
-audio.addEventListener('play',()=>{playButton.textContent='❚❚';playButton.setAttribute('aria-label','Pause');audioState.textContent='Narration playing';});
-audio.addEventListener('pause',()=>{playButton.textContent='▶';playButton.setAttribute('aria-label','Play');audioState.textContent='Narration paused';renderAt(audio.currentTime);});
+audio.addEventListener('play',()=>{playButton.textContent='❚❚';playButton.setAttribute('aria-label','Pause');audioState.textContent='Narration playing';startAudioFrameLoop();});
+audio.addEventListener('pause',()=>{stopAudioFrameLoop();playButton.textContent='▶';playButton.setAttribute('aria-label','Play');audioState.textContent='Narration paused';renderAt(audio.currentTime);});
 function applyAudioMetadata(){
   if(audio.readyState<1||!Number.isFinite(audio.duration)||audio.duration<=0)return false;
   previewOnly=false;duration=audio.duration;calculateChapters(duration);totalTimeEl.textContent=fmt(duration);
   audioState.textContent=`Narration ready · ${fmt(duration)}`;renderAt(audio.currentTime||0);return true;
 }
 audio.addEventListener('loadedmetadata',applyAudioMetadata);
-audio.addEventListener('timeupdate',()=>renderAt(audio.currentTime));
-audio.addEventListener('seeked',()=>renderAt(audio.currentTime));
-audio.addEventListener('ended',()=>{renderAt(duration);audioState.textContent='Narration complete';});
-audio.addEventListener('error',()=>{previewOnly=true;audioState.textContent='Visual preview · narration pending';totalTimeEl.textContent=fmt(duration);renderAt(manualTime);});
+audio.addEventListener('timeupdate',()=>{if(audio.paused)renderAt(Math.round(audio.currentTime*FPS)/FPS);});
+audio.addEventListener('seeked',()=>{const frame=Math.round(audio.currentTime*FPS);renderAt(frame/FPS);lastAudioFrame=frame;});
+audio.addEventListener('ended',()=>{stopAudioFrameLoop();renderAt(duration);audioState.textContent='Narration complete';});
+audio.addEventListener('error',()=>{stopAudioFrameLoop();previewOnly=true;audioState.textContent='Visual preview · narration pending';totalTimeEl.textContent=fmt(duration);renderAt(manualTime);});
 seekBar.addEventListener('input',()=>{const t=Number(seekBar.value)/100*duration;if(!previewOnly)audio.currentTime=t;renderAt(t);showControls();});
 chapterButtons.forEach((button,i)=>button.addEventListener('click',()=>{const t=chapterStarts[i]??0;if(!previewOnly)audio.currentTime=t;renderAt(t);showControls();}));
 playbackRate.addEventListener('change',()=>{audio.playbackRate=Number(playbackRate.value);});

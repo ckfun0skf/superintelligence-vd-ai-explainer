@@ -73,3 +73,39 @@
 .attention-web circle{fill:#d8fff2;stroke:#91f2d2;stroke-width:1.6;opacity:0;filter:drop-shadow(0 0 7px #91f2d2)}
 .attention-token{font-size:1.42cqw;padding:.68cqw .82cqw;will-change:transform,opacity}
 .scene-attention .attention-focus-label{top:auto;bottom:27%;left:50%;padding:.45cqw .75cqw;border:1px solid #355265;border-radius:99px;background:#0a141ee8;color:#bfeee4;font-size:.76cqw;letter-spacing:.1em}
+
+/* Section 04 — make the Q/K/score/V computation read as a moving pipeline. */
+.scene-qkv .qkv-head,.scene-qkv .qkv-origin,.scene-qkv .qkv-columns,.scene-qkv .mix-output,.scene-qkv .formula-panel,.scene-qkv .mechanism-steps{z-index:2}
+.scene-qkv .qkv-head .micro-label{font-size:.78cqw}
+.scene-qkv .qkv-focus{font-size:.95cqw}
+.scene-qkv .qkv-origin{top:19.5%;height:6.2%;align-items:center}
+.scene-qkv .qkv-origin .attention-token{font-size:.94cqw;padding:.38cqw .62cqw;will-change:transform,opacity}
+.scene-qkv .qkv-origin .attention-token.focus{border-color:#91f2d2;color:#d9fff1;background:#102820;box-shadow:0 0 1.1cqw #91f2d244}
+.scene-qkv .qkv-columns{top:30%;height:41%;grid-template-columns:1.04fr 1.12fr 1.2fr 1.02fr;gap:.85cqw}
+.scene-qkv .projection-col,.scene-qkv .score-col{padding:1cqw .9cqw;border-color:#385064;border-radius:.8cqw;background:linear-gradient(155deg,#111e2df5,#0a141feF);box-shadow:0 .9cqw 2.3cqw #0007}
+.scene-qkv .projection-title{position:relative;min-height:3.25cqw;padding-left:1.95cqw;font-size:.95cqw;line-height:1.2}
+.scene-qkv .projection-title::before{position:absolute;left:0;top:0;display:grid;place-items:center;width:1.45cqw;height:1.45cqw;border:1px solid currentColor;border-radius:50%;background:#0c1622;font:700 .82cqw var(--mono);box-shadow:0 0 .7cqw currentColor}
+.scene-qkv .q-col .projection-title::before{content:"Q"}
+.scene-qkv .k-col .projection-title::before{content:"K"}
+.scene-qkv .score-col .projection-title::before{content:"Σ"}
+.scene-qkv .v-col .projection-title::before{content:"V"}
+.scene-qkv .score-col .projection-title{color:var(--mint)}
+.scene-qkv .projection-title small{margin-top:.28cqw;font-size:.69cqw;line-height:1.25;color:#a1b2c0}
+.scene-qkv .projection-stack{gap:.46cqw}
+.scene-qkv .proj-row{height:2.25cqw;gap:.48cqw;font-size:.9cqw;color:#d3dee7}
+.scene-qkv .proj-row em{min-width:4.25cqw}
+.scene-qkv .proj-row i{height:.4cqw;transition:none;will-change:width,filter,box-shadow}
+.scene-qkv .score-stack{gap:.72cqw;margin-top:.62cqw}
+.scene-qkv .score-row{grid-template-columns:4.05cqw 1fr 2.25cqw;gap:.42cqw;font:.82cqw var(--mono);color:#c5d4df;will-change:transform,opacity}
+.scene-qkv .score-track{height:.68cqw;background:#1a2b38}
+.scene-qkv .score-value{font-weight:700;color:#e5fff5}
+.scene-qkv .sum-label{font-size:.68cqw;color:#b1c8c8}
+.scene-qkv .mix-output{width:22%;height:11.5%;padding:.75cqw .95cqw;border-color:#49806e;background:linear-gradient(135deg,#10241fed,#0b1719f2);will-change:transform,opacity,box-shadow}
+.scene-qkv .mix-output span{font-size:.72cqw}
+.scene-qkv .mix-output strong{font-size:.95cqw}
+.scene-qkv .mix-signal{width:.92cqw;height:.92cqw;filter:drop-shadow(0 0 .55cqw #91f2d2)}
+.scene-qkv .formula-panel{z-index:2;min-width:44%;padding:.72cqw 1.65cqw;background:#09121dee;box-shadow:0 .7cqw 1.7cqw #0007}
+.scene-qkv .formula-panel span{font-size:.68cqw}
+.scene-qkv .formula-panel b{font-size:1.38cqw}
+.scene-qkv .mechanism-steps{font-size:.72cqw;color:#a7bac7}
+.scene-qkv .mechanism-steps i{width:1.55cqw;background:#5a7380}

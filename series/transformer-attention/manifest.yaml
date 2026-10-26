@@ -83,6 +83,7 @@ qa:
     - "Chromium loaded narration metadata and timing JSON; all eight chapter buttons sought to their exact starts and activated the corresponding scene/transcript."
     - "Play/pause advanced and stopped the audio clock; repeated rendering at the same timestamp produced identical scene states."
     - "Preview stage retained 16:9 aspect ratio; canvas and page loaded without audio resource errors."
+    - "Narration playback samples audio.currentTime on requestAnimationFrame and renders only newly reached 24 fps frames; Chromium measured 37 render writes in 1.52 seconds (24.4 updates/s) while audio advanced 1.52 seconds."
     - "Live GitHub Pages page, MP3, timing JSON, opening WAV and final chapter WAV all returned HTTP 200; public browser playback was started successfully."
     - "Visual prototype previously passed eight-scene Chromium checks at 16:9."
   visual_development:
@@ -118,7 +119,17 @@ qa:
         - "Attention paths terminate at actual token centers and form an incoming context fan into the focused word."
         - "Mint, cyan, and violet paths plus traveling particles distinguish selected contextual signals without presenting them as ground-truth weights."
         - "The contextual-mixture result appears in time with the explanation and remains visually separated from the token fan."
+    chapter_04:
+      status: qkv_staged_reveal_refined_browser_qa_passed
+      duration_seconds: 79.44
+      timing_source: "Chapter-local progress and playback frame selection are derived from the narration audio clock; every component remains seek-stable."
+      reviewed_frames: [150, 193]
+      checks:
+        - "Query and Key lanes enter first; score/softmax and Value lanes appear later in narration order rather than as a static four-column reveal."
+        - "The focused 'It' token is visually singled out, and sequential Key comparison pulses lead into growing normalized score bars."
+        - "Value stream brightness and width follow the normalized weights; the weighted contextual vector appears after the mix begins."
+        - "Q/K/Σ/V lane badges and enlarged labels improve legibility while the formula waits until after the operation has been shown."
   pending:
-    - "Refine and browser-QA Chapters 04–08 to the same visual standard."
+    - "Refine and browser-QA Chapters 05–08 to the same visual standard."
     - "Review chapter-to-chapter voice continuity and pacing by listening."
     - "Full-length playback QA and final MP4 export at 1920x1080, 24 fps."
