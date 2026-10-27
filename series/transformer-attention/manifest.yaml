@@ -142,6 +142,15 @@ qa:
       - "Cross-scene token handoff uses the existing Taipei sentence and rotates/lifts in 3D rather than duplicating source and destination text on screen."
       - "Later chapters reuse one persistent signal object to carry the computation forward between scene anchors."
       - "No white/flash overlay remains in the film markup or stylesheet."
+  motion_pacing:
+    status: rapid_signal_motion_browser_qa_passed
+    timing_basis: "All repeated motion uses absolute chapter-local audio seconds; no wall-clock animation or history-dependent state was added."
+    checks:
+      - "Slow draw-on curves were replaced with complete paths and fast signal pulses. Map, token-to-ID and attention paths reveal in about 1.2–1.8 seconds; Q/K/V, multi-head and recap paths carry moving dashes/tracers."
+      - "Tracer cycles run at approximately 0.44–0.56 cycles/second (about 1.8–2.3 seconds per pass); causal-mask row focus advances about every 0.56 seconds."
+      - "The four multi-head merge lanes are independent SVG paths, each with its own moving tracer into the shared combine node."
+      - "Chromium sampled all eight scenes without renderer exceptions; attention tracer positions changed at all 20 samples during real playback while narration advanced 1.178 seconds."
+      - "Dense 24fps local scene samples measured p95 render-call costs of 1.2–8.0 ms (below the 41.7 ms frame budget); repeating an attention timestamp after unrelated seeks produced identical tracer positions."
   pending:
     - "Refine and browser-QA Chapters 05–08 to the same visual standard."
     - "Review chapter-to-chapter voice continuity and pacing by listening."

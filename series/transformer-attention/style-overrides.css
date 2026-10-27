@@ -114,3 +114,7 @@
 .continuity-layer{position:absolute;z-index:8;inset:0;overflow:visible;pointer-events:none;visibility:hidden;container-type:inline-size}
 .continuity-token{position:absolute;display:grid;place-items:center;white-space:nowrap;text-align:center;line-height:1.15;letter-spacing:-.025em;will-change:left,top,width,height,transform;background-clip:padding-box}
 .continuity-signal{position:absolute;width:1.3cqw;height:1.3cqw;border-radius:50%;background:radial-gradient(circle,#f1fff9 0 12%,#91f2d2 28%,#72c8ff55 65%,transparent 72%);box-shadow:0 0 1.2cqw #91f2d2,0 0 2.6cqw #72c8ff99;pointer-events:none;will-change:left,top,transform,opacity}
+.qkv-lines .qkv-pulse,.head-merge .head-merge-pulse{fill:#edfff8;stroke:#91f2d2;stroke-width:1.5;filter:drop-shadow(0 0 7px #91f2d2)}
+.qkv-lines .qkv-pulse:nth-of-type(2n){fill:#dfeeff;stroke:#72c8ff;filter:drop-shadow(0 0 7px #72c8ff)}
+.head-merge .head-merge-pulse:nth-of-type(2n){fill:#efe3ff;stroke:#ba9aff;filter:drop-shadow(0 0 7px #ba9aff)}
+.recap-flow .recap-signal{fill:#effff8;stroke:#91f2d2;stroke-width:1.6;filter:drop-shadow(0 0 7px #91f2d2)}
