@@ -158,6 +158,8 @@ function snapshotHandoffNodes(nodes,filmRect){
 }
 function renderContinuityHandoff(t,activeIndex,activeProgress){
   continuityLayer.style.visibility='hidden';
+  continuityTokens.forEach(chip=>chip.style.opacity='0');
+  continuitySignal.style.opacity='0';
   const filmRect=film.getBoundingClientRect();
   for(const pair of continuityPairs){
     const windowStart=(chapterEnds[pair.from]??0)-.72,windowEnd=(chapterStarts[pair.to]??0)+.72;
