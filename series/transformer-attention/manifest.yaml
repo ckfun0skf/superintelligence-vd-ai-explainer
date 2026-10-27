@@ -86,6 +86,11 @@ qa:
     - "Narration playback samples audio.currentTime on requestAnimationFrame and renders only newly reached 24 fps frames; Chromium measured 37 render writes in 1.52 seconds (24.4 updates/s) while audio advanced 1.52 seconds."
     - "Live GitHub Pages page, MP3, timing JSON, opening WAV and final chapter WAV all returned HTTP 200; public browser playback was started successfully."
     - "Visual prototype previously passed eight-scene Chromium checks at 16:9."
+    - "Removed the chapter-start white flash overlay and all related CSS; chapter boundaries are bridged by persistent visual handoffs instead."
+    - "All seven chapter boundaries were Chromium-rendered before/at/after the cut; no handoff runtime exceptions occurred."
+    - "The same ten-token phrase travels across Chapters 01–04; one persistent signal travels from the weighted mix through heads, Transformer blocks, causal mask and recap."
+    - "Handoff source/target poses are sampled at fixed absolute chapter endpoints and the current scene is restored, so seeking to the same timestamp from different histories produces identical DOM state."
+    - "Dense 24fps transition samples measured p95 render-call costs of 13.6–19.8 ms in Chromium (below the 41.7 ms frame budget)."
   visual_development:
     chapter_01:
       status: opening_animation_refined_browser_qa_passed
@@ -129,6 +134,14 @@ qa:
         - "The focused 'It' token is visually singled out, and sequential Key comparison pulses lead into growing normalized score bars."
         - "Value stream brightness and width follow the normalized weights; the weighted contextual vector appears after the mix begins."
         - "Q/K/Σ/V lane badges and enlarged labels improve legibility while the formula waits until after the operation has been shown."
+  chapter_continuity:
+    status: persistent_handoffs_deterministic_chromium_qa_passed
+    transition_window_seconds: 1.44
+    reviewed_boundaries_seconds: [40.84, 91.0, 136.72, 216.96, 257.6, 307.0, 361.68]
+    checks:
+      - "Cross-scene token handoff uses the existing Taipei sentence and rotates/lifts in 3D rather than duplicating source and destination text on screen."
+      - "Later chapters reuse one persistent signal object to carry the computation forward between scene anchors."
+      - "No white/flash overlay remains in the film markup or stylesheet."
   pending:
     - "Refine and browser-QA Chapters 05–08 to the same visual standard."
     - "Review chapter-to-chapter voice continuity and pacing by listening."
