@@ -125,15 +125,20 @@ qa:
         - "Mint, cyan, and violet paths plus traveling particles distinguish selected contextual signals without presenting them as ground-truth weights."
         - "The contextual-mixture result appears in time with the explanation and remains visually separated from the token fan."
     chapter_04:
-      status: qkv_staged_reveal_refined_browser_qa_passed
+      status: qkv_audio_choreography_refined_browser_qa_passed
       duration_seconds: 79.44
-      timing_source: "Chapter-local progress and playback frame selection are derived from the narration audio clock; every component remains seek-stable."
-      reviewed_frames: [150, 193]
+      timing_source: "A paused GSAP timeline is scrubbed from chapter-local seconds derived from audio.currentTime; all non-timeline motion is computed from absolute local seconds."
+      animation_library: "GSAP; timeline remains paused and deterministic; no independent wall-clock ticker."
+      reviewed_frames: [142, 160, 178, 190, 207]
       checks:
-        - "Query and Key lanes enter first; score/softmax and Value lanes appear later in narration order rather than as a static four-column reveal."
-        - "The focused 'It' token is visually singled out, and sequential Key comparison pulses lead into growing normalized score bars."
-        - "Value stream brightness and width follow the normalized weights; the weighted contextual vector appears after the mix begins."
-        - "Q/K/Σ/V lane badges and enlarged labels improve legibility while the formula waits until after the operation has been shown."
+        - "Three projection cards appear within the opening second; the same cards receive short Q/K/V emphasis pulses, then perform a brief 3D pivot during the 'learned vectors' explanation."
+        - "Q/K/V vector bars keep moving with deterministic sub-second width/brightness pulses through the long vector explanation instead of holding a static layout."
+        - "At local 38.65 seconds, the same Q/K/V cards reflow in under one second to open a clear Query-to-Key comparison channel; the Scores card joins on the corresponding narration beat."
+        - "Four independent Query-to-Key beams and four separate weighted-Value streams use moving tracers; no line is slowly drawn on, and all endpoints are recalculated from live DOM anchors."
+        - "Raw match scores transform into a normalized 64/16/12/8 distribution; the sum-to-one cue appears with the narration, then weights drive Value bar width and the new vector's bar heights."
+        - "The same on-screen token and panels stay present through the operation; at the formula beat, panels move upward and recede while the compact equation takes focus."
+        - "Chromium reviewed absolute frames 142, 160, 178, 190 and 207; all 11 QKV paths and tracers were present with no runtime exception."
+        - "A 48-frame dense QKV sample measured 3.81 ms average, 4.9 ms p95 and 6.6 ms max per render call, below the 41.7 ms 24fps frame budget; rendering frame 178 after another seek returned identical tracer state."
   chapter_continuity:
     status: persistent_handoffs_deterministic_chromium_qa_passed
     transition_window_seconds: 1.44

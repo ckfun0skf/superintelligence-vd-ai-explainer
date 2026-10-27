@@ -63,18 +63,18 @@
           </section>
 
           <section class="scene scene-qkv" data-scene="3" aria-hidden="true">
-            <div class="qkv-head"><span class="micro-label">FROM INPUT REPRESENTATIONS TO A CONTEXTUAL MIX</span><div class="qkv-focus">Focus position: <b>“it”</b></div></div>
+            <div class="qkv-head"><span class="micro-label" id="qkv-stage-label">LEARNED PROJECTIONS · Q / K / V</span><div class="qkv-focus">Focus position: <b>“it”</b></div></div>
             <div class="qkv-origin" id="qkv-origin"></div>
-            <svg class="qkv-lines" viewBox="0 0 1200 580" preserveAspectRatio="none" aria-hidden="true"><g id="qkv-paths"></g></svg>
-            <div class="qkv-columns">
+            <svg class="qkv-lines" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><g id="qkv-paths"></g></svg>
+            <div class="qkv-columns" id="qkv-columns">
               <div class="projection-col q-col"><div class="projection-title">QUERY <small>what this position matches against</small></div><div class="projection-stack" id="q-stack"></div></div>
               <div class="projection-col k-col"><div class="projection-title">KEYS <small>available positions to compare</small></div><div class="projection-stack" id="k-stack"></div></div>
-              <div class="score-col"><div class="projection-title">SCORES → SOFTMAX <small>scaled, then normalized</small></div><div class="score-stack" id="score-stack"></div><div class="sum-label">weights sum to 1</div></div>
+              <div class="score-col"><div class="projection-title">SCORES → SOFTMAX <small id="score-mode">raw comparisons</small></div><div class="score-stack" id="score-stack"></div><div class="sum-label">weights sum to 1</div></div>
               <div class="projection-col v-col"><div class="projection-title">VALUES <small>information to be mixed</small></div><div class="projection-stack" id="v-stack"></div></div>
             </div>
-            <div class="mix-output"><span>WEIGHTED MIX</span><div class="mix-signal" id="mix-signal"></div><strong>new contextual vector</strong></div>
+            <div class="mix-output"><span>WEIGHTED MIX</span><div class="mix-signal" id="mix-signal"></div><div class="mix-vector" id="mix-vector" aria-hidden="true"></div><strong>new contextual vector</strong><small class="mix-note" id="mix-note">NOT A COPIED WORD · NOT AN ANSWER</small></div>
             <div class="formula-panel" id="formula-panel"><span>Scaled dot-product attention</span><b>softmax ( QK<sup>T</sup> / √d<sub>k</sub> ) V</b></div>
-            <div class="mechanism-steps"><span>COMPARE</span><i></i><span>NORMALIZE</span><i></i><span>MIX</span></div>
+            <div class="mechanism-steps"><span data-step="0">COMPARE</span><i></i><span data-step="1">NORMALIZE</span><i></i><span data-step="2">MIX</span></div>
           </section>
 
           <section class="scene scene-heads" data-scene="4" aria-hidden="true">

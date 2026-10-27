@@ -118,3 +118,42 @@
 .qkv-lines .qkv-pulse:nth-of-type(2n){fill:#dfeeff;stroke:#72c8ff;filter:drop-shadow(0 0 7px #72c8ff)}
 .head-merge .head-merge-pulse:nth-of-type(2n){fill:#efe3ff;stroke:#ba9aff;filter:drop-shadow(0 0 7px #ba9aff)}
 .recap-flow .recap-signal{fill:#effff8;stroke:#91f2d2;stroke-width:1.6;filter:drop-shadow(0 0 7px #91f2d2)}
+
+
+/* Chapter 4: continuous Q/K/V operation. Geometry is scrubbed by the paused GSAP audio-time timeline. */
+.scene-qkv .qkv-columns{position:absolute;inset:0;width:100%;height:100%;display:contents}
+.scene-qkv .qkv-columns>div{position:absolute;margin:0;overflow:hidden;transform-origin:50% 50%;will-change:left,top,width,height,transform,opacity;transition:none!important;z-index:2}
+.scene-qkv .q-col,.scene-qkv .k-col,.scene-qkv .v-col{top:32%;height:39%;width:28%}
+.scene-qkv .q-col{left:4%}.scene-qkv .k-col{left:36%}.scene-qkv .v-col{left:68%}
+.scene-qkv .score-col{left:50%;top:32%;width:27%;height:39%;z-index:3}
+.scene-qkv .qkv-lines{inset:0;width:100%;height:100%;z-index:1;overflow:visible;pointer-events:none}
+.scene-qkv .qkv-lines path{fill:none;stroke-width:2.5;stroke-dasharray:none;stroke-linecap:round;opacity:0;filter:drop-shadow(0 0 .45cqw currentColor);transition:none!important}
+.scene-qkv .qkv-lines .qkv-pulse{stroke-width:1.3;transition:none!important}
+.scene-qkv .qkv-head,.scene-qkv .qkv-origin,.scene-qkv .formula-panel,.scene-qkv .mix-output,.scene-qkv .mechanism-steps{will-change:transform,opacity}
+.scene-qkv .qkv-origin{z-index:4}
+.scene-qkv .qkv-origin .origin-token{font-size:.96cqw;padding:.34cqw .72cqw;transition:none!important}
+.scene-qkv .origin-token.focus{border-color:var(--mint);color:var(--mint);box-shadow:0 0 .9cqw #91f2d266}
+.scene-qkv .qkv-head{z-index:4}
+.scene-qkv .qkv-head .micro-label{font-size:.78cqw;letter-spacing:.15em;color:#a8dfd2}
+.scene-qkv .projection-col,.scene-qkv .score-col{padding:1.05cqw .9cqw;border-radius:.82cqw;backdrop-filter:blur(8px)}
+.scene-qkv .projection-title{font-size:.9cqw;min-height:2.3cqw;letter-spacing:.12em}
+.scene-qkv .projection-title small{font-size:.67cqw;min-height:.85cqw}
+.scene-qkv .proj-row{height:2.45cqw;font-size:.94cqw}
+.scene-qkv .proj-row em{min-width:4.5cqw}
+.scene-qkv .score-stack{gap:.78cqw;margin-top:.75cqw}
+.scene-qkv .score-row{grid-template-columns:4.35cqw 1fr 2.7cqw;font-size:.86cqw}
+.scene-qkv .score-track{height:.74cqw}
+.scene-qkv .sum-label{font-size:.72cqw;opacity:0;transition:none!important}
+.scene-qkv .mix-output{z-index:3;display:flex;flex-direction:column;justify-content:center;gap:.45cqw;padding:1cqw 1.1cqw;border-radius:.9cqw;overflow:hidden;will-change:left,right,top,width,height,transform,opacity}
+.scene-qkv .mix-output>span{font-size:.78cqw;letter-spacing:.12em}
+.scene-qkv .mix-output strong{font-size:1.06cqw}
+.scene-qkv .mix-vector{display:flex;align-items:flex-end;justify-content:space-between;gap:.28cqw;width:100%;height:5.8cqw;min-height:2.7cqw;padding:.35cqw .15cqw;border-bottom:1px solid #375d54}
+.scene-qkv .mix-vector i{display:block;flex:1;max-width:1.15cqw;min-height:.22cqw;border-radius:.2cqw .2cqw 0 0;background:linear-gradient(180deg,#b9ffe7,#45cbb0 68%,#257d75);box-shadow:0 0 .55cqw #91f2d277;transform-origin:50% 100%}
+.scene-qkv .mix-note{font:600 .61cqw var(--mono);letter-spacing:.075em;color:#8eada5;opacity:0}
+.scene-qkv .mix-signal{z-index:4}
+.scene-qkv .formula-panel{z-index:5;min-width:49%;width:54%;bottom:14%;padding:.9cqw 1.9cqw;border-color:#78a79f;background:linear-gradient(130deg,#0d1d20f5,#09121df2);box-shadow:0 0 2cqw #91f2d233,0 1cqw 2.5cqw #0008}
+.scene-qkv .formula-panel span{font-size:.76cqw}
+.scene-qkv .formula-panel b{font-size:1.58cqw}
+.scene-qkv .mechanism-steps{z-index:5;gap:.58cqw;font-size:.8cqw;letter-spacing:.1em}
+.scene-qkv .mechanism-steps [data-step]{color:#8296a5;transition:none!important}
+.scene-qkv .mechanism-steps [data-step].active{color:#c9fff0;text-shadow:0 0 .75cqw #91f2d2aa}

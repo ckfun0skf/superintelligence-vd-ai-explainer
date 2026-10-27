@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import '../style.css';
 import '../style-overrides.css';
+import { createQkvTimeline } from './qkv-timeline.js';
 
 const film = document.querySelector('#film');
 const audio = document.querySelector('#narration');
@@ -72,7 +73,8 @@ function makeBars(id, labels, kind) {
   return labels.map((label, i) => {
     const row = document.createElement('div');
     row.className = 'proj-row';
-    row.innerHTML = `<em>${label}</em><i style="width:${30 + ((i * 17 + 29) % 65)}%"></i>`;
+    const baseWidth=30 + ((i * 17 + 29) % 65);
+    row.innerHTML = `<em>${label}</em><i style="width:${baseWidth}%" data-base-width="${baseWidth}"></i>`;
     root.append(row);
     return row;
   });
@@ -87,12 +89,15 @@ const scoreRows = ['trail', 'near', 'shaded', 'Maokong'].map((label, i) => {
   scoreRoot.append(row); return row;
 });
 const qkvPaths = document.getElementById('qkv-paths');
-for (let i = 0; i < 6; i++) {
+for (let i = 0; i < 11; i++) {
   const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-  p.setAttribute('d', `M ${185 + i * 10} 104 C ${260 + i * 6} ${170 + i * 10}, ${390 + i * 2} ${170 + i * 10}, ${480 + i * 3} 225`);
+  p.setAttribute('d', 'M 0 0 L 0 0');
   p.dataset.index = String(i); qkvPaths.append(p);
 }
 const qkvPulseDots=[...qkvPaths.querySelectorAll('path')].map((_,i)=>{const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');dot.setAttribute('r',String(i===0||i===3?5.5:4));dot.setAttribute('class','qkv-pulse');qkvPaths.append(dot);return dot;});
+const mixedVectorValues=[.34,.76,.48,.92,.28,.63,.41,.81];
+const mixedVectorBars=mixedVectorValues.map(value=>{const bar=document.createElement('i');bar.style.height=`${20+value*72}%`;bar.style.transform='scaleY(0)';document.getElementById('mix-vector').append(bar);return bar;});
+const qkvTimeline=createQkvTimeline();
 const idCells = document.getElementById('id-cells');
 const embeddingCells = document.getElementById('embedding-cells');
 ['102','481','92','733','318','11','204','37','610','18'].forEach((v, i) => {
@@ -436,22 +441,36 @@ function renderAttention(p){
 }
 function renderQKV(p){
   const sec=sceneSeconds(3,p);
-  const active=smooth(.06,.18,p),matrix=smooth(.14,.22,p),weights=smooth(.34,.405,p),mix=smooth(.55,.64,p),formula=smooth(.7,.82,p)*(1-smooth(.95,1,p));
-  const columns=[...document.querySelectorAll('.qkv-columns>div')],entry=[smooth(.02,.14,p),smooth(.07,.22,p),smooth(.27,.4,p),smooth(.43,.56,p)];
-  columns.forEach((el,i)=>{const q=entry[i];el.style.opacity=String(q);el.style.transform=`translateY(${(1-q)*.75}cqw) scale(${.975+.025*q})`;});
-  qkvOriginTokens.forEach((token,i)=>{const reveal=smooth(.025,.08,p),focus=i===6;token.classList.toggle('focus',focus&&p>.08);token.style.opacity=String(reveal*(focus?1:.58+.42*active));token.style.transform=`translateY(${(1-reveal)*.32}cqw) scale(${focus?1+.025*Math.sin(p*22):1})`;});
-  [...qRows,...keyRows,...valueRows].forEach((row,i)=>{row.style.opacity=String(.25+.75*active);row.style.transform=`translateX(${(1-active)*.35}cqw)`;});
-  qkvPaths.querySelectorAll('path').forEach((path,i)=>{path.style.opacity=String(.04+matrix*(i===0||i===3?.42:.12));path.style.strokeDashoffset=String(-sec*185+i*22);});
-  [...qkvPaths.querySelectorAll('path')].forEach((path,i)=>{const len=path.getTotalLength(),dot=qkvPulseDots[i],q=phase(sec,.48,i*.14),pt=path.getPointAtLength(len*q);dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));dot.style.opacity=String(matrix*(i===0||i===3?.95:.55));});
-  const raw=[.55,.2,.16,.09];const softmax=raw.map((x,i)=>Math.pow(x,1.35+(1-p)*.3));const sum=softmax.reduce((a,b)=>a+b,0);
-  qRows.forEach((row,i)=>{const beat=pulse(sec,.48,i*.13);const bar=row.querySelector('i');bar.style.boxShadow=`0 0 ${(.25+.8*beat*matrix)}cqw #72c8ff99`;bar.style.filter=`brightness(${.82+.42*beat*matrix})`;});
-  keyRows.forEach((row,i)=>{const sweep=Math.exp(-Math.pow((p-(.19+i*.018))/.012,2))*matrix;row.style.filter=`brightness(${.78+.72*sweep})`;row.style.transform=`translateX(${sweep*.24}cqw) scale(${1+sweep*.025})`;row.querySelector('i').style.boxShadow=`0 0 ${(.15+1.15*sweep)}cqw #ba9affbb`;});
-  scoreRows.forEach((row,i)=>{const value=softmax[i]/sum,fill=row.querySelector('.score-fill'),step=Math.exp(-Math.pow((p-(.37+i*.015))/.022,2));fill.style.width=`${value*100*weights}%`;fill.style.opacity=String(.18+weights*.82);fill.style.boxShadow=`0 0 ${(.2+step*.9+weights*.35)}cqw #91f2d2aa`;row.querySelector('.score-value').textContent=`${Math.round(value*100*weights)}%`;row.style.opacity=String(.25+weights*.75);row.style.transform=`translateX(${(1-weights)*.25}cqw) scale(${1+step*.018})`;});
-  valueRows.forEach((row,i)=>{const value=softmax[i]/sum,beat=pulse(sec,.48,-i*.12),bar=row.querySelector('i');row.style.opacity=String(.12+weights*(.2+value*.8));bar.style.width=`${(24+value*68)*weights}%`;bar.style.boxShadow=`0 0 ${(.2+value*weights*.9*beat)}cqw #ffc77699`;bar.style.filter=`brightness(${.75+value*.55+weights*beat*.25})`;});
-  document.querySelector('.sum-label').style.opacity=String(weights);
-  document.getElementById('mix-signal').style.transform=`translateX(${mix*2.7}cqw) scale(${.6+mix*.6})`;const output=document.querySelector('.mix-output');output.style.opacity=String(mix);output.style.transform=`translateY(${(1-mix)*.55}cqw) scale(${.96+.04*mix})`;output.style.boxShadow=`0 0 ${mix*1.4}cqw #91f2d244,0 .8cqw 2cqw #0005`;
-  document.getElementById('formula-panel').style.opacity=String(formula);
-  document.querySelectorAll('.mechanism-steps span').forEach((e,i)=>{const beat=p>(.2+i*.22);e.style.color=beat?'#91f2d2':'#8092a2';e.style.textShadow=beat?'0 0 .8cqw #91f2d2':'';});
+  qkvTimeline.seek(sec);
+  const projection=smooth(.2,1.4,sec),compare=smooth(39.6,40.4,sec)*(1-smooth(46.8,48.2,sec)),normalize=smooth(42.1,47.4,sec),mix=smooth(50.5,54.0,sec),vectorFlow=smooth(20.8,22.2,sec)*(1-smooth(37.6,39.6,sec));
+  const weights=[.64,.16,.12,.08],rawScores=[2.079,.693,.405,0],rawWidths=[100,33,19,0],stageLabel=document.getElementById('qkv-stage-label');
+  const title=sec<7.6?'THREE LEARNED PROJECTIONS':sec<21.3?'QUERY · KEY · VALUE':sec<33.1?'VECTORS, NOT WORD LABELS':sec<42.1?'QUERY × KEYS → SCORES':sec<47.4?'SOFTMAX TURNS SCORES INTO WEIGHTS':sec<50.5?'WEIGHTS SUM TO ONE':sec<64.7?'WEIGHTED VALUES → NEW CONTEXT':'COMPARE → NORMALIZE → MIX';
+  stageLabel.textContent=title;
+  document.getElementById('score-mode').textContent=sec<42.1?'raw match scores':sec<47.4?'softmax distribution':'normalized weights · sum to one';
+  qkvOriginTokens.forEach((token,i)=>{const reveal=smooth(.12,1.05,sec),focus=i===6;token.classList.toggle('focus',focus&&sec>.65);token.style.opacity=String(reveal*(focus?1:.62+.38*projection));token.style.transform=`translateY(${(1-reveal)*.28}cqw) scale(${focus?1+.025*Math.sin(sec*7.2):1})`;});
+  const rowIn=smooth(.45,1.35,sec);
+  qRows.forEach((row,i)=>{const beat=pulse(sec,.72,i*.13),bar=row.querySelector('i'),base=Number(bar.dataset.baseWidth);const width=Math.max(12,Math.min(96,base+vectorFlow*8*Math.sin(sec*6.6+i*1.4)));bar.style.width=`${width}%`;row.style.opacity=String(rowIn);row.style.transform=`translateX(${(1-rowIn)*.28}cqw)`;bar.style.boxShadow=`0 0 ${(.2+.85*beat*projection+vectorFlow*.45)}cqw #72c8ff99`;bar.style.filter=`brightness(${.82+.4*beat*projection+vectorFlow*.22*Math.sin(sec*6.6+i)})`;});
+  const compareStart=39.9;
+  keyRows.forEach((row,i)=>{const sweep=Math.exp(-Math.pow((sec-(compareStart+i*.72))/.2,2))*compare,bar=row.querySelector('i'),base=Number(bar.dataset.baseWidth),width=Math.max(12,Math.min(96,base+vectorFlow*8*Math.sin(sec*6.6+i*1.1)+sweep*5));bar.style.width=`${width}%`;row.style.opacity=String(.42+.58*Math.max(projection,compare));row.style.filter=`brightness(${.82+.85*sweep+vectorFlow*.15*Math.sin(sec*6.6+i)})`;row.style.transform=`translateX(${sweep*.52}cqw) scale(${1+sweep*.035})`;bar.style.boxShadow=`0 0 ${(.12+1.3*sweep+vectorFlow*.35)}cqw #ba9affcc`;});
+  scoreRows.forEach((row,i)=>{const reveal=smooth(39.8+i*.35,40.15+i*.35,sec),value=weights[i],width=rawWidths[i]+(value*100-rawWidths[i])*normalize,fill=row.querySelector('.score-fill'),step=Math.exp(-Math.pow((sec-(41.2+i*.42))/.2,2));fill.style.width=`${width*reveal}%`;fill.style.opacity=String(reveal);fill.style.boxShadow=`0 0 ${(.2+step*.95+normalize*.5)}cqw #91f2d2bb`;row.querySelector('.score-value').textContent=sec<42.1?rawScores[i].toFixed(1):`${Math.round(value*100)}%`;row.style.opacity=String(reveal);row.style.transform=`translateX(${(1-reveal)*.7}cqw) scale(${1+step*.025})`;});
+  valueRows.forEach((row,i)=>{const value=weights[i],beat=pulse(sec,.62,-i*.12),bar=row.querySelector('i'),base=Number(bar.dataset.baseWidth),vectorWidth=base+vectorFlow*8*Math.sin(sec*6.6+i*1.3),weightedWidth=24+value*68;row.style.opacity=String(.34+.66*mix*(.35+value));bar.style.width=`${(1-mix)*vectorWidth+mix*weightedWidth}%`;bar.style.boxShadow=`0 0 ${(.15+value*mix*1.5*beat+vectorFlow*.25)}cqw #ffc776bb`;bar.style.filter=`brightness(${.75+value*.7+mix*beat*.35+vectorFlow*.12*Math.sin(sec*6.6+i)})`;});
+  document.querySelector('.sum-label').style.opacity=String(smooth(47.1,48.5,sec));
+  mixedVectorBars.forEach((bar,i)=>{const pulseValue=.88+.12*Math.sin(sec*5.2+i*1.1);bar.style.transform=`scaleY(${mix*mixedVectorValues[i]*pulseValue})`;bar.style.opacity=String(mix);});
+  const signal=document.getElementById('mix-signal'),output=document.querySelector('.mix-output');signal.style.transform=`translateX(${mix*1.4}cqw) scale(${.55+mix*.7})`;output.style.boxShadow=`0 0 ${mix*1.5}cqw #91f2d255,0 .8cqw 2cqw #0005`;document.getElementById('mix-note').style.opacity=String(smooth(59.5,62.0,sec));
+  document.querySelectorAll('.mechanism-steps [data-step]').forEach((e,i)=>{const active=sec>=77.15?((sec<77.9&&i===0)||(sec>=77.9&&sec<78.55&&i===1)||(sec>=78.55&&i===2)):(i===0?sec>=39.6&&sec<42.1:i===1?sec>=42.1&&sec<50.5:i===2?sec>=50.5&&sec<77.15:false);e.classList.toggle('active',active);});
+
+  // Each bright tracer is recalculated from real DOM anchors after the timeline has moved the same cards.
+  const svg=document.querySelector('.qkv-lines'),svgRect=svg.getBoundingClientRect(),paths=[...qkvPaths.querySelectorAll('path')];
+  const anchor=(el,x=.5,y=.5)=>{const r=el.getBoundingClientRect();return{x:(r.left+r.width*x-svgRect.left)/svgRect.width*1200,y:(r.top+r.height*y-svgRect.top)/svgRect.height*675};};
+  const curve=(path,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,bend=Math.max(18,Math.min(88,Math.abs(dx)*.16+Math.abs(dy)*.12));path.setAttribute('d',`M ${a.x.toFixed(1)} ${a.y.toFixed(1)} C ${(a.x+dx*.38).toFixed(1)} ${(a.y+Math.sign(dy||1)*bend).toFixed(1)}, ${(b.x-dx*.38).toFixed(1)} ${(b.y-Math.sign(dy||1)*bend).toFixed(1)}, ${b.x.toFixed(1)} ${b.y.toFixed(1)}`);};
+  const panels=[...document.querySelectorAll('.qkv-columns>div')],titleOf=panel=>panel.querySelector('.projection-title');
+  const projectionTargets=[titleOf(panels[0]),titleOf(panels[1]),titleOf(panels[3])],origin=anchor(qkvOriginTokens[6],.5,.92),projectionStrength=projection*(1-smooth(31.8,33.4,sec)*.82);
+  const projectionColors=['#72c8ff','#ba9aff','#ffc776'];
+  for(let i=0;i<3;i++){const path=paths[i],dot=qkvPulseDots[i];curve(path,origin,anchor(projectionTargets[i],.5,.04));path.style.stroke=projectionColors[i];path.style.opacity=String(projectionStrength*.52);path.style.strokeDasharray='none';const len=path.getTotalLength(),pt=path.getPointAtLength(len*phase(sec,.72,i*.19));dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));dot.style.opacity=String(projectionStrength*(.12+.88*pulse(sec,.72,i*.17)));dot.setAttribute('r',String(4.5+2.2*pulse(sec,.72,i*.14)));}
+  const queryAnchor=anchor(qRows[0].querySelector('i'),.98,.5),comparisonStrength=compare;
+  for(let i=0;i<4;i++){const index=i+3,path=paths[index],dot=qkvPulseDots[index],target=anchor(keyRows[i],.04,.5);curve(path,queryAnchor,target);path.style.stroke='#a887ff';path.style.opacity=String(comparisonStrength*(.14+.38*(i===0?1:.45)));path.style.strokeDasharray='none';const len=path.getTotalLength(),pt=path.getPointAtLength(len*phase(sec,.56,i*.13));dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));dot.style.opacity=String(comparisonStrength*(.18+.82*pulse(sec,.56,i*.13)));dot.setAttribute('r',String(3.8+1.8*pulse(sec,.56,i*.13)));}
+  const outputRect=output.getBoundingClientRect(),outputTarget={x:(outputRect.left-svgRect.left)/svgRect.width*1200,y:(outputRect.top+outputRect.height*.55-svgRect.top)/svgRect.height*675};
+  for(let i=0;i<4;i++){const index=i+7,path=paths[index],dot=qkvPulseDots[index],source=anchor(valueRows[i].querySelector('i'),.98,.5);curve(path,source,outputTarget);path.style.stroke='#ffc776';path.style.opacity=String(mix*(.1+weights[i]*1.2));path.style.strokeDasharray='none';const len=path.getTotalLength(),pt=path.getPointAtLength(len*phase(sec,.48,i*.11));dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));dot.style.opacity=String(mix*(.12+weights[i]*1.55));dot.setAttribute('r',String(3.6+weights[i]*5.2));}
 }
 function renderHeads(p){
   const sec=sceneSeconds(4,p);
