@@ -142,7 +142,7 @@ qa:
         - "At 64.38 seconds the same cards recede and the compact formula takes focus; compare/scale, softmax, and value multiplication highlights follow the spoken timestamps. No slide-style chapter title is shown."
         - "The global particle field was simplified to 180 points and 24 faint links with a capped 1.25 device pixel ratio. Fixed scene header titles and decorative film grain are hidden; object/UI labels remain."
         - "Chromium visually reviewed early projection (3s), named vectors (8–24s), comparison/scores (39.1s), softmax (44s), contextual output (58.6s), and formula (68s); all 11 QKV paths/tracers rendered with no runtime exception."
-        - "Across 48 dense QKV frames using the final beat timings, measured renderAt averaged 3.73 ms, p95 was 6.0 ms and max 7.1 ms; seeking away and returning to the same timestamp reproduced identical path, tracer and score states."
+        - "Across 48 dense weighted-mix frames on the final public bundle, renderAt averaged 3.93 ms, p95 was 5.0 ms and max 7.3 ms; seeking away and returning to the same timestamp reproduced identical path, tracer and score states."
   chapter_continuity:
     status: persistent_handoffs_deterministic_chromium_qa_passed
     transition_window_seconds: 1.44
