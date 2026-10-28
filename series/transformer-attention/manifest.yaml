@@ -91,6 +91,8 @@ qa:
     - "The same ten-token phrase travels across Chapters 01–04; one persistent signal travels from the weighted mix through heads, Transformer blocks, causal mask and recap."
     - "Handoff source/target poses are sampled at fixed absolute chapter endpoints and the current scene is restored, so seeking to the same timestamp from different histories produces identical DOM state."
     - "Dense 24fps transition samples measured p95 render-call costs of 13.6–19.8 ms in Chromium (below the 41.7 ms frame budget)."
+    - "Slide-like scene/header titles and decorative film grain are hidden; animated UI/object labels remain. Chapter 05 multi-head lanes and Chapter 02 token/embedding flow were visually checked after the change."
+    - "The global ambient WebGL layer is subdued (180 seeded points, 24 faint links, low opacity); the 16:9 stage remained 1180×664 in the desktop browser QA viewport."
   visual_development:
     chapter_01:
       status: opening_animation_refined_browser_qa_passed
@@ -129,16 +131,18 @@ qa:
       duration_seconds: 79.44
       timing_source: "A paused GSAP timeline is scrubbed from chapter-local seconds derived from audio.currentTime; all non-timeline motion is computed from absolute local seconds."
       animation_library: "GSAP; timeline remains paused and deterministic; no independent wall-clock ticker."
-      reviewed_frames: [142, 160, 178, 190, 207]
+      reviewed_seconds_local: [3, 8, 15, 24, 33.1, 39.1, 44, 47, 51, 55, 58.6, 68, 77]
       checks:
-        - "Three projection cards appear within the opening second; the same cards receive short Q/K/V emphasis pulses, then perform a brief 3D pivot during the 'learned vectors' explanation."
-        - "Q/K/V vector bars keep moving with deterministic sub-second width/brightness pulses through the long vector explanation instead of holding a static layout."
-        - "At local 38.65 seconds, the same Q/K/V cards reflow in under one second to open a clear Query-to-Key comparison channel; the Scores card joins on the corresponding narration beat."
-        - "Four independent Query-to-Key beams and four separate weighted-Value streams use moving tracers; no line is slowly drawn on, and all endpoints are recalculated from live DOM anchors."
-        - "Raw match scores transform into a normalized 64/16/12/8 distribution; the sum-to-one cue appears with the narration, then weights drive Value bar width and the new vector's bar heights."
-        - "The same on-screen token and panels stay present through the operation; at the formula beat, panels move upward and recede while the compact equation takes focus."
-        - "Chromium reviewed absolute frames 142, 160, 178, 190 and 207; all 11 QKV paths and tracers were present with no runtime exception."
-        - "A 48-frame dense QKV sample measured 3.81 ms average, 4.9 ms p95 and 6.6 ms max per render call, below the 41.7 ms 24fps frame budget; rendering frame 178 after another seek returned identical tracer state."
+        - "The same ten-token Taipei sentence from the preceding scene remains in place. A single highlighted 'It' branches into three unlabelled vector shapes at local 2.3 seconds; QUERY/KEYS/VALUES names appear at their spoken beats (6.70/7.68/8.64 seconds)."
+        - "Plain-language role cues pulse at 11.4/14.74/18.06 seconds. Candidate words turn into indexed vector markers during the 'not literal labels' explanation, then return only when those positions are named in the later comparison/mix."
+        - "A brief 3D pivot at 22.22 seconds distinguishes numerical vectors from word labels. Vector bars and small signals continue moving; no long progressive line draw-on is used."
+        - "The same projection cards reflow in 0.4 seconds at 32.55 seconds; the Query comparison pulse starts at 33.60 seconds, and the Scores card appears at 39.32 seconds as 'Those comparisons produce scores' is spoken. Four candidate sweeps repeat every 3.2 seconds during the allowed-position explanation."
+        - "Example raw scores transform over 2.36 seconds beginning at the spoken softmax cue (43.54 seconds); example 64/16/12/8 weights and the 100% sum bar resolve with the spoken distribution/total cues (46.64/47.36 seconds). Values are visibly marked as an illustrative example, not fixed model internals."
+        - "The same cards reflow toward the mix at 49.96 seconds; the output appears at 50.50 seconds with 'combine the values'. The 'trail' signal becomes dominant at 55.90–57.12 seconds, followed by the new contextual vector at 58.16 seconds and the 'not copied / not final answer' notes at 60.48/62.06 seconds."
+        - "At 64.38 seconds the same cards recede and the compact formula takes focus; compare/scale, softmax, and value multiplication highlights follow the spoken timestamps. No slide-style chapter title is shown."
+        - "The global particle field was simplified to 180 points and 24 faint links with a capped 1.25 device pixel ratio. Fixed scene header titles and decorative film grain are hidden; object/UI labels remain."
+        - "Chromium visually reviewed early projection (3s), named vectors (8–24s), comparison/scores (39.1s), softmax (44s), contextual output (58.6s), and formula (68s); all 11 QKV paths/tracers rendered with no runtime exception."
+        - "Across 48 dense QKV frames using the final beat timings, measured renderAt averaged 3.73 ms, p95 was 6.0 ms and max 7.1 ms; seeking away and returning to the same timestamp reproduced identical path, tracer and score states."
   chapter_continuity:
     status: persistent_handoffs_deterministic_chromium_qa_passed
     transition_window_seconds: 1.44

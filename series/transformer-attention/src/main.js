@@ -13,15 +13,12 @@ const currentTimeEl = document.querySelector('#time-current');
 const totalTimeEl = document.querySelector('#time-total');
 const reviewText = document.querySelector('#review-transcript');
 const audioState = document.querySelector('#audio-state');
-const statusLabel = document.querySelector('#status-label');
-const frameCounter = document.querySelector('#frame-counter');
 const playbackRate = document.querySelector('#playback-rate');
 
 const FPS = 24;
 const plannedChapterSeconds = [45, 60, 55, 105, 50, 55, 80, 85];
 const plannedTotal = plannedChapterSeconds.reduce((a, b) => a + b, 0);
 let narrationTiming = null;
-const chapterNames = ['CONTEXT WINDOW · COREFERENCE', 'TOKENS · EMBEDDINGS · POSITION', 'SELF-ATTENTION · CONTEXT MIX', 'QUERY · KEY · VALUE', 'MULTI-HEAD ATTENTION', 'TRANSFORMER BLOCK · LAYERS', 'CAUSAL MASK · NEXT TOKEN', 'CONTEXT → NEXT-TOKEN SCORES'];
 const transcript = [
   'Imagine asking an AI to plan a nature weekend in Taipei, within an eight-thousand-dollar budget. In its answer, it may mention Maokong, a shaded trail, or a short hike. Now consider this sentence: “The trail near Maokong is shaded. It is short, too.” What information helps the model connect “it” with the trail? The answer is not one magic connection. It is a series of computations that lets each token build a representation using its surrounding context. A key mechanism is self-attention. And self-attention lives inside a larger architecture called the Transformer.',
   'Before attention, the text is split into tokens. A tokenizer assigns each token an ID, and the model looks up a learned numerical representation for it. That representation is called an embedding. An embedding is not a tiny definition stored inside a word. It is a vector: a list of numbers the network can work with. Order matters, too. “The trail is near Maokong” and “Maokong is near the trail” use similar words, but they say different things. A Transformer therefore needs information about where tokens occur in the sequence. Different architectures encode position in different ways. Now we can look at the sentence as a row of token representations, each carrying content and position information into the next calculation.',
@@ -65,7 +62,17 @@ function makeTokenRow(id, tokens) {
   });
 }
 const attentionTokens = makeTokenRow('attention-token-row', ['The', 'trail', 'near', 'Maokong', 'is', 'shaded.', 'It', 'is', 'short,', 'too.']);
-const qkvOriginTokens = makeTokenRow('qkv-origin', ['The', 'trail', 'near', 'Maokong', 'is', 'shaded.', 'It']);
+const qkvOriginTokens = makeTokenRow('qkv-origin', ['The', 'trail', 'near', 'Maokong', 'is', 'shaded.', 'It', 'is', 'short,', 'too.']);
+const qkvFocusText = document.createElement('span');
+qkvFocusText.className = 'qkv-token-word';
+qkvFocusText.textContent = 'It';
+qkvOriginTokens[6].replaceChildren(qkvFocusText);
+const qkvFeatureVector = document.createElement('span');
+qkvFeatureVector.className = 'qkv-feature-vector';
+const qkvFeatureValues = [.36,.82,.52,.7,.28,.9,.43,.64];
+qkvFeatureValues.forEach(value=>{const bar=document.createElement('i');bar.style.setProperty('--feature-height',`${20+value*68}%`);qkvFeatureVector.append(bar);});
+qkvOriginTokens[6].append(qkvFeatureVector);
+const valueColors = ['#91f2d2','#72c8ff','#ba9aff','#ffc776'];
 
 function makeBars(id, labels, kind) {
   const root = document.getElementById(id);
@@ -81,13 +88,19 @@ function makeBars(id, labels, kind) {
 }
 const qRows = makeBars('q-stack', ['qᵢ', 'projection'], 'q');
 const keyRows = makeBars('k-stack', ['k₁ · trail', 'k₂ · near', 'k₃ · shaded', 'k₄ · Maokong'], 'k');
-const valueRows = makeBars('v-stack', ['v₁', 'v₂', 'v₃', 'v₄'], 'v');
+const valueRows = makeBars('v-stack', ['v₁ · trail', 'v₂ · near', 'v₃ · shaded', 'v₄ · Maokong'], 'v');
 const scoreRoot = document.getElementById('score-stack');
 const scoreRows = ['trail', 'near', 'shaded', 'Maokong'].map((label, i) => {
-  const row = document.createElement('div'); row.className = 'score-row';
+  const row = document.createElement('div'); row.className = 'score-row'; row.dataset.index=String(i);
   row.innerHTML = `<span>${label}</span><div class="score-track"><div class="score-fill"></div></div><b class="score-value">0.00</b>`;
+  row.style.setProperty('--candidate-color',valueColors[i]);
   scoreRoot.append(row); return row;
 });
+const weightSegments=[...document.querySelectorAll('#weight-total i')];
+const attentionWeights=[.64,.16,.12,.08];
+weightSegments.forEach((segment,i)=>{segment.style.flexBasis=`${attentionWeights[i]*100}%`;segment.style.background=valueColors[i];});
+valueRows.forEach((row,i)=>{row.style.setProperty('--candidate-color',valueColors[i]);row.querySelector('i').style.background=valueColors[i];});
+keyRows.forEach((row,i)=>row.style.setProperty('--candidate-color',valueColors[i]));
 const qkvPaths = document.getElementById('qkv-paths');
 for (let i = 0; i < 11; i++) {
   const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -224,12 +237,12 @@ for (let i=0;i<targetIndices.length;i++) {
 
 // A seeded, absolute-time particle field gives the typography a quiet 3D depth layer.
 const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#webgl'), alpha: true, antialias: true, powerPreference: 'high-performance' });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
 renderer.setClearColor(0x000000, 0);
 const threeScene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(44, 16/9, .1, 120);
 camera.position.set(0, 0, 30);
-const count = 620;
+const count = 180;
 const basePositions = new Float32Array(count * 3);
 const phases = new Float32Array(count);
 let seed = 91731;
@@ -243,15 +256,15 @@ for(let i=0;i<count;i++){
 }
 const pointGeometry=new THREE.BufferGeometry();
 pointGeometry.setAttribute('position',new THREE.BufferAttribute(new Float32Array(basePositions),3));
-const pointMaterial=new THREE.PointsMaterial({color:0x80c6d1,size:.085,transparent:true,opacity:.56,depthWrite:false,sizeAttenuation:true});
+const pointMaterial=new THREE.PointsMaterial({color:0x80c6d1,size:.075,transparent:true,opacity:.14,depthWrite:false,sizeAttenuation:true});
 const particles=new THREE.Points(pointGeometry,pointMaterial);threeScene.add(particles);
 const linePositions=[];
-for(let i=0;i<88;i++){
+for(let i=0;i<24;i++){
   const a=(i*7)%count,b=(a+17+(i%11)*3)%count;
   linePositions.push(basePositions[a*3],basePositions[a*3+1],basePositions[a*3+2],basePositions[b*3],basePositions[b*3+1],basePositions[b*3+2]);
 }
 const lineGeometry=new THREE.BufferGeometry();lineGeometry.setAttribute('position',new THREE.Float32BufferAttribute(linePositions,3));
-const lines=new THREE.LineSegments(lineGeometry,new THREE.LineBasicMaterial({color:0x467c89,transparent:true,opacity:.16}));threeScene.add(lines);
+const lines=new THREE.LineSegments(lineGeometry,new THREE.LineBasicMaterial({color:0x467c89,transparent:true,opacity:.035}));threeScene.add(lines);
 const ambient=new THREE.AmbientLight(0xffffff,.8);threeScene.add(ambient);
 function resizeRenderer(){const r=film.getBoundingClientRect();renderer.setSize(Math.max(1,Math.round(r.width)),Math.max(1,Math.round(r.height)),false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix();}
 new ResizeObserver(resizeRenderer).observe(film);resizeRenderer();
@@ -442,35 +455,166 @@ function renderAttention(p){
 function renderQKV(p){
   const sec=sceneSeconds(3,p);
   qkvTimeline.seek(sec);
-  const projection=smooth(.2,1.4,sec),compare=smooth(39.6,40.4,sec)*(1-smooth(46.8,48.2,sec)),normalize=smooth(42.1,47.4,sec),mix=smooth(50.5,54.0,sec),vectorFlow=smooth(20.8,22.2,sec)*(1-smooth(37.6,39.6,sec));
-  const weights=[.64,.16,.12,.08],rawScores=[2.079,.693,.405,0],rawWidths=[100,33,19,0],stageLabel=document.getElementById('qkv-stage-label');
-  const title=sec<7.6?'THREE LEARNED PROJECTIONS':sec<21.3?'QUERY · KEY · VALUE':sec<33.1?'VECTORS, NOT WORD LABELS':sec<42.1?'QUERY × KEYS → SCORES':sec<47.4?'SOFTMAX TURNS SCORES INTO WEIGHTS':sec<50.5?'WEIGHTS SUM TO ONE':sec<64.7?'WEIGHTED VALUES → NEW CONTEXT':'COMPARE → NORMALIZE → MIX';
-  stageLabel.textContent=title;
-  document.getElementById('score-mode').textContent=sec<42.1?'raw match scores':sec<47.4?'softmax distribution':'normalized weights · sum to one';
-  qkvOriginTokens.forEach((token,i)=>{const reveal=smooth(.12,1.05,sec),focus=i===6;token.classList.toggle('focus',focus&&sec>.65);token.style.opacity=String(reveal*(focus?1:.62+.38*projection));token.style.transform=`translateY(${(1-reveal)*.28}cqw) scale(${focus?1+.025*Math.sin(sec*7.2):1})`;});
-  const rowIn=smooth(.45,1.35,sec);
-  qRows.forEach((row,i)=>{const beat=pulse(sec,.72,i*.13),bar=row.querySelector('i'),base=Number(bar.dataset.baseWidth);const width=Math.max(12,Math.min(96,base+vectorFlow*8*Math.sin(sec*6.6+i*1.4)));bar.style.width=`${width}%`;row.style.opacity=String(rowIn);row.style.transform=`translateX(${(1-rowIn)*.28}cqw)`;bar.style.boxShadow=`0 0 ${(.2+.85*beat*projection+vectorFlow*.45)}cqw #72c8ff99`;bar.style.filter=`brightness(${.82+.4*beat*projection+vectorFlow*.22*Math.sin(sec*6.6+i)})`;});
-  const compareStart=39.9;
-  keyRows.forEach((row,i)=>{const sweep=Math.exp(-Math.pow((sec-(compareStart+i*.72))/.2,2))*compare,bar=row.querySelector('i'),base=Number(bar.dataset.baseWidth),width=Math.max(12,Math.min(96,base+vectorFlow*8*Math.sin(sec*6.6+i*1.1)+sweep*5));bar.style.width=`${width}%`;row.style.opacity=String(.42+.58*Math.max(projection,compare));row.style.filter=`brightness(${.82+.85*sweep+vectorFlow*.15*Math.sin(sec*6.6+i)})`;row.style.transform=`translateX(${sweep*.52}cqw) scale(${1+sweep*.035})`;bar.style.boxShadow=`0 0 ${(.12+1.3*sweep+vectorFlow*.35)}cqw #ba9affcc`;});
-  scoreRows.forEach((row,i)=>{const reveal=smooth(39.8+i*.35,40.15+i*.35,sec),value=weights[i],width=rawWidths[i]+(value*100-rawWidths[i])*normalize,fill=row.querySelector('.score-fill'),step=Math.exp(-Math.pow((sec-(41.2+i*.42))/.2,2));fill.style.width=`${width*reveal}%`;fill.style.opacity=String(reveal);fill.style.boxShadow=`0 0 ${(.2+step*.95+normalize*.5)}cqw #91f2d2bb`;row.querySelector('.score-value').textContent=sec<42.1?rawScores[i].toFixed(1):`${Math.round(value*100)}%`;row.style.opacity=String(reveal);row.style.transform=`translateX(${(1-reveal)*.7}cqw) scale(${1+step*.025})`;});
-  valueRows.forEach((row,i)=>{const value=weights[i],beat=pulse(sec,.62,-i*.12),bar=row.querySelector('i'),base=Number(bar.dataset.baseWidth),vectorWidth=base+vectorFlow*8*Math.sin(sec*6.6+i*1.3),weightedWidth=24+value*68;row.style.opacity=String(.34+.66*mix*(.35+value));bar.style.width=`${(1-mix)*vectorWidth+mix*weightedWidth}%`;bar.style.boxShadow=`0 0 ${(.15+value*mix*1.5*beat+vectorFlow*.25)}cqw #ffc776bb`;bar.style.filter=`brightness(${.75+value*.7+mix*beat*.35+vectorFlow*.12*Math.sin(sec*6.6+i)})`;});
-  document.querySelector('.sum-label').style.opacity=String(smooth(47.1,48.5,sec));
-  mixedVectorBars.forEach((bar,i)=>{const pulseValue=.88+.12*Math.sin(sec*5.2+i*1.1);bar.style.transform=`scaleY(${mix*mixedVectorValues[i]*pulseValue})`;bar.style.opacity=String(mix);});
-  const signal=document.getElementById('mix-signal'),output=document.querySelector('.mix-output');signal.style.transform=`translateX(${mix*1.4}cqw) scale(${.55+mix*.7})`;output.style.boxShadow=`0 0 ${mix*1.5}cqw #91f2d255,0 .8cqw 2cqw #0005`;document.getElementById('mix-note').style.opacity=String(smooth(59.5,62.0,sec));
-  document.querySelectorAll('.mechanism-steps [data-step]').forEach((e,i)=>{const active=sec>=77.15?((sec<77.9&&i===0)||(sec>=77.9&&sec<78.55&&i===1)||(sec>=78.55&&i===2)):(i===0?sec>=39.6&&sec<42.1:i===1?sec>=42.1&&sec<50.5:i===2?sec>=50.5&&sec<77.15:false);e.classList.toggle('active',active);});
 
-  // Each bright tracer is recalculated from real DOM anchors after the timeline has moved the same cards.
+  const projection=smooth(2.3,3.25,sec);
+  const compare=smooth(33.6,34.2,sec)*(1-smooth(40.86,42.0,sec));
+  const scoreReveal=smooth(39.32,39.72,sec);
+  const normalize=smooth(43.54,45.9,sec);
+  const weightsReveal=smooth(46.64,47.36,sec);
+  const mix=smooth(50.5,52.12,sec);
+  const trailMix=smooth(55.9,57.12,sec);
+  const newVector=smooth(58.16,59.2,sec);
+  const formula=smooth(64.38,64.9,sec);
+  const weights=attentionWeights;
+  const rawScores=[2.079,.693,.405,0];
+  const rawWidths=[100,33,19,0];
+  const vectorFlow=smooth(2.3,3.25,sec)*(1-smooth(32.45,33.15,sec));
+
+  qkvOriginTokens.forEach((token,i)=>{
+    const focus=i===6;
+    const reveal=smooth(.4,.95,sec);
+    token.classList.toggle('focus',focus&&sec>=2.3);
+    token.style.opacity=String(reveal*(focus?1:.62+.38*projection));
+    token.style.transform=`translateY(${(1-reveal)*.22}cqw) scale(${focus?1+.018*Math.sin(sec*5.8):1})`;
+  });
+
+  const roleCue=[smooth(11.4,11.72,sec)*(1-smooth(14.5,14.82,sec)),smooth(14.74,15.05,sec)*(1-smooth(17.9,18.2,sec)),smooth(18.06,18.38,sec)*(1-smooth(20.35,20.66,sec))];
+  const projColors=['#72c8ff','#ba9aff','#ffc776'];
+  const projCards=[...document.querySelectorAll('.q-col,.k-col,.v-col')];
+  const projTitles=projCards.map(card=>card.querySelector('.projection-title'));
+  const titleTimes=[6.7,7.68,8.64];
+  projCards.forEach((card,i)=>{
+    const signal=.5+.5*Math.sin(sec*5.2-i*1.35);
+    const titleReveal=smooth(titleTimes[i],titleTimes[i]+.24,sec);
+    projTitles[i].style.opacity=String(titleReveal);
+    card.style.filter=`brightness(${.92+roleCue[i]*.26+vectorFlow*signal*.09})`;
+    card.style.boxShadow=`0 0 ${(roleCue[i]*.75+vectorFlow*.18)}cqw ${projColors[i]}44,0 .9cqw 2.3cqw #0007`;
+  });
+  qRows.forEach(row=>{row.querySelector('em').style.opacity=String(smooth(6.7,6.95,sec));});
+  keyRows.forEach((row,i)=>{
+    const symbolic=sec>=22.22&&sec<32.92;
+    row.querySelector('em').textContent=symbolic?`k${['₁','₂','₃','₄'][i]}`:`k${['₁','₂','₃','₄'][i]} · ${['trail','near','shaded','Maokong'][i]}`;
+    row.querySelector('em').style.opacity=String(smooth(14.74,15.0,sec));
+  });
+  valueRows.forEach((row,i)=>{
+    const symbolic=sec>=22.22&&sec<57.12;
+    row.querySelector('em').textContent=symbolic?`v${['₁','₂','₃','₄'][i]}`:`v${['₁','₂','₃','₄'][i]} · ${['trail','near','shaded','Maokong'][i]}`;
+    row.querySelector('em').style.opacity=String(smooth(18.06,18.32,sec));
+  });
+
+  qRows.forEach((row,i)=>{
+    const bar=row.querySelector('i'),base=Number(bar.dataset.baseWidth),wave=Math.sin(sec*4.6+i*1.2);
+    bar.style.width=`${Math.max(12,Math.min(96,base+vectorFlow*4.5*wave))}%`;
+    bar.style.filter=`brightness(${.85+projection*.2+vectorFlow*.12*(.5+.5*wave)})`;
+    bar.style.boxShadow=`0 0 ${(.12+projection*.42+vectorFlow*.24)}cqw #72c8ff88`;
+  });
+  keyRows.forEach((row,i)=>{
+  const scan=phase(sec-34.92,1/3.2),offset=(scan-i*.25+1)%1;
+    const sweep=smooth(0,.045,offset)*(1-smooth(.18,.32,offset))*compare;
+    const bar=row.querySelector('i'),base=Number(bar.dataset.baseWidth),wave=Math.sin(sec*4.3+i*1.1);
+    row.style.opacity=String(.4+.6*Math.max(projection,compare));
+    row.style.filter=`brightness(${.82+sweep*.9+vectorFlow*.08})`;
+    row.style.transform=`translateX(${sweep*.42}cqw) scale(${1+sweep*.026})`;
+    bar.style.width=`${Math.max(12,Math.min(96,base+vectorFlow*3.5*wave))}%`;
+    bar.style.background=`linear-gradient(90deg,${valueColors[i]}55,${valueColors[i]})`;
+  });
+
+  scoreRows.forEach((row,i)=>{
+    const value=weights[i],step=Math.exp(-Math.pow((sec-(41.32+i*.32))/.24,2));
+    const raw=rawWidths[i]*(1-normalize),normalized=value*100*normalize;
+    const width=Math.max(0,raw+normalized);
+    const fill=row.querySelector('.score-fill');
+    fill.style.width=`${width*scoreReveal}%`;
+    fill.style.opacity=String(scoreReveal);
+    fill.style.background=`linear-gradient(90deg,${valueColors[i]}88,${valueColors[i]})`;
+    fill.style.boxShadow=`0 0 ${(.18+step*.72+normalize*.35)}cqw ${valueColors[i]}88`;
+    row.querySelector('.score-value').textContent=sec<45.9?rawScores[i].toFixed(1):`${Math.round(value*100)}%`;
+    row.style.opacity=String(scoreReveal);
+    row.style.filter=`brightness(${.9+step*.42+normalize*.12})`;
+    row.style.transform=`translateX(${(1-scoreReveal)*.45}cqw) scale(${1+step*.025})`;
+  });
+
+  weightSegments.forEach((segment,i)=>{
+    segment.style.flexBasis=`${weights[i]*100*weightsReveal}%`;
+    segment.style.opacity=String(weightsReveal);
+    segment.style.boxShadow=`0 0 ${weightsReveal*.42}cqw ${valueColors[i]}99`;
+  });
+  const totalLabel=document.getElementById('weight-total-label');
+  if(totalLabel)totalLabel.style.opacity=String(weightsReveal);
+  const scoreMode=document.getElementById('score-mode');
+  if(scoreMode)scoreMode.textContent=sec<43.54?'example match scores':sec<46.64?'softmax → example weights':'example weights';
+
+  valueRows.forEach((row,i)=>{
+    const value=weights[i],beat=.5+.5*Math.sin(sec*5.1-i*.9),bar=row.querySelector('i');
+    const base=Number(bar.dataset.baseWidth),weightedWidth=20+value*76;
+    const width=base*(1-mix)+weightedWidth*mix;
+    row.style.opacity=String(.38+.62*Math.max(projection,trailMix*(.35+value)));
+    row.style.filter=`brightness(${.8+trailMix*(.18+value*.48)+beat*mix*.12})`;
+    bar.style.width=`${width}%`;
+    bar.style.background=`linear-gradient(90deg,${valueColors[i]}66,${valueColors[i]})`;
+    bar.style.boxShadow=`0 0 ${(.12+trailMix*value*.95+mix*beat*.18)}cqw ${valueColors[i]}99`;
+  });
+  document.querySelector('.sum-label').style.opacity=String(weightsReveal);
+  mixedVectorBars.forEach((bar,i)=>{
+    const pulseValue=.86+.14*Math.sin(sec*4.2+i*.85);
+    bar.style.transform=`scaleY(${newVector*mixedVectorValues[i]*pulseValue})`;
+    bar.style.opacity=String(newVector);
+  });
+  const output=document.querySelector('.mix-output');
+  const signal=document.getElementById('mix-signal');
+  signal.style.transform=`translateX(${trailMix*.72}cqw) scale(${.52+trailMix*.58})`;
+  output.style.boxShadow=`0 0 ${(trailMix*1.0)}cqw #91f2d244,0 .8cqw 2cqw #0005`;
+  const outputLabel=document.getElementById('mix-output-label');
+  if(outputLabel)outputLabel.textContent=sec>=57.5?'new contextual vector':'combine information';
+  const notes=document.querySelectorAll('.mix-note span');
+  if(notes[0])notes[0].style.opacity=String(smooth(60.48,60.72,sec)*(1-smooth(61.65,61.85,sec)));
+  if(notes[1])notes[1].style.opacity=String(smooth(62.06,62.35,sec));
+
+  const formulaParts=document.querySelectorAll('#formula-panel [data-formula-part]');
+  const formulaWindows={compare:[67.02,69.0],scale:[67.02,69.0],normalize:[69.14,71.55],mix:[71.88,73.22]};
+  formulaParts.forEach(el=>{
+    const [start,end]=formulaWindows[el.dataset.formulaPart]||[64.38,73.22];
+    const active=sec>=start&&sec<=end;
+    el.classList.toggle('is-active',active);
+    el.style.opacity=String(formula*(el.dataset.formulaPart==='compare'||el.dataset.formulaPart==='scale'||el.dataset.formulaPart==='normalize'||el.dataset.formulaPart==='mix'?1:.6));
+  });
+  document.querySelectorAll('.mechanism-steps [data-step]').forEach((el,i)=>{
+    const active=sec>=76.82?((i===0&&sec<77.74)||(i===1&&sec>=77.74&&sec<78.78)||(i===2&&sec>=78.78)):(i===0?sec>=32.92&&sec<40.86:i===1?sec>=40.86&&sec<49.96:i===2?sec>=49.96&&sec<63.68:false);
+    el.classList.toggle('active',active);
+  });
+
+  // Signal paths are tied to the actual cards and candidate rows after each deterministic reflow.
   const svg=document.querySelector('.qkv-lines'),svgRect=svg.getBoundingClientRect(),paths=[...qkvPaths.querySelectorAll('path')];
   const anchor=(el,x=.5,y=.5)=>{const r=el.getBoundingClientRect();return{x:(r.left+r.width*x-svgRect.left)/svgRect.width*1200,y:(r.top+r.height*y-svgRect.top)/svgRect.height*675};};
-  const curve=(path,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,bend=Math.max(18,Math.min(88,Math.abs(dx)*.16+Math.abs(dy)*.12));path.setAttribute('d',`M ${a.x.toFixed(1)} ${a.y.toFixed(1)} C ${(a.x+dx*.38).toFixed(1)} ${(a.y+Math.sign(dy||1)*bend).toFixed(1)}, ${(b.x-dx*.38).toFixed(1)} ${(b.y-Math.sign(dy||1)*bend).toFixed(1)}, ${b.x.toFixed(1)} ${b.y.toFixed(1)}`);};
-  const panels=[...document.querySelectorAll('.qkv-columns>div')],titleOf=panel=>panel.querySelector('.projection-title');
-  const projectionTargets=[titleOf(panels[0]),titleOf(panels[1]),titleOf(panels[3])],origin=anchor(qkvOriginTokens[6],.5,.92),projectionStrength=projection*(1-smooth(31.8,33.4,sec)*.82);
-  const projectionColors=['#72c8ff','#ba9aff','#ffc776'];
-  for(let i=0;i<3;i++){const path=paths[i],dot=qkvPulseDots[i];curve(path,origin,anchor(projectionTargets[i],.5,.04));path.style.stroke=projectionColors[i];path.style.opacity=String(projectionStrength*.52);path.style.strokeDasharray='none';const len=path.getTotalLength(),pt=path.getPointAtLength(len*phase(sec,.72,i*.19));dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));dot.style.opacity=String(projectionStrength*(.12+.88*pulse(sec,.72,i*.17)));dot.setAttribute('r',String(4.5+2.2*pulse(sec,.72,i*.14)));}
-  const queryAnchor=anchor(qRows[0].querySelector('i'),.98,.5),comparisonStrength=compare;
-  for(let i=0;i<4;i++){const index=i+3,path=paths[index],dot=qkvPulseDots[index],target=anchor(keyRows[i],.04,.5);curve(path,queryAnchor,target);path.style.stroke='#a887ff';path.style.opacity=String(comparisonStrength*(.14+.38*(i===0?1:.45)));path.style.strokeDasharray='none';const len=path.getTotalLength(),pt=path.getPointAtLength(len*phase(sec,.56,i*.13));dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));dot.style.opacity=String(comparisonStrength*(.18+.82*pulse(sec,.56,i*.13)));dot.setAttribute('r',String(3.8+1.8*pulse(sec,.56,i*.13)));}
-  const outputRect=output.getBoundingClientRect(),outputTarget={x:(outputRect.left-svgRect.left)/svgRect.width*1200,y:(outputRect.top+outputRect.height*.55-svgRect.top)/svgRect.height*675};
-  for(let i=0;i<4;i++){const index=i+7,path=paths[index],dot=qkvPulseDots[index],source=anchor(valueRows[i].querySelector('i'),.98,.5);curve(path,source,outputTarget);path.style.stroke='#ffc776';path.style.opacity=String(mix*(.1+weights[i]*1.2));path.style.strokeDasharray='none';const len=path.getTotalLength(),pt=path.getPointAtLength(len*phase(sec,.48,i*.11));dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));dot.style.opacity=String(mix*(.12+weights[i]*1.55));dot.setAttribute('r',String(3.6+weights[i]*5.2));}
+  const curve=(path,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,bend=Math.max(18,Math.min(82,Math.abs(dx)*.15+Math.abs(dy)*.11));path.setAttribute('d',`M ${a.x.toFixed(1)} ${a.y.toFixed(1)} C ${(a.x+dx*.38).toFixed(1)} ${(a.y+Math.sign(dy||1)*bend).toFixed(1)}, ${(b.x-dx*.38).toFixed(1)} ${(b.y-Math.sign(dy||1)*bend).toFixed(1)}, ${b.x.toFixed(1)} ${b.y.toFixed(1)}`);};
+  const projectionTargets=[qRows[0],keyRows[0],valueRows[0]];
+  const origin=anchor(qkvOriginTokens[6],.5,.92);
+  const projectionStrength=projection*(1-smooth(32.45,33.2,sec));
+  for(let i=0;i<3;i++){
+    const path=paths[i],dot=qkvPulseDots[i];
+    curve(path,origin,anchor(projectionTargets[i],.1,.5));
+    path.style.stroke=projColors[i];path.style.opacity=String(projectionStrength*.46);path.style.strokeDasharray='none';
+    const len=path.getTotalLength(),pt=path.getPointAtLength(len*phase(sec,.9,i*.23));
+    dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));
+    dot.style.opacity=String(projectionStrength*(.08+.92*(.5+.5*Math.sin(sec*6.2+i))));
+    dot.setAttribute('r',String(4.2+1.8*(.5+.5*Math.sin(sec*6+i))));
+  }
+  const queryAnchor=anchor(qRows[0].querySelector('i'),.98,.5);
+  for(let i=0;i<4;i++){
+    const index=i+3,path=paths[index],dot=qkvPulseDots[index],target=anchor(keyRows[i],.04,.5);
+    curve(path,queryAnchor,target);path.style.stroke=valueColors[i];path.style.opacity=String(compare*(i===0?.58:.3));path.style.strokeDasharray='none';
+    const len=path.getTotalLength(),pt=path.getPointAtLength(len*phase(sec,.72,i*.19));
+    dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));
+    dot.style.opacity=String(compare*(i===0?.92:.58));dot.setAttribute('r',String(i===0?5.2:4.1));
+  }
+  const outputRect=output.getBoundingClientRect(),outputTarget={x:(outputRect.left+outputRect.width*.05-svgRect.left)/svgRect.width*1200,y:(outputRect.top+outputRect.height*.42-svgRect.top)/svgRect.height*675};
+  for(let i=0;i<4;i++){
+    const index=i+7,path=paths[index],dot=qkvPulseDots[index],source=anchor(valueRows[i].querySelector('i'),.98,.5);
+    curve(path,source,outputTarget);path.style.stroke=valueColors[i];path.style.opacity=String(mix*(.12+weights[i]*.9));path.style.strokeDasharray='none';
+    const len=path.getTotalLength(),pt=path.getPointAtLength(len*phase(sec,.86,i*.17));
+    dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));
+    dot.style.opacity=String(mix*(.1+weights[i]*1.3));dot.setAttribute('r',String(3.6+weights[i]*4.2));
+  }
 }
 function renderHeads(p){
   const sec=sceneSeconds(4,p);
@@ -514,11 +658,11 @@ function renderAt(seconds){
   renderContinuityHandoff(t,idx,p);
   particles.rotation.y=Math.sin(t*.56)*.12;particles.rotation.x=Math.sin(t*.72)*.075;lines.rotation.y=-Math.sin(t*.48)*.09;
   const pos=pointGeometry.attributes.position.array;
-  const activeEnergy=.58+.3*Math.sin(t*1.15);
+  const activeEnergy=.12+.045*Math.sin(t*.8);
   for(let i=0;i<count;i++){pos[i*3]=basePositions[i*3]+Math.sin(t*2.2+phases[i])*.22;pos[i*3+1]=basePositions[i*3+1]+Math.cos(t*1.8+phases[i]*1.7)*.18;pos[i*3+2]=basePositions[i*3+2]+Math.sin(t*1.35+phases[i])*.17;}
   pointGeometry.attributes.position.needsUpdate=true;pointMaterial.opacity=activeEnergy;
   renderer.render(threeScene,camera);
-  const frame=Math.round(t*FPS);frameCounter.textContent=fmt(t);statusLabel.textContent=chapterNames[idx];
+  const frame=Math.round(t*FPS);
   if(idx!==lastChapter){chapterButtons.forEach((b,i)=>b.classList.toggle('active',i===idx));reviewText.textContent=transcript[idx];lastChapter=idx;}
   currentTimeEl.textContent=fmt(t);if(!seekBar.matches(':active'))seekBar.value=String(duration?t/duration*100:0);
   return {time:t,frame,chapter:idx,progress:p};

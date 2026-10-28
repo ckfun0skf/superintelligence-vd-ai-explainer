@@ -10,20 +10,11 @@
   </head>
   <body>
     <main class="page">
-      <header class="page-heading">
-        <a class="back-link" href="../../">← From Prompt to Action</a>
-        <p class="series-label">AI UNDER THE HOOD · DEEP DIVE 01</p>
-        <h1>How Transformers Work</h1>
-        <p class="subtitle">Self-attention, Query · Key · Value, and context</p>
-      </header>
-
       <section class="player-shell" aria-label="Transformer deep-dive video preview">
         <div id="film" class="film" role="img" aria-label="Animated Transformer explainer frame">
           <canvas id="webgl" aria-hidden="true"></canvas>
           <div class="film-vignette" aria-hidden="true"></div>
           <div class="film-grain" aria-hidden="true"></div>
-          <div class="top-status"><span class="status-dot"></span><span id="status-label">CONTEXT WINDOW · READY</span><span class="frame-counter" id="frame-counter">00:00</span></div>
-
           <section class="scene scene-hook" data-scene="0" aria-hidden="true">
             <div class="chat-app">
               <div class="chat-top"><span class="app-mark">✳</span><span>Assistant</span><span class="chat-menu">···</span></div>
@@ -63,18 +54,17 @@
           </section>
 
           <section class="scene scene-qkv" data-scene="3" aria-hidden="true">
-            <div class="qkv-head"><span class="micro-label" id="qkv-stage-label">LEARNED PROJECTIONS · Q / K / V</span><div class="qkv-focus">Focus position: <b>“it”</b></div></div>
             <div class="qkv-origin" id="qkv-origin"></div>
             <svg class="qkv-lines" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><g id="qkv-paths"></g></svg>
             <div class="qkv-columns" id="qkv-columns">
-              <div class="projection-col q-col"><div class="projection-title">QUERY <small>what this position matches against</small></div><div class="projection-stack" id="q-stack"></div></div>
-              <div class="projection-col k-col"><div class="projection-title">KEYS <small>available positions to compare</small></div><div class="projection-stack" id="k-stack"></div></div>
-              <div class="score-col"><div class="projection-title">SCORES → SOFTMAX <small id="score-mode">raw comparisons</small></div><div class="score-stack" id="score-stack"></div><div class="sum-label">weights sum to 1</div></div>
-              <div class="projection-col v-col"><div class="projection-title">VALUES <small>information to be mixed</small></div><div class="projection-stack" id="v-stack"></div></div>
+              <div class="projection-col q-col"><div class="projection-title">QUERY <small>what “it” is looking for</small></div><div class="projection-stack" id="q-stack"></div></div>
+              <div class="projection-col k-col"><div class="projection-title">KEYS <small>what each position offers</small></div><div class="projection-stack" id="k-stack"></div></div>
+              <div class="score-col"><div class="projection-title">SCORES <small id="score-mode">how well they match</small></div><div class="score-stack" id="score-stack"></div><div class="weight-total" id="weight-total" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="sum-label" id="weight-total-label">ALL AVAILABLE = 100%</div></div>
+              <div class="projection-col v-col"><div class="projection-title">VALUES <small>information to mix in</small></div><div class="projection-stack" id="v-stack"></div></div>
             </div>
-            <div class="mix-output"><span>WEIGHTED MIX</span><div class="mix-signal" id="mix-signal"></div><div class="mix-vector" id="mix-vector" aria-hidden="true"></div><strong>new contextual vector</strong><small class="mix-note" id="mix-note">NOT A COPIED WORD · NOT AN ANSWER</small></div>
-            <div class="formula-panel" id="formula-panel"><span>Scaled dot-product attention</span><b>softmax ( QK<sup>T</sup> / √d<sub>k</sub> ) V</b></div>
-            <div class="mechanism-steps"><span data-step="0">COMPARE</span><i></i><span data-step="1">NORMALIZE</span><i></i><span data-step="2">MIX</span></div>
+            <div class="mix-output"><span id="mix-title">WEIGHTED MIX</span><div class="mix-signal" id="mix-signal"></div><div class="mix-vector" id="mix-vector" aria-hidden="true"></div><strong id="mix-output-label">combine information</strong><small class="mix-note" id="mix-note"><span id="mix-not-copied">not a copied word</span><span id="mix-not-answer">not the final answer</span></small></div>
+            <div class="formula-panel" id="formula-panel"><b><span data-formula-part="normalize">softmax</span><span class="formula-paren">(</span><span data-formula-part="compare">QK<sup>T</sup></span><span data-formula-part="scale">/ √d<sub>k</sub></span><span class="formula-paren">)</span><span data-formula-part="mix">V</span></b></div>
+            <div class="mechanism-steps"><span data-step="0">⌕ COMPARE</span><i></i><span data-step="1">↗ NORMALIZE</span><i></i><span data-step="2">⊕ MIX</span></div>
           </section>
 
           <section class="scene scene-heads" data-scene="4" aria-hidden="true">
