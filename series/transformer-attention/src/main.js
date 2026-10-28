@@ -462,6 +462,7 @@ function renderQKV(p){
   const normalize=smooth(43.54,45.9,sec);
   const weightsReveal=smooth(46.64,47.36,sec);
   const mix=smooth(50.5,52.12,sec);
+  const mixPathReveal=smooth(50.5,51.05,sec);
   const trailMix=smooth(55.9,57.12,sec);
   const newVector=smooth(58.16,59.2,sec);
   const formula=smooth(64.38,64.9,sec);
@@ -610,10 +611,10 @@ function renderQKV(p){
   const outputRect=output.getBoundingClientRect(),outputTarget={x:(outputRect.left+outputRect.width*.05-svgRect.left)/svgRect.width*1200,y:(outputRect.top+outputRect.height*.42-svgRect.top)/svgRect.height*675};
   for(let i=0;i<4;i++){
     const index=i+7,path=paths[index],dot=qkvPulseDots[index],source=anchor(valueRows[i].querySelector('i'),.98,.5);
-    curve(path,source,outputTarget);path.style.stroke=valueColors[i];path.style.opacity=String(mix*(.12+weights[i]*.9));path.style.strokeDasharray='none';
+    curve(path,source,outputTarget);path.style.stroke=valueColors[i];path.style.opacity=String(mixPathReveal*(.12+weights[i]*.9));path.style.strokeDasharray='none';
     const len=path.getTotalLength(),pt=path.getPointAtLength(len*phase(sec,.86,i*.17));
     dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));
-    dot.style.opacity=String(mix*(.1+weights[i]*1.3));dot.setAttribute('r',String(3.6+weights[i]*4.2));
+    dot.style.opacity=String(mixPathReveal*(.1+weights[i]*1.3));dot.setAttribute('r',String(3.6+weights[i]*4.2));
   }
 }
 function renderHeads(p){
