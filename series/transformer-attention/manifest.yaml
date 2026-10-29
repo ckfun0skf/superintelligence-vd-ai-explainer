@@ -16,8 +16,8 @@ video:
   export_status: on_hold_for_user_page_qa
   export_script: scripts/render-mp4.py
   final_output: ../../renders/transformer-attention-deep-dive-1080p24.mp4
-  deployed_commit: 9896f76fcd13d6ab954f49c9bdbe3f2b46ea8193
-  pages_workflow_run: 40847637285
+  deployed_commit: 4c03942462206f9f3f9cd3f16f1defde79145c4e
+  pages_workflow_run: 40850276902
   live_preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/series/transformer-attention/
   runtime_seconds: 420.504
   timeline_seconds: 420.48
