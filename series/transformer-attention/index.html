@@ -4,9 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#070b13" />
-    <title>How Transformers Work — Self-Attention, Q/K/V &amp; Context</title>
+    <title>Deep Dive 01: How Transformers Work — Self-Attention, Q/K/V &amp; Context</title>
     <meta name="description" content="A visual deep dive into Transformer self-attention, Query, Key and Value, multi-head attention, causal masking and next-token generation." />
     <link rel="icon" href="../../favicon.svg" />
+  </head>
   </head>
   <body>
     <main class="page">
@@ -64,28 +65,68 @@
             </div>
             <div class="mix-output"><span id="mix-title">WEIGHTED MIX</span><div class="mix-signal" id="mix-signal"></div><div class="mix-vector" id="mix-vector" aria-hidden="true"></div><strong id="mix-output-label">combine information</strong><small class="mix-note" id="mix-note"><span id="mix-not-copied">not a copied word</span><span id="mix-not-answer">not the final answer</span></small></div>
             <div class="formula-panel" id="formula-panel"><b><span data-formula-part="normalize">softmax</span><span class="formula-paren">(</span><span data-formula-part="compare">QK<sup>T</sup></span><span data-formula-part="scale">/ √d<sub>k</sub></span><span class="formula-paren">)</span><span data-formula-part="mix">V</span></b></div>
-            <div class="mechanism-steps"><span data-step="0">⌕ COMPARE</span><i></i><span data-step="1">↗ NORMALIZE</span><i></i><span data-step="2">⊕ MIX</span></div>
+            <div class="mechanism-steps" id="mechanism-steps" aria-label="Illustrative attention calculation">
+              <article class="mechanism-card" data-step="0">
+                <div class="mechanism-card-head"><span class="mechanism-icon">↔</span><div><b>COMPARE</b><small>Does “It” match each available clue?</small></div></div>
+                <div class="mechanism-candidates mechanism-raw">
+                  <div data-candidate="trail"><span>trail</span><i><b style="--bar:100%"></b></i><em>2.1</em></div>
+                  <div data-candidate="near"><span>near</span><i><b style="--bar:33%"></b></i><em>0.7</em></div>
+                  <div data-candidate="shaded"><span>shaded</span><i><b style="--bar:19%"></b></i><em>0.4</em></div>
+                  <div data-candidate="maokong"><span>Maokong</span><i><b style="--bar:0%"></b></i><em>0.0</em></div>
+                </div>
+              </article>
+              <span class="mechanism-connector" data-connector="0" aria-hidden="true"><i></i></span>
+              <article class="mechanism-card" data-step="1">
+                <div class="mechanism-card-head"><span class="mechanism-icon">100%</span><div><b>NORMALIZE</b><small>Turn scores into shares</small></div></div>
+                <div class="mechanism-candidates mechanism-shares">
+                  <div data-candidate="trail"><span>trail</span><i><b style="--bar:64%"></b></i><em>64%</em></div>
+                  <div data-candidate="near"><span>near</span><i><b style="--bar:16%"></b></i><em>16%</em></div>
+                  <div data-candidate="shaded"><span>shaded</span><i><b style="--bar:12%"></b></i><em>12%</em></div>
+                  <div data-candidate="maokong"><span>Maokong</span><i><b style="--bar:8%"></b></i><em>8%</em></div>
+                </div>
+                <div class="mechanism-total"><i></i><i></i><i></i><i></i><b>total = 100%</b></div>
+              </article>
+              <span class="mechanism-connector" data-connector="1" aria-hidden="true"><i></i></span>
+              <article class="mechanism-card" data-step="2">
+                <div class="mechanism-card-head"><span class="mechanism-icon">⇢</span><div><b>MIX</b><small>Weighted clues flow into one result</small></div></div>
+                <div class="mechanism-mix-sources">
+                  <div data-candidate="trail"><span>trail</span><i></i><em>64%</em></div>
+                  <div data-candidate="near"><span>near</span><i></i><em>16%</em></div>
+                  <div data-candidate="shaded"><span>shaded</span><i></i><em>12%</em></div>
+                  <div data-candidate="maokong"><span>Maokong</span><i></i><em>8%</em></div>
+                </div>
+                <div class="mechanism-mix-result"><span>UPDATED “IT”</span><i></i><i></i><i></i><i></i><small>context—not a copied word</small></div>
+              </article>
+              <div class="mechanism-caveat">Illustrative numbers · not measured model outputs</div>
+            </div>
           </section>
 
           <section class="scene scene-heads" data-scene="4" aria-hidden="true">
             <div class="heads-heading"><span class="micro-label">PARALLEL LEARNED VIEWS</span><b>Multi-head attention</b></div>
-            <div class="head-source">same input representations</div>
+            <div class="head-source" id="head-source">
+              <div class="head-source-request"><span class="head-source-label">SAME TAIPEI INPUT</span><span data-prompt="days">two days</span><span data-prompt="place">Taipei</span><span data-prompt="preference">nature-first</span><span data-prompt="budget">$8,000 limit</span></div>
+              <div class="head-source-sentence" aria-label="The trail near Maokong is shaded. It is short, too."><span>The</span><span data-word="trail">trail</span><span>near</span><span data-word="maokong">Maokong</span><span>is</span><span data-word="shaded">shaded.</span><span data-word="it">It</span><span>is</span><span data-word="short">short,</span><span>too.</span></div>
+            </div>
+            <div class="head-single-view" id="head-single-view"><span>ONE LEARNED VIEW</span><div aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
             <div class="head-lanes" id="head-lanes"></div>
-            <svg class="head-merge" viewBox="0 0 1200 530" preserveAspectRatio="none" aria-hidden="true"><path d="M120 85 C520 85 530 260 920 260"/><path d="M120 205 C520 205 530 260 920 260"/><path d="M120 325 C520 325 530 260 920 260"/><path d="M120 445 C520 445 530 260 920 260"/></svg>
-            <div class="heads-output"><div class="heads-combine" id="heads-combine"><i></i><i></i><i></i><i></i></div><span>combined representation</span></div>
-            <div class="schematic-stamp">PATTERNS ARE ILLUSTRATIVE · NO FIXED “HEAD JOBS”</div>
+            <svg class="head-merge" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><path/><path/><path/><path/></svg>
+            <div class="heads-output" id="heads-output"><div class="heads-combine" id="heads-combine"><i></i><i></i><i></i><i></i><i></i><i></i></div><span id="heads-output-label">combined views</span></div>
+            <div class="head-caveat" id="head-caveat">ILLUSTRATIVE PATTERNS · NOT FIXED HEAD JOBS</div>
+            <div class="head-main-idea" id="head-main-idea">NOT ONE HEAD = ONE RULE</div>
+            <div class="schematic-stamp" id="schematic-stamp">same input · parallel views</div>
           </section>
 
           <section class="scene scene-block" data-scene="5" aria-hidden="true">
             <div class="block-heading"><span class="micro-label">ATTENTION IS ONE PART OF THE ARCHITECTURE</span><b>A GPT-style Transformer block</b></div>
             <div class="block-flow">
               <div class="block-token-stream" id="block-token-stream"></div>
+              <svg class="block-flow-web" id="block-flow-web" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><path/><path/><path/><path/><circle/><circle/><circle/><circle/></svg>
               <div class="transformer-stack" id="transformer-stack">
                 <div class="transformer-block block-back"><div class="block-face"><span>SELF-ATTENTION</span><i class="block-nodes"></i></div><div class="block-face"><span>RESIDUAL + NORM</span><i class="residual-loop"></i></div><div class="block-face"><span>FEED-FORWARD · MLP</span><i class="mlp-nodes"></i></div></div>
                 <div class="transformer-block block-middle"><div class="block-face"><span>SELF-ATTENTION</span><i class="block-nodes"></i></div><div class="block-face"><span>RESIDUAL + NORM</span><i class="residual-loop"></i></div><div class="block-face"><span>FEED-FORWARD · MLP</span><i class="mlp-nodes"></i></div></div>
                 <div class="transformer-block block-front"><div class="block-face"><span>SELF-ATTENTION</span><i class="block-nodes"></i></div><div class="block-face"><span>RESIDUAL + NORM</span><i class="residual-loop"></i></div><div class="block-face"><span>FEED-FORWARD · MLP</span><i class="mlp-nodes"></i></div></div>
               </div>
-              <div class="block-explainer" id="block-explainer"><div class="explain-item" data-step="0"><i class="icon-network">↗</i><span>mix across positions</span></div><div class="explain-item" data-step="1"><i class="icon-residual">↺</i><span>preserve a signal path</span></div><div class="explain-item" data-step="2"><i class="icon-mlp">▦</i><span>transform each position</span></div></div>
+              <div class="block-explainer" id="block-explainer"><div class="explain-item" data-step="0"><i class="icon-network">↗</i><span>mix across positions</span></div><div class="explain-item" data-step="1"><i class="icon-residual">↺</i><span>preserve a signal path</span></div><div class="explain-item" data-step="2"><i class="icon-mlp">▦</i><span>transform each position</span></div><div class="block-result" id="block-result"><b>It</b><div class="block-result-vector" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><small>same token · richer context</small></div></div>
             </div>
             <div class="block-stack-caption">repeated layers build richer contextual representations</div>
           </section>
@@ -97,13 +138,14 @@
               <div class="mask-grid" id="mask-grid"></div>
               <div class="mask-explain"><div class="mask-gate">FUTURE<br/><b>BLOCKED</b></div><div class="mask-flow">earlier context <span>→</span> current token</div></div>
             </div>
-            <div class="generation-track"><div class="generation-label">PROMPT</div><div class="generation-tokens" id="generation-tokens"></div><div class="next-candidates" id="next-candidates"><span>next token scores</span><b>trail</b><b>hike</b><b>park</b></div><div class="kv-cache" id="kv-cache"><small>KV CACHE</small><i></i><i></i><i></i></div></div>
+            <div class="generation-track"><div class="generation-label">PROMPT</div><div class="generation-tokens" id="generation-tokens"></div><div class="next-candidates" id="next-candidates"><span class="next-candidates-label">next token scores</span><b><span class="candidate-label">short</span><i><em></em></i></b><b><span class="candidate-label">long</span><i><em></em></i></b><b><span class="candidate-label">park</span><i><em></em></i></b></div><div class="kv-cache" id="kv-cache"><small>KV CACHE</small><i></i><i></i><i></i></div></div>
             <div class="mask-caption" id="mask-caption">Each position can use itself and earlier tokens—not the future.</div>
           </section>
 
           <section class="scene scene-recap" data-scene="7" aria-hidden="true">
-            <div class="recap-context"><span>TAIPEI · NATURE · $8,000</span><div class="recap-input">Plan a weekend. Keep it nature-first.</div></div>
+            <div class="recap-context"><span>TAIPEI · NATURE · $8,000</span><div class="recap-input">Plan two days in Taipei. Nature-first, under <b>$8,000</b>.</div></div>
             <div class="recap-route" id="recap-route"><span>tokens</span><i></i><span>vectors<br/>+ position</span><i></i><span>self-<br/>attention</span><i></i><span>Transformer<br/>blocks</span><i></i><span>next-token<br/>scores</span></div>
+            <div class="recap-next" id="recap-next"><div class="recap-next-heading"><b>WHAT COULD COME NEXT?</b><small>Illustrative ranking · not measured model outputs</small></div><div class="recap-candidates"><div data-candidate="maokong"><b>Maokong</b><i><em></em></i></div><div data-candidate="nature"><b>nature-first</b><i><em></em></i></div><div data-candidate="trail"><b>trail</b><i><em></em></i></div></div></div>
             <svg class="recap-flow" viewBox="0 0 1200 280" preserveAspectRatio="none" aria-hidden="true"><path id="recap-path" d="M 105 140 C 250 40 330 240 470 140 S 710 40 840 140 S 1040 240 1120 140"/></svg>
             <div class="recap-copy" id="recap-copy"><span class="micro-label">THE WHOLE PASS</span><b>Context is built, one layer at a time.</b></div>
             <div class="closing-line" id="closing-line">Before the next token is chosen.</div>

@@ -1,6 +1,6 @@
 episode: 01
-title: "How Transformers Work: Self-Attention, Q/K/V & Context"
-status: narration_ready_live_pages_verified
+title: "Deep Dive 01: How Transformers Work"
+status: final_master_render_in_progress
 standalone: true
 language:
   narration: en-US
@@ -13,7 +13,9 @@ video:
   preview_stage_selector: "#film"
   deterministic_clock: audio.currentTime
   export_api: window.renderFrame(frame)
-  export_status: not_started
+  export_status: rendering
+  export_script: scripts/render-mp4.py
+  final_output: ../../renders/transformer-attention-deep-dive-1080p24.mp4
   deployed_commit: 50b6432cc342ced12ee2f6ee3fd54fb0a4b61f2b
   pages_workflow_run: 40206843509
   live_preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/series/transformer-attention/
@@ -160,7 +162,24 @@ qa:
       - "The four multi-head merge lanes are independent SVG paths, each with its own moving tracer into the shared combine node."
       - "Chromium sampled all eight scenes without renderer exceptions; attention tracer positions changed at all 20 samples during real playback while narration advanced 1.178 seconds."
       - "Dense 24fps local scene samples measured p95 render-call costs of 1.2–8.0 ms (below the 41.7 ms frame budget); repeating an attention timestamp after unrelated seeks produced identical tracer positions."
+  final_review:
+    status: eight_chapters_browser_and_1080p_sample_qa_passed_full_render_in_progress
+    sampled_times_seconds: [4, 23, 60, 111, 175, 195.7, 227, 245, 269.1, 278.6, 291.6, 297.6, 319, 331, 343, 345.3, 349.3, 354.5, 375.7, 386.7, 401.7, 413.7, 418.18]
+    checks:
+      - "Captured 23 representative 1920x1080 frames covering all eight chapters, chapter handoffs, Q/K/V compare/mix, four multi-head example lanes, transformer block operations, causal-mask training/generation, both token choices, KV-cache, recap and ending."
+      - "Every sampled time activated the expected scene; browser reported zero console/page errors."
+      - "Rendering the same second-generation frame after an unrelated seek produced byte-identical screenshot output."
+      - "Chapter 05 shows four parallel views over the same Taipei input, then concrete relations (It→the trail, nature-first+$8,000→fits the budget, Taipei↔Maokong, shaded↔short) before merging to one updated representation."
+      - "Chapter 07 shows the first selected token, appends `short,`, produces a new `too.` candidate set from the longer context, then appends the second token; illustrative choices are clearly distinct from measured model scores."
+      - "Chapter 08 preserves the Taipei/nature/$8,000 example, animates the five-step recap route, evolves illustrative candidate scores, and ends on a legible forward-pass closure."
+      - "A 14-second 1920x1080p24 silent sample render around training-to-generation passed H.264 encode and showed the prompt/candidate interaction in three reviewed frames."
+    export:
+      status: in_progress
+      resolution: 1920x1080
+      frame_rate: 24
+      audio_master: /public/series/transformer-attention/audio/voiceover.mp3
+      expected_frames: 10092
+      expected_duration_seconds: 420.504
+      full_decode: pending
   pending:
-    - "Refine and browser-QA Chapters 05–08 to the same visual standard."
-    - "Review chapter-to-chapter voice continuity and pacing by listening."
-    - "Full-length playback QA and final MP4 export at 1920x1080, 24 fps."
+    - "Listen through the complete finished export once available and confirm narration continuity and pacing."

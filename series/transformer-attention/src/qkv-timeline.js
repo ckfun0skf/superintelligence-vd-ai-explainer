@@ -57,11 +57,13 @@ export function createQkvTimeline() {
     .to(output, { scale: 1.035, duration: 0.2, yoyo: true, repeat: 1 }, 58.16)
 
     // Existing machine recedes; its own formula grows into the foreground.
-    .to(panels, { top: '13%', height: '20%', opacity: 0.28, scale: 0.88, duration: 0.58 }, 64.38)
-    .to(output, { opacity: 0.72, scale: 0.94, duration: 0.4 }, 64.38)
+    .to(panels, { top: '12%', height: '17%', opacity: 0.22, scale: 0.88, duration: 0.58 }, 64.38)
+    .to(output, { opacity: 0.48, scale: 0.9, duration: 0.4 }, 64.38)
     .to(formula, { opacity: 1, yPercent: 0, scale: 1, duration: 0.32, ease: 'back.out(1.2)' }, 64.38)
-    .to(formula, { opacity: 0.24, scale: 0.98, duration: 0.28 }, 75.8)
-    .to(steps, { opacity: 1, yPercent: 0, duration: 0.2 }, 75.8);
+    .to(panels, { opacity: 0, yPercent: -8, scale: 0.86, duration: 0.2 }, 75.8)
+    .to(output, { opacity: 0, scale: 0.88, duration: 0.2 }, 75.8)
+    .to(formula, { opacity: 0, yPercent: -8, scale: 0.96, duration: 0.2 }, 75.8)
+    .to(steps, { opacity: 1, yPercent: 0, duration: 0.18 }, 75.8);
 
   return {
     seek(seconds) {
