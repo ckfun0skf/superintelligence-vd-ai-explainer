@@ -403,3 +403,37 @@ body{background:#080d14}
 .scene-recap .recap-route>span{font-size:1.08cqw}
 .scene-recap .recap-copy,.scene-recap .recap-copy b{font-size:1.68cqw}
 .scene-recap .closing-line{font-size:1.08cqw}
+
+
+/* Final self-QA polish: keep the same objects, give the narration's active idea a clear frame. */
+.scene-hook .chat-app{width:45%;min-height:34%}
+.scene-hook .chat-question{font-size:1.18cqw}
+.scene-hook .chat-answer{font-size:1.22cqw;line-height:1.4}
+
+/* Chapter 3 paths are expressed in film coordinates; the SVG must cover the full film canvas. */
+.scene-attention .attention-title{top:24%;left:6%;right:6%;z-index:2}
+.scene-attention .attention-token-row{gap:.72cqw;margin-top:1.1cqw}
+.scene-attention .attention-token{padding:.72cqw .9cqw;font-size:1.42cqw}
+.scene-attention .attention-web{left:0;right:0;top:0;width:100%;height:100%;z-index:1}
+.scene-attention .attention-focus-label{top:52%;z-index:3;font-size:.88cqw}
+.scene-attention .context-result{z-index:3;padding:.9cqw 1.3cqw}
+.scene-attention .context-result>span{font-size:.8cqw}
+.scene-attention .context-result>b{font-size:1.02cqw}
+.scene-attention .schematic-stamp{z-index:3;font-size:.74cqw}
+
+/* Chapter 7: center the full causal picture and enlarge its cells; generation still grows from the same prompt strip. */
+.scene-mask .mask-content{left:6%;right:6%;top:21%;height:45%;justify-content:center;gap:5%}
+.scene-mask .mask-grid{grid-template-columns:repeat(6,3.25cqw);gap:.34cqw}
+.scene-mask .mask-cell{width:3.25cqw;height:3.25cqw;font-size:1.04cqw}
+.scene-mask .mask-explain{min-width:30cqw;gap:1.3cqw}
+.scene-mask .mask-gate{padding:1.1cqw 1.25cqw;font-size:.95cqw}
+.scene-mask .mask-gate b{font-size:1.14cqw}
+.scene-mask .mask-flow{font-size:1.02cqw}
+
+/* Chapter 8: retain completed steps but let narration's current stage breathe forward. */
+.scene-recap .recap-route>span.current{position:relative;z-index:3;border-color:#c0ffea;color:#f1fff9;background:linear-gradient(145deg,#1c4a3d,#102720);box-shadow:0 0 1.4cqw #5ad5b088,0 .65cqw 1.6cqw #0006}
+.scene-recap .recap-route>span.active:not(.current){opacity:.76}
+
+
+/* Chapter 3: a compact focus tag, not an empty oversized target ring. */
+.scene-attention .attention-focus-label{top:52%;bottom:auto;left:50%;width:max-content;height:auto;min-width:0;min-height:0;display:inline-flex;align-items:center;justify-content:center;transform:translate(-50%,-50%);padding:.48cqw .82cqw;line-height:1.2;white-space:nowrap;box-sizing:border-box;border:1px solid #456979;border-radius:999px;background:#0a141ee8;color:#c7fff0;font-size:.88cqw;letter-spacing:.09em;box-shadow:0 0 .7cqw #72c8ff2c;pointer-events:none}

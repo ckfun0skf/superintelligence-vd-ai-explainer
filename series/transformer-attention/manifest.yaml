@@ -128,6 +128,7 @@ qa:
         - "Attention paths terminate at actual token centers and form an incoming context fan into the focused word."
         - "Mint, cyan, and violet paths plus traveling particles distinguish selected contextual signals without presenting them as ground-truth weights."
         - "The contextual-mixture result appears in time with the explanation and remains visually separated from the token fan."
+        - "The focus marker is a compact readable pill rather than a large empty ring; the `It` position stays focused while relation strengths change during the context-dependent-mixture caveat, and the trail position becomes the focus when every position is introduced."
     chapter_04:
       status: qkv_audio_choreography_refined_browser_qa_passed
       duration_seconds: 79.44
@@ -164,11 +165,12 @@ qa:
       - "Dense 24fps local scene samples measured p95 render-call costs of 1.2–8.0 ms (below the 41.7 ms frame budget); repeating an attention timestamp after unrelated seeks produced identical tracer positions."
   final_review:
     status: eight_chapters_browser_and_1080p_sample_qa_passed_awaiting_user_page_qa
-    sampled_times_seconds: [4, 23, 60, 111, 175, 195.7, 227, 245, 269.1, 278.6, 291.6, 297.6, 319, 331, 343, 345.3, 349.3, 354.5, 375.7, 386.7, 401.7, 413.7, 418.18]
+    sampled_times_seconds: [4, 12, 21, 23, 24, 29, 60, 103, 110.5, 114.5, 120, 125.5, 131.5, 175, 195.7, 227, 245, 269.1, 278.6, 291.6, 297.6, 319, 331, 341.7, 343, 345.3, 348, 349.3, 354.5, 375.7, 381.68, 386.7, 400.68, 401.7, 408.68, 413.7, 418.18, 418.68]
     checks:
       - "Captured 23 representative 1920x1080 frames covering all eight chapters, chapter handoffs, Q/K/V compare/mix, four multi-head example lanes, transformer block operations, causal-mask training/generation, both token choices, KV-cache, recap and ending."
       - "Every sampled time activated the expected scene; browser reported zero console/page errors."
       - "Rendering the same second-generation frame after an unrelated seek produced byte-identical screenshot output."
+      - "Additional local Playwright QA captured full-HD frames at the exact 1920x1080 film stage across Chapters 01, 03, 07 and 08; after correcting Chapter 03's oversized empty focus ring, three frames were rechecked. Browser console/page errors: zero; a repeated 24fps frame was byte-identical."
       - "Chapter 05 shows four parallel views over the same Taipei input, then concrete relations (It→the trail, nature-first+$8,000→fits the budget, Taipei↔Maokong, shaded↔short) before merging to one updated representation."
       - "Chapter 07 shows the first selected token, appends `short,`, produces a new `too.` candidate set from the longer context, then appends the second token; illustrative choices are clearly distinct from measured model scores."
       - "Chapter 08 preserves the Taipei/nature/$8,000 example, animates the five-step recap route, evolves illustrative candidate scores, and ends on a legible forward-pass closure."
