@@ -164,8 +164,8 @@ qa:
       - "Chromium sampled all eight scenes without renderer exceptions; attention tracer positions changed at all 20 samples during real playback while narration advanced 1.178 seconds."
       - "Dense 24fps local scene samples measured p95 render-call costs of 1.2–8.0 ms (below the 41.7 ms frame budget); repeating an attention timestamp after unrelated seeks produced identical tracer positions."
   final_review:
-    status: eight_chapters_browser_and_1080p_sample_qa_passed_awaiting_user_page_qa
-    sampled_times_seconds: [4, 12, 21, 23, 24, 29, 60, 103, 110.5, 114.5, 120, 125.5, 131.5, 175, 195.7, 227, 245, 269.1, 278.6, 291.6, 297.6, 319, 331, 341.7, 343, 345.3, 348, 349.3, 354.5, 375.7, 381.68, 386.7, 400.68, 401.7, 408.68, 413.7, 418.18, 418.68]
+    status: eight_chapter_fullhd_self_qa_passed_awaiting_user_page_qa
+    sampled_times_seconds: [4, 12, 21, 23, 24, 29, 60, 63, 80, 103, 108, 110.5, 114.5, 120, 125.5, 128, 131.5, 175, 195.7, 212.4, 213.35, 214.45, 215.5, 215.8, 216.12, 216.24, 216.5, 216.96, 217.72, 227, 239, 245, 269.1, 278.6, 281, 291.6, 297.6, 301, 319, 331, 331.5, 341.7, 343, 345.3, 348, 349.3, 354, 354.5, 375.7, 381.68, 386.7, 397, 400.68, 401.7, 408.68, 413.7, 418, 418.18, 418.68]
     checks:
       - "Captured 23 representative 1920x1080 frames covering all eight chapters, chapter handoffs, Q/K/V compare/mix, four multi-head example lanes, transformer block operations, causal-mask training/generation, both token choices, KV-cache, recap and ending."
       - "Every sampled time activated the expected scene; browser reported zero console/page errors."
@@ -175,6 +175,10 @@ qa:
       - "Chapter 07 shows the first selected token, appends `short,`, produces a new `too.` candidate set from the longer context, then appends the second token; illustrative choices are clearly distinct from measured model scores."
       - "Chapter 08 preserves the Taipei/nature/$8,000 example, animates the five-step recap route, evolves illustrative candidate scores, and ends on a legible forward-pass closure."
       - "A 14-second 1920x1080p24 silent sample render around training-to-generation passed H.264 encode and showed the prompt/candidate interaction in three reviewed frames."
+      - "Final local self-QA captured 18 representative 1920x1080 frames across all eight chapters; every time activated the expected scene and Chromium reported zero console/page errors."
+      - "Chapter 01 composer clears the submitted prompt as one UI action, keeps the sent message in the chat, and clears the chat/map before the sentence becomes the sole focus at the 11.3-second narration handoff."
+      - "Chapter 04 recap cards appear with 'Watch the order'; Compare, Normalize and Mix highlights match local narration beats 76.82, 77.74 and 78.78 seconds. The Mix card now reveals the Updated It vector bars during the final spoken beat rather than leaving an empty result area."
+      - "After the Mix/handoff fix, seven additional full-HD frames from 215.5–217.72 seconds showed the result through the final spoken beat, then the signal travelling during the inter-chapter gap; browser errors: zero, and a repeated 215.8-second frame was byte-identical."
     export:
       status: on_hold
       resolution: 1920x1080

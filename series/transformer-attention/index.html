@@ -18,17 +18,18 @@
           <section class="scene scene-hook" data-scene="0" aria-hidden="true">
             <div class="chat-app">
               <div class="chat-top"><span class="app-mark">✳</span><span>Assistant</span><span class="chat-menu">···</span></div>
-              <div class="chat-input-bar"><span class="input-placeholder">Ask anything…</span><span class="input-copy">Plan a nature weekend in Taipei. My budget is <b>$8,000</b>.</span><span class="send-button" aria-hidden="true">↑</span></div>
-              <div class="chat-question">Plan a nature weekend in Taipei. My budget is <b>$8,000</b>.</div>
+              <div class="chat-input-bar"><span class="input-placeholder">Ask anything…</span><span class="input-copy">Plan a two-day weekend in Taipei. My budget is eight thousand dollars, and I love nature.</span><span class="send-button" aria-hidden="true">↑</span></div>
+              <div class="chat-question">Plan a two-day weekend in Taipei. My budget is eight thousand dollars, and I love nature.</div>
               <div class="chat-thinking"><i></i><i></i><i></i><span>Checking the request</span></div>
               <div class="chat-answer">A nature-first weekend in Taipei<span class="typing-caret"></span></div>
             </div>
             <div class="hook-location-card" aria-hidden="true">
               <div class="location-top"><span class="map-pin">⌖</span><span>MAOKONG · TAIPEI</span><i>LIVE MAP</i></div>
               <svg class="location-map" viewBox="0 0 420 190" preserveAspectRatio="none"><path class="contour contour-a" d="M-10 142 C48 96 60 151 111 111 S184 61 222 96 293 145 338 98 399 48 434 76"/><path class="contour contour-b" d="M-8 165 C40 126 79 177 132 135 S204 89 249 119 319 163 366 123 407 86 434 105"/><path class="map-route" id="hook-map-route" d="M30 142 C92 116 116 66 184 87 S269 134 309 92 S362 65 391 51"/><circle class="map-stop" cx="30" cy="142" r="6"/><circle class="map-stop end" cx="391" cy="51" r="7"/><circle id="hook-map-dot" class="map-dot" cx="30" cy="142" r="5"/></svg>
-              <div class="location-meta"><b>Shaded trail</b><span>Nature-first suggestion · within budget</span></div>
+              <div class="location-meta"><div><small>DAY 1</small><b>Maokong · shaded trail</b></div><div><small>DAY 2</small><b>Riverside nature walk</b></div></div>
             </div>
             <div class="hook-sentence" aria-label="The trail near Maokong is shaded. It is short, too."><span data-word="0">The</span><span data-word="1">trail</span><span data-word="2">near</span><span data-word="3">Maokong</span><span data-word="4">is</span><span data-word="5">shaded.</span><span class="period-gap" data-word="6">It</span><span data-word="7">is</span><span data-word="8">short,</span><span data-word="9">too.</span></div>
+            <div class="hook-context-vector" id="hook-context-vector" aria-hidden="true"><b>It</b><span></span></div>
             <svg class="hook-links" id="hook-links" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><path id="hook-path-place"/><path id="hook-path-trail"/><circle id="hook-particle-place" r="5"/><circle id="hook-particle-trail" r="6"/></svg>
             <div class="hook-candidates" aria-hidden="true"><div class="candidate-chip" id="candidate-place"><span class="candidate-icon">⌖</span><span><small>PLACE</small><b>Maokong</b></span></div><div class="candidate-chip candidate-trail" id="candidate-trail"><span class="candidate-icon">⌁</span><span><small>THING</small><b>the trail</b></span></div></div>
             <div class="hook-cues" aria-hidden="true"><span id="hook-cue-shaded">☼ <b>shaded</b></span><span id="hook-cue-short">↔ <b>short</b></span></div>
@@ -41,7 +42,7 @@
             <div class="vector-heading"><span class="micro-label">TEXT BECOMES NUMERICAL INPUT</span><div class="token-phrase"><span>The</span><span>trail</span><span>near</span><span>Maokong</span><span>is</span><span>shaded.</span><span>It</span><span>is</span><span>short,</span><span>too.</span></div></div>
             <svg class="vector-token-links" id="vector-token-links" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><g id="vector-link-paths"></g><g id="vector-link-particles"></g></svg>
             <div class="vector-flow"><div class="flow-label">TOKEN ID</div><div class="id-cells" id="id-cells"></div><div class="flow-arrow">→</div><div class="flow-label">EMBEDDING</div><div class="embedding-cells" id="embedding-cells"></div></div>
-            <div class="position-lab"><div class="position-title">ORDER CHANGES THE CONTEXT</div><div class="order-row"><span>The</span><span>trail</span><span>is</span><span>near</span><span>Maokong</span></div><div class="position-ribbon" id="position-ribbon"></div><div class="order-row swapped"><span>Maokong</span><span>is</span><span>near</span><span>the</span><span>trail</span></div></div>
+            <div class="position-lab"><div class="position-title">ORDER CHANGES THE CONTEXT</div><div class="order-row"><span>The</span><span>trail</span><span>is</span><span>near</span><span>Maokong</span></div><div class="position-ribbon" id="position-ribbon"></div><div class="order-row swapped"><span>Maokong</span><span>is</span><span>near</span><span>the</span><span>trail</span></div><div class="position-modes" id="position-modes" aria-hidden="true"><div class="position-mode slot-mode"><span class="mode-glyph">1 · 2 · 3 · 4 · 5</span><b>POSITION SLOTS</b></div><div class="position-mode relative-mode"><span class="mode-glyph">↔1 · ↔2 · ↔3</span><b>RELATIVE DISTANCE</b></div></div></div>
             <div class="vector-note">Illustrative vector values · not a word definition</div>
           </section>
 
@@ -50,6 +51,7 @@
             <svg class="attention-web" id="attention-web" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><g id="attention-lines"></g><g id="attention-particles"></g></svg>
             <div class="attention-focus-label" id="focus-label">CURRENT POSITION · “IT”</div>
             <div class="context-result"><span>CONTEXTUAL MIXTURE</span><div class="context-orb"><i></i><i></i><i></i><i></i><i></i></div><b>representation updated</b></div>
+            <div class="attention-qkv-preview" id="attention-qkv-preview" aria-hidden="true"><span><b>Q</b> Query</span><span><b>K</b> Key</span><span><b>V</b> Value</span></div>
             <div class="schematic-stamp">SCHEMATIC · CONTEXT-DEPENDENT</div>
           </section>
 
@@ -119,7 +121,7 @@
             <div class="block-heading"><span class="micro-label">ATTENTION IS ONE PART OF THE ARCHITECTURE</span><b>A GPT-style Transformer block</b></div>
             <div class="block-flow">
               <div class="block-token-stream" id="block-token-stream"></div>
-              <svg class="block-flow-web" id="block-flow-web" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><path/><path/><path/><path/><circle/><circle/><circle/><circle/></svg>
+              <svg class="block-flow-web" id="block-flow-web" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><path/><path/><path/><path/><path/><circle/><circle/><circle/><circle/><circle/></svg>
               <div class="transformer-stack" id="transformer-stack">
                 <div class="transformer-block block-back"><div class="block-face"><span>SELF-ATTENTION</span><i class="block-nodes"></i></div><div class="block-face"><span>RESIDUAL + NORM</span><i class="residual-loop"></i></div><div class="block-face"><span>FEED-FORWARD · MLP</span><i class="mlp-nodes"></i></div></div>
                 <div class="transformer-block block-middle"><div class="block-face"><span>SELF-ATTENTION</span><i class="block-nodes"></i></div><div class="block-face"><span>RESIDUAL + NORM</span><i class="residual-loop"></i></div><div class="block-face"><span>FEED-FORWARD · MLP</span><i class="mlp-nodes"></i></div></div>
@@ -137,14 +139,14 @@
               <div class="mask-grid" id="mask-grid"></div>
               <div class="mask-explain"><div class="mask-gate">FUTURE<br/><b>BLOCKED</b></div><div class="mask-flow">earlier context <span>→</span> current token</div></div>
             </div>
-            <div class="generation-track"><div class="generation-label">PROMPT</div><div class="generation-tokens" id="generation-tokens"></div><div class="next-candidates" id="next-candidates"><span class="next-candidates-label">next token scores</span><b><span class="candidate-label">short</span><i><em></em></i></b><b><span class="candidate-label">long</span><i><em></em></i></b><b><span class="candidate-label">park</span><i><em></em></i></b></div><div class="kv-cache" id="kv-cache"><small>KV CACHE</small><i></i><i></i><i></i></div></div>
+            <div class="generation-track"><div class="generation-label">PROMPT</div><div class="generation-tokens" id="generation-tokens"></div><div class="next-candidates" id="next-candidates"><span class="next-candidates-label">next token scores</span><b><span class="candidate-label">short</span><i><em></em></i></b><b><span class="candidate-label">long</span><i><em></em></i></b><b><span class="candidate-label">park</span><i><em></em></i></b></div><div class="kv-cache" id="kv-cache"><small>KV CACHE</small><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
             <div class="mask-caption" id="mask-caption">Each position can use itself and earlier tokens—not the future.</div>
           </section>
 
           <section class="scene scene-recap" data-scene="7" aria-hidden="true">
             <div class="recap-context"><span>TAIPEI · NATURE · $8,000</span><div class="recap-input">Plan two days in Taipei. Nature-first, under <b>$8,000</b>.</div></div>
-            <div class="recap-route" id="recap-route"><span>tokens</span><i></i><span>vectors<br/>+ position</span><i></i><span>self-<br/>attention</span><i></i><span>Transformer<br/>blocks</span><i></i><span>next-token<br/>scores</span></div>
-            <div class="recap-next" id="recap-next"><div class="recap-next-heading"><b>WHAT COULD COME NEXT?</b><small>Illustrative ranking · not measured model outputs</small></div><div class="recap-candidates"><div data-candidate="maokong"><b>Maokong</b><i><em></em></i></div><div data-candidate="nature"><b>nature-first</b><i><em></em></i></div><div data-candidate="trail"><b>trail</b><i><em></em></i></div></div></div>
+            <div class="recap-route" id="recap-route"><span>tokens</span><i></i><span>vectors<br/>+ position</span><i></i><span>self-attention</span><i></i><span>learned<br/>views</span><i></i><span>Transformer<br/>blocks</span><i></i><span>causal<br/>mask</span><i></i><span>next-token<br/>scores</span></div>
+            <div class="recap-next" id="recap-next"><div class="recap-next-heading"><b id="recap-next-title">TAIPEI CONSTRAINT → SUGGESTION</b><small id="recap-next-note">Nature-first · within budget</small></div><div class="recap-candidates"><div data-candidate="maokong"><b>Maokong</b><i><em></em></i></div><div data-candidate="nature"><b>shaded trail</b><i><em></em></i></div><div data-candidate="trail"><b>short hike</b><i><em></em></i></div></div></div>
             <svg class="recap-flow" viewBox="0 0 1200 280" preserveAspectRatio="none" aria-hidden="true"><path id="recap-path" d="M 105 140 C 250 40 330 240 470 140 S 710 40 840 140 S 1040 240 1120 140"/></svg>
             <div class="recap-copy" id="recap-copy"><span class="micro-label">THE WHOLE PASS</span><b>Context is built, one layer at a time.</b></div>
             <div class="closing-line" id="closing-line">Before the next token is chosen.</div>
