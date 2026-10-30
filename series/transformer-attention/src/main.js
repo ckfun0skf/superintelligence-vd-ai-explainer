@@ -635,7 +635,7 @@ function renderQKV(p){
   if(notes[1])notes[1].style.opacity=String(smooth(62.06,62.35,sec));
   const mixStepRows=document.querySelectorAll('.mechanism-mix-sources [data-candidate]');
   mixStepRows.forEach((row,i)=>{const bar=row.querySelector('i'),value=weights[i];bar.style.setProperty('--share',`${value*100}%`);bar.style.opacity=String(.45+.55*smooth(78.72,78.92,sec));bar.style.transform=`scaleX(${.9+.1*Math.sin(sec*5.2+i)})`;bar.style.transformOrigin='left center';row.querySelector('em').textContent=`${Math.round(value*100)}%`;});
-  document.querySelectorAll('.mechanism-mix-result>i').forEach((bar,i)=>{bar.style.height=`${Math.max(22,mixedVectorValues[i%mixedVectorValues.length]*100)}%`;bar.style.opacity=String(smooth(78.72,78.92,sec));bar.style.transform=`scaleY(${.88+.12*Math.sin(sec*4+i*.7)})`;});
+  document.querySelectorAll('.mechanism-mix-result>i').forEach((bar,i)=>{bar.style.height=`${.65+mixedVectorValues[i%mixedVectorValues.length]*.85}cqw`;bar.style.opacity=String(smooth(78.72,78.92,sec));bar.style.transform=`scaleY(${.88+.12*Math.sin(sec*4+i*.7)})`;});
 
   const formulaParts=document.querySelectorAll('#formula-panel [data-formula-part]');
   const formulaWindows={compare:[67.02,69.0],scale:[67.02,69.0],normalize:[69.14,71.55],mix:[71.88,73.22]};

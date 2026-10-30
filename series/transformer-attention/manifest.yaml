@@ -178,7 +178,7 @@ qa:
       - "Final local self-QA captured 18 representative 1920x1080 frames across all eight chapters; every time activated the expected scene and Chromium reported zero console/page errors."
       - "Chapter 01 composer clears the submitted prompt as one UI action, keeps the sent message in the chat, and clears the chat/map before the sentence becomes the sole focus at the 11.3-second narration handoff."
       - "Chapter 04 recap cards appear with 'Watch the order'; Compare, Normalize and Mix highlights match local narration beats 76.82, 77.74 and 78.78 seconds. The Mix card now reveals the Updated It vector bars during the final spoken beat rather than leaving an empty result area."
-      - "After the Mix/handoff fix, seven additional full-HD frames from 215.5–217.72 seconds showed the result through the final spoken beat, then the signal travelling during the inter-chapter gap; browser errors: zero, and a repeated 215.8-second frame was byte-identical."
+      - "After the final Mix result-bar geometry fix, four local 1920x1080 frames at 215.8, 216.12, 216.5 and 217.72 showed the four vector bars at 12px width and 16–24px height, kept the result visible through narration, then moved the signal during the inter-chapter gap; browser errors: zero, and a repeated 215.8-second frame was byte-identical."
     export:
       status: on_hold
       resolution: 1920x1080

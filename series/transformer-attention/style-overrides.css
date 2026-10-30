@@ -489,10 +489,10 @@ body{background:#080d14}
 .scene-qkv .mechanism-candidates>div{font-size:1cqw}
 .scene-qkv .mechanism-candidates>div>em{font-size:.98cqw}
 .scene-qkv .mechanism-mix-sources>div{font-size:.94cqw}
-.scene-qkv .mechanism-mix-result{grid-template-columns:1fr repeat(4,.54cqw);gap:.36cqw;margin-top:.68cqw;padding:.62cqw .72cqw}
-.scene-qkv .mechanism-mix-result>span{font-size:.98cqw}
-.scene-qkv .mechanism-mix-result>i{width:.48cqw;height:1.72cqw}
-.scene-qkv .mechanism-mix-result>small{font-size:.9cqw}
+.scene-qkv .mechanism-mix-result{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;gap:.3cqw .34cqw;margin-top:.68cqw;padding:.62cqw .72cqw}
+.scene-qkv .mechanism-mix-result>span{flex:0 0 100%;font-size:.98cqw}
+.scene-qkv .mechanism-mix-result>i{flex:0 0 .58cqw;width:.58cqw;height:1.2cqw}
+.scene-qkv .mechanism-mix-result>small{flex:0 0 100%;font-size:.9cqw}
 .scene-qkv .mechanism-caveat{font-size:.9cqw}
 
 /* One token typeface travels through the continuous sentence handoffs. */
