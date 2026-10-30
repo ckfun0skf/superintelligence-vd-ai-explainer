@@ -16,8 +16,8 @@ video:
   export_status: on_hold_for_user_page_qa
   export_script: scripts/render-mp4.py
   final_output: ../../renders/transformer-attention-deep-dive-1080p24.mp4
-  deployed_commit: 4c03942462206f9f3f9cd3f16f1defde79145c4e
-  pages_workflow_run: 40850276902
+  deployed_commit: 18590d6e399a27c4b4a17bb546c72ae64af94a05
+  pages_workflow_run: 41137617678
   live_preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/series/transformer-attention/
   runtime_seconds: 420.504
   timeline_seconds: 420.48
@@ -179,6 +179,7 @@ qa:
       - "Chapter 01 composer clears the submitted prompt as one UI action, keeps the sent message in the chat, and clears the chat/map before the sentence becomes the sole focus at the 11.3-second narration handoff."
       - "Chapter 04 recap cards appear with 'Watch the order'; Compare, Normalize and Mix highlights match local narration beats 76.82, 77.74 and 78.78 seconds. The Mix card now reveals the Updated It vector bars during the final spoken beat rather than leaving an empty result area."
       - "After the final Mix result-bar geometry fix, four local 1920x1080 frames at 215.8, 216.12, 216.5 and 217.72 showed the four vector bars at 12px width and 16–24px height, kept the result visible through narration, then moved the signal during the inter-chapter gap; browser errors: zero, and a repeated 215.8-second frame was byte-identical."
+      - "GitHub Pages deployment for commit 18590d6 (run 41137617678) succeeded. Public 1920x1080 QA at 215.8, 216.12, 216.5 and 217.72 seconds confirmed visible Mix result bars, the narration-to-handoff sequence and Chapter 05 entry; browser errors: zero. After fonts loaded, repeated 215.8-second captures differed by at most 1/255 per channel, with no pixels differing by more than 3/255."
     export:
       status: on_hold
       resolution: 1920x1080
