@@ -584,6 +584,15 @@ body{background:#080d14}
 .scene-hook .hook-location-card{right:2%;width:43%;height:43%}
 .scene-hook .location-meta{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:.8cqw;padding-top:.55cqw}
 .scene-hook .location-meta>div{display:flex;flex-direction:column;gap:.16cqw;min-width:0}
+
+/* Fullscreen player controls: keep chapters on one swipeable row below the seek bar. */
+.player-shell.fullscreen .player-controls{bottom:calc(12px + clamp(38px,4.2vh,48px) + 14px);min-width:0;gap:clamp(6px,.8vw,12px)}
+.player-shell.fullscreen .chapter-rail{display:flex;flex-flow:row nowrap;align-items:center;gap:8px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#47665e #111a22;-webkit-overflow-scrolling:touch;touch-action:pan-x;scroll-snap-type:x proximity}
+.player-shell.fullscreen .chapter-rail::-webkit-scrollbar{height:4px}
+.player-shell.fullscreen .chapter-rail::-webkit-scrollbar-track{background:#111a22;border-radius:99px}
+.player-shell.fullscreen .chapter-rail::-webkit-scrollbar-thumb{background:#47665e;border-radius:99px}
+.player-shell.fullscreen .chapter-rail button{flex:0 0 clamp(132px,14vw,220px);min-height:clamp(38px,4.2vh,48px);padding:0 12px;font-size:clamp(12px,.78vw,16px);white-space:nowrap;scroll-snap-align:center}
+
 .scene-hook .location-meta>div+div{border-left:1px solid #2c4150;padding-left:.8cqw}
 .scene-hook .location-meta small{color:#8ea3b1;font-size:.92cqw;letter-spacing:.08em}
 .scene-hook .location-meta b{font-size:1.04cqw;white-space:nowrap}

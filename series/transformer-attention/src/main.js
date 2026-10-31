@@ -7,6 +7,8 @@ const film = document.querySelector('#film');
 const audio = document.querySelector('#narration');
 const scenes = [...document.querySelectorAll('.scene')];
 const chapterButtons = [...document.querySelectorAll('.chapter-rail button')];
+const chapterRail = document.querySelector('.chapter-rail');
+const shell = film.closest('.player-shell');
 const playButton = document.querySelector('#play-toggle');
 const seekBar = document.querySelector('#seek-bar');
 const currentTimeEl = document.querySelector('#time-current');
@@ -831,7 +833,7 @@ function renderAt(seconds){
   pointGeometry.attributes.position.needsUpdate=true;pointMaterial.opacity=activeEnergy;
   renderer.render(threeScene,camera);
   const frame=Math.round(t*FPS);
-  if(idx!==lastChapter){chapterButtons.forEach((b,i)=>b.classList.toggle('active',i===idx));reviewText.textContent=transcript[idx];lastChapter=idx;}
+  if(idx!==lastChapter){chapterButtons.forEach((b,i)=>b.classList.toggle('active',i===idx));reviewText.textContent=transcript[idx];lastChapter=idx;scrollChapterIntoView(idx,'smooth');}
   currentTimeEl.textContent=fmt(t);if(!seekBar.matches(':active'))seekBar.value=String(duration?t/duration*100:0);
   return {time:t,frame,chapter:idx,progress:p};
 }
@@ -868,7 +870,22 @@ function stopAudioFrameLoop(){
   lastAudioFrame=-1;
 }
 
-function showControls(){film.closest('.player-shell').classList.remove('controls-hidden');window.clearTimeout(controlsTimer);if(film.closest('.player-shell').classList.contains('fullscreen')&&!audio.paused){controlsTimer=window.setTimeout(()=>film.closest('.player-shell').classList.add('controls-hidden'),2800);}}
+function scrollChapterIntoView(index,behavior='smooth'){
+  const button=chapterButtons[index];
+  if(!button||!chapterRail)return;
+  const railRect=chapterRail.getBoundingClientRect(),buttonRect=button.getBoundingClientRect();
+  if(buttonRect.left>=railRect.left+4&&buttonRect.right<=railRect.right-4)return;
+  const delta=buttonRect.left+buttonRect.width/2-(railRect.left+railRect.width/2);
+  const maxLeft=Math.max(0,chapterRail.scrollWidth-chapterRail.clientWidth);
+  chapterRail.scrollTo({left:Math.max(0,Math.min(maxLeft,chapterRail.scrollLeft+delta)),behavior});
+}
+function showControls(){
+  shell.classList.remove('controls-hidden');
+  window.clearTimeout(controlsTimer);
+  if(shell.classList.contains('fullscreen'))controlsTimer=window.setTimeout(()=>shell.classList.add('controls-hidden'),3000);
+}
+function hideControls(){window.clearTimeout(controlsTimer);shell.classList.add('controls-hidden');}
+function toggleControls(){if(shell.classList.contains('controls-hidden'))showControls();else hideControls();}
 playButton.addEventListener('click',()=>{
   if(previewOnly){
     previewPlaying=!previewPlaying;
@@ -893,10 +910,18 @@ audio.addEventListener('error',()=>{stopAudioFrameLoop();previewOnly=true;audioS
 seekBar.addEventListener('input',()=>{const t=Number(seekBar.value)/100*duration;if(!previewOnly)audio.currentTime=t;renderAt(t);showControls();});
 chapterButtons.forEach((button,i)=>button.addEventListener('click',()=>{const t=chapterStarts[i]??0;if(!previewOnly)audio.currentTime=t;renderAt(t);showControls();}));
 playbackRate.addEventListener('change',()=>{audio.playbackRate=Number(playbackRate.value);});
-const shell=film.closest('.player-shell');
 document.querySelector('#fullscreen-toggle').addEventListener('click',async()=>{if(!document.fullscreenElement){await shell.requestFullscreen?.();shell.classList.add('fullscreen');}else await document.exitFullscreen?.();showControls();});
-document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement){shell.classList.remove('fullscreen','controls-hidden');}else{shell.classList.add('fullscreen');showControls();}resizeRenderer();});
-shell.addEventListener('pointermove',showControls);shell.addEventListener('pointerdown',e=>{if(e.target===film||e.target===document.querySelector('#webgl'))showControls();});
+document.addEventListener('fullscreenchange',()=>{
+  if(!document.fullscreenElement){window.clearTimeout(controlsTimer);shell.classList.remove('fullscreen','controls-hidden');}
+  else{shell.classList.add('fullscreen');showControls();window.requestAnimationFrame(()=>scrollChapterIntoView(lastChapter,'auto'));}
+  resizeRenderer();
+});
+shell.addEventListener('pointermove',event=>{if(event.pointerType!=='touch')showControls();});
+shell.addEventListener('pointerdown',event=>{if(event.target.closest('.player-controls, .chapter-rail'))showControls();});
+shell.addEventListener('click',event=>{
+  if(!shell.classList.contains('fullscreen')||event.target.closest('.player-controls, .chapter-rail'))return;
+  toggleControls();
+});
 window.addEventListener('keydown',e=>{if(e.target instanceof HTMLInputElement||e.target instanceof HTMLSelectElement)return;if(e.code==='Space'){e.preventDefault();playButton.click();}if(e.key==='f'||e.key==='F')document.querySelector('#fullscreen-toggle').click();if(e.key==='ArrowRight'){const t=Math.min(duration,(previewOnly?manualTime:audio.currentTime)+5);if(!previewOnly)audio.currentTime=t;renderAt(t);}if(e.key==='ArrowLeft'){const t=Math.max(0,(previewOnly?manualTime:audio.currentTime)-5);if(!previewOnly)audio.currentTime=t;renderAt(t);}});
 
 renderAt(0);
