@@ -77,6 +77,14 @@ qkvOriginTokens[6].append(qkvFeatureVector);
 const valueColors = ['#91f2d2','#72c8ff','#ba9aff','#ffc776'];
 const hookContextVector=document.getElementById('hook-context-vector');
 const hookContextBars=Array.from({length:8},(_,i)=>{const bar=document.createElement('i');bar.dataset.value=String([.42,.78,.5,.88,.3,.66,.38,.82][i]);hookContextVector.querySelector('span').append(bar);return bar;});
+const hookSentenceWords=[...document.querySelectorAll('.scene-hook .hook-sentence [data-word]')];
+const hookVectorWord=hookContextVector.querySelector('b'),hookVectorCaption=hookContextVector.querySelector('small');
+const hookContextPathRoot=document.getElementById('hook-context-paths'),hookContextParticleRoot=document.getElementById('hook-context-particles');
+const hookContextPathColors=['#72c8ff','#ba9aff','#ffc776','#91f2d2'];
+const hookContextPaths=hookContextPathColors.map(color=>{const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.dataset.color=color;hookContextPathRoot.append(path);return path;});
+const hookContextParticles=hookContextPathColors.map(color=>{const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');dot.dataset.color=color;dot.setAttribute('r','5.5');hookContextParticleRoot.append(dot);return dot;});
+const hookContextOutputPath=document.getElementById('hook-context-output-path'),hookContextOutputParticle=document.getElementById('hook-context-output-particle');
+const hookSpeechWordTimes=[[0,14.5,14.65],[1,14.7,15.0],[2,15.1,15.3],[3,15.3,15.9],[4,16.0,16.1],[5,16.2,16.6],[6,17.2,17.25],[7,17.3,17.4],[8,17.4,17.7],[9,17.8,18.1]];
 
 function makeBars(id, labels, kind) {
   const root = document.getElementById(id);
@@ -347,7 +355,11 @@ function renderHook(p){
   const mapDot=document.getElementById('hook-map-dot');
   const sentence=document.querySelector('.scene-hook .hook-sentence');
   const prompt=document.querySelector('.scene-hook .hook-prompt');
-  const tag=document.querySelector('.scene-hook .scene-tag');
+  const architecture=document.getElementById('hook-architecture');
+  const shell=document.getElementById('transformer-shell');
+  const architectureLabel=document.getElementById('architecture-label');
+  const module=document.getElementById('hook-attention-module');
+  const architecturePulse=document.getElementById('architecture-pulse');
   const candidates=document.querySelector('.hook-candidates');
   const cues=document.querySelector('.hook-cues');
   const motionNote=document.getElementById('hook-motion-note');
@@ -360,9 +372,11 @@ function renderHook(p){
   const answerIn=smooth(6.65,7.15,sec)*(1-smooth(10.65,11.2,sec));
   const mapIn=smooth(6.7,7.2,sec)*(1-smooth(10.65,11.2,sec));
   const sentenceIn=smooth(10.95,11.45,sec);
-  const ambiguity=smooth(.48,.59,p)*(1-smooth(.76,.84,p));
-  const resolve=smooth(.64,.78,p);
-  const concept=smooth(.82,.94,p);
+  const candidateEntrance=smooth(18.88,19.14,sec);
+  const ambiguity=candidateEntrance*(1-smooth(25.22,25.58,sec));
+  const resolve=smooth(22.7,23.16,sec)*(1-smooth(25.18,25.58,sec));
+  const contextBuild=smooth(25.58,25.92,sec)*(1-smooth(32.16,32.56,sec));
+  const architectureIn=smooth(33.18,33.48,sec)*(1-smooth(39.34,39.72,sec));
 
   const appBuild=smooth(0,.05,p),chatExit=smooth(10.7,11.2,sec);
   setOpacity(chat,appBuild*(1-chatExit));
@@ -394,78 +408,111 @@ function renderHook(p){
   mapDot.style.opacity=String(mapIn*(routeProgress>.02?1:0));
 
   setOpacity(sentence,sentenceIn*(1-smooth(.84,.94,p)*.3));
-  const focusScale=1+smooth(.49,.63,p)*.14+concept*.3;
+  const focusScale=1+smooth(18.88,19.18,sec)*.02+architectureIn*.015;
   const sentenceBox=sentence.getBoundingClientRect(),itBox=itWord.getBoundingClientRect();
   sentence.style.transformOrigin=`${clamp(((itBox.left+itBox.width/2-sentenceBox.left)/Math.max(1,sentenceBox.width))*100,0,100)}% 50%`;
   sentence.style.transform=`translateY(${(1-sentenceIn)*.9-smooth(.74,.86,p)*.35}cqw) scale(${focusScale})`;
-  sentence.querySelectorAll('[data-word]').forEach((word,i)=>{
-    const isTrail=i===1, isIt=i===6;
-    word.classList.toggle('word-focus',isIt&&ambiguity>.25||isTrail&&resolve>.35);
-    word.style.opacity=String(isIt||isTrail?1:.58+.42*(1-smooth(.77,.87,p)));
-    if(isIt&&ambiguity>.1)word.style.color=`rgb(${Math.round(210+resolve*20)},${Math.round(224+resolve*25)},${Math.round(236+resolve*10)})`;
-    else if(isIt)word.style.color='';
-    const contextBuild=smooth(25.6,26.15,sec)*(1-smooth(31.9,32.3,sec));
-    const sweep=clamp((sec-25.6)/6.7)*9,energy=Math.max(0,1-Math.abs(i-sweep)/1.35)*contextBuild;
-    word.style.backgroundColor=energy>.04?`rgba(93,203,174,${(.08+.3*energy).toFixed(3)})`:'';
-    word.style.boxShadow=energy>.04?`0 0 ${(.15+energy*.48).toFixed(2)}cqw rgba(110,245,205,${(.25+.55*energy).toFixed(2)})`:'';
-    word.style.transform=`translateY(${-energy*.18}cqw)`;
+  sentence.style.opacity=String(sentenceIn*(1-smooth(.84,.94,p)*.3)*(1-architectureIn*.25));
+  const contextCursor=sec<28.42?6:sec<31.32?clamp((sec-28.42)/2.9)*9:9;
+  const currentContextIndex=clamp(Math.round(contextCursor),0,hookSentenceWords.length-1);
+  hookSentenceWords.forEach((word,i)=>{
+    const isTrail=i===1,isIt=i===6;
+    const speech=hookSpeechWordTimes.find(item=>item[0]===i);
+    const voiceHot=speech?smooth(speech[1]-.025,speech[1]+.04,sec)*(1-smooth(speech[2]+.01,speech[2]+.045,sec)):0;
+    const contextEnergy=Math.max(0,1-Math.abs(i-contextCursor)/.9)*contextBuild;
+    word.classList.toggle('word-focus',(isIt&&ambiguity>.25)||(isTrail&&resolve>.35)||(i===currentContextIndex&&contextBuild>.4));
+    const ordinaryOpacity=isIt||isTrail?1:.58+.42*(1-smooth(.77,.87,p));
+    word.style.opacity=String(Math.max(ordinaryOpacity,contextBuild*.94,voiceHot));
+    if(voiceHot>.01){const r=Math.round(239+16*voiceHot),g=Math.round(246-47*voiceHot),b=Math.round(250-132*voiceHot);word.style.color=`rgb(${r},${g},${b})`;}
+    else if(isIt&&ambiguity>.1)word.style.color='#91f2d2';
+    else if(isTrail&&resolve>.35)word.style.color='#ffc776';
+    else word.style.color='';
+    if(voiceHot>.04)word.style.backgroundColor=`rgba(255,178,76,${(.08+.24*voiceHot).toFixed(3)})`;
+    else if(contextEnergy>.04)word.style.backgroundColor=`rgba(93,203,174,${(.08+.3*contextEnergy).toFixed(3)})`;
+    else word.style.backgroundColor='';
+    word.style.boxShadow=voiceHot>.04?`0 0 ${(.12+.48*voiceHot).toFixed(2)}cqw rgba(255,177,76,${(.2+.62*voiceHot).toFixed(2)})`:contextEnergy>.04?`0 0 ${(.15+contextEnergy*.48).toFixed(2)}cqw rgba(110,245,205,${(.25+.55*contextEnergy).toFixed(2)})`:'';
+    word.style.transform=`translateY(${-Math.max(contextEnergy*.18,voiceHot*.22)}cqw) scale(${1+voiceHot*.075+contextEnergy*.035})`;
   });
 
-  const contextBuild=smooth(25.6,26.15,sec)*(1-smooth(31.9,32.3,sec));
-  const stageRect=sentence.parentElement.getBoundingClientRect(),itRect=itWord.getBoundingClientRect();
-  hookContextVector.style.left=`${((itRect.left+itRect.width/2-stageRect.left)/stageRect.width*100).toFixed(3)}%`;
-  hookContextVector.style.top=`${((itRect.bottom-stageRect.top+8)/stageRect.height*100).toFixed(3)}%`;
+  const focusToken=hookSentenceWords[currentContextIndex]||itWord;
+  const stageRect=sentence.parentElement.getBoundingClientRect(),focusRect=focusToken.getBoundingClientRect();
+  hookVectorWord.textContent=focusToken.textContent.replace(/[.,]/g,'');
+  hookContextVector.style.left=`${((focusRect.left+focusRect.width/2-stageRect.left)/stageRect.width*100).toFixed(3)}%`;
+  hookContextVector.style.top=`${((focusRect.bottom-stageRect.top+27)/stageRect.height*100).toFixed(3)}%`;
   hookContextVector.style.opacity=String(contextBuild);
-  hookContextVector.style.transform=`translateX(-50%) translateY(${(1-contextBuild)*.35}cqw) scale(${.82+.18*contextBuild})`;
-  hookContextBars.forEach((bar,i)=>{const value=Number(bar.dataset.value),wave=.88+.12*Math.sin(sec*4.4+i*.62);bar.style.height=`${(18+value*76)*contextBuild*wave}%`;bar.style.opacity=String(contextBuild);});
+  hookContextVector.style.transform=`translateX(-50%) translateY(${(1-contextBuild)*.35}cqw) scale(${.88+.12*contextBuild})`;
+  hookContextBars.forEach((bar,i)=>{const signature=.5+.5*Math.sin((currentContextIndex+1)*(i+2)*.73),wave=.92+.08*Math.sin(sec*4.4+i*.62);bar.style.height=`${(20+(22+signature*64))*contextBuild*wave}%`;bar.style.opacity=String(contextBuild);});
 
   setOpacity(candidates,ambiguity);
-  candidates.style.transform=`translateY(${(1-ambiguity)*.55-smooth(.66,.8,p)*.15}cqw)`;
-  const placeAlpha=.42*(1-resolve)+.16;
-  const trailAlpha=.82+resolve*.18;
+  candidates.style.transform=`translateY(${(1-candidateEntrance)*.8}cqw)`;
+  const placeAlpha=.72-resolve*.12;
+  const trailAlpha=.82+resolve*.12;
   placeCard.style.opacity=String(ambiguity*placeAlpha);
   trailCard.style.opacity=String(ambiguity*trailAlpha);
-  trailCard.style.transform=`scale(${.96+resolve*.04})`;
-  placeCard.style.transform=`scale(${1-resolve*.035})`;
-  setOpacity(cues,smooth(.62,.7,p)*(1-smooth(.83,.9,p)));
-  document.getElementById('hook-cue-shaded').style.opacity=String(.65+.35*smooth(.64,.74,p));
-  document.getElementById('hook-cue-short').style.opacity=String(smooth(.65,.74,p));
-  setOpacity(prompt,smooth(.51,.58,p)*(1-smooth(.79,.87,p)));
-  prompt.style.transform=`translateY(${(1-smooth(.53,.63,p))*.3}cqw)`;
+  trailCard.style.transform=`translateX(${(1-candidateEntrance)*2.3}cqw) scale(${.88+.12*candidateEntrance+resolve*.025})`;
+  placeCard.style.transform=`translateX(${(1-candidateEntrance)*-2.3}cqw) scale(${.88+.12*candidateEntrance})`;
+  setOpacity(cues,0);
+  setOpacity(prompt,ambiguity);
+  prompt.style.transform=`translateY(${(1-candidateEntrance)*.35}cqw)`;
 
-  // Draw current candidate links from the actual word/card positions, so resizing and seeking stay deterministic.
+  // Draw every link from live word/card geometry; all movement is a pure function of narration time.
   const filmRect=film.getBoundingClientRect();
-  const toView=(el,anchor='center')=>{const r=el.getBoundingClientRect();return {x:(r.left+r.width/2-filmRect.left)*1200/filmRect.width,y:((anchor==='top'?r.top:r.top+r.height/2)-filmRect.top)*675/filmRect.height};};
-  const start=toView(itWord),place=toView(placeCard,'top'),trail=toView(trailCard,'top');
-  const makeCurve=(end,drop)=>`M ${start.x.toFixed(1)} ${start.y.toFixed(1)} C ${(start.x-18).toFixed(1)} ${(start.y+drop).toFixed(1)}, ${(end.x+22).toFixed(1)} ${(end.y-drop*.28).toFixed(1)}, ${end.x.toFixed(1)} ${end.y.toFixed(1)}`;
+  const toView=(el,anchor='center')=>{const r=el.getBoundingClientRect(),x=anchor==='left'?r.left:anchor==='right'?r.right:r.left+r.width/2,y=anchor==='top'?r.top:anchor==='bottom'?r.bottom:r.top+r.height/2;return {x:(x-filmRect.left)*1200/filmRect.width,y:(y-filmRect.top)*675/filmRect.height};};
+  const start=toView(itWord,'bottom'),place=toView(placeCard,'top'),trail=toView(trailCard,'top');
+  const makeCandidateCurve=(end,drop)=>`M ${start.x.toFixed(1)} ${start.y.toFixed(1)} C ${(start.x-18).toFixed(1)} ${(start.y+drop).toFixed(1)}, ${(end.x+22).toFixed(1)} ${(end.y-drop*.28).toFixed(1)}, ${end.x.toFixed(1)} ${end.y.toFixed(1)}`;
   const placePath=document.getElementById('hook-path-place'),trailPath=document.getElementById('hook-path-trail');
-  placePath.setAttribute('d',makeCurve(place,48));trailPath.setAttribute('d',makeCurve(trail,34));
-  const pathAlpha=ambiguity;
-  placePath.style.opacity=String(ambiguity*.22*(1-resolve));
-  trailPath.style.opacity=String(ambiguity*(.48+.52*resolve));
+  placePath.setAttribute('d',makeCandidateCurve(place,48));trailPath.setAttribute('d',makeCandidateCurve(trail,34));
+  placePath.style.opacity=String(ambiguity*.4*(1-contextBuild));
+  trailPath.style.opacity=String(ambiguity*(.56+.28*resolve)*(1-contextBuild));
   const placeLen=placePath.getTotalLength?.()??1,trailLen=trailPath.getTotalLength?.()??1;
-  const draw=smooth(.50,.535,p);
   placePath.style.strokeDasharray='none';placePath.style.strokeDashoffset='0';
   trailPath.style.strokeDasharray='none';trailPath.style.strokeDashoffset='0';
   const placeParticle=document.getElementById('hook-particle-place'),trailParticle=document.getElementById('hook-particle-trail');
-  const placePoint=placePath.getPointAtLength(placeLen*phase(sec,.46)),trailPoint=trailPath.getPointAtLength(trailLen*phase(sec,.52,.17));
+  const placePoint=placePath.getPointAtLength(placeLen*phase(sec,.82)),trailPoint=trailPath.getPointAtLength(trailLen*phase(sec,.9,.17));
   placeParticle.setAttribute('cx',String(placePoint.x));placeParticle.setAttribute('cy',String(placePoint.y));
   trailParticle.setAttribute('cx',String(trailPoint.x));trailParticle.setAttribute('cy',String(trailPoint.y));
-  placeParticle.setAttribute('r',String(4+Math.sin(p*42)*.8));trailParticle.setAttribute('r',String(5+Math.sin(p*48+1)*1.1));
-  placeParticle.style.opacity=String(pathAlpha*.18*(1-resolve)*(draw>.1?1:0));
-  trailParticle.style.opacity=String(ambiguity*(.45+.55*resolve)*(draw>.1?1:0));
+  placeParticle.setAttribute('r',String(4.5+Math.sin(sec*8)*.7));trailParticle.setAttribute('r',String(5.5+Math.sin(sec*9+1)*.8));
+  placeParticle.style.opacity=String(ambiguity*.42*(1-contextBuild));
+  trailParticle.style.opacity=String(ambiguity*.72*(1-contextBuild));
 
-  setOpacity(motionNote,concept*(1-smooth(.95,.99,p)));
-  setOpacity(tag,concept);
-  tag.style.transform=`translateY(${(1-concept)*-.35}cqw) scale(${.96+.04*concept})`;
-  const attentionSignal=tag.querySelector('.attention-signal');
-  const signalPulse=.5+.5*Math.sin(p*38);
-  attentionSignal.style.transform=`scale(${.78+.22*signalPulse})`;
-  attentionSignal.style.opacity=String(.62+.38*signalPulse);
-  // The ending reframes several moving candidate paths as contextual computation, never a single fixed arrow.
-  const quiet=1-smooth(.81,.9,p);
-  [placePath,trailPath].forEach(path=>{path.style.opacity=String(Number(path.style.opacity)*quiet);});
-  [placeParticle,trailParticle].forEach(dot=>{dot.style.opacity=String(Number(dot.style.opacity)*quiet);});
+  const contextOffsets=[-2,-1,1,2];
+  hookContextPaths.forEach((path,i)=>{
+    const sourceIndex=currentContextIndex+contextOffsets[i],dot=hookContextParticles[i];
+    if(sourceIndex<0||sourceIndex>=hookSentenceWords.length||contextBuild<.01){path.style.opacity='0';dot.style.opacity='0';return;}
+    const source=hookSentenceWords[sourceIndex],a=toView(source,'bottom'),cardTop=toView(hookContextVector,'top');
+    const target={x:cardTop.x+(i-1.5)*15,y:cardTop.y},gap=Math.max(16,target.y-a.y);
+    path.setAttribute('d',`M ${a.x.toFixed(1)} ${a.y.toFixed(1)} C ${a.x.toFixed(1)} ${(a.y+gap*.72).toFixed(1)}, ${target.x.toFixed(1)} ${(target.y-gap*.28).toFixed(1)}, ${target.x.toFixed(1)} ${target.y.toFixed(1)}`);
+    path.style.stroke=path.dataset.color;path.style.strokeDasharray='none';path.style.opacity=String(contextBuild*.82);
+    const length=path.getTotalLength?.()??1,point=path.getPointAtLength(length*phase(sec,1.05,i*.19));
+    dot.setAttribute('cx',String(point.x));dot.setAttribute('cy',String(point.y));dot.style.fill=path.dataset.color;dot.style.opacity=String(contextBuild*.92);
+  });
+  const outputFrom=toView(focusToken,'bottom'),outputTo=toView(hookContextVector,'top'),outputGap=outputTo.y-outputFrom.y;
+  hookContextOutputPath.setAttribute('d',`M ${outputFrom.x.toFixed(1)} ${outputFrom.y.toFixed(1)} C ${outputFrom.x.toFixed(1)} ${(outputFrom.y+outputGap*.38).toFixed(1)}, ${outputTo.x.toFixed(1)} ${(outputTo.y-outputGap*.38).toFixed(1)}, ${outputTo.x.toFixed(1)} ${outputTo.y.toFixed(1)}`);
+  hookContextOutputPath.style.strokeDasharray='none';hookContextOutputPath.style.opacity=String(contextBuild*.9);
+  const outputLength=hookContextOutputPath.getTotalLength?.()??1,outputPoint=hookContextOutputPath.getPointAtLength(outputLength*phase(sec,1.22,.35));
+  hookContextOutputParticle.setAttribute('cx',String(outputPoint.x));hookContextOutputParticle.setAttribute('cy',String(outputPoint.y));hookContextOutputParticle.style.opacity=String(contextBuild*.94);
+
+  const moduleIn=architectureIn;
+  const moduleTravel=smooth(35.48,36.34,sec);
+  const shellIn=smooth(36.62,37.18,sec)*(1-smooth(39.34,39.72,sec));
+  const selfAttentionHot=Math.max(smooth(34.18,34.32,sec)*(1-smooth(34.88,35.04,sec)),smooth(35.48,35.62,sec)*(1-smooth(36.32,36.48,sec)));
+  const transformerName=smooth(38.56,38.8,sec)*(1-smooth(39.28,39.52,sec));
+  architecture.style.visibility=moduleIn>.001||shellIn>.001?'visible':'hidden';
+  module.style.opacity=String(moduleIn);
+  module.style.left=`${12+22*moduleTravel}%`;
+  module.style.transform=`translateY(${(1-moduleIn)*.45}cqw) scale(${.9+.1*moduleIn+selfAttentionHot*.035})`;
+  module.style.borderColor=selfAttentionHot>.05?'#ffc776':'#639f94';
+  module.style.boxShadow=`0 0 ${(.45+selfAttentionHot*.85).toFixed(2)}cqw rgba(116,230,200,${(.22+selfAttentionHot*.34).toFixed(2)}), 0 1.1cqw 2.8cqw rgba(0,0,0,.35)`;
+  shell.style.opacity=String(shellIn);
+  shell.style.transform=`perspective(1000px) rotateX(${8-shellIn*4}deg) rotateY(${-8+shellIn*4}deg) scale(${.72+.28*shellIn})`;
+  shell.style.borderColor=transformerName>.1?'#ffc776':'#4a8f84';
+  shell.style.boxShadow=`0 1.5cqw 3cqw rgba(0,0,0,.4), 0 0 ${(.55+transformerName*.8).toFixed(2)}cqw rgba(255,199,118,${(.08+transformerName*.28).toFixed(2)})`;
+  architectureLabel.textContent=transformerName>.1?'TRANSFORMER':'LARGER ARCHITECTURE';
+  architectureLabel.style.opacity=String(shellIn);
+  architectureLabel.style.color=transformerName>.1?'#ffc776':'#d6e9e8';
+  architectureLabel.style.transform=`scale(${.92+.08*shellIn+transformerName*.025})`;
+  architecturePulse.style.left=`${phase(sec,.78)*100}%`;
+  architecturePulse.style.opacity=String(shellIn*(.62+.38*Math.sin(sec*9)**2));
 }
 function renderVectors(p){
   const sec=sceneSeconds(1,p);
