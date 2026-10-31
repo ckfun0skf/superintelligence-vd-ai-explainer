@@ -16,8 +16,8 @@ video:
   export_status: on_hold_for_user_page_qa
   export_script: scripts/render-mp4.py
   final_output: ../../renders/transformer-attention-deep-dive-1080p24.mp4
-  deployed_commit: 2c27d284c7d125a0c0c35b0cbbd9eeefa9ad951e
-  pages_workflow_run: 41149140255
+  deployed_commit: 1fa7bd6668749b04c2e7ff93036a22511335e939
+  pages_workflow_run: 41150999738
   live_preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/series/transformer-attention/
   runtime_seconds: 420.504
   timeline_seconds: 420.48
@@ -97,10 +97,10 @@ qa:
     - "The global ambient WebGL layer is subdued (180 seeded points, 24 faint links, low opacity); the 16:9 stage remained 1180×664 in the desktop browser QA viewport."
   visual_development:
     chapter_01:
-      status: opening_animation_refined_browser_qa_passed
+      status: chapter_01_visual_revision_fullhd_public_qa_passed_waiting_user_review
       duration_seconds: 40.04
       timing_source: "Chapter-local progress derived from audio.currentTime; all visual values are seek-stable and deterministic."
-      reviewed_frames: [18, 23, 29, 37]
+      reviewed_frames: [11.3, 12.8, 14.72, 15.58, 16.35, 17.52, 19.3, 23.8, 25.8, 27.3, 29, 30.2, 31.8, 34.55, 37.65, 38.9]
       checks:
         - "Chat prompt is typed in the bottom composer; after send, the composer resets and the submitted prompt remains as a message bubble."
         - "The Taipei Maokong map card and chat UI stay above the expanding sentence, avoiding visual overlap."
@@ -108,6 +108,10 @@ qa:
         - "The 'shaded' and 'short' context clues are visible before the closing concept beat."
         - "SELF-ATTENTION is visually nested inside a TRANSFORMER frame; the signal pulse is driven by chapter progress."
         - "Review transcript remains outside the 16:9 film frame; key labels and prompt stay within the 1920x1080 design canvas."
+        - "The sentence 'The trail near Maokong is shaded. It is short, too.' is enlarged to 55.7px at 1080p; each spoken word turns amber and scales slightly at its measured word timestamp. The maximum late-scene text bounds remain inside x=26–1874px."
+        - "PLACE/Maokong and THING/the trail candidate cards are enlarged to about 403x125px at 1080p and enter quickly; the small ambiguous question is replaced by the clear label 'POSSIBLE REFERENCES'."
+        - "During the computation explanation, four surrounding-word signals flow beneath the sentence into the same moving UPDATED REPRESENTATION card; its token label and vector bars update as the focus sweeps across positions."
+        - "The Self-Attention module visibly moves into the larger Transformer shell; the container label changes from 'LARGER ARCHITECTURE' to 'TRANSFORMER' on the spoken cue."
       references_note: ../../docs/series-planning/01-transformer-visual-reference-notes.md
     chapter_02:
       status: token_embedding_position_motion_refined_browser_qa_passed
@@ -181,6 +185,7 @@ qa:
       - "After the final Mix result-bar geometry fix, four local 1920x1080 frames at 215.8, 216.12, 216.5 and 217.72 showed the four vector bars at 12px width and 16–24px height, kept the result visible through narration, then moved the signal during the inter-chapter gap; browser errors: zero, and a repeated 215.8-second frame was byte-identical."
       - "GitHub Pages deployment for commit 18590d6 (run 41137617678) succeeded. Public 1920x1080 QA at 215.8, 216.12, 216.5 and 217.72 seconds confirmed visible Mix result bars, the narration-to-handoff sequence and Chapter 05 entry; browser errors: zero. After fonts loaded, repeated 215.8-second captures differed by at most 1/255 per channel, with no pixels differing by more than 3/255."
       - "GitHub Pages player-controls QA for commit 2c27d28 (run 41149140255) passed at 780x360 CSS pixels/DPR 3 and 1920x1080: fullscreen chapter rail is one horizontally scrollable row, the seek/control bar does not overlap it, active chapters auto-scroll into view, touch taps toggle controls, controls auto-hide after 3 seconds even while paused, and browser errors are zero. A real requestFullscreen API click also passed on the local production preview."
+      - "GitHub Pages Chapter 01 review build 1fa7bd6 (run 41150999738) passed 12 public 1920x1080 keyframes covering word highlights, both candidate cards, context signal routing, Self-Attention and Transformer containment; sentence bounds remained within x=26–1874px, browser errors were zero, and a repeated context-flow frame was byte-identical."
     export:
       status: on_hold
       resolution: 1920x1080
