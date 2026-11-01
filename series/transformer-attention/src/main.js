@@ -18,6 +18,8 @@ const audioState = document.querySelector('#audio-state');
 const playbackRate = document.querySelector('#playback-rate');
 
 const FPS = 24;
+// Chapter 02 transcript: opening line starts at +0.32s; word tiles unfold through +2.66s.
+const CHAPTER_02_SPLIT_DURATION=2.66,CHAPTER_02_SPLIT_MOVE_START=.32,CHAPTER_02_TILE_START=1.28,CHAPTER_02_TILE_STAGGER=.075,CHAPTER_02_TILE_DURATION=.27;
 const plannedChapterSeconds = [45, 60, 55, 105, 50, 55, 80, 85];
 const plannedTotal = plannedChapterSeconds.reduce((a, b) => a + b, 0);
 let narrationTiming = null;
@@ -208,7 +210,7 @@ function boxInFilm(node,filmRect){const r=node.getBoundingClientRect();return{x:
 function snapshotHandoffNodes(nodes,filmRect){
   return (nodes||[]).filter(Boolean).map(node=>{
     const s=getComputedStyle(node);
-    return{node,rect:boxInFilm(node,filmRect),style:{color:s.color,backgroundColor:s.backgroundColor,borderColor:s.borderColor,borderWidth:s.borderWidth,borderRadius:s.borderRadius,fontSize:s.fontSize,fontWeight:s.fontWeight,boxShadow:s.boxShadow}};
+    return{node,rect:boxInFilm(node,filmRect),style:{color:s.color,backgroundColor:s.backgroundColor,borderColor:s.borderColor,borderWidth:s.borderWidth,borderRadius:s.borderRadius,fontSize:s.fontSize,fontWeight:s.fontWeight,boxShadow:s.boxShadow,padding:s.padding,lineHeight:s.lineHeight}};
   });
 }
 function renderContinuityHandoff(t,activeIndex,activeProgress){
@@ -217,15 +219,19 @@ function renderContinuityHandoff(t,activeIndex,activeProgress){
   continuitySignal.style.opacity='0';
   const filmRect=film.getBoundingClientRect();
   for(const pair of continuityPairs){
-    const windowStart=pair.from===3?(chapterEnds[pair.from]??0)+.04:(chapterEnds[pair.from]??0)-.72,windowEnd=(chapterStarts[pair.to]??0)+.72;
+    const splitHandoff=pair.from===0&&pair.to===1,splitStart=chapterStarts[pair.to]??0,splitDuration=CHAPTER_02_SPLIT_DURATION;
+    const windowStart=splitHandoff?splitStart:pair.from===3?(chapterEnds[pair.from]??0)+.04:(chapterEnds[pair.from]??0)-.72;
+    const windowEnd=splitHandoff?splitStart+splitDuration:(chapterStarts[pair.to]??0)+.72;
     if(t<windowStart||t>windowEnd)continue;
-    const q=clamp((t-windowStart)/Math.max(.001,windowEnd-windowStart)),e=smooth(0,1,q);
+    const q=clamp((t-windowStart)/Math.max(.001,windowEnd-windowStart)),handoffSec=t-windowStart;
+    const e=splitHandoff?smooth(CHAPTER_02_SPLIT_MOVE_START,splitDuration,handoffSec):smooth(0,1,q);
     // Sample both chapter endpoints at fixed progress, then restore the current audio-time scene.
     sceneRenderers[pair.from](1);
     const hasTokens=pair.type==='tokens'||pair.type==='tokens+signal',hasSignal=pair.type==='signal'||pair.type==='tokens+signal';
     const sourceNodes=hasTokens?(pair.tokenSource?pair.tokenSource():pair.source()||[]):[],sourceShots=snapshotHandoffNodes(sourceNodes,filmRect);
     const signalSourceNodes=hasSignal?(pair.signalSource?pair.signalSource():pair.source()||[]):[],signalSourceShots=snapshotHandoffNodes(signalSourceNodes,filmRect);
-    sceneRenderers[pair.to](0);
+    const targetProgress=splitHandoff?clamp(splitDuration/sceneSpan(pair.to)):0;
+    sceneRenderers[pair.to](targetProgress);
     const targetNodes=hasTokens?(pair.tokenTarget?pair.tokenTarget():pair.target()||[]):[],targetShots=snapshotHandoffNodes(targetNodes,filmRect);
     const signalTargetNodes=hasSignal?(pair.signalTarget?pair.signalTarget():pair.target()||[]):[],signalTargetShots=snapshotHandoffNodes(signalTargetNodes,filmRect);
     sceneRenderers[activeIndex](activeProgress);
@@ -237,14 +243,23 @@ function renderContinuityHandoff(t,activeIndex,activeProgress){
         if(!src){chip.style.opacity='0';continue;}
         const a=src.rect,b=dst?.rect||{...a,x:Math.min(108,a.x+8),y:a.y-7,w:a.w,h:a.h};
         const sa=src.style,sb=dst?.style||sa;
+        const tileStart=CHAPTER_02_TILE_START+i*CHAPTER_02_TILE_STAGGER;
+        const tileProgress=splitHandoff?smooth(tileStart,tileStart+CHAPTER_02_TILE_DURATION,handoffSec):e;
+        const [sourcePadY,sourcePadX]=(sa.padding||'0px 0px').split(' ').map(parseFloat),[targetPadY,targetPadX]=(sb.padding||'0px 0px').split(' ').map(parseFloat);
         chip.style.left=`${a.x+(b.x-a.x)*e}%`;chip.style.top=`${a.y+(b.y-a.y)*e-Math.sin(e*Math.PI)*2.2}%`;
         chip.style.width=`${a.w+(b.w-a.w)*e}%`;chip.style.height=`${a.h+(b.h-a.h)*e}%`;
         chip.style.fontSize=`${(parseFloat(sa.fontSize)+(parseFloat(sb.fontSize)-parseFloat(sa.fontSize))*e)/filmRect.width*100}cqw`;
-        chip.style.color=e<.55?sa.color:sb.color;chip.style.backgroundColor=blendColor(sa.backgroundColor,sb.backgroundColor,e);
-        chip.style.borderColor=blendColor(sa.borderColor,sb.borderColor,e);chip.style.borderWidth=`${(parseFloat(sa.borderWidth||'0')+(parseFloat(sb.borderWidth||'0')-parseFloat(sa.borderWidth||'0'))*e)/filmRect.width*100}cqw`;
-        chip.style.borderRadius=`${(parseFloat(sa.borderRadius||'0')+(parseFloat(sb.borderRadius||'0')-parseFloat(sa.borderRadius||'0'))*e)/filmRect.width*100}cqw`;
-        chip.style.fontWeight=e<.5?sa.fontWeight:sb.fontWeight;chip.style.boxShadow=e>.78?sb.boxShadow:`0 0 ${e*.85}cqw #72c8ff55`;
-        chip.style.padding=`${e*.12}cqw ${e*.2}cqw`;chip.style.transform=`translate(-50%,-50%) perspective(900px) rotateY(${Math.sin(e*Math.PI)*13}deg) rotateX(${Math.sin(e*Math.PI)*4}deg) translateZ(${Math.sin(e*Math.PI)*.6}cqw)`;
+        chip.style.color=tileProgress<.55?sa.color:sb.color;chip.style.backgroundColor=blendColor(sa.backgroundColor,sb.backgroundColor,tileProgress);
+        chip.style.borderColor=blendColor(sa.borderColor,sb.borderColor,tileProgress);chip.style.borderWidth=`${(parseFloat(sa.borderWidth||'0')+(parseFloat(sb.borderWidth||'0')-parseFloat(sa.borderWidth||'0'))*tileProgress)/filmRect.width*100}cqw`;
+        chip.style.borderRadius=`${(parseFloat(sa.borderRadius||'0')+(parseFloat(sb.borderRadius||'0')-parseFloat(sa.borderRadius||'0'))*tileProgress)/filmRect.width*100}cqw`;
+        chip.style.fontWeight=tileProgress<.5?sa.fontWeight:sb.fontWeight;
+        chip.style.boxShadow=tileProgress>.78?sb.boxShadow:`0 0 ${tileProgress*.85}cqw #72c8ff55`;
+        if(splitHandoff){
+          chip.style.padding=`${(sourcePadY+(targetPadY-sourcePadY)*tileProgress)/filmRect.width*100}cqw ${(sourcePadX+(targetPadX-sourcePadX)*tileProgress)/filmRect.width*100}cqw`;
+          chip.style.lineHeight=sa.lineHeight||sb.lineHeight;
+        }else chip.style.padding=`${e*.12}cqw ${e*.2}cqw`;
+        const tileKick=splitHandoff?Math.exp(-tileProgress*7)*Math.sin(tileProgress*Math.PI*2.5):0;
+        chip.style.transform=`translate(-50%,-50%) perspective(900px) rotateY(${Math.sin(e*Math.PI)*13}deg) rotateX(${Math.sin(e*Math.PI)*4}deg) translateZ(${Math.sin(e*Math.PI)*.6}cqw) scale(${1+Math.max(0,tileKick)*.06})`;
         chip.style.opacity=String(i>=targetShots.length?1-e:1);
       }
       for(const node of [...sourceNodes,...targetNodes])if(node&&!continuityHidden.has(node)){continuityHidden.set(node,node.style.opacity);node.style.opacity='0';}
@@ -520,7 +535,7 @@ function renderVectors(p){
   const sec=sceneSeconds(1,p);
   const scene=document.querySelector('.scene-vectors'),heading=scene.querySelector('.vector-heading'),headingLabel=heading.querySelector('.micro-label'),phrase=heading.querySelector('.token-phrase');
   const phraseTokens=[...phrase.children],ids=[...idCells.children],embs=[...embeddingCells.children],tokenizer=document.getElementById('tokenizer-card'),embedding=document.getElementById('embedding-card');
-  const split=smooth(.22,.98,sec),lookup=smooth(3.46,3.86,sec),tokenizerOut=smooth(14.02,14.48,sec),detailIn=smooth(18.88,19.35,sec)*(1-smooth(22.12,22.58,sec));
+  const split=smooth(CHAPTER_02_SPLIT_MOVE_START,CHAPTER_02_SPLIT_DURATION,sec),lookup=smooth(3.46,3.86,sec),tokenizerOut=smooth(14.02,14.48,sec),detailIn=smooth(18.88,19.35,sec)*(1-smooth(22.12,22.58,sec));
   const orderIn=smooth(22.64,23.12,sec)*(1-smooth(39.58,40.04,sec)),finalIn=smooth(40.04,40.48,sec);
   const stage=sec<3.46?'split':sec<14.1?'lookup':sec<22.64?'vector':sec<40.04?'order':'final';
   scene.dataset.phase=stage;
@@ -533,7 +548,7 @@ function renderVectors(p){
   phrase.style.gap=`${.28+.36*split}cqw`;
   phrase.style.marginTop=`${.34+.34*split}cqw`;
   phraseTokens.forEach((e,i)=>{
-    const tile=smooth(.32+i*.047,.47+i*.047,sec),kick=Math.exp(-Math.max(0,sec-(.47+i*.047))*9)*Math.sin(Math.max(0,sec-(.47+i*.047))*20);
+    const tileStart=CHAPTER_02_TILE_START+i*CHAPTER_02_TILE_STAGGER,tile=smooth(tileStart,tileStart+CHAPTER_02_TILE_DURATION,sec),tileAge=Math.max(0,sec-tileStart),kick=Math.exp(-tileAge*9)*Math.sin(tileAge*20);
     e.style.padding=`${.12+.28*tile}cqw ${.08+.34*tile}cqw`;
     e.style.borderColor=`rgba(103,153,177,${.04+.82*tile})`;
     e.style.backgroundColor=`rgba(16,26,40,${.08+.9*tile})`;
