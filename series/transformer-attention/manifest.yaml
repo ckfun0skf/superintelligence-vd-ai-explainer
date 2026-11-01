@@ -114,15 +114,18 @@ qa:
         - "The Self-Attention module visibly moves into the larger Transformer shell; the container label changes from 'LARGER ARCHITECTURE' to 'TRANSFORMER' on the spoken cue."
       references_note: ../../docs/series-planning/01-transformer-visual-reference-notes.md
     chapter_02:
-      status: token_embedding_position_motion_refined_browser_qa_passed
+      status: chapter_02_user_visual_revision_local_fullhd_qa_passed_public_page_review_pending
       duration_seconds: 49.36
       timing_source: "Chapter-local progress is derived from the narration audio clock; paths, stagger, and chip motion are seek-stable."
-      reviewed_frames: [45, 55, 74, 82]
+      reviewed_frames: [42.09, 44.56, 44.89, 45.84, 48.14, 60.24, 64.34, 65.49, 66.14, 68.04, 73.04, 78.04, 81.84, 87.94]
       checks:
-        - "A large sentence contracts into distinct word tiles; tile-to-ID curves align to the live DOM boxes and carry deterministic signal dots."
-        - "Token IDs appear in sequence, embedding cells grow into vector bars, and the explanatory note is delayed until the vector beat."
-        - "The order comparison enters after the token/embedding explanation; the lower sentence reorders via deterministic transforms over a positional ribbon."
-        - "The 16:9 composition retains open space and keeps section transcript outside the film frame."
+        - "On the spoken 'split into tokens' cue, the persistent sentence separates into larger word tiles with decisive motion; the token row carries directly forward from Chapter 01."
+        - "As the tokenizer is named, orange ID tiles bounce down from the corresponding tokens into a labeled TOKENIZER card, with a moving signal trace and readable illustrative IDs."
+        - "When the model looks up a learned representation, a second labeled EMBEDDING card appears below; each token produces its own small vector glyph, followed by one enlarged example vector."
+        - "The order beat first presents 'SAME WORDS · DIFFERENT ORDER · DIFFERENT RELATION' without an empty card; the comparison panel expands only as the first quote arrives, then shows both subject/reference reversals."
+        - "Position numbers sit immediately below their words; readable POSITION SLOTS and RELATIVE DISTANCE cues connect the encoding choices to the following calculation."
+        - "The closing row retains all ten phrase tokens, shows embedding glyphs and numbered positions, then routes them into CONTENT + POSITION → NEXT CALCULATION."
+        - "Thirteen representative local Chromium captures at the 1920x1080 film stage passed with zero console/page errors; the production build, JavaScript syntax and git diff checks passed. Public page review is still pending."
     chapter_03:
       status: self_attention_paths_refined_browser_qa_passed
       duration_seconds: 44.92
@@ -186,6 +189,7 @@ qa:
       - "GitHub Pages deployment for commit 18590d6 (run 41137617678) succeeded. Public 1920x1080 QA at 215.8, 216.12, 216.5 and 217.72 seconds confirmed visible Mix result bars, the narration-to-handoff sequence and Chapter 05 entry; browser errors: zero. After fonts loaded, repeated 215.8-second captures differed by at most 1/255 per channel, with no pixels differing by more than 3/255."
       - "GitHub Pages player-controls QA for commit 2c27d28 (run 41149140255) passed at 780x360 CSS pixels/DPR 3 and 1920x1080: fullscreen chapter rail is one horizontally scrollable row, the seek/control bar does not overlap it, active chapters auto-scroll into view, touch taps toggle controls, controls auto-hide after 3 seconds even while paused, and browser errors are zero. A real requestFullscreen API click also passed on the local production preview."
       - "GitHub Pages Chapter 01 review build 1fa7bd6 (run 41150999738) passed 12 public 1920x1080 keyframes covering word highlights, both candidate cards, context signal routing, Self-Attention and Transformer containment; sentence bounds remained within x=26–1874px, browser errors were zero, and a repeated context-flow frame was byte-identical."
+      - "Chapter 02's latest local 1920x1080 QA covered split, ID bounce, embedding lookup, vector detail, order headline/transition/both sentences, position slots, relative distance and the closing representation row; all expected states appeared and browser console/page errors were zero."
     export:
       status: on_hold
       resolution: 1920x1080

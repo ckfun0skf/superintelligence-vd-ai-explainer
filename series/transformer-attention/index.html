@@ -42,10 +42,23 @@
           </section>
 
           <section class="scene scene-vectors" data-scene="1" aria-hidden="true">
-            <div class="vector-heading"><span class="micro-label">TEXT BECOMES NUMERICAL INPUT</span><div class="token-phrase"><span>The</span><span>trail</span><span>near</span><span>Maokong</span><span>is</span><span>shaded.</span><span>It</span><span>is</span><span>short,</span><span>too.</span></div></div>
+            <div class="vector-heading"><span class="micro-label">ONE SENTENCE → INDIVIDUAL TOKENS</span><div class="token-phrase"><span>The</span><span>trail</span><span>near</span><span>Maokong</span><span>is</span><span>shaded.</span><span>It</span><span>is</span><span>short,</span><span>too.</span></div></div>
             <svg class="vector-token-links" id="vector-token-links" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><g id="vector-link-paths"></g><g id="vector-link-particles"></g></svg>
-            <div class="vector-flow"><div class="flow-label">TOKEN ID</div><div class="id-cells" id="id-cells"></div><div class="flow-arrow">→</div><div class="flow-label">EMBEDDING</div><div class="embedding-cells" id="embedding-cells"></div></div>
-            <div class="position-lab"><div class="position-title">ORDER CHANGES THE CONTEXT</div><div class="order-row"><span>The</span><span>trail</span><span>is</span><span>near</span><span>Maokong</span></div><div class="position-ribbon" id="position-ribbon"></div><div class="order-row swapped"><span>Maokong</span><span>is</span><span>near</span><span>the</span><span>trail</span></div><div class="position-modes" id="position-modes" aria-hidden="true"><div class="position-mode slot-mode"><span class="mode-glyph">1 · 2 · 3 · 4 · 5</span><b>POSITION SLOTS</b></div><div class="position-mode relative-mode"><span class="mode-glyph">↔1 · ↔2 · ↔3</span><b>RELATIVE DISTANCE</b></div></div></div>
+            <div class="vector-flow" aria-label="Each token receives an ID, then a learned embedding">
+              <div class="pipeline-card tokenizer-card" id="tokenizer-card"><div class="pipeline-head"><span class="pipeline-icon">01</span><div><b>TOKENIZER</b><small>assigns one ID to each token</small></div></div><div class="id-cells" id="id-cells"></div></div>
+              <div class="pipeline-card embedding-card" id="embedding-card"><div class="pipeline-head"><span class="pipeline-icon">02</span><div><b id="embedding-card-title">MODEL LOOKUP</b><small>learned numerical representation</small></div></div><div class="embedding-cells" id="embedding-cells"></div></div>
+            </div>
+            <div class="vector-detail" id="vector-detail"><div class="vector-detail-head"><b>ONE TOKEN</b><span>→</span><strong>A VECTOR · A LIST OF NUMBERS</strong></div><div class="vector-detail-body"><span class="vector-detail-token" id="vector-detail-token">near</span><div class="vector-detail-bars" id="vector-detail-bars"></div><div class="vector-detail-values">0.18&nbsp; · &nbsp;−0.42&nbsp; · &nbsp;0.73&nbsp; · &nbsp;0.09&nbsp; · &nbsp;…</div></div><small>numbers the network can work with</small></div>
+            <div class="position-lab">
+              <div class="position-title">SAME WORDS · DIFFERENT ORDER · DIFFERENT RELATION</div>
+              <div class="order-pairs">
+                <div class="order-pair" id="order-pair-a"><div class="order-row"><span>The</span><span>trail</span><span>is</span><span>near</span><span>Maokong</span></div><div class="order-meaning"><div class="relation-entity"><small>SUBJECT</small><b>TRAIL</b></div><div class="relation-link"><b>IS NEAR</b><i>→</i></div><div class="relation-entity"><small>REFERENCE</small><b>MAOKONG</b></div></div></div>
+                <div class="order-pair swapped-pair" id="order-pair-b"><div class="order-row swapped"><span>Maokong</span><span>is</span><span>near</span><span>the</span><span>trail</span></div><div class="order-meaning"><div class="relation-entity"><small>SUBJECT</small><b>MAOKONG</b></div><div class="relation-link"><b>IS NEAR</b><i>→</i></div><div class="relation-entity"><small>REFERENCE</small><b>TRAIL</b></div></div></div>
+              </div>
+              <div class="position-ribbon" id="position-ribbon"></div>
+              <div class="position-modes" id="position-modes" aria-hidden="true"><div class="position-mode slot-mode"><span class="mode-glyph">01 · 02 · 03 · 04 · 05</span><b>POSITION SLOTS</b></div><div class="position-mode relative-mode"><span class="mode-glyph">← 1 · 2 · 3 →</span><b>RELATIVE DISTANCE</b></div></div>
+            </div>
+            <div class="representation-takeaway" id="representation-takeaway"><div class="takeaway-title"><span>CONTENT</span><i>+</i><span>POSITION</span><b>→</b><strong>NEXT CALCULATION</strong></div><div class="position-index-row" id="position-index-row"></div><div class="takeaway-flow" id="takeaway-flow"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
             <div class="vector-note">Illustrative vector values · not a word definition</div>
           </section>
 
