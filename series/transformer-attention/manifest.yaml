@@ -16,8 +16,8 @@ video:
   export_status: on_hold_for_user_page_qa
   export_script: scripts/render-mp4.py
   final_output: ../../renders/transformer-attention-deep-dive-1080p24.mp4
-  deployed_commit: 1fa7bd6668749b04c2e7ff93036a22511335e939
-  pages_workflow_run: 41150999738
+  deployed_commit: e86ae4213479b3cd758b132465cb671d105f29a6
+  pages_workflow_run: 41263932088
   live_preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/series/transformer-attention/
   runtime_seconds: 420.504
   timeline_seconds: 420.48
@@ -114,7 +114,7 @@ qa:
         - "The Self-Attention module visibly moves into the larger Transformer shell; the container label changes from 'LARGER ARCHITECTURE' to 'TRANSFORMER' on the spoken cue."
       references_note: ../../docs/series-planning/01-transformer-visual-reference-notes.md
     chapter_02:
-      status: chapter_02_user_visual_revision_local_fullhd_qa_passed_public_page_review_pending
+      status: chapter_02_public_fullhd_qa_passed_waiting_user_review
       duration_seconds: 49.36
       timing_source: "Chapter-local progress is derived from the narration audio clock; paths, stagger, and chip motion are seek-stable."
       reviewed_frames: [42.09, 44.56, 44.89, 45.84, 48.14, 60.24, 64.34, 65.49, 66.14, 68.04, 73.04, 78.04, 81.84, 87.94]
@@ -125,7 +125,7 @@ qa:
         - "The order beat first presents 'SAME WORDS · DIFFERENT ORDER · DIFFERENT RELATION' without an empty card; the comparison panel expands only as the first quote arrives, then shows both subject/reference reversals."
         - "Position numbers sit immediately below their words; readable POSITION SLOTS and RELATIVE DISTANCE cues connect the encoding choices to the following calculation."
         - "The closing row retains all ten phrase tokens, shows embedding glyphs and numbered positions, then routes them into CONTENT + POSITION → NEXT CALCULATION."
-        - "Thirteen representative local Chromium captures at the 1920x1080 film stage passed with zero console/page errors; the production build, JavaScript syntax and git diff checks passed. Public page review is still pending."
+        - "Thirteen representative public GitHub Pages captures at the 1920x1080 film stage passed with zero console/page errors; the repeated 24.65-second transition frame was byte-identical after unrelated seeks. Production build, JavaScript syntax and git diff checks passed; user review is pending."
     chapter_03:
       status: self_attention_paths_refined_browser_qa_passed
       duration_seconds: 44.92
@@ -189,7 +189,7 @@ qa:
       - "GitHub Pages deployment for commit 18590d6 (run 41137617678) succeeded. Public 1920x1080 QA at 215.8, 216.12, 216.5 and 217.72 seconds confirmed visible Mix result bars, the narration-to-handoff sequence and Chapter 05 entry; browser errors: zero. After fonts loaded, repeated 215.8-second captures differed by at most 1/255 per channel, with no pixels differing by more than 3/255."
       - "GitHub Pages player-controls QA for commit 2c27d28 (run 41149140255) passed at 780x360 CSS pixels/DPR 3 and 1920x1080: fullscreen chapter rail is one horizontally scrollable row, the seek/control bar does not overlap it, active chapters auto-scroll into view, touch taps toggle controls, controls auto-hide after 3 seconds even while paused, and browser errors are zero. A real requestFullscreen API click also passed on the local production preview."
       - "GitHub Pages Chapter 01 review build 1fa7bd6 (run 41150999738) passed 12 public 1920x1080 keyframes covering word highlights, both candidate cards, context signal routing, Self-Attention and Transformer containment; sentence bounds remained within x=26–1874px, browser errors were zero, and a repeated context-flow frame was byte-identical."
-      - "Chapter 02's latest local 1920x1080 QA covered split, ID bounce, embedding lookup, vector detail, order headline/transition/both sentences, position slots, relative distance and the closing representation row; all expected states appeared and browser console/page errors were zero."
+      - "GitHub Pages Chapter 02 review build e86ae42 (run 41263932088) passed 13 public 1920x1080 keyframes covering split, ID bounce, embedding lookup, vector detail, order headline/transition/both sentences, position slots, relative distance and the closing representation row; all expected states appeared, browser errors were zero, and a repeated 24.65-second transition capture was byte-identical."
     export:
       status: on_hold
       resolution: 1920x1080
