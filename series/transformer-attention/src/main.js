@@ -284,7 +284,10 @@ const attentionSvg = document.getElementById('attention-lines');
 const attentionParticleRoot=document.getElementById('attention-particles');
 const attentionPaths = [];
 const attentionParticles=[];
-const targetIndices = [0, 1, 2, 3, 5, 6, 7, 8];
+const attentionSweepPositions=[6,0,1,2,3,4,5,7,8,9];
+const attentionSourceColors=['#91f2d2','#72c8ff','#ba9aff','#ffc776'];
+const attentionSourceChips=[...document.querySelectorAll('#context-sources i')];
+const targetIndices = attentionTokens.map((_,i)=>i);
 for (let i=0;i<targetIndices.length;i++) {
   const p=document.createElementNS('http://www.w3.org/2000/svg','path');
   p.setAttribute('d','M 0 0 L 0 0');
@@ -293,6 +296,9 @@ for (let i=0;i<targetIndices.length;i++) {
 }
 const attentionOutputPath=document.createElementNS('http://www.w3.org/2000/svg','path');attentionOutputPath.setAttribute('d','M 0 0 L 0 0');attentionOutputPath.classList.add('attention-output-path');attentionSvg.append(attentionOutputPath);
 const attentionOutputParticle=document.createElementNS('http://www.w3.org/2000/svg','circle');attentionOutputParticle.setAttribute('r','5.5');attentionOutputParticle.classList.add('attention-output-particle');attentionParticleRoot.append(attentionOutputParticle);
+const attentionLayerFlowRoot=document.getElementById('attention-layer-flow');
+const attentionLayerPath=document.createElementNS('http://www.w3.org/2000/svg','path');attentionLayerPath.setAttribute('d','M 0 0 L 0 0');attentionLayerPath.classList.add('attention-layer-path');attentionLayerFlowRoot.append(attentionLayerPath);
+const attentionLayerParticle=document.createElementNS('http://www.w3.org/2000/svg','circle');attentionLayerParticle.setAttribute('r','6');attentionLayerParticle.classList.add('attention-layer-particle');attentionLayerFlowRoot.append(attentionLayerParticle);
 
 // A seeded, absolute-time particle field gives the typography a quiet 3D depth layer.
 const renderer = new THREE.WebGLRenderer({ canvas: document.querySelector('#webgl'), alpha: true, antialias: true, powerPreference: 'high-performance' });
@@ -640,23 +646,52 @@ function renderVectors(p){
 }
 function renderAttention(p){
   const sec=sceneSeconds(2,p);
-  const sampledPositions=[0,1,3,6,8],positionSweep=sec>=33.7&&sec<37.9,positionStep=Math.min(sampledPositions.length-1,Math.floor(Math.max(0,sec-33.7)/.78));
-  const focusIndex=sec<26.4?6:sec<33.7?1:positionSweep?sampledPositions[positionStep]:6;
+  const stepDuration=(37.9-33.7)/attentionSweepPositions.length,positionSweep=sec>=33.7&&sec<37.9,positionStep=Math.min(attentionSweepPositions.length-1,Math.floor(Math.max(0,sec-33.7)/stepDuration));
+  const focusIndex=sec<26.4?6:sec<33.7?1:positionSweep?attentionSweepPositions[positionStep]:6;
   const focusWord=attentionTokens[focusIndex]?.textContent?.replace(/[.,]/g,'').toUpperCase()||'IT';
   const label=`CURRENT POSITION · “${focusWord}”`;
   document.getElementById('focus-label').textContent=label;
+  const result=document.getElementById('context-result'),resultIn=smooth(21.78,22.35,sec)*(1-smooth(37.35,37.9,sec));
+  const laterLayer=document.getElementById('attention-later-layer'),layerUseIn=smooth(26.44,26.9,sec)*(1-smooth(33.42,33.74,sec));
+  const sourceIndices=[];
+  if(positionSweep){
+    const candidates=[focusIndex-1,focusIndex+1,0,9,1,3,5,8,2,4,6,7];
+    candidates.forEach(index=>{if(index>=0&&index<attentionTokens.length&&index!==focusIndex&&!sourceIndices.includes(index)&&sourceIndices.length<4)sourceIndices.push(index);});
+  }else if(focusIndex===6)sourceIndices.push(1,3,5,8);
+  else sourceIndices.push(0,2,3,5);
+  const resultHeading=document.getElementById('context-result-heading'),resultCopy=document.getElementById('context-result-copy');
+  resultHeading.textContent=positionSweep?'EACH POSITION':sec>=26.44?'CONTEXT MIXTURE':'EXAMPLE CLUES';
+  resultCopy.textContent=positionSweep?'Every token builds its own context':sec>=26.44?'This mixture moves into later layers':'“It” now carries clues from this sentence';
+  attentionSourceChips.forEach((chip,i)=>{
+    const index=sourceIndices[i],stepPhase=((sec-33.7)%stepDuration+stepDuration)%stepDuration,entry=positionSweep ? .45+.55*smooth(0,.12,stepPhase) : 1;
+    chip.textContent=attentionTokens[index]?.textContent?.replace(/[.,]/g,'')||'';
+    chip.style.setProperty('--source-color',attentionSourceColors[i]);
+    chip.style.opacity=String(resultIn*entry*(.84+.16*pulse(sec,1.05,i*.12)));
+    chip.style.transform=`translateY(${(1-resultIn)*.28}cqw) scale(${.94+.06*entry})`;
+  });
+  setOpacity(result,resultIn);result.style.transform=`translateX(-50%) scale(${.9+.1*resultIn})`;
+  setOpacity(laterLayer,layerUseIn);laterLayer.style.transform=`translateY(${(1-layerUseIn)*.55}cqw) scale(${.96+.04*layerUseIn})`;
   attentionTokens.forEach((el,i)=>{el.classList.toggle('focus',i===focusIndex);el.style.opacity=String(i===focusIndex?1:.45+((i*13)%5)*.07);el.style.transform=`translateY(${i===focusIndex?-.42*Math.sin(p*30):.07*Math.sin(p*22+i)}cqw) scale(${i===focusIndex?1.04+.025*Math.sin(p*28):1})`;});
   const filmRect=film.getBoundingClientRect(),point=el=>{const r=el.getBoundingClientRect();return {x:((r.left+r.width/2-filmRect.left)/filmRect.width)*1200,y:((r.top+r.height/2-filmRect.top)/filmRect.height)*675};},focus=point(attentionTokens[focusIndex]);
   const recalculated=focusIndex===6?smooth(17.5,21.8,sec)*(1-smooth(25.4,26.4,sec)):positionSweep?smooth(33.7,34.1,sec):0;
-  attentionPaths.forEach((path,i)=>{const t=Number(path.dataset.target),target=point(attentionTokens[t]),chosen=positionSweep?Math.abs(t-focusIndex)<=2&&t!==focusIndex:focusIndex===6?[1,3,5,8].includes(t):[6,0].includes(t),active=t!==focusIndex,reveal=smooth(.09+i*.006,.13+i*.006,p),strength=positionSweep?(chosen?.72+.18*(1-Math.abs(t-focusIndex)/3):.035):focusIndex===6?(t===1?1-.72*recalculated:t===3?.75+.08*recalculated:t===5?.62+.22*recalculated:t===8?.52+.34*recalculated:.08):(t===6?.92:.65);const bend=78+(i%3)*18;path.setAttribute('d',`M ${target.x.toFixed(1)} ${target.y.toFixed(1)} C ${target.x.toFixed(1)} ${(target.y+bend).toFixed(1)}, ${focus.x.toFixed(1)} ${(focus.y+bend).toFixed(1)}, ${focus.x.toFixed(1)} ${focus.y.toFixed(1)}`);path.style.stroke=chosen?(t===1?'#91f2d2':t===3?'#72c8ff':t===5?'#ba9aff':'#ffc776'):'#456274';path.style.strokeWidth=String(chosen?(t===1?3.2:2.5):1.25);path.style.opacity=String(active?reveal*(chosen?strength:.045):0);const length=path.getTotalLength?.()??1;path.style.strokeDasharray='none';path.style.strokeDashoffset='0';const dot=attentionParticles[i],u=phase(sec,positionSweep?1.25:.52,i*.13),q=path.getPointAtLength(length*u);dot.setAttribute('cx',String(q.x));dot.setAttribute('cy',String(q.y));dot.style.opacity=String(active?reveal*(chosen?.92:.025):0);dot.setAttribute('r',String(4.5+1.5*Math.sin(sec*5+i)));});
+  attentionPaths.forEach((path,i)=>{
+    const t=Number(path.dataset.target),target=point(attentionTokens[t]),slot=sourceIndices.indexOf(t),chosen=slot>=0,active=t!==focusIndex,reveal=smooth(.018+i*.003,.048+i*.003,p);
+    const strength=positionSweep ? .9-slot*.09 : focusIndex===6 ? (t===1?1-.72*recalculated:t===3?.75+.08*recalculated:t===5?.62+.22*recalculated:t===8?.52+.34*recalculated:.08) : chosen ? .84-slot*.08 : .08;
+    const bend=78+(i%3)*18;
+    path.setAttribute('d',`M ${target.x.toFixed(1)} ${target.y.toFixed(1)} C ${target.x.toFixed(1)} ${(target.y+bend).toFixed(1)}, ${focus.x.toFixed(1)} ${(focus.y+bend).toFixed(1)}, ${focus.x.toFixed(1)} ${focus.y.toFixed(1)}`);
+    path.style.stroke=chosen?attentionSourceColors[slot]:'#456274';path.style.strokeWidth=String(chosen?(slot===0?3.2:2.5):1.25);path.style.opacity=String(active?reveal*(chosen?strength:.035):0);
+    const length=path.getTotalLength?.()??1;path.style.strokeDasharray='none';path.style.strokeDashoffset='0';
+    const dot=attentionParticles[i],u=phase(sec,positionSweep?1.25:.52,i*.13),q=path.getPointAtLength(length*u);dot.setAttribute('cx',String(q.x));dot.setAttribute('cy',String(q.y));dot.style.opacity=String(active?reveal*(chosen?.92:.02):0);dot.setAttribute('r',String(4.5+1.5*Math.sin(sec*5+i)));
+  });
   setOpacity(document.querySelector('.attention-focus-label'),smooth(.08,.2,p));
-  const result=document.querySelector('.context-result'),resultIn=smooth(.28,.38,p)*(1-smooth(37.35,37.9,sec));setOpacity(result,resultIn);result.style.transform=`translateX(-50%) scale(${.9+.1*resultIn})`;
   const orb=document.querySelector('.context-orb');orb.style.transform=`scale(${.9+.14*Math.sin(sec*2.8)})`;document.querySelectorAll('.context-orb i').forEach((e,i)=>{e.style.opacity=String(.3+.65*((Math.sin(sec*5+i*1.5)+1)/2));e.style.transform=`translateY(${Math.sin(sec*4+i)*.14}cqw) scale(${.85+.2*((Math.sin(sec*4.25+i)+1)/2)})`;});
   const outputRect=result.getBoundingClientRect(),output={x:((outputRect.left+outputRect.width*.5-filmRect.left)/filmRect.width)*1200,y:((outputRect.top+outputRect.height*.28-filmRect.top)/filmRect.height)*675,};
   const dy=output.y-focus.y;attentionOutputPath.setAttribute('d',`M ${focus.x.toFixed(1)} ${focus.y.toFixed(1)} C ${(focus.x+35).toFixed(1)} ${(focus.y+dy*.32).toFixed(1)}, ${(output.x-35).toFixed(1)} ${(output.y-dy*.18).toFixed(1)}, ${output.x.toFixed(1)} ${output.y.toFixed(1)}`);
   const qkvPreviewIn=smooth(37.88,38.35,sec);attentionOutputPath.style.stroke='#91f2d2';attentionOutputPath.style.strokeWidth='3.2';attentionOutputPath.style.opacity=String(resultIn*.66*(1-qkvPreviewIn));
   const outLen=attentionOutputPath.getTotalLength?.()??1,outPoint=attentionOutputPath.getPointAtLength(outLen*phase(sec,1.05));attentionOutputParticle.setAttribute('cx',String(outPoint.x));attentionOutputParticle.setAttribute('cy',String(outPoint.y));attentionOutputParticle.style.fill='#c7ffed';attentionOutputParticle.style.opacity=String(resultIn*(1-qkvPreviewIn)*(.3+.7*pulse(sec,1.05)));
-  document.querySelector('.context-result>b').textContent=positionSweep?'each position updates in context':'representation updated';
+  const layerRect=laterLayer.getBoundingClientRect(),layerFrom={x:((outputRect.left+outputRect.width*.12-filmRect.left)/filmRect.width)*1200,y:((outputRect.top+outputRect.height*.5-filmRect.top)/filmRect.height)*675},layerTo={x:((layerRect.right-filmRect.left)/filmRect.width)*1200,y:((layerRect.top+layerRect.height*.5-filmRect.top)/filmRect.height)*675},layerDx=layerTo.x-layerFrom.x,layerDy=layerTo.y-layerFrom.y;
+  attentionLayerPath.setAttribute('d',`M ${layerFrom.x.toFixed(1)} ${layerFrom.y.toFixed(1)} C ${(layerFrom.x+layerDx*.34).toFixed(1)} ${(layerFrom.y+layerDy*.08).toFixed(1)}, ${(layerTo.x-layerDx*.28).toFixed(1)} ${(layerTo.y-layerDy*.22).toFixed(1)}, ${layerTo.x.toFixed(1)} ${layerTo.y.toFixed(1)}`);attentionLayerPath.style.strokeDasharray='8 9';attentionLayerPath.style.opacity=String(layerUseIn*.82);
+  const layerLen=attentionLayerPath.getTotalLength?.()??1,layerPoint=attentionLayerPath.getPointAtLength(layerLen*phase(sec,.92));attentionLayerParticle.setAttribute('cx',String(layerPoint.x));attentionLayerParticle.setAttribute('cy',String(layerPoint.y));attentionLayerParticle.style.opacity=String(layerUseIn*(.32+.68*pulse(sec,.92)));attentionLayerParticle.style.fill='#c7ffed';
   const preview=document.getElementById('attention-qkv-preview');setOpacity(preview,qkvPreviewIn);preview.style.transform=`translateX(-50%) translateY(${(1-qkvPreviewIn)*.5}cqw) scale(${.94+.06*qkvPreviewIn})`;
   setOpacity(document.querySelector('.schematic-stamp'),smooth(.48,.62,p)*(1-qkvPreviewIn));
 }

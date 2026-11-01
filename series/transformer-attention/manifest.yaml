@@ -129,15 +129,17 @@ qa:
         - "The closing row retains all ten phrase tokens, shows embedding glyphs and numbered positions, then routes them into CONTENT + POSITION → NEXT CALCULATION."
         - "Thirteen representative public GitHub Pages captures at the 1920x1080 film stage passed with zero console/page errors; the repeated 24.65-second transition frame was byte-identical after unrelated seeks. Production build, JavaScript syntax and git diff checks passed; user review is pending."
     chapter_03:
-      status: self_attention_paths_refined_browser_qa_passed
+      status: chapter_03_clarity_review_1080p24_qa_passed_waiting_user_review
       duration_seconds: 44.92
       timing_source: "Chapter-local progress is derived from the narration audio clock; path geometry is recomputed from live token bounds at each frame."
-      reviewed_frames: [110, 120]
+      reviewed_frames: [91.0, 91.72, 92.0, 92.5, 93.0, 94.0, 95.0, 105.0, 112.9, 115.0, 117.6, 120.0, 124.8, 126.1, 128.5, 129.5, 132.0]
       checks:
-        - "Attention paths terminate at actual token centers and form an incoming context fan into the focused word."
-        - "Mint, cyan, and violet paths plus traveling particles distinguish selected contextual signals without presenting them as ground-truth weights."
-        - "The contextual-mixture result appears in time with the explanation and remains visually separated from the token fan."
-        - "The focus marker is a compact readable pill rather than a large empty ring; the `It` position stays focused while relation strengths change during the context-dependent-mixture caveat, and the trail position becomes the focus when every position is introduced."
+        - "The same ten-token Taipei sentence from Chapter 02 remains the scene object; attention paths terminate at the actual token centers and form a readable context fan into the focused position. The fan begins within about 0.7 seconds of the chapter start and completes its stagger during the opening 'combine information' narration beat."
+        - "Mint, cyan, violet, and amber paths with moving particles identify example contextual signals without presenting the illustrative paths as fixed or ground-truth weights."
+        - "The context-clue card appears at the context-dependent-mixture cue (21.78s local); a visible signal then carries that mixture into a three-layer stack at the later-layers cue (26.44s local)."
+        - "The 'Every position' beat scans all ten sentence positions at approximately 0.42-second intervals; each highlighted token and its four example source chips update together. The same token row then hands into the Q/K/V preview at 37.88s local."
+        - "At 1920x1080, key text is 32.3px (tokens), 23.4px (focus), 20.7px (source chips), 22.7px (result copy), and 21.1px (later-layer title/note); the 17.3px illustrative-weight disclaimer remains secondary. Minimum token-box gap is 15px, source/result and layer/result do not overlap, and all measured elements stay in bounds."
+        - "The complete chapter was sampled at 24fps (1,079 frame times); renderAt cost was 5.4ms median, 9.2ms p95, and 37.4ms max. Eleven representative forward/reverse seeks reproduced exact relevant DOM state and identical direct WebGL framebuffer SHA-256, with no browser/page errors. Chromium's composited PNG screenshot byte comparison varied after different seek histories, so exact-state QA uses the DOM and direct GL readback while screenshots are used for visual review."
     chapter_04:
       status: qkv_audio_choreography_refined_browser_qa_passed
       duration_seconds: 79.44

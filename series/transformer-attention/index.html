@@ -64,11 +64,12 @@
 
           <section class="scene scene-attention" data-scene="2" aria-hidden="true">
             <div class="attention-title"><span class="micro-label">ONE POSITION, SURROUNDED BY CONTEXT</span><div class="attention-token-row" id="attention-token-row"></div></div>
-            <svg class="attention-web" id="attention-web" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><g id="attention-lines"></g><g id="attention-particles"></g></svg>
+            <svg class="attention-web" id="attention-web" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><g id="attention-lines"></g><g id="attention-particles"></g><g id="attention-layer-flow"></g></svg>
             <div class="attention-focus-label" id="focus-label">CURRENT POSITION · “IT”</div>
-            <div class="context-result"><span>CONTEXTUAL MIXTURE</span><div class="context-orb"><i></i><i></i><i></i><i></i><i></i></div><b>representation updated</b></div>
+            <div class="context-result" id="context-result"><span id="context-result-heading">CONTEXT CLUES</span><div class="context-sources" id="context-sources" aria-hidden="true"><i>trail</i><i>Maokong</i><i>shaded</i><i>short</i></div><div class="context-orb"><i></i><i></i><i></i><i></i><i></i></div><b id="context-result-copy">“It” carries clues from this sentence</b></div>
+            <div class="attention-later-layer" id="attention-later-layer" aria-hidden="true"><div class="attention-layer-stack"><i>01</i><i>02</i><i>03</i></div><div class="attention-later-copy"><b>LATER LAYER</b><small>uses this mixture too</small></div></div>
             <div class="attention-qkv-preview" id="attention-qkv-preview" aria-hidden="true"><span><b>Q</b> Query</span><span><b>K</b> Key</span><span><b>V</b> Value</span></div>
-            <div class="schematic-stamp">SCHEMATIC · CONTEXT-DEPENDENT</div>
+            <div class="schematic-stamp">ILLUSTRATIVE · NOT FIXED WEIGHTS</div>
           </section>
 
           <section class="scene scene-qkv" data-scene="3" aria-hidden="true">
