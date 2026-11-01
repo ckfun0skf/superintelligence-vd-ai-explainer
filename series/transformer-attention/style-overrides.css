@@ -733,3 +733,64 @@ body{background:#080d14}
 .scene-vectors .takeaway-flow{width:90%;height:.72cqw;display:grid;grid-template-columns:repeat(10,1fr);align-items:center;justify-items:center;position:relative;border-top:2px solid #42675e}
 .scene-vectors .takeaway-flow i{width:.56cqw;height:.56cqw;border-radius:50%;background:#baffdf;box-shadow:0 0 .55cqw #91f2d2;transform-origin:50% 50%}
 .scene-vectors[data-phase="order"] .vector-flow,.scene-vectors[data-phase="order"] .vector-detail{visibility:hidden}
+
+
+/* Chapter 03–08 legibility pass: enlarge semantic labels, keep scene objects and cues intact. */
+.scene-attention .attention-focus-label{top:7.5%;left:50%;z-index:6;display:flex;align-items:center;justify-content:center;min-height:3.5cqw;padding:.72cqw 1.25cqw;border:1px solid #63a888;border-radius:.72cqw;background:linear-gradient(135deg,#102920f5,#0b191cf5);box-shadow:0 .45cqw 1.2cqw #0006,0 0 .8cqw #91f2d233;color:#d4ffef;font-size:1.28cqw;font-weight:700;line-height:1.12;letter-spacing:.07em;white-space:nowrap}
+
+/* Chapter 04 · Q/K/V: operation labels and the illustrative 100% total stay readable. */
+.scene-qkv .projection-title{font-size:1.2cqw;line-height:1.25}
+.scene-qkv .projection-title small{font-size:1.08cqw;line-height:1.25}
+.scene-qkv .proj-row{font-size:1.12cqw}
+.scene-qkv .proj-row em{font-size:1.08cqw}
+.scene-qkv .score-row{font-size:1.08cqw}
+.scene-qkv .sum-label{font-size:1.05cqw}
+.scene-qkv .mix-note{font-size:1.1cqw;line-height:1.25;color:#d6e8e3}
+.scene-qkv .mechanism-card{overflow:visible}
+.scene-qkv .mechanism-card-head b{font-size:1.22cqw}
+.scene-qkv .mechanism-card-head small{font-size:1cqw;line-height:1.25}
+.scene-qkv .mechanism-candidates>div{min-height:3.5cqw;font-size:1.12cqw}
+.scene-qkv .mechanism-candidates>div>em{font-size:1.08cqw}
+.scene-qkv .mechanism-mix-sources>div{font-size:1.08cqw}
+.scene-qkv .mechanism-mix-result>span{font-size:1.08cqw}
+.scene-qkv .mechanism-mix-result>small{font-size:1.06cqw;line-height:1.25;color:#d6e8e3}
+.scene-qkv .mechanism-total{height:.78cqw;margin-bottom:1.1cqw;overflow:visible}
+.scene-qkv .mechanism-total>i:first-child{border-radius:99px 0 0 99px}
+.scene-qkv .mechanism-total>i:last-of-type{border-radius:0 99px 99px 0}
+.scene-qkv .mechanism-total>b{top:calc(100% + .1cqw);right:.18cqw;padding:0;background:transparent;color:#f2fffa;font-size:1.1cqw;line-height:1.1;z-index:2}
+.scene-qkv .mechanism-caveat{font-size:1cqw;color:#d6e3e1}
+
+/* Chapter 05 · preserve four parallel lanes while giving role labels room to breathe. */
+.scene-heads .head-source-label,.scene-heads .head-source-request>[data-prompt]{font-size:1.08cqw}
+.scene-heads .head-lanes{top:30%;height:58%}
+.scene-heads .head-id{font-size:1.08cqw}
+.scene-heads .head-role{flex:0 0 13.5cqw;width:13.5cqw;margin-right:.5cqw;font-size:1.12cqw;letter-spacing:.035em}
+.scene-heads .head-pattern-token{font-size:1.18cqw}
+.scene-heads .head-pattern-result{font-size:1.12cqw}
+.scene-heads .heads-output>span{font-size:1.08cqw;line-height:1.3}
+
+/* Chapter 06 · slightly larger layer names and spoken operation cues; no static chapter header. */
+.scene-block .block-face>span{font-size:1.15cqw}
+.scene-block .explain-item>span{font-size:1.18cqw}
+.scene-block .block-result>small{font-size:1.08cqw;line-height:1.2}
+.scene-block .block-stack-caption{font-size:1.2cqw;line-height:1.25}
+
+/* Chapter 07 · enlarge the words inside the mask and the generation labels, not the grid cells. */
+.scene-mask .mask-cell{font-size:1.08cqw}
+.scene-mask .mask-mode{font-size:1.08cqw}
+.scene-mask .generation-label{font-size:1.08cqw}
+.scene-mask .gen-token{font-size:1.1cqw}
+.scene-mask .next-candidates-label{font-size:1.05cqw;line-height:1.12}
+.scene-mask .next-candidates .candidate-label{font-size:1.08cqw}
+.scene-mask .kv-cache small{font-size:1.05cqw}
+.scene-mask .mask-caption{font-size:1.2cqw}
+
+/* Chapter 08 · keep the prompt→scores→next-token recap legible without changing its route geometry. */
+.scene-recap .recap-context>span{font-size:1cqw;color:#c2d4d3}
+.scene-recap .recap-input{font-size:1.12cqw}
+.scene-recap .recap-route>span{min-height:7.4cqw;font-size:1.2cqw;line-height:1.2}
+.scene-recap .recap-next-heading b{font-size:1.12cqw;line-height:1.25}
+.scene-recap .recap-next-heading small{font-size:1.08cqw;line-height:1.25;color:#bfd2cd;font-weight:600}
+.scene-recap .recap-candidates>div{min-height:3.7cqw;padding:.6cqw .7cqw}
+.scene-recap .recap-candidates>div>b{font-size:1.1cqw;line-height:1.15}
+.scene-recap .closing-line{font-size:1.25cqw;line-height:1.25}

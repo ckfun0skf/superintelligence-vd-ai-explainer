@@ -157,6 +157,17 @@ qa:
         - "The global particle field was simplified to 180 points and 24 faint links with a capped 1.25 device pixel ratio. Fixed scene header titles and decorative film grain are hidden; object/UI labels remain."
         - "Chromium visually reviewed early projection (3s), named vectors (8–24s), comparison/scores (39.1s), softmax (44s), contextual output (58.6s), and formula (68s); all 11 QKV paths/tracers rendered with no runtime exception."
         - "Across 48 dense weighted-mix frames on the final public bundle, renderAt averaged 3.93 ms, p95 was 5.0 ms and max 7.3 ms; seeking away and returning to the same timestamp reproduced identical path, tracer and score states."
+  legibility_review:
+    status: chapters_03_to_08_1080p_typography_qa_passed_waiting_user_review
+    reviewed_frames_seconds: [120.0, 132.0, 160.0, 215.6, 234.5, 250.0, 276.08, 300.0, 342.5, 356.0, 390.0, 409.0, 419.0]
+    checks:
+      - "Thirteen representative production-preview frames were captured at the 1920x1080 film stage across Chapters 03–08; each activated the expected scene and Chromium reported zero page/console errors."
+      - "Chapter 03 CURRENT POSITION is 24.6px at 1080p with 167.6px clearance above the token row; token text remains 32.3px."
+      - "Chapter 04 operation, candidate and score text is 19.2–23.4px. The COMPARE subtitle stays on one line; the 21.1px total = 100% label sits below the normalization bar and remains inside its card."
+      - "Chapter 05 role labels are 21.5px and example tokens 22.7px; the reviewed active lane has zero role/chip bounding-box collisions."
+      - "Chapter 06 layer/operation labels are 20.7–23.0px; Chapter 07 mask/generation text is 20.2–23.0px; Chapter 08 recap and closing text is 19.2–24.0px."
+      - "Seven representative active-scene seeks across Chapters 03–08 reproduced identical active-scene DOM state; no browser errors occurred. Production build, JS syntax and git diff checks passed."
+      - "Final MP4 export remains on hold until the user completes chapter-by-chapter preview QA."
   chapter_continuity:
     status: persistent_handoffs_deterministic_chromium_qa_passed
     transition_window_seconds: 1.44
