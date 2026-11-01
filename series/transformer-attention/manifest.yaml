@@ -92,8 +92,8 @@ qa:
     - "All seven chapter boundaries were Chromium-rendered before/at/after the cut; no handoff runtime exceptions occurred."
     - "The same ten-token phrase travels across Chapters 01–04; one persistent signal travels from the weighted mix through heads, Transformer blocks, causal mask and recap."
     - "Handoff source/target poses are sampled at fixed absolute chapter endpoints and the current scene is restored, so seeking to the same timestamp from different histories produces identical DOM state."
-    - "The Chapter 01→02 handoff now spans 40.84–43.50s: the sentence holds through 41.16s, then moves continuously while individual word tiles unfold in a stagger beginning at 42.12s. The 64 visible 24fps handoff frames rendered without page errors; maximum adjacent token-box change was 10.22px."
-    - "The first source-to-handoff frame pair and final handoff-to-native-scene pair measured 1.18px and 1.507px mean absolute pixel difference at 1920×1080; seeking through unrelated timestamps and returning to 43.00s produced a byte-identical frame."
+    - "The Chapter 01→02 handoff spans 40.84–44.16s. The original phrase holds through 42.12s; its words first spread apart, individual token tiles stagger in from 42.32s, the completed row remains centered, then the same row lifts above the pipeline before the 44.19s tokenizer cue. The 79 visible 24fps frames rendered without page errors; minimum inter-token box gap stayed positive at 11.34px and the group remained within x=224.8–1684.2px."
+    - "The first source-to-handoff and last handoff-to-native-scene frame pairs measured 1.18px and 1.699px mean absolute pixel difference at 1920×1080; maximum adjacent token-box change was 24.73px. Seeking through unrelated timestamps and returning to 43.00s produced a byte-identical frame."
     - "Dense 24fps transition samples measured p95 render-call costs of 13.6–19.8 ms in Chromium (below the 41.7 ms frame budget)."
     - "Slide-like scene/header titles and decorative film grain are hidden; animated UI/object labels remain. Chapter 05 multi-head lanes and Chapter 02 token/embedding flow were visually checked after the change."
     - "The global ambient WebGL layer is subdued (180 seeded points, 24 faint links, low opacity); the 16:9 stage remained 1180×664 in the desktop browser QA viewport."
@@ -116,12 +116,12 @@ qa:
         - "The Self-Attention module visibly moves into the larger Transformer shell; the container label changes from 'LARGER ARCHITECTURE' to 'TRANSFORMER' on the spoken cue."
       references_note: ../../docs/series-planning/01-transformer-visual-reference-notes.md
     chapter_02:
-      status: chapter_02_handoff_fullhd_qa_passed_waiting_user_review
+      status: chapter_02_handoff_revision_fullhd_qa_passed_waiting_user_review
       duration_seconds: 49.36
       timing_source: "Chapter-local progress is derived from the narration audio clock; paths, stagger, and chip motion are seek-stable."
-      reviewed_frames: [40.833, 40.875, 41.16, 41.5, 41.9, 42.09, 42.2, 42.6, 43.0, 43.5, 43.542, 44.56, 44.89, 45.84, 48.14, 60.24, 64.34, 65.49, 66.14, 68.04, 73.04, 78.04, 81.84, 87.94]
+      reviewed_frames: [40.833, 40.875, 41.16, 41.5, 41.9, 42.09, 42.12, 42.22, 42.35, 42.6, 43.0, 43.25, 43.5, 43.875, 44.0, 44.125, 44.167, 44.2, 44.56, 44.89, 45.84, 48.14, 60.24, 64.34, 65.49, 66.14, 68.04, 73.04, 78.04, 81.84, 87.94]
       checks:
-        - "On the opening narration cue, the Chapter 01 sentence persists as the same onscreen phrase, glides upward, and separates into readable word tiles rather than shrinking away and being replaced. The handoff and Chapter 02 renderer share the same absolute-time motion curve through 43.50s."
+        - "The Chapter 01 phrase remains whole at the Chapter 02 boundary. On the 'text is split into tokens' cue, word centers first move apart in place from 42.12s; individual boxes then unfold in a stagger from 42.32s, hold as a clear row in the center, and only then lift to the upper lane by 44.16s. No replacement sentence is spawned."
         - "As the tokenizer is named, orange ID tiles bounce down from the corresponding tokens into a labeled TOKENIZER card, with a moving signal trace and readable illustrative IDs."
         - "When the model looks up a learned representation, a second labeled EMBEDDING card appears below; each token produces its own small vector glyph, followed by one enlarged example vector."
         - "The order beat first presents 'SAME WORDS · DIFFERENT ORDER · DIFFERENT RELATION' without an empty card; the comparison panel expands only as the first quote arrives, then shows both subject/reference reversals."
