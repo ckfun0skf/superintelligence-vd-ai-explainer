@@ -736,7 +736,12 @@ body{background:#080d14}
 
 
 /* Chapter 03–08 legibility pass: enlarge semantic labels, keep scene objects and cues intact. */
-.scene-attention .attention-focus-label{top:7.5%;left:50%;z-index:6;display:flex;align-items:center;justify-content:center;min-height:3.5cqw;padding:.72cqw 1.25cqw;border:1px solid #63a888;border-radius:.72cqw;background:linear-gradient(135deg,#102920f5,#0b191cf5);box-shadow:0 .45cqw 1.2cqw #0006,0 0 .8cqw #91f2d233;color:#d4ffef;font-size:1.28cqw;font-weight:700;line-height:1.12;letter-spacing:.07em;white-space:nowrap}
+.scene-attention .attention-focus-label{top:6.2%;left:50%;z-index:6;display:flex;align-items:center;justify-content:center;min-height:6cqw;padding:1.2cqw 2cqw;border:1.5px solid #63a888;border-radius:1cqw;background:linear-gradient(135deg,#102920f5,#0b191cf5);box-shadow:0 .55cqw 1.3cqw #0006,0 0 .9cqw #91f2d244;color:#d4ffef;font-size:2.45cqw;font-weight:700;line-height:1.12;letter-spacing:.035em;white-space:nowrap}
+.scene-attention .attention-token-row{gap:.8cqw;margin-top:1.25cqw}
+.scene-attention .attention-token{padding:.82cqw 1.05cqw;font-size:2.25cqw;line-height:1.08}
+.scene-attention .attention-qkv-preview{bottom:13%;width:58%;min-width:58%;max-width:68%;gap:1.2cqw;padding:1.35cqw 1.65cqw;border-radius:1cqw}
+.scene-attention .attention-qkv-preview>span{gap:.7cqw;padding:.9cqw 1.1cqw;border-radius:.7cqw;font-size:2.15cqw}
+.scene-attention .attention-qkv-preview>span>b{width:2.8cqw;height:2.8cqw;border-radius:.58cqw;font-size:1.9cqw}
 
 /* Chapter 04 · Q/K/V: operation labels and the illustrative 100% total stay readable. */
 .scene-qkv .projection-title{font-size:1.2cqw;line-height:1.25}
@@ -794,3 +799,26 @@ body{background:#080d14}
 .scene-recap .recap-candidates>div{min-height:3.7cqw;padding:.6cqw .7cqw}
 .scene-recap .recap-candidates>div>b{font-size:1.1cqw;line-height:1.15}
 .scene-recap .closing-line{font-size:1.25cqw;line-height:1.25}
+
+/* Chapter 04 · make the source→weighted-vector transformation the visual center of its spoken cue. */
+.scene-qkv .qkv-origin{gap:.55cqw}
+.scene-qkv .qkv-origin .attention-token{font-size:1.55cqw;padding:.62cqw .82cqw}
+.scene-qkv .qkv-origin .attention-token.focus{min-width:6.2cqw;height:6.1cqw;padding:.48cqw .62cqw}
+.scene-qkv .qkv-origin .attention-token.source-signal{z-index:5;border-color:#ffc776;background:#332719;color:#fff0d0;box-shadow:0 0 1.25cqw #ffc77688;transform:translateY(-.32cqw) scale(1.12)}
+.scene-qkv .qkv-origin .source-token-word{font-size:1.65cqw}
+.scene-qkv .qkv-origin .qkv-feature-vector{width:4.7cqw;height:2.35cqw;gap:.18cqw}
+.scene-qkv .qkv-origin .qkv-feature-vector i{max-width:.46cqw}
+.scene-qkv .projection-title{font-size:1.7cqw;line-height:1.2;min-height:3.6cqw}
+.scene-qkv .projection-title small{font-size:1.38cqw;line-height:1.25}
+.scene-qkv .proj-row{height:2.8cqw;font-size:1.5cqw;gap:.45cqw}
+.scene-qkv .proj-row em{min-width:6.8cqw;font-size:1.42cqw}
+.scene-qkv .score-row{grid-template-columns:5.4cqw 1fr 3.2cqw;gap:.42cqw;font-size:1.42cqw}
+.scene-qkv .score-track{height:.96cqw}
+.scene-qkv .sum-label{font-size:1.32cqw}
+.scene-qkv .mix-output{gap:.62cqw;padding:1.2cqw 1.35cqw}
+.scene-qkv .mix-output>span{font-size:1.4cqw;letter-spacing:.1em}
+.scene-qkv .mix-output strong{font-size:1.7cqw;line-height:1.18;white-space:nowrap}
+.scene-qkv .mix-vector{height:7.5cqw;min-height:5.3cqw;gap:.45cqw;padding:.5cqw .2cqw}
+.scene-qkv .mix-vector i{max-width:1.65cqw;min-height:.38cqw}
+.scene-qkv .mix-note{flex-direction:column;align-items:center;gap:.18cqw;font-size:1.45cqw;line-height:1.2;letter-spacing:.025em}
+.scene-qkv .mix-note span{display:inline-flex;flex:0 0 auto;align-items:center;white-space:nowrap;padding:.2cqw .32cqw;border:1px solid #356154;border-radius:.3cqw;background:#122620;color:#c9ffeb;font:700 1.45cqw/1.2 Arial,sans-serif!important}

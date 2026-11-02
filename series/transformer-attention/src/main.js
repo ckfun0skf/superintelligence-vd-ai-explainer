@@ -707,7 +707,7 @@ function renderQKV(p){
   const mix=smooth(50.5,52.12,sec);
   const mixPathReveal=smooth(50.5,51.05,sec);
   const trailMix=smooth(55.9,57.12,sec);
-  const newVector=smooth(58.16,59.2,sec);
+  const newVector=smooth(56.3,57.38,sec);
   const formula=smooth(64.38,64.9,sec);
   const weights=attentionWeights;
   const rawScores=[2.079,.693,.405,0];
@@ -718,8 +718,10 @@ function renderQKV(p){
     const focus=i===6;
     const reveal=smooth(.4,.95,sec);
     token.classList.toggle('focus',focus&&sec>=2.3);
+    token.classList.toggle('source-signal',i===1&&sec>=56.7&&sec<61.72);
     token.style.opacity=String(reveal*(focus?1:.62+.38*projection));
-    token.style.transform=`translateY(${(1-reveal)*.22}cqw) scale(${focus?1+.018*Math.sin(sec*5.8):1})`;
+    const sourceLift=i===1?smooth(56.7,57.12,sec)*(1-smooth(61.35,61.72,sec)):0;
+    token.style.transform=`translateY(${(1-reveal)*.22-sourceLift*.32}cqw) scale(${focus?1+.018*Math.sin(sec*5.8):1+sourceLift*.1})`;
   });
 
   const roleCue=[smooth(11.4,11.72,sec)*(1-smooth(14.5,14.82,sec)),smooth(14.74,15.05,sec)*(1-smooth(17.9,18.2,sec)),smooth(18.06,18.38,sec)*(1-smooth(20.35,20.66,sec))];
@@ -742,7 +744,7 @@ function renderQKV(p){
     row.querySelector('em').style.opacity=String(smooth(14.74,15.0,sec));
   });
   valueRows.forEach((row,i)=>{
-    const symbolic=sec>=22.22&&sec<57.12;
+    const symbolic=sec>=22.22&&sec<55.9;
     row.querySelector('em').textContent=symbolic?`v${['₁','₂','₃','₄'][i]}`:`v${['₁','₂','₃','₄'][i]} · ${['trail','near','shaded','Maokong'][i]}`;
     row.querySelector('em').style.opacity=String(smooth(18.06,18.32,sec));
   });
@@ -810,10 +812,13 @@ function renderQKV(p){
   signal.style.transform=`translateX(${trailMix*.72}cqw) scale(${.52+trailMix*.58})`;
   output.style.boxShadow=`0 0 ${(trailMix*1.0)}cqw #91f2d244,0 .8cqw 2cqw #0005`;
   const outputLabel=document.getElementById('mix-output-label');
-  if(outputLabel)outputLabel.textContent=sec>=57.5?'new contextual vector':'combine information';
+  if(outputLabel)outputLabel.textContent=sec>=58.16?'new contextual vector for “It”':'combine information';
   const notes=document.querySelectorAll('.mix-note span');
-  if(notes[0])notes[0].style.opacity=String(smooth(60.48,60.72,sec)*(1-smooth(61.65,61.85,sec)));
-  if(notes[1])notes[1].style.opacity=String(smooth(62.06,62.35,sec));
+  const notCopyCue=smooth(60.48,60.72,sec)*(1-smooth(61.65,61.85,sec));
+  const notFinalCue=smooth(62.06,62.35,sec);
+  setOpacity(document.querySelector('.mix-note'),Math.max(notCopyCue,notFinalCue));
+  if(notes[0])notes[0].style.opacity=String(notCopyCue);
+  if(notes[1])notes[1].style.opacity=String(notFinalCue);
   const mixStepRows=document.querySelectorAll('.mechanism-mix-sources [data-candidate]');
   mixStepRows.forEach((row,i)=>{const bar=row.querySelector('i'),value=weights[i];bar.style.setProperty('--share',`${value*100}%`);bar.style.opacity=String(.45+.55*smooth(78.72,78.92,sec));bar.style.transform=`scaleX(${.9+.1*Math.sin(sec*5.2+i)})`;bar.style.transformOrigin='left center';row.querySelector('em').textContent=`${Math.round(value*100)}%`;});
   document.querySelectorAll('.mechanism-mix-result>i').forEach((bar,i)=>{bar.style.height=`${.65+mixedVectorValues[i%mixedVectorValues.length]*.85}cqw`;bar.style.opacity=String(smooth(78.72,78.92,sec));bar.style.transform=`scaleY(${.88+.12*Math.sin(sec*4+i*.7)})`;});
@@ -864,10 +869,10 @@ function renderQKV(p){
   const outputRect=output.getBoundingClientRect(),outputTarget={x:(outputRect.left+outputRect.width*.05-svgRect.left)/svgRect.width*1200,y:(outputRect.top+outputRect.height*.42-svgRect.top)/svgRect.height*675};
   for(let i=0;i<4;i++){
     const index=i+7,path=paths[index],dot=qkvPulseDots[index],source=anchor(valueRows[i].querySelector('i'),.98,.5);
-    curve(path,source,outputTarget);path.style.stroke=valueColors[i];path.style.opacity=String(mixPathReveal*(.12+weights[i]*.9));path.style.strokeDasharray='none';
+    curve(path,source,outputTarget);path.style.stroke=i===0?'#ffc776':valueColors[i];path.style.opacity=String(mixPathReveal*(.12+weights[i]*.9)*(i===0?1+trailMix*.35:1));path.style.strokeDasharray='none';
     const len=path.getTotalLength(),pt=path.getPointAtLength(len*phase(sec,.86,i*.17));
     dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));
-    dot.style.opacity=String(mixPathReveal*(.1+weights[i]*1.3));dot.setAttribute('r',String(3.6+weights[i]*4.2));
+    dot.style.opacity=String(mixPathReveal*(.1+weights[i]*1.3)*(i===0?1+trailMix*.35:1));dot.setAttribute('r',String(3.6+weights[i]*4.2+(i===0?trailMix*1.8:0)));
   }
 }
 function renderHeads(p){

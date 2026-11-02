@@ -48,11 +48,11 @@ export function createQkvTimeline() {
     .to(scores, { boxShadow: '0 0 1.35cqw rgba(145,242,210,.18), 0 .9cqw 2.3cqw rgba(0,0,0,.42)', duration: 0.25 }, 46.64)
 
     // Values stream into a new representation when the narration says “combine”.
-    .to(query, { left: '2%', top: '26%', width: '13%', height: '35%', opacity: 0.42, scale: 0.91, duration: 0.52 }, 49.96)
-    .to(keys, { left: '16%', top: '26%', width: '15%', height: '35%', opacity: 0.48, scale: 0.93, duration: 0.52 }, 49.96)
-    .to(scores, { left: '32%', top: '26%', width: '15%', height: '35%', opacity: 0.62, scale: 0.94, duration: 0.52 }, 49.96)
-    .to(values, { left: '48%', top: '26%', width: '20%', height: '39%', opacity: 1, scale: 1.02, duration: 0.52 }, 49.96)
-    .to(output, { right: '3%', top: '28%', width: '23%', height: '42%', opacity: 1, scale: 1, yPercent: 0, duration: 0.4, ease: 'back.out(1.35)' }, 50.5)
+    .to(query, { left: '2%', top: '26%', width: '13%', height: '46%', opacity: 0.42, scale: 0.91, duration: 0.52 }, 49.96)
+    .to(keys, { left: '16%', top: '26%', width: '15%', height: '46%', opacity: 0.48, scale: 0.93, duration: 0.52 }, 49.96)
+    .to(scores, { left: '32%', top: '26%', width: '15%', height: '46%', opacity: 0.62, scale: 0.94, duration: 0.52 }, 49.96)
+    .to(values, { left: '48%', top: '26%', width: '20%', height: '46%', opacity: 1, scale: 1.02, duration: 0.52 }, 49.96)
+    .to(output, { right: '3%', top: '28%', width: '28%', height: '44%', opacity: 1, scale: 1, yPercent: 0, duration: 0.4, ease: 'back.out(1.35)' }, 50.5)
     .to(values, { boxShadow: '0 0 1.35cqw rgba(255,199,118,.24), 0 .9cqw 2.3cqw rgba(0,0,0,.42)', duration: 0.24 }, 50.5)
     .to(output, { scale: 1.035, duration: 0.2, yoyo: true, repeat: 1 }, 58.16)
 

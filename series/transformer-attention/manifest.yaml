@@ -129,7 +129,7 @@ qa:
         - "The closing row retains all ten phrase tokens, shows embedding glyphs and numbered positions, then routes them into CONTENT + POSITION → NEXT CALCULATION."
         - "Thirteen representative public GitHub Pages captures at the 1920x1080 film stage passed with zero console/page errors; the repeated 24.65-second transition frame was byte-identical after unrelated seeks. Production build, JavaScript syntax and git diff checks passed; user review is pending."
     chapter_03:
-      status: chapter_03_clarity_review_1080p24_qa_passed_waiting_user_review
+      status: chapter_03_legibility_revision_1080p_qa_passed_waiting_user_review
       duration_seconds: 44.92
       timing_source: "Chapter-local progress is derived from the narration audio clock; path geometry is recomputed from live token bounds at each frame."
       reviewed_frames: [91.0, 91.72, 92.0, 92.5, 93.0, 94.0, 95.0, 105.0, 112.9, 115.0, 117.6, 120.0, 124.8, 126.1, 128.5, 129.5, 132.0]
@@ -138,32 +138,34 @@ qa:
         - "Mint, cyan, violet, and amber paths with moving particles identify example contextual signals without presenting the illustrative paths as fixed or ground-truth weights."
         - "The context-clue card appears at the context-dependent-mixture cue (21.78s local); a visible signal then carries that mixture into a three-layer stack at the later-layers cue (26.44s local)."
         - "The 'Every position' beat scans all ten sentence positions at approximately 0.42-second intervals; each highlighted token and its four example source chips update together. The same token row then hands into the Q/K/V preview at 37.88s local."
-        - "At 1920x1080, key text is 32.3px (tokens), 23.4px (focus), 20.7px (source chips), 22.7px (result copy), and 21.1px (later-layer title/note); the 17.3px illustrative-weight disclaimer remains secondary. Minimum token-box gap is 15px, source/result and layer/result do not overlap, and all measured elements stay in bounds."
+        - "Latest 1920x1080 pass enlarges CURRENT POSITION to 47.0px, sentence tokens to 43.2px, and Q/K/V preview labels to 41.3px; the full-HD screenshot at local 38.7s confirmed the preview and token row stay inside the frame."
+        - "The two updated Chapter 03 cue frames at global 120.0s and 129.7s were captured at 1920x1080; the browser reported no page or console errors."
         - "The complete chapter was sampled at 24fps (1,079 frame times); renderAt cost was 5.4ms median, 9.2ms p95, and 37.4ms max. Eleven representative forward/reverse seeks reproduced exact relevant DOM state and identical direct WebGL framebuffer SHA-256, with no browser/page errors. Chromium's composited PNG screenshot byte comparison varied after different seek histories, so exact-state QA uses the DOM and direct GL readback while screenshots are used for visual review."
     chapter_04:
-      status: qkv_audio_choreography_refined_browser_qa_passed
+      status: trail_to_contextual_vector_revision_1080p_qa_passed_waiting_user_review
       duration_seconds: 79.44
       timing_source: "A paused GSAP timeline is scrubbed from chapter-local seconds derived from audio.currentTime; all non-timeline motion is computed from absolute local seconds."
       animation_library: "GSAP; timeline remains paused and deterministic; no independent wall-clock ticker."
-      reviewed_seconds_local: [3, 8, 15, 24, 33.1, 39.1, 44, 47, 50.75, 55, 58.6, 68, 77]
+      reviewed_seconds_local: [3, 8, 15, 24, 33.1, 39.1, 44, 47, 50.75, 55, 56.8, 57.3, 58.9, 61.1, 62.5, 68, 77]
       checks:
         - "The same ten-token Taipei sentence from the preceding scene remains in place. A single highlighted 'It' branches into three unlabelled vector shapes at local 2.3 seconds; QUERY/KEYS/VALUES names appear at their spoken beats (6.70/7.68/8.64 seconds)."
         - "Plain-language role cues pulse at 11.4/14.74/18.06 seconds. Candidate words turn into indexed vector markers during the 'not literal labels' explanation, then return only when those positions are named in the later comparison/mix."
         - "A brief 3D pivot at 22.22 seconds distinguishes numerical vectors from word labels. Vector bars and small signals continue moving; no long progressive line draw-on is used."
         - "The same projection cards reflow in 0.4 seconds at 32.55 seconds; the Query comparison pulse starts at 33.60 seconds, and the Scores card appears at 39.32 seconds as 'Those comparisons produce scores' is spoken. Four candidate sweeps repeat every 3.2 seconds during the allowed-position explanation."
         - "Example raw scores transform over 2.36 seconds beginning at the spoken softmax cue (43.54 seconds); example 64/16/12/8 weights and the 100% sum bar resolve with the spoken distribution/total cues (46.64/47.36 seconds). Values are visibly marked as an illustrative example, not fixed model internals."
-        - "The same cards reflow toward the mix at 49.96 seconds; the output appears at 50.50 seconds with 'combine the values'. The four weighted-Value paths and moving dots reach clear visibility within 0.55 seconds, then keep moving; the 'trail' signal becomes dominant at 55.90–57.12 seconds, followed by the new contextual vector at 58.16 seconds and the 'not copied / not final answer' notes at 60.48/62.06 seconds."
+        - "The same cards reflow toward the mix at 49.96 seconds; the output appears at 50.50 seconds with 'combine the values'. For 'signal from trail' (56.30–57.50s), the retained source word 'trail', its V1 value row, the moving V1→mix path and the forming output vector are highlighted together; the source remains emphasized through 'not a copied word' (60.48–61.68s). The 'new contextual vector for It' label starts at 58.16s."
         - "At 64.38 seconds the same cards recede and the compact formula takes focus; compare/scale, softmax, and value multiplication highlights follow the spoken timestamps. No slide-style chapter title is shown."
         - "The global particle field was simplified to 180 points and 24 faint links with a capped 1.25 device pixel ratio. Fixed scene header titles and decorative film grain are hidden; object/UI labels remain."
-        - "Chromium visually reviewed early projection (3s), named vectors (8–24s), comparison/scores (39.1s), softmax (44s), contextual output (58.6s), and formula (68s); all 11 QKV paths/tracers rendered with no runtime exception."
+        - "The 1920x1080 correction measured projection labels at 32.6px, value rows at 28.8px, and the new-vector caption at 32.6px. The 'not copied' note's hidden parent was fixed; its 27.8px caption is centered and visible on the exact spoken cue. Nine designated Chapter 03/04 frames passed the production-preview assertions with no browser errors."
+        - "Chromium visually reviewed early projection (3s), named vectors (8–24s), comparison/scores (39.1s), softmax (44s), contextual output (58.9s), not-copy cue (61.1s), and formula (68s); all 11 QKV paths/tracers rendered with no runtime exception."
         - "Across 48 dense weighted-mix frames on the final public bundle, renderAt averaged 3.93 ms, p95 was 5.0 ms and max 7.3 ms; seeking away and returning to the same timestamp reproduced identical path, tracer and score states."
   legibility_review:
     status: chapters_03_to_08_1080p_typography_qa_passed_waiting_user_review
     reviewed_frames_seconds: [120.0, 132.0, 160.0, 215.6, 234.5, 250.0, 276.08, 300.0, 342.5, 356.0, 390.0, 409.0, 419.0]
     checks:
       - "Thirteen representative production-preview frames were captured at the 1920x1080 film stage across Chapters 03–08; each activated the expected scene and Chromium reported zero page/console errors."
-      - "Chapter 03 CURRENT POSITION is 24.6px at 1080p with 167.6px clearance above the token row; token text remains 32.3px."
-      - "Chapter 04 operation, candidate and score text is 19.2–23.4px. The COMPARE subtitle stays on one line; the 21.1px total = 100% label sits below the normalization bar and remains inside its card."
+      - "Latest Chapter 03 full-HD pass sets CURRENT POSITION to 47.0px, sentence tokens to 43.2px, and the Q/K/V preview labels to 41.3px; representative elements remain within the 16:9 canvas."
+      - "Latest Chapter 04 full-HD pass sets projection headings to 32.6px, value rows to 28.8px, the contextual-vector label to 32.6px, and the 'not copied' caption to 27.8px. The caption is cue-driven, centered, one-line, and visible inside the expanded output card."
       - "Chapter 05 role labels are 21.5px and example tokens 22.7px; the reviewed active lane has zero role/chip bounding-box collisions."
       - "Chapter 06 layer/operation labels are 20.7–23.0px; Chapter 07 mask/generation text is 20.2–23.0px; Chapter 08 recap and closing text is 19.2–24.0px."
       - "Seven representative active-scene seeks across Chapters 03–08 reproduced identical active-scene DOM state; no browser errors occurred. Production build, JS syntax and git diff checks passed."
