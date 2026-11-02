@@ -156,7 +156,7 @@ headPatterns.forEach((pattern, i) => {
   row.dataset.view=String(i);
   const token=(text)=>`<span class="head-pattern-token" data-token="${text.toLowerCase().replace(/[^a-z0-9]+/g,'-')}">${text}</span>`;
   const example=pattern.result?`${token(pattern.items[0])}<b class="head-pair-plus">+</b>${token(pattern.items[1])}<span class="head-pair-link">→</span><span class="head-pattern-result">${pattern.result}</span>`:`${token(pattern.items[0])}<span class="head-pair-link">${pattern.join}</span>${token(pattern.items[1])}`;
-  row.innerHTML=`<div class="head-id">VIEW 0${i+1}</div><div class="head-track"><span class="head-role">${pattern.role}</span><div class="head-pattern-example"><div class="head-example-items">${example}</div></div><div class="head-projection-bars" aria-hidden="true">${Array.from({length:6},(_,j)=>`<i data-bar="${j}"></i>`).join('')}</div></div><div class="head-lane-output" aria-hidden="true">${Array.from({length:5},(_,j)=>`<i data-bar="${j}"></i>`).join('')}</div>`;
+  row.innerHTML=`<div class="head-id">VIEW 0${i+1}</div><div class="head-track"><span class="head-role">${pattern.role}</span><div class="head-pattern-example"><div class="head-example-items">${example}</div></div><div class="head-projection-bars" aria-hidden="true">${Array.from({length:6},(_,j)=>`<i data-bar="${j}"></i>`).join('')}</div><i class="head-signal" aria-hidden="true"></i></div><div class="head-lane-output" aria-hidden="true">${Array.from({length:5},(_,j)=>`<i data-bar="${j}"></i>`).join('')}</div>`;
   row.style.setProperty('--head-color',headPalette[i]);
   headLanesRoot.append(row); headLanes.push(row);
 });
@@ -900,9 +900,11 @@ function renderHeads(p){
   headLanes.forEach((lane,i)=>{
     const laneIn=smooth(7.85+i*.035,8.95+i*.035,sec);
     const active=i===0?reference:i===1?preference:0;
-    lane.style.opacity=String(laneIn*(.66+.34*Math.max(active,equalViews)));
+    lane.style.opacity=String(laneIn*(.86+.14*Math.max(active,equalViews)));
     lane.style.transform=`translateX(${(1-laneIn)*3.2-active*.25}cqw) scale(${1+active*.018})`;
-    lane.style.filter=`brightness(${.82+active*.32+equalViews*.12+finalMix*.12})`;
+    const signal=lane.querySelector('.head-signal'),signalPhase=phase(sec,.46,i*.21),signalWindow=laneIn*(1-smooth(11.45,12.05,sec));
+    signal.style.left=`${12+signalPhase*76}%`;signal.style.opacity=String(signalWindow*(.72+.28*Math.sin(sec*3.8+i)));
+    lane.style.filter=`brightness(${.92+active*.32+equalViews*.12+finalMix*.18})`;
     const role=lane.querySelector('.head-role'),example=lane.querySelector('.head-pattern-example');
     role.style.opacity=String(namedExamples*(.58+active*.42));
     example.style.opacity=String(patterns*(i<2?1:.7));
@@ -910,7 +912,7 @@ function renderHeads(p){
     const profileBars=[...lane.querySelectorAll('.head-projection-bars i')];
     profileBars.forEach((bar,j)=>{const blend=changing*(.5+.5*Math.sin((sec-25.4)*3.25+i*1.2)),h=baseProfiles[i][j]*(1-blend)+altProfiles[i][j]*blend;const shimmer=.88+.12*Math.sin(sec*4.2+i+j*.7);bar.style.height=`${h*shimmer}%`;bar.style.filter=`brightness(${.78+blend*.55})`;});
     const outputBars=[...lane.querySelectorAll('.head-lane-output i')];
-    outputBars.forEach((bar,j)=>{const h=baseProfiles[i][j%6]*(1-changing)+altProfiles[i][j%6]*changing;bar.style.height=`${h*(.84+.16*Math.sin(sec*2.5+i+j))}%`;bar.style.opacity=String(laneIn*(.64+finalMix*.36));});
+    outputBars.forEach((bar,j)=>{const h=baseProfiles[i][j%6]*(1-changing)+altProfiles[i][j%6]*changing;bar.style.height=`${h*(.84+.16*Math.sin(sec*2.5+i+j))}%`;bar.style.opacity=String(laneIn*(.88+finalMix*.12));});
     lane.querySelector('.head-track').style.borderColor=active>.1?`color-mix(in srgb,var(--head-color) ${Math.round(28+active*52)}%,#2b3946)`:'';
   });
   const stamp=document.getElementById('schematic-stamp');
@@ -927,13 +929,13 @@ function renderHeads(p){
   const svg=document.querySelector('.head-merge'),rect=svg.getBoundingClientRect();
   const anchor=(el,x=.5,y=.5)=>{const r=el.getBoundingClientRect();return{x:(r.left+r.width*x-rect.left)/rect.width*1200,y:(r.top+r.height*y-rect.top)/rect.height*675};};
   const target=anchor(combine,.08,.5);
-  const mergeStrength=Math.max(outputIn*.3,finalMix);
+  const mergeStrength=Math.max(outputIn,finalMix);
   headMergePaths.forEach((path,i)=>{
     const sourcePoint=anchor(headLanes[i].querySelector('.head-lane-output'),.02,.5),dx=target.x-sourcePoint.x,dy=target.y-sourcePoint.y,bend=Math.max(14,Math.min(50,Math.abs(dy)*.38));
     path.setAttribute('d',`M ${sourcePoint.x.toFixed(1)} ${sourcePoint.y.toFixed(1)} C ${(sourcePoint.x+dx*.42).toFixed(1)} ${(sourcePoint.y+Math.sign(dy||1)*bend).toFixed(1)}, ${(target.x-dx*.38).toFixed(1)} ${(target.y-Math.sign(dy||1)*bend).toFixed(1)}, ${target.x.toFixed(1)} ${target.y.toFixed(1)}`);
-    path.style.stroke=headPalette[i];path.style.opacity=String(mergeStrength*(.24+equalViews*.16+finalMix*.5));path.style.strokeDasharray='none';
+    path.style.stroke=headPalette[i];path.style.strokeWidth='2.3';path.style.opacity=String(mergeStrength*(.4+equalViews*.18+finalMix*.32));path.style.strokeDasharray='10 8';path.style.strokeDashoffset=String(-sec*18);
     const len=path.getTotalLength(),q=phase(sec,finalMix>.2?.82:1.8,i*.19),pt=path.getPointAtLength(len*q),dot=headMergeDots[i];
-    dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));dot.style.fill=headPalette[i];dot.style.opacity=String(mergeStrength*(.12+finalMix*.88));dot.setAttribute('r',String(3.6+finalMix*2.4));
+    dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));dot.style.fill=headPalette[i];dot.style.opacity=String(mergeStrength*(.45+finalMix*.48));dot.setAttribute('r',String(4.4+finalMix*2.2));
   });
 }
 function renderBlock(p){
@@ -970,7 +972,8 @@ function renderMask(p){
   const appendedCount=sec>=42.5?2:sec>=39.7?1:0;
   const rowIndex=training?-1:5;
   document.querySelectorAll('.mask-cell').forEach(e=>{const r=Number(e.dataset.r),c=Number(e.dataset.c),beat=pulse(sec,.38,r*.08),allowed=c<=r,current=!training&&r===rowIndex&&allowed,parallelBeat=.72+.28*Math.sin((sec-19.7)*4+r*.24);e.classList.toggle('current',current);e.classList.toggle('parallel-computing',training&&parallelPhase>.01&&allowed);e.style.opacity=allowed?String(.28+.7*(training?Math.max(.42+.45*beat,parallelPhase*parallelBeat):r===rowIndex?1:.48+.22*pulse(sec,.38,r*.1+c*.06))):'0.18';e.style.transform=allowed?`scale(${current?1+.08*beat:training?1+.025*beat+parallelPhase*.035*parallelBeat:1})`:'';e.style.borderColor=!allowed?'#59333a':'';e.style.boxShadow=allowed&&parallelPhase>.01?`0 0 ${parallelPhase*(.2+.42*parallelBeat)}cqw rgba(107,235,199,.68)`:'';});
-  const track=document.querySelector('.generation-track'),generationReveal=smooth(30.0,31.0,sec);track.style.width=`${58+28*generationReveal}cqw`;track.style.opacity=String(generationReveal);track.style.transform=`translateY(${(1-generationReveal)*.65}cqw)`;
+  const track=document.querySelector('.generation-track'),generationReveal=smooth(30.35,31.35,sec);track.style.width=`${58+28*generationReveal}cqw`;track.style.opacity=String(generationReveal);track.style.transform=`translateY(${(1-generationReveal)*.65}cqw)`;
+  const maskContent=document.querySelector('.mask-content'),maskOut=smooth(29.95,31.0,sec);maskContent.style.opacity=String(1-maskOut);maskContent.style.transform=`translateY(${-maskOut*2}cqw) scale(${1-maskOut*.025})`;
   const caption=document.getElementById('mask-caption');caption.textContent=sec<9?'Predicting the next token means each position must respect what comes before.':sec<19.7?'A one-way gate keeps every position from seeing its future.':sec<30?'Many positions compute in parallel, with future tokens still masked.':sec<33.5?'Generation starts from the prompt’s final position.':sec<37.2?'That position scores several possible next tokens.':sec<39.7?'Select one token; it is only the next piece, not a full answer.':sec<44.5?'Append the selected token; now predict from the longer context.':'Reuse cached Keys and Values, then extend one token at a time.';
   [...generationTokens.children].forEach((e,i)=>{const generated=i>=genWords.length,gi=generated?Number(e.dataset.generated):-1,shown=generated&&gi<appendedCount,reveal=gi===0?smooth(39.7,40.15,sec):smooth(42.5,42.95,sec);e.classList.toggle('new',shown);e.style.opacity=generated?String(shown?reveal:0):'1';e.style.transform=`translateY(${shown?-Math.sin(sec*9+i)*.12:0}cqw) scale(${shown?1+.025*pulse(sec,.7,i):1})`;});
   const candidates=document.getElementById('next-candidates'),firstCandidateIn=smooth(33.5,34.0,sec)*(1-smooth(39.5,40.0,sec)),nextCandidateIn=smooth(41.65,42.0,sec)*(1-smooth(42.25,42.65,sec)),candidateIn=Math.max(firstCandidateIn,nextCandidateIn);candidates.style.display=candidateIn>.001?'flex':'none';candidates.style.opacity=String(candidateIn);const candidateLabels=sec<39.7?['short','long','park']:['too.','today','either.'],selected=sec>=37.2&&sec<39.7||sec>=42.2?0:-1,scoreWidths=[76,48,29];

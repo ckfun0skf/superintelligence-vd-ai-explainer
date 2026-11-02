@@ -161,14 +161,15 @@ qa:
         - "Across 48 dense weighted-mix frames on the final public bundle, renderAt averaged 3.93 ms, p95 was 5.0 ms and max 7.3 ms; seeking away and returning to the same timestamp reproduced identical path, tracer and score states."
   legibility_review:
     status: chapters_03_to_08_1080p_typography_qa_passed_waiting_user_review
-    reviewed_frames_seconds: [120.0, 132.0, 160.0, 215.6, 234.5, 250.0, 276.08, 300.0, 342.5, 356.0, 390.0, 409.0, 419.0]
+    reviewed_frames_seconds: [120.0, 132.0, 160.0, 215.6, 217.96, 225.46, 232.46, 234.5, 234.86, 238.96, 245.36, 248.96, 250.0, 253.76, 255.46, 259.1, 261.1, 269.0, 274.4, 276.08, 278.1, 283.4, 289.1, 297.1, 300.0, 303.6, 310.0, 316.6, 319.5, 327.8, 332.8, 337.5, 342.5, 342.6, 345.0, 347.5, 353.8, 356.0, 359.5, 362.48, 364.28, 369.68, 376.88, 382.28, 388.68, 390.0, 395.68, 400.68, 406.38, 409.0, 413.48, 416.48, 418.68, 419.0]
     checks:
       - "Thirteen representative production-preview frames were captured at the 1920x1080 film stage across Chapters 03–08; each activated the expected scene and Chromium reported zero page/console errors."
       - "Latest Chapter 03 full-HD pass sets CURRENT POSITION to 47.0px, sentence tokens to 43.2px, and the Q/K/V preview labels to 41.3px; representative elements remain within the 16:9 canvas."
       - "Latest Chapter 04 full-HD pass sets projection headings to 32.6px, value rows to 28.8px, the contextual-vector label to 32.6px, and the 'not copied' caption to 27.8px. The caption is cue-driven, centered, one-line, and visible inside the expanded output card."
-      - "Chapter 05 role labels are 21.5px and example tokens 22.7px; the reviewed active lane has zero role/chip bounding-box collisions."
-      - "Chapter 06 layer/operation labels are 20.7–23.0px; Chapter 07 mask/generation text is 20.2–23.0px; Chapter 08 recap and closing text is 19.2–24.0px."
+      - "Chapter 05 key source words are 29.8px, lane-role labels 26.5px and named example tokens 28.4px at 1920x1080; four color-coded signals travel through the parallel lanes before their outputs converge."
+      - "Chapter 06 key operation/explanation labels are 28.8–34.6px. Chapter 07 mask-cell words are 26.9px; the enlarged 6x6 matrix lifts/fades before the generation strip moves into center stage. Chapter 08 recap-route labels are 29.8px and the Taipei constraint prompt is 27.8px."
       - "Seven representative active-scene seeks across Chapters 03–08 reproduced identical active-scene DOM state; no browser errors occurred. Production build, JS syntax and git diff checks passed."
+      - "Final Chapters 05–08 production-preview regression captured 41 cue frames at 1920x1080; all four chapters had zero measured text/layout overflows, Chromium reported zero errors, and 19 reverse/random seek comparisons passed."
       - "Final MP4 export remains on hold until the user completes chapter-by-chapter preview QA."
   chapter_continuity:
     status: persistent_handoffs_deterministic_chromium_qa_passed

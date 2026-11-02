@@ -822,3 +822,120 @@ body{background:#080d14}
 .scene-qkv .mix-vector i{max-width:1.65cqw;min-height:.38cqw}
 .scene-qkv .mix-note{flex-direction:column;align-items:center;gap:.18cqw;font-size:1.45cqw;line-height:1.2;letter-spacing:.025em}
 .scene-qkv .mix-note span{display:inline-flex;flex:0 0 auto;align-items:center;white-space:nowrap;padding:.2cqw .32cqw;border:1px solid #356154;border-radius:.3cqw;background:#122620;color:#c9ffeb;font:700 1.45cqw/1.2 Arial,sans-serif!important}
+
+
+/* Chapters 05–08 · legibility pass: spend the unused 1080p canvas on the core concepts. */
+.scene-heads .head-source-label{font-size:1.25cqw}
+.scene-heads .head-source-request>[data-prompt]{font-size:1.24cqw}
+.scene-heads .head-source-sentence>span{font-size:1.38cqw}
+.scene-heads .head-id{font-size:1.22cqw}
+.scene-heads .head-role{flex:0 0 15.5cqw;width:15.5cqw;margin-right:.4cqw;font-size:1.28cqw;letter-spacing:.025em}
+.scene-heads .head-pattern-token{font-size:1.34cqw}
+.scene-heads .head-pattern-result{font-size:1.28cqw}
+.scene-heads .heads-output>span{font-size:1.28cqw;line-height:1.25}
+.scene-heads .head-caveat{font-size:1.05cqw;letter-spacing:.06em}
+.scene-heads .head-main-idea{font-size:1.35cqw;letter-spacing:.08em}
+.scene-heads .schematic-stamp{font-size:1.02cqw;letter-spacing:.055em;color:#adc4cf}
+
+.scene-block .block-flow{top:24%;height:65%}
+.scene-block .transformer-stack{width:49%}
+.scene-block .block-token-stream>span{width:6.6cqw;height:2.3cqw;font-size:1.28cqw}
+.scene-block .block-face>span{font-size:1.4cqw;letter-spacing:.015em}
+.scene-block .explain-item>span{font-size:1.4cqw;line-height:1.2}
+.scene-block .explain-item>i{font-size:1.55cqw}
+.scene-block .block-result>b{font-size:1.6cqw}
+.scene-block .block-result>small{font-size:1.22cqw;line-height:1.22}
+.scene-block .block-stack-caption{font-size:1.4cqw;line-height:1.25}
+
+.scene-mask .mask-content{top:14%;height:61%;gap:4%}
+.scene-mask .mask-grid{grid-template-columns:repeat(6,5.1cqw);gap:.4cqw}
+.scene-mask .mask-cell{width:5.1cqw;height:5.1cqw;font-size:1.18cqw}
+.scene-mask .mask-explain{min-width:32cqw;gap:1.4cqw}
+.scene-mask .mask-mode{font-size:1.25cqw;padding:.58cqw .9cqw}
+.scene-mask .mask-gate{font-size:1.15cqw;line-height:1.45;padding:1.05cqw 1.35cqw}
+.scene-mask .mask-gate b{font-size:1.35cqw}
+.scene-mask .mask-flow{font-size:1.25cqw;line-height:1.25}
+.scene-mask .generation-label{font-size:1.2cqw}
+.scene-mask .gen-token{font-size:1.2cqw;padding:.52cqw .68cqw}
+.scene-mask .next-candidates-label{font-size:1.15cqw;line-height:1.15}
+.scene-mask .next-candidates>b{min-width:6.4cqw;padding:.48cqw .62cqw;font-size:1.15cqw}
+.scene-mask .next-candidates .candidate-label{font-size:1.15cqw}
+.scene-mask .kv-cache{min-width:13cqw;gap:.4cqw;padding:.55cqw .65cqw}
+.scene-mask .kv-cache small{font-size:1.2cqw}
+.scene-mask .mask-caption{font-size:1.42cqw;line-height:1.25}
+
+.scene-recap .recap-context{left:6%;top:9%;width:34%;padding:.9cqw 1.1cqw}
+.scene-recap .recap-context>span{font-size:1.2cqw}
+.scene-recap .recap-input{font-size:1.3cqw;line-height:1.35}
+.scene-recap .recap-route{left:4%;right:4%;top:40%}
+.scene-recap .recap-route>span{width:12%;min-height:10cqw;padding:1cqw .55cqw;font-size:1.4cqw;line-height:1.22}
+.scene-recap .recap-route>i{flex-basis:1.3cqw;width:1.3cqw}
+.scene-recap .recap-next-heading b{font-size:1.3cqw;line-height:1.25}
+.scene-recap .recap-next-heading small{font-size:1.2cqw;line-height:1.25}
+.scene-recap .recap-candidates>div{min-height:4.2cqw;padding:.72cqw .8cqw}
+.scene-recap .recap-candidates>div>b{font-size:1.3cqw;line-height:1.2}
+.scene-recap .closing-line{font-size:1.5cqw;line-height:1.25}
+
+
+/* Chapters 05–08 · stronger final scale, designed for a 1080p film viewed on a phone. */
+.scene-heads .head-source-label{font-size:1.38cqw}
+.scene-heads .head-source-request>[data-prompt]{font-size:1.34cqw}
+.scene-heads .head-source-sentence>span{font-size:1.55cqw}
+.scene-heads .head-id{font-size:1.4cqw}
+.scene-heads .head-role{flex-basis:17cqw;width:17cqw;font-size:1.38cqw}
+.scene-heads .head-pattern-token{font-size:1.48cqw}
+.scene-heads .head-pattern-result{font-size:1.4cqw}
+.scene-heads .heads-output>span{font-size:1.42cqw}
+.scene-heads .head-caveat{font-size:1.15cqw}
+.scene-heads .head-main-idea{font-size:1.45cqw}
+.scene-heads .schematic-stamp{font-size:1.15cqw}
+.scene-heads .head-track{position:relative;overflow:hidden}
+.scene-heads .head-signal{position:absolute;top:50%;left:12%;z-index:5;width:1.05cqw;height:1.05cqw;border-radius:50%;background:var(--head-color);box-shadow:0 0 .65cqw color-mix(in srgb,var(--head-color) 75%,white);transform:translate(-50%,-50%);pointer-events:none;will-change:left,opacity}
+.scene-heads .head-signal::before{content:"";position:absolute;right:48%;top:50%;width:3.2cqw;height:.28cqw;border-radius:99px;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--head-color) 75%,transparent));transform:translateY(-50%)}
+
+.scene-block .block-flow{top:22%;height:68%}
+.scene-block .transformer-stack{width:56%}
+.scene-block .block-token-stream>span{width:6.8cqw;height:2.45cqw;font-size:1.45cqw}
+.scene-block .block-face>span{font-size:1.6cqw}
+.scene-block .explain-item>span{font-size:1.55cqw;line-height:1.22}
+.scene-block .explain-item>i{font-size:1.7cqw}
+.scene-block .block-result>b{font-size:1.8cqw}
+.scene-block .block-result>small{font-size:1.35cqw;line-height:1.22}
+.scene-block .block-stack-caption{font-size:1.5cqw;line-height:1.25}
+
+.scene-mask .mask-content{top:8%;height:68%;gap:4%}
+.scene-mask .mask-grid{grid-template-columns:repeat(6,5.9cqw);gap:.4cqw}
+.scene-mask .mask-cell{width:5.9cqw;height:5.9cqw;font-size:1.4cqw;letter-spacing:-.02em}
+.scene-mask .mask-explain{min-width:32cqw;gap:1.4cqw}
+.scene-mask .mask-mode{font-size:1.3cqw;padding:.62cqw .95cqw}
+.scene-mask .mask-gate{font-size:1.2cqw;line-height:1.4;padding:1.05cqw 1.4cqw}
+.scene-mask .mask-gate b{font-size:1.42cqw}
+.scene-mask .mask-flow{font-size:1.35cqw;line-height:1.25}
+.scene-mask .generation-label{font-size:1.28cqw}
+.scene-mask .gen-token{font-size:1.3cqw;padding:.56cqw .72cqw}
+.scene-mask .next-candidates>span{min-width:5.6cqw;font-size:1.28cqw;line-height:1.15}
+.scene-mask .next-candidates>b{min-width:6.6cqw;padding:.5cqw .68cqw;font-size:1.25cqw}
+.scene-mask .next-candidates .candidate-label{font-size:1.25cqw}
+.scene-mask .kv-cache{min-width:13.4cqw;gap:.4cqw;padding:.58cqw .68cqw}
+.scene-mask .kv-cache small{font-size:1.28cqw}
+.scene-mask .mask-caption{font-size:1.5cqw;line-height:1.25}
+
+.scene-recap .recap-context{left:6%;top:8%;width:34%;padding:1cqw 1.15cqw}
+.scene-recap .recap-context>span{font-size:1.35cqw}
+.scene-recap .recap-input{font-size:1.45cqw;line-height:1.35}
+.scene-recap .recap-route{left:4%;right:4%;top:38.5%}
+.scene-recap .recap-route>span{width:12.5%;min-height:11cqw;padding:1.1cqw .58cqw;font-size:1.55cqw;line-height:1.22}
+.scene-recap .recap-route>i{flex-basis:1.25cqw;width:1.25cqw}
+.scene-recap .recap-next-heading b{font-size:1.4cqw;line-height:1.25}
+.scene-recap .recap-next-heading small{font-size:1.3cqw;line-height:1.25}
+.scene-recap .recap-candidates>div{min-height:4.4cqw;padding:.76cqw .82cqw}
+.scene-recap .recap-candidates>div>b{font-size:1.35cqw;line-height:1.2}
+.scene-recap .closing-line{font-size:1.55cqw;line-height:1.25}
+
+/* Chapter 07 · fit the enlarged 6×6 matrix, then make room for the generation strip. */
+.scene-mask .mask-content{top:7%;height:70%}
+.scene-mask .mask-grid{grid-template-columns:repeat(6,6.1cqw)}
+.scene-mask .mask-cell{width:6.1cqw;height:6.1cqw}
+
+/* Chapter 07 · generation takes over the center stage after the mask exits. */
+.scene-mask .generation-track{top:37%;bottom:auto;min-height:18%}
