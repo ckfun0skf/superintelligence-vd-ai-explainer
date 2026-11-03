@@ -127,6 +127,12 @@
             </div>
             <div class="head-single-view" id="head-single-view"><span>ONE LEARNED VIEW</span><div aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
             <div class="head-lanes" id="head-lanes"></div>
+            <div class="head-variation-context" id="head-variation-context" aria-hidden="true">
+              <b>SAME VIEW 01</b>
+              <span class="head-variant-tab" data-variant="0">MODEL A · LAYER 02</span>
+              <span class="head-variant-tab" data-variant="1">MODEL A · LAYER 08</span>
+              <span class="head-variant-tab" data-variant="2">MODEL B · LAYER 02</span>
+            </div>
             <div class="head-merge-overlay" id="head-merge-overlay" aria-hidden="true"></div>
             <svg class="head-merge" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><path/><path/><path/><path/></svg>
             <div class="heads-output" id="heads-output"><div class="heads-combine" id="heads-combine"><i></i><i></i><i></i><i></i><i></i><i></i></div><span id="heads-output-label">combined views</span><div class="head-arrivals" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
@@ -152,6 +158,26 @@
                 <span class="block-demo-label">ONE INPUT SEQUENCE</span>
                 <div class="block-demo-token-row">
                   <span>The</span><span data-key="trail">trail</span><span>near</span><span data-key="maokong">Maokong</span><span>is</span><span data-key="shaded">shaded.</span><span class="is-token" data-key="it">It</span><span>is</span><span data-key="short">short,</span><span>too.</span>
+                </div>
+              </div>
+              <div class="block-module-rail" id="block-module-rail" aria-label="Simplified GPT-style Transformer block">
+                <div class="block-module-rail-heading"><b>ONE GPT-STYLE TRANSFORMER BLOCK</b><span>simplified schematic</span></div>
+                <div class="block-module-track">
+                  <div class="block-module" data-module="attention">
+                    <div class="module-glyph attention-glyph"><span>trail</span><span>shaded</span><i aria-hidden="true"></i><b>It</b></div>
+                    <strong>ATTENTION</strong><small>positions share context</small>
+                  </div>
+                  <i class="block-module-arrow" aria-hidden="true">→</i>
+                  <div class="block-module" data-module="residual">
+                    <div class="module-glyph residual-glyph"><span>input</span><i aria-hidden="true">↷</i><b>+</b><em>NORM</em></div>
+                    <strong>RESIDUAL + NORM</strong><small>keep a path · steady the scale</small>
+                  </div>
+                  <i class="block-module-arrow" aria-hidden="true">→</i>
+                  <div class="block-module" data-module="mlp">
+                    <div class="module-glyph mlp-glyph"><span>It</span><i aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><b></b></i><strong>ƒ</strong><em>It′</em></div>
+                    <strong>MLP</strong><small>transforms each position</small>
+                  </div>
+                  <i class="block-module-pulse" id="block-module-pulse" aria-hidden="true"></i>
                 </div>
               </div>
               <div class="block-demo-operations">
