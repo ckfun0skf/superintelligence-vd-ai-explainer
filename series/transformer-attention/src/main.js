@@ -164,6 +164,10 @@ const headMergePaths=[...document.querySelectorAll('.head-merge path')];
 const headMergeDots=headMergePaths.map((path,i)=>{const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');dot.setAttribute('r','5.5');dot.setAttribute('class','head-merge-pulse');path.parentElement.append(dot);return dot;});
 const headSingleView=document.getElementById('head-single-view');
 const headOutput=document.getElementById('heads-output');
+const headArrivalSlots=[...document.querySelectorAll('.head-arrivals i')];
+const headMergeOverlay=document.getElementById('head-merge-overlay');
+const headPatternExamples=headLanes.map(lane=>lane.querySelector('.head-pattern-example'));
+const headExampleOrigins=headPatternExamples.map(el=>({parent:el.parentElement,next:el.nextSibling}));
 const blockTokenStream = document.getElementById('block-token-stream');
 const blockTokens=[];
 ['The','trail','near','Maokong','is','shaded.','It','is','short,','too.'].forEach((t,i)=>{const e=document.createElement('span');e.dataset.token=t.toLowerCase();e.style.transform=`translateX(${i%2?'.18':'0'}cqw)`;const label=document.createElement('b');label.className='block-token-label';label.textContent=t;e.append(label);if(t==='It'){const vector=document.createElement('i');vector.className='block-token-vector';[.34,.72,.48,.9,.26,.62,.42,.82].forEach((h,j)=>{const bar=document.createElement('i');bar.style.setProperty('--h',`${20+h*72}%`);bar.dataset.bar=String(j);vector.append(bar)});e.append(vector)}blockTokenStream.append(e);blockTokens.push(e)});
@@ -877,9 +881,14 @@ function renderQKV(p){
 }
 function renderHeads(p){
   const sec=sceneSeconds(4,p);
+  headPatternExamples.forEach((example,i)=>{
+    const origin=headExampleOrigins[i];
+    if(example.parentElement!==origin.parent)origin.parent.insertBefore(example,origin.next);
+    example.removeAttribute('style');
+  });
   const oneView=smooth(.42,.78,sec)*(1-smooth(6.0,6.8,sec));
   const parallel=smooth(7.0,8.35,sec);
-  const patterns=smooth(12.1,13.55,sec)*(1-smooth(30.25,31.05,sec));
+  const patterns=smooth(12.1,13.55,sec)*(1-smooth(38.75,39.55,sec));
   const namedExamples=patterns*(1-smooth(19.0,19.85,sec));
   const reference=smooth(14.66,15.28,sec)*(1-smooth(16.25,16.72,sec));
   const preference=smooth(16.72,17.28,sec)*(1-smooth(19.0,19.7,sec));
@@ -906,7 +915,7 @@ function renderHeads(p){
     signal.style.left=`${12+signalPhase*76}%`;signal.style.opacity=String(signalWindow*(.72+.28*Math.sin(sec*3.8+i)));
     lane.style.filter=`brightness(${.92+active*.32+equalViews*.12+finalMix*.18})`;
     const role=lane.querySelector('.head-role'),example=lane.querySelector('.head-pattern-example');
-    role.style.opacity=String(namedExamples*(.58+active*.42));
+    role.style.opacity=String(Math.max(namedExamples,finalMix*.86)*( .58+active*.42));
     example.style.opacity=String(patterns*(i<2?1:.7));
     example.style.transform=`scale(${1+active*.045})`;
     const profileBars=[...lane.querySelectorAll('.head-projection-bars i')];
@@ -922,8 +931,23 @@ function renderHeads(p){
   const mainIdea=document.getElementById('head-main-idea');
   if(mainIdea)mainIdea.style.opacity=String(smooth(32.6,33.35,sec)*(1-smooth(34.5,35.05,sec)));
   const outputLabel=document.getElementById('heads-output-label');
-  if(outputLabel)outputLabel.textContent=sec>=38.36?'UPDATED “IT” REPRESENTATION':'combined views';
-  if(headOutput){headOutput.style.opacity=String(outputIn);headOutput.style.transform=`translateX(${moveOn*1.1}cqw) scale(${1+finalMix*.035*Math.sin(sec*2.4)})`;headOutput.style.filter=`brightness(${1+finalMix*.25})`;}
+  if(outputLabel)outputLabel.textContent=sec>=38.36?'UPDATED “IT” REPRESENTATION':finalMix>.12?'four learned views → one':'combined views';
+  const mergeMove=smooth(35.56,38.58,sec);
+  if(headOutput){headOutput.style.opacity=String(outputIn);headOutput.style.transform=`translateX(${moveOn*1.1}cqw) scale(${1+finalMix*.035*Math.sin(sec*2.4)})`;headOutput.style.filter=`brightness(${1+finalMix*.25})`;headOutput.style.width=`${16.5+5.5*mergeMove}cqw`;headOutput.style.top=`${47-3*mergeMove}%`;headOutput.style.minHeight=`${18+22*mergeMove}%`;}
+  const arrivals=document.querySelector('.head-arrivals');
+  if(arrivals){arrivals.style.display=mergeMove>.001?'grid':'none';arrivals.style.opacity=String(mergeMove);}
+  headLanes.forEach((lane,i)=>{
+    const example=headPatternExamples[i],slot=headArrivalSlots[i];
+    if(!example||!slot)return;
+    if(mergeMove<.001){example.style.zIndex='';example.style.transform=`scale(${1+(i===0?reference: i===1?preference:0)*.045})`;return;}
+    example.style.transform='none';
+    const from=example.getBoundingClientRect(),to=slot.getBoundingClientRect();
+    const overlayRect=headMergeOverlay.getBoundingClientRect();
+    const currentWidth=from.width+(to.width-from.width)*mergeMove,currentHeight=from.height+(to.height-from.height)*mergeMove;
+    headMergeOverlay.appendChild(example);
+    Object.assign(example.style,{position:'absolute',left:`${from.left-overlayRect.left+(from.width-currentWidth)/2}px`,top:`${from.top-overlayRect.top+(from.height-currentHeight)/2}px`,width:`${currentWidth}px`,height:`${currentHeight}px`,margin:'0',flex:'none',transformOrigin:'center',zIndex:String(10+i)});
+    example.style.transform=`translate3d(${((to.left+to.width/2)-(from.left+from.width/2))*mergeMove}px,${((to.top+to.height/2)-(from.top+from.height/2))*mergeMove}px,0)`;
+  });
   const combine=document.getElementById('heads-combine');
   if(combine){combine.style.opacity=String(outputIn);combine.style.transform=`scale(${.9+.1*outputIn+finalMix*.04*Math.sin(sec*3.2)})`;[...combine.children].forEach((bar,i)=>{bar.style.height=`${[42,78,56,90,64,36][i]}%`;bar.style.transform=`scaleY(${.82+.18*Math.sin(sec*3.4+i*.7)})`;});}
   const svg=document.querySelector('.head-merge'),rect=svg.getBoundingClientRect();
@@ -938,7 +962,7 @@ function renderHeads(p){
     dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));dot.style.fill=headPalette[i];dot.style.opacity=String(mergeStrength*(.45+finalMix*.48));dot.setAttribute('r',String(4.4+finalMix*2.2));
   });
 }
-function renderBlock(p){
+function renderBlockLegacy(p){
   const sec=sceneSeconds(5,p);
   const attentionCue=Math.max(smooth(2.6,3.2,sec)*(1-smooth(10.0,10.5,sec)),smooth(30.3,31.0,sec)*(1-smooth(37.25,38.0,sec)));
   const mlpCue=Math.max(smooth(10.3,10.9,sec)*(1-smooth(15.8,16.35,sec)),smooth(30.3,31.0,sec)*(1-smooth(37.25,38.0,sec)));
@@ -964,6 +988,71 @@ function renderBlock(p){
   const tokenPoint=point(blockItToken,'right'),tokenTop=point(blockItToken,'top'),faces=frontFaces.map(face=>({left:point(face,'left'),center:point(face),right:point(face,'right'),top:point(face,'top')})),resultPoint=point(result,'left');
   const links=[[tokenPoint,faces[0].left,attentionCue],[faces[0].right,faces[1].left,Math.max(attentionCue,residualCue)],[tokenTop,faces[1].top,residualCue],[faces[1].right,faces[2].left,Math.max(residualCue,mlpCue)],[faces[2].right,resultPoint,representationCue]];
   links.forEach(([a,b,alpha],i)=>{const path=blockFlowPaths[i],dot=blockFlowDots[i],dx=b.x-a.x,dy=b.y-a.y,bend=Math.max(12,Math.min(42,Math.abs(dx)*.13));if(i===2){path.setAttribute('d',`M ${a.x.toFixed(1)} ${a.y.toFixed(1)} C ${(a.x+42).toFixed(1)} ${(a.y-72).toFixed(1)}, ${(b.x-72).toFixed(1)} ${(b.y-68).toFixed(1)}, ${b.x.toFixed(1)} ${b.y.toFixed(1)}`);}else{path.setAttribute('d',`M ${a.x.toFixed(1)} ${a.y.toFixed(1)} C ${(a.x+dx*.42).toFixed(1)} ${(a.y-Math.sign(dy||1)*bend).toFixed(1)}, ${(b.x-dx*.42).toFixed(1)} ${(b.y+Math.sign(dy||1)*bend).toFixed(1)}, ${b.x.toFixed(1)} ${b.y.toFixed(1)}`);}path.style.opacity=String(alpha*(i===2?.78:.62));path.style.stroke=i===2||i===1?'#b7e1af':i===4?'#91f2d2':'#72c8ff';path.style.strokeDasharray='none';const len=path.getTotalLength(),pos=phase(sec,.94,i*.19),pt=path.getPointAtLength(len*pos);dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));dot.setAttribute('r',String(3.5+alpha*2));dot.style.fill=i===2||i===1?'#b7e1af':'#dffff5';dot.style.opacity=String(alpha*(.22+.78*pulse(sec,.94,i*.19)));});
+}
+function renderBlock(p){
+  const sec=sceneSeconds(5,p);
+  const attentionCue=smooth(2.55,3.15,sec)*(1-smooth(10.05,10.55,sec));
+  const mlpCue=smooth(10.25,10.9,sec)*(1-smooth(15.85,16.4,sec));
+  const residualCue=smooth(16.1,16.8,sec)*(1-smooth(24.45,24.95,sec));
+  const repeatCue=smooth(24.8,25.7,sec)*(1-smooth(30.05,30.4,sec));
+  const stackedCue=smooth(30.25,31.0,sec)*(1-smooth(37.45,38.0,sec));
+  const representationCue=smooth(37.6,39.0,sec);
+  const attentionCard=document.getElementById('attention-demo'),mlpCard=document.getElementById('mlp-demo');
+  const residualCard=document.getElementById('residual-demo'),repeatCard=document.getElementById('block-repeat-demo');
+  const periodic=.5+.5*Math.sin((sec-30.3)*2.1);
+  const attentionLevel=Math.max(attentionCue,stackedCue*(.52+.48*periodic));
+  const mlpLevel=Math.max(mlpCue,stackedCue*(.52+.48*(1-periodic)));
+  [[attentionCard,attentionLevel],[mlpCard,mlpLevel],[residualCard,residualCue],[repeatCard,Math.max(repeatCue,stackedCue,representationCue*.65)]].forEach(([el,v])=>{
+    el.classList.toggle('active',v>.5);el.style.opacity=String(.43+.57*v);el.style.filter=`brightness(${.82+.3*v})`;el.style.transform=`translateY(${-v*.08}cqw) scale(${1+v*.006})`;
+  });
+  document.querySelectorAll('.block-demo-token-row [data-key]').forEach((el)=>{
+    const key=el.dataset.key,hot=key==='it'?Math.max(attentionCue,mlpCue*.35,representationCue):key==='trail'||key==='maokong'||key==='shaded'?attentionCue*.9:mlpCue*.25;
+    el.style.borderColor=`color-mix(in srgb,${key==='it'?'#91f2d2':'#72c8ff'} ${Math.round(24+hot*68)}%,#304656)`;
+    el.style.backgroundColor=hot>.42?(key==='it'?'#17362c':'#182e3a'):'#132231';
+    el.style.transform=`translateY(${-hot*.16}cqw) scale(${1+hot*.025})`;
+  });
+  const visual=document.querySelector('.attention-visual'),web=document.querySelector('.attention-demo-web');
+  if(visual&&web){
+    const sources=[...visual.querySelectorAll('[data-clue]')];
+    const paths=[...web.querySelectorAll('path')],dots=[...web.querySelectorAll('circle')];
+    sources.forEach((source,i)=>{
+      const sx=385,sy=75+i*45,ex=828,ey=84+i*36,dx=ex-sx;
+      const path=paths[i],dot=dots[i],cy=sy+(ey-sy)*.35;
+      path.setAttribute('d',`M ${sx.toFixed(1)} ${sy.toFixed(1)} C ${(sx+dx*.45).toFixed(1)} ${cy.toFixed(1)}, ${(ex-dx*.3).toFixed(1)} ${(ey+(sy-ey)*.2).toFixed(1)}, ${ex.toFixed(1)} ${ey.toFixed(1)}`);
+      path.style.opacity=String(attentionCue*(.34+.16*i));path.style.stroke=i===0?'#72c8ff':i===1?'#ffc776':'#ba9aff';
+      const len=path.getTotalLength(),pos=phase(sec,.72,i*.18),pt=path.getPointAtLength(len*pos);
+      dot.setAttribute('cx',String(pt.x));dot.setAttribute('cy',String(pt.y));dot.setAttribute('r',String(4.2+attentionCue*2));dot.style.opacity=String(attentionCue*(.3+.7*pulse(sec,.72,i*.18)));
+      source.style.borderColor=`color-mix(in srgb,${i===0?'#72c8ff':i===1?'#ffc776':'#ba9aff'} ${Math.round(24+attentionCue*70)}%,#405c6d)`;
+      source.style.transform=`translateX(${attentionCue*.12*Math.sin(sec*3+i)}cqw) scale(${1+attentionCue*.025*pulse(sec,.7,i*.2)})`;
+    });
+    visual.querySelectorAll('.attention-vector i').forEach((bar,i)=>{const h=[38,76,54,88,46,68,32,82][i];bar.style.height=`${(20+h*.72+attentionCue*5+representationCue*8)}%`;bar.style.transform=`scaleY(${.84+.16*Math.sin(sec*3.8+i*.7)})`;});
+  }
+  document.querySelectorAll('.mlp-position').forEach((row,i)=>{
+    const hot=mlpCue*Math.max(.55,.85+.15*Math.sin(sec*3.4+i*.8))+stackedCue*.32;
+    row.style.opacity=String(.38+.62*hot);row.style.transform=`translateY(${-hot*.11}cqw) scale(${1+hot*.012})`;row.style.borderColor=hot>.3?'#8b86c0':'#304452';
+    const inputs=[...row.querySelectorAll('.mlp-mini-bars:not(.output) i')],outputs=[...row.querySelectorAll('.mlp-mini-bars.output i')];
+    inputs.forEach((bar,j)=>{bar.style.height=`${28+((i*19+j*27)%60)}%`;bar.style.opacity=String(.5+hot*.3);});
+    outputs.forEach((bar,j)=>{const before=28+((i*19+j*27)%60),after=25+((i*31+j*17+37)%70);bar.style.height=`${before+(after-before)*hot}%`;bar.style.filter=`brightness(${.78+hot*.65})`;});
+  });
+  const routePacket=document.querySelector('.route-packet');
+  routePacket.style.left=`${phase(sec,.8)*88}%`;routePacket.style.opacity=String(residualCue*(.55+.45*pulse(sec,.8)));
+  const residualSublayer=document.querySelector('.residual-sublayer');
+  residualSublayer.style.opacity=String(.62+.38*residualCue);residualSublayer.style.filter=`brightness(${.82+.38*residualCue})`;residualSublayer.style.transform=`translateY(${-residualCue*.08*Math.abs(Math.sin(sec*2.1))}cqw)`;
+  document.querySelectorAll('.residual-transformed-bars b').forEach((bar,i)=>{const h=[74,34,88,48,66][i];bar.style.setProperty('--bar-h',`${h*(.86+.14*Math.sin(sec*3.4+i*.65))}%`);bar.style.filter=`brightness(${.76+.72*residualCue})`;});
+  document.querySelectorAll('.residual-signal>i b').forEach((bar,i)=>{bar.style.setProperty('--bar-h',`${34+((i*23+21)%58)}%`);bar.style.opacity=String(.55+residualCue*.45);});
+  document.querySelectorAll('.norm-range i').forEach((bar,i)=>{
+    const wide=[28,94,40,100,52][i],steady=[48,72,60,78,54][i],q=smooth(17.2,22.2,sec);
+    bar.style.height=`${wide+(steady-wide)*q}%`;bar.style.filter=`brightness(${.8+residualCue*.65})`;
+  });
+  document.querySelector('.residual-add>b').style.transform=`scale(${1+residualCue*.16*pulse(sec,.58)})`;
+  const miniBlocks=[...document.querySelectorAll('.mini-block-stack>i')];
+  miniBlocks.forEach((block,i)=>{const pulseLevel=repeatCue*Math.max(.25,pulse(sec,.8,i*.16))+stackedCue*.6;block.style.transform=`translateY(${-pulseLevel*.18}cqw) scale(${1+pulseLevel*.035})`;block.style.filter=`brightness(${.82+pulseLevel*.5})`;});
+  const lateResult=document.querySelector('.late-token-result');lateResult.style.opacity=String(representationCue);lateResult.style.transform=`translateY(${(1-representationCue)*.45}cqw) scale(${.96+.04*representationCue})`;
+  document.querySelectorAll('.late-result-bars i').forEach((bar,i)=>{const base=[38,76,54,88,46,68,32,82][i],grown=[72,44,91,58,82,35,68,94][i],layerStep=clamp((sec-37.6)/10.2)*2;
+    bar.style.height=`${base+(grown-base)*layerStep}%`;bar.style.transform=`scaleY(${.78+.22*Math.sin(sec*4+i*.65)})`;
+  });
+  const captions=document.querySelector('.block-stack-caption');
+  captions.textContent=sec<2.6?'A Transformer is built from blocks; attention is only one part.':sec<10.3?'Attention lets positions share clues—“It” can use context from other tokens.':sec<16.1?'Then an MLP transforms every token position’s representation.':sec<24.8?'A residual path carries the incoming signal around; normalization keeps the combined scale useful.':sec<30.3?'Architectures vary in detail, but the broad pattern repeats.':sec<37.6?'Across blocks: attention mixes positions; the MLP transforms each position.':'The same “It” position gains a richer vector—not a sentence stored in the network.';
 }
 function renderMask(p){
   const sec=sceneSeconds(6,p);

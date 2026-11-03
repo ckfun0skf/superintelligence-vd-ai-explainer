@@ -161,7 +161,7 @@ qa:
         - "Across 48 dense weighted-mix frames on the final public bundle, renderAt averaged 3.93 ms, p95 was 5.0 ms and max 7.3 ms; seeking away and returning to the same timestamp reproduced identical path, tracer and score states."
   legibility_review:
     status: chapters_03_to_08_1080p_typography_qa_passed_waiting_user_review
-    reviewed_frames_seconds: [120.0, 132.0, 160.0, 215.6, 217.96, 225.46, 232.46, 234.5, 234.86, 238.96, 245.36, 248.96, 250.0, 253.76, 255.46, 259.1, 261.1, 269.0, 274.4, 276.08, 278.1, 283.4, 289.1, 297.1, 300.0, 303.6, 310.0, 316.6, 319.5, 327.8, 332.8, 337.5, 342.5, 342.6, 345.0, 347.5, 353.8, 356.0, 359.5, 362.48, 364.28, 369.68, 376.88, 382.28, 388.68, 390.0, 395.68, 400.68, 406.38, 409.0, 413.48, 416.48, 418.68, 419.0]
+    reviewed_frames_seconds: [120.0, 132.0, 160.0, 215.6, 217.96, 225.46, 232.46, 234.5, 234.86, 238.96, 245.36, 247.06, 248.96, 250.0, 250.76, 251.96, 253.16, 253.76, 254.36, 255.46, 255.96, 259.1, 261.1, 264.6, 268.5, 269.0, 271.6, 274.4, 276.08, 278.1, 281.1, 283.4, 286.1, 289.1, 292.6, 295.6, 297.1, 299.6, 300.0, 303.6, 305.4, 310.0, 316.6, 319.5, 327.8, 332.8, 337.5, 342.5, 342.6, 345.0, 347.5, 353.8, 356.0, 359.5, 362.48, 364.28, 369.68, 376.88, 382.28, 388.68, 390.0, 395.68, 400.68, 406.38, 409.0, 413.48, 416.48, 418.68, 419.0]
     checks:
       - "Thirteen representative production-preview frames were captured at the 1920x1080 film stage across Chapters 03–08; each activated the expected scene and Chromium reported zero page/console errors."
       - "Latest Chapter 03 full-HD pass sets CURRENT POSITION to 47.0px, sentence tokens to 43.2px, and the Q/K/V preview labels to 41.3px; representative elements remain within the 16:9 canvas."
@@ -170,6 +170,7 @@ qa:
       - "Chapter 06 key operation/explanation labels are 28.8–34.6px. Chapter 07 mask-cell words are 26.9px; the enlarged 6x6 matrix lifts/fades before the generation strip moves into center stage. Chapter 08 recap-route labels are 29.8px and the Taipei constraint prompt is 27.8px."
       - "Seven representative active-scene seeks across Chapters 03–08 reproduced identical active-scene DOM state; no browser errors occurred. Production build, JS syntax and git diff checks passed."
       - "Final Chapters 05–08 production-preview regression captured 41 cue frames at 1920x1080; all four chapters had zero measured text/layout overflows, Chromium reported zero errors, and 19 reverse/random seek comparisons passed."
+      - "Latest Chapters 05–06 revision passed 24 narration-aligned 1920x1080 frames with zero overflows or browser errors; 18 forward/reverse seek comparisons reproduced the same active-scene state. VIEW 01–04 labels are centered, and the four original example elements stay at readable size as they move into the combined-output slots instead of shrinking away. Chapter 06 now shows the incoming vector split into a bypass path and an Attention/MLP-transformed signal, visibly recombining before normalization."
       - "Final MP4 export remains on hold until the user completes chapter-by-chapter preview QA."
   chapter_continuity:
     status: persistent_handoffs_deterministic_chromium_qa_passed

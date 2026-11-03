@@ -127,8 +127,9 @@
             </div>
             <div class="head-single-view" id="head-single-view"><span>ONE LEARNED VIEW</span><div aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
             <div class="head-lanes" id="head-lanes"></div>
+            <div class="head-merge-overlay" id="head-merge-overlay" aria-hidden="true"></div>
             <svg class="head-merge" viewBox="0 0 1200 675" preserveAspectRatio="none" aria-hidden="true"><path/><path/><path/><path/></svg>
-            <div class="heads-output" id="heads-output"><div class="heads-combine" id="heads-combine"><i></i><i></i><i></i><i></i><i></i><i></i></div><span id="heads-output-label">combined views</span></div>
+            <div class="heads-output" id="heads-output"><div class="heads-combine" id="heads-combine"><i></i><i></i><i></i><i></i><i></i><i></i></div><span id="heads-output-label">combined views</span><div class="head-arrivals" aria-hidden="true"><i></i><i></i><i></i><i></i></div></div>
             <div class="head-caveat" id="head-caveat">ILLUSTRATIVE PATTERNS · NOT FIXED HEAD JOBS</div>
             <div class="head-main-idea" id="head-main-idea">NOT ONE HEAD = ONE RULE</div>
             <div class="schematic-stamp" id="schematic-stamp">same input · parallel views</div>
@@ -145,6 +146,53 @@
                 <div class="transformer-block block-front"><div class="block-face"><span>SELF-ATTENTION</span><i class="block-nodes"></i></div><div class="block-face"><span>RESIDUAL + NORM</span><i class="residual-loop"></i></div><div class="block-face"><span>FEED-FORWARD · MLP</span><i class="mlp-nodes"></i></div></div>
               </div>
               <div class="block-explainer" id="block-explainer"><div class="explain-item" data-step="0"><i class="icon-network">↗</i><span>mix across positions</span></div><div class="explain-item" data-step="1"><i class="icon-residual">↺</i><span>preserve a signal path</span></div><div class="explain-item" data-step="2"><i class="icon-mlp">▦</i><span>transform each position</span></div><div class="block-result" id="block-result"><b>It</b><div class="block-result-vector" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><small>same token · richer context</small></div></div>
+            </div>
+            <div class="block-demo" id="block-demo">
+              <div class="block-demo-sequence">
+                <span class="block-demo-label">ONE INPUT SEQUENCE</span>
+                <div class="block-demo-token-row">
+                  <span>The</span><span data-key="trail">trail</span><span>near</span><span data-key="maokong">Maokong</span><span>is</span><span data-key="shaded">shaded.</span><span class="is-token" data-key="it">It</span><span>is</span><span data-key="short">short,</span><span>too.</span>
+                </div>
+              </div>
+              <div class="block-demo-operations">
+                <article class="block-demo-card attention-demo" id="attention-demo">
+                  <div class="block-demo-card-head"><b>ATTENTION</b><span>positions share context</span></div>
+                  <div class="attention-visual">
+                    <div class="attention-sources"><span data-clue="trail">trail</span><span data-clue="maokong">Maokong</span><span data-clue="shaded">shaded</span></div>
+                    <svg class="attention-demo-web" viewBox="0 0 1200 240" preserveAspectRatio="none" aria-hidden="true"><path/><path/><path/><circle/><circle/><circle/></svg>
+                    <div class="attention-target"><b>It</b><div class="attention-vector" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><small>updated from context</small></div>
+                  </div>
+                  <div class="block-demo-foot">Clues travel in from other token positions</div>
+                </article>
+                <article class="block-demo-card mlp-demo" id="mlp-demo">
+                  <div class="block-demo-card-head"><b>MLP</b><span>transforms each position</span></div>
+                  <div class="mlp-position-grid">
+                    <div class="mlp-position" data-pos="0"><b>The</b><span class="mlp-mini-bars"><i></i><i></i><i></i><i></i><i></i></span><em>ƒ</em><span class="mlp-mini-bars output"><i></i><i></i><i></i><i></i><i></i></span></div>
+                    <div class="mlp-position" data-pos="1"><b>trail</b><span class="mlp-mini-bars"><i></i><i></i><i></i><i></i><i></i></span><em>ƒ</em><span class="mlp-mini-bars output"><i></i><i></i><i></i><i></i><i></i></span></div>
+                    <div class="mlp-position" data-pos="2"><b>Maokong</b><span class="mlp-mini-bars"><i></i><i></i><i></i><i></i><i></i></span><em>ƒ</em><span class="mlp-mini-bars output"><i></i><i></i><i></i><i></i><i></i></span></div>
+                    <div class="mlp-position is-token" data-pos="3"><b>It</b><span class="mlp-mini-bars"><i></i><i></i><i></i><i></i><i></i></span><em>ƒ</em><span class="mlp-mini-bars output"><i></i><i></i><i></i><i></i><i></i></span></div>
+                    <div class="mlp-position" data-pos="4"><b>short</b><span class="mlp-mini-bars"><i></i><i></i><i></i><i></i><i></i></span><em>ƒ</em><span class="mlp-mini-bars output"><i></i><i></i><i></i><i></i><i></i></span></div>
+                  </div>
+                  <div class="block-demo-foot">Same kind of operation · applied at every position</div>
+                </article>
+              </div>
+              <div class="block-demo-bottom">
+                <div class="residual-demo" id="residual-demo">
+                  <div class="residual-demo-head"><b>RESIDUAL + NORMALIZATION</b><span>keep a route for the incoming signal</span></div>
+                  <div class="residual-demo-flow">
+                    <div class="residual-signal original"><span>incoming vector</span><i><b></b><b></b><b></b><b></b><b></b></i></div>
+                    <div class="residual-sublayer"><span>SUB-LAYER</span><b>ATTENTION / MLP</b><i class="residual-transformed-bars"><b></b><b></b><b></b><b></b><b></b></i><small>changed signal</small></div>
+                    <div class="residual-add"><b>+</b><span>add both</span></div>
+                    <div class="norm-meter"><span>NORM</span><div class="norm-range"><i></i><i></i><i></i><i></i><i></i></div><small>steady useful range</small></div>
+                    <div class="residual-route"><span class="route-label">BYPASS PATH · KEEP INPUT</span><span class="route-arrow">→</span><i class="route-packet"></i></div>
+                  </div>
+                </div>
+                <div class="block-repeat-demo" id="block-repeat-demo">
+                  <div class="block-demo-card-head"><b>REPEATED BLOCKS</b><span>the broad pattern repeats</span></div>
+                  <div class="mini-block-stack"><i><b>ATTN</b><b>MLP</b></i><i><b>ATTN</b><b>MLP</b></i><i><b>ATTN</b><b>MLP</b></i><span class="stack-more">···</span></div>
+                  <div class="late-token-result"><b>It</b><span class="late-result-bars"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><small>same token · richer context<br>vector, not a stored sentence</small></div>
+                </div>
+              </div>
             </div>
             <div class="block-stack-caption">repeated layers build richer contextual representations</div>
           </section>
