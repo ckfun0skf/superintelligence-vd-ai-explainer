@@ -1121,3 +1121,109 @@ body{background:#080d14}
 .scene-mask .generation-track.cache-focus .kv-cache small{margin:0 1.5cqw 0 0;font-size:1.85cqw;letter-spacing:.09em;color:#d5d2ff}
 .scene-mask .generation-track.cache-focus .kv-cache i{width:1.45cqw;min-width:1.45cqw;height:8.5cqw;border-radius:.28cqw .28cqw .08cqw .08cqw;box-shadow:0 0 .55cqw #8584ff55}
 .scene-mask .generation-track.cache-focus .kv-cache i:nth-of-type(4){margin-left:1.2cqw;border-left:1px solid #5e677f}
+
+
+/* Chapter5: same learned view, changing illustrative behavior. */
+.head-variation-context{
+  position:absolute;left:9%;top:23.4%;width:82%;min-height:4.1cqw;z-index:16;
+  display:flex;align-items:center;justify-content:center;gap:.85cqw;
+  padding:.42cqw .8cqw;border:1px solid #476a7b;border-radius:.85cqw;
+  background:linear-gradient(90deg,#111d28f2,#172a35f2,#111d28f2);
+  box-shadow:0 .55cqw 1.6cqw #0006;pointer-events:none;will-change:transform,opacity
+}
+.head-variation-context>b{font:700 1.65cqw var(--mono);letter-spacing:.07em;color:#91f2d2;white-space:nowrap;padding:0 .5cqw}
+.head-variant-tab{font:700 1.55cqw var(--mono);letter-spacing:.025em;color:#aebfc9;border:1px solid #344a59;border-radius:.55cqw;padding:.45cqw .7cqw;white-space:nowrap;background:#0c1721}
+.head-variant-tab.active{color:#f0fff9;border-color:#91f2d2;background:#15312d;box-shadow:0 0 .65cqw #91f2d255;transform:translateY(-.08cqw)}
+.head-role{font-size:1.48cqw!important;line-height:1.05!important;letter-spacing:.04em!important;padding:.3cqw .62cqw;border:1px dashed color-mix(in srgb,var(--head-color) 62%,#263846);border-radius:999px;background:color-mix(in srgb,var(--head-color) 13%,#0d1822);color:var(--head-color)!important;white-space:nowrap}
+.head-pattern-example{min-width:0}
+.head-pattern-token{font-size:1.85cqw!important;line-height:1.08!important;padding:.28cqw .54cqw!important}
+.head-pair-link,.head-pair-plus{font-size:1.85cqw!important;line-height:1!important}
+.head-pattern-result{font-size:1.6cqw!important;line-height:1.08!important;padding:.25cqw .5cqw!important}
+.head-arrivals i{min-height:3.7cqw}
+.head-merge-overlay .head-pattern-example .head-pattern-token{font-size:1.62cqw!important;padding:.22cqw .42cqw!important}
+.head-merge-overlay .head-pattern-example .head-pair-link,.head-merge-overlay .head-pattern-example .head-pair-plus{font-size:1.55cqw!important}
+.head-merge-overlay .head-pattern-example .head-pattern-result{font-size:1.38cqw!important;padding:.2cqw .35cqw!important}
+.head-caveat{font-size:1.72cqw!important;letter-spacing:.07em!important;min-height:2.8cqw;padding:.42cqw 1cqw!important}
+.head-main-idea{font-size:2.2cqw!important;letter-spacing:.06em!important}
+
+/* Chapter6: one persistent block anatomy, which compresses into a live operation rail. */
+.block-module-rail{
+  position:absolute;left:3.2%;right:3.2%;z-index:9;box-sizing:border-box;
+  display:flex;flex-direction:column;gap:.5cqw;padding:.72cqw 1.1cqw .82cqw;
+  border:1px solid #496373;border-radius:1.05cqw;
+  background:linear-gradient(135deg,#12212deF,#0d1924f4 52%,#142530ef);
+  box-shadow:0 .7cqw 2.2cqw #0007,inset 0 0 1.6cqw #8ee8d10b;
+  overflow:hidden;will-change:top,height
+}
+.block-module-rail-heading{display:flex;align-items:center;justify-content:space-between;min-height:1.9cqw;color:#bad0da}
+.block-module-rail-heading b{font:700 var(--rail-title-size,1.8cqw) var(--mono);letter-spacing:.09em;color:#d9eaf0}
+.block-module-rail-heading span{font:600 1.25cqw var(--mono);letter-spacing:.07em;color:#9ab3c1;opacity:var(--rail-open,0);white-space:nowrap}
+.block-module-track{position:relative;flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 3.1cqw minmax(0,1.1fr) 3.1cqw minmax(0,1fr);align-items:stretch;gap:.35cqw}
+.block-module{position:relative;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.34cqw;padding:.35cqw .55cqw;border:1px solid #344b5a;border-radius:.75cqw;background:linear-gradient(135deg,#101c27,#111f2a);color:#d5e2e9;transition:border-color .12s,background .12s,box-shadow .12s;will-change:transform}
+.block-module[data-module="attention"]{--module-color:#72c8ff}
+.block-module[data-module="residual"]{--module-color:#91f2d2}
+.block-module[data-module="mlp"]{--module-color:#ba9aff}
+.block-module.active{border-color:color-mix(in srgb,var(--module-color) 78%,#ffffff);background:linear-gradient(135deg,color-mix(in srgb,var(--module-color) 16%,#111d28),#142430);box-shadow:inset 0 0 1.2cqw color-mix(in srgb,var(--module-color) 18%,transparent),0 0 .85cqw color-mix(in srgb,var(--module-color) 30%,transparent)}
+.block-module>strong{font:800 var(--rail-label-size,1.75cqw) var(--mono);letter-spacing:.06em;color:var(--module-color);white-space:nowrap;text-align:center}
+.block-module>small{font:600 1.34cqw var(--sans);line-height:1.12;color:#b9c8d0;opacity:var(--rail-open,0);white-space:nowrap;text-align:center}
+.block-module-arrow{display:flex;align-items:center;justify-content:center;color:#8ca8b8;font:700 2.1cqw var(--sans);opacity:.82}
+.block-module-pulse{position:absolute;top:50%;width:1.05cqw;height:1.05cqw;border-radius:50%;transform:translate(-50%,-50%);background:#eafff8;box-shadow:0 0 1.2cqw .35cqw #91f2d2a8,0 0 2.4cqw .5cqw #72c8ff55;pointer-events:none;transition:left .18s ease-out}
+.module-glyph{position:relative;flex:none;width:calc(var(--rail-icon-size,7cqw)*1.5);height:var(--rail-icon-size,7cqw);display:flex;align-items:center;justify-content:center;gap:.46cqw;border:1px solid #354d5c;border-radius:.75cqw;background:linear-gradient(140deg,#0b151e,#162633);color:#dae6ec;font:700 1.28cqw var(--mono);transition:width .18s,height .18s}
+.module-glyph>span,.module-glyph>em,.module-glyph>b{position:relative;z-index:2;display:flex;align-items:center;justify-content:center;min-width:2.25cqw;min-height:1.7cqw;padding:.22cqw .42cqw;border:1px solid #3d5666;border-radius:.4cqw;background:#142533;color:#dceaf0;font-style:normal;white-space:nowrap}
+.attention-glyph>span{border-color:#4d83a2;color:#bde8ff}
+.attention-glyph>span:first-child{transform:translateY(-.45cqw)}
+.attention-glyph>span:nth-child(2){transform:translateY(.45cqw)}
+.attention-glyph>i{position:absolute;left:31%;top:24%;width:28%;height:50%;border-top:.12cqw solid #72c8ff;border-right:.12cqw solid #72c8ff;border-radius:0 1.1cqw 0 0;transform:skewY(-18deg);opacity:.9}
+.attention-glyph>i:after{content:"";position:absolute;right:-.22cqw;top:-.28cqw;width:.4cqw;height:.4cqw;border-top:.12cqw solid #72c8ff;border-right:.12cqw solid #72c8ff;transform:rotate(25deg)}
+.attention-glyph>b{margin-left:auto;border-color:#62ab94;color:#a5f6df;font-size:1.45cqw}
+.residual-glyph{gap:.65cqw}
+.residual-glyph>span{color:#aee4d9;border-color:#4e8275}
+.residual-glyph>i{font-style:normal;color:#91f2d2;font-size:2.25cqw;text-shadow:0 0 .65cqw #91f2d288}
+.residual-glyph>b{min-width:2.2cqw;min-height:2.2cqw;border-radius:50%;border-color:#91f2d2;color:#eafff8;font-size:1.8cqw}
+.residual-glyph>em{color:#c5f4e7;background:#16312e;border-color:#4b8477;font-size:1.05cqw}
+.mlp-glyph{gap:.38cqw}
+.mlp-glyph>span,.mlp-glyph>em{color:#e0d5ff;border-color:#7664a2}
+.mlp-glyph>i{position:relative;display:grid;grid-template-columns:repeat(3,.38cqw);grid-template-rows:repeat(2,.38cqw);gap:.42cqw;align-content:center;justify-content:center;width:3.15cqw;height:2.15cqw;border-left:.12cqw solid #907ac6;border-right:.12cqw solid #907ac6}
+.mlp-glyph>i b{width:.38cqw;height:.38cqw;border-radius:50%;background:#c2aaff;box-shadow:0 0 .35cqw #ba9aff99}
+.mlp-glyph>strong{font:800 1.8cqw var(--mono);color:#e0d5ff}
+.block-module-rail[style*="--rail-open: 1"] .block-module{padding:.65cqw .8cqw}
+
+/* Chapter6 operation cards fill one shared stage at a time; no narrow side-by-side cards. */
+.block-demo-card-head b{font-size:2.35cqw!important;letter-spacing:.1em!important}
+.block-demo-card-head span{font-size:1.72cqw!important;line-height:1.15!important}
+.attention-sources span{font-size:2.08cqw!important;line-height:1.1!important;padding:.55cqw .7cqw!important;min-width:0!important}
+.attention-sources{min-width:0!important}
+.attention-visual{grid-template-columns:minmax(0,34%) minmax(0,1fr) minmax(0,30%)!important}
+.attention-target b{font-size:4.2cqw!important}
+.attention-target small{font-size:1.66cqw!important}
+.mlp-position>b{font-size:2.1cqw!important;line-height:1.1!important}
+.mlp-position>em{font-size:2.5cqw!important;line-height:1!important}
+.mlp-mini-bars{height:2.55cqw!important;min-height:2.55cqw!important}
+.block-demo-sequence .block-demo-label{font-size:1.56cqw!important}
+.block-demo-token-row>span{font-size:1.72cqw!important;padding:.42cqw .62cqw!important}
+.residual-demo-head b{font-size:2.15cqw!important}
+.residual-demo-head span{font-size:1.55cqw!important}
+.residual-signal span,.residual-sublayer span,.residual-sublayer small,.residual-add span,.norm-meter small{font-size:1.55cqw!important}
+.residual-sublayer>b{font-size:1.95cqw!important}
+.norm-meter>span,.residual-sublayer>span{font-size:1.48cqw!important}
+.block-repeat-demo .block-demo-card-head b{font-size:2.2cqw!important}
+.mini-block-stack>i>b{font-size:2.4cqw!important}
+.late-token-result>b{font-size:5.2cqw!important}
+.late-token-result small{font-size:1.72cqw!important;line-height:1.28!important}
+.block-demo-foot,.block-stack-caption{display:none!important}
+
+
+/* Final spacing corrections after frame review: keep VIEW01 unobscured, use the opening canvas. */
+.head-variation-context{top:28%;}
+.block-module-rail-heading span{font-size:1.38cqw}
+.block-module>small{font-size:1.42cqw}
+
+.block-module-rail-heading{min-height:1.55cqw}
+
+.block-module-rail-heading span{display:none!important}
+
+.head-role{font-size:1.78cqw!important;padding:.36cqw .72cqw!important;background:color-mix(in srgb,var(--head-color) 22%,#0d1822)!important;box-shadow:0 .25cqw .7cqw #0005}
+
+/* Frame-accurate chapter rendering: every Chapter5–6 movement is authored by renderAt(time). */
+.scene-heads *,
+.scene-block *{transition:none!important}
