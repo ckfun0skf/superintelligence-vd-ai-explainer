@@ -16,8 +16,8 @@ video:
   export_status: on_hold_for_user_page_qa
   export_script: scripts/render-mp4.py
   final_output: ../../renders/transformer-attention-deep-dive-1080p24.mp4
-  deployed_commit: e86ae4213479b3cd758b132465cb671d105f29a6
-  pages_workflow_run: 41263932088
+  deployed_commit: 56016d09eabbd9adc8db22c44880c243bcf11b0d
+  pages_workflow_run: 41800291749
   live_preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/series/transformer-attention/
   runtime_seconds: 420.504
   timeline_seconds: 420.48
@@ -220,6 +220,7 @@ qa:
       - "GitHub Pages player-controls QA for commit 2c27d28 (run 41149140255) passed at 780x360 CSS pixels/DPR 3 and 1920x1080: fullscreen chapter rail is one horizontally scrollable row, the seek/control bar does not overlap it, active chapters auto-scroll into view, touch taps toggle controls, controls auto-hide after 3 seconds even while paused, and browser errors are zero. A real requestFullscreen API click also passed on the local production preview."
       - "GitHub Pages Chapter 01 review build 1fa7bd6 (run 41150999738) passed 12 public 1920x1080 keyframes covering word highlights, both candidate cards, context signal routing, Self-Attention and Transformer containment; sentence bounds remained within x=26–1874px, browser errors were zero, and a repeated context-flow frame was byte-identical."
       - "GitHub Pages Chapter 02 review build e86ae42 (run 41263932088) passed 13 public 1920x1080 keyframes covering split, ID bounce, embedding lookup, vector detail, order headline/transition/both sentences, position slots, relative distance and the closing representation row; all expected states appeared, browser errors were zero, and a repeated 24.65-second transition capture was byte-identical."
+      - "Chapter 06–07 preview update 56016d0 (Pages run 41800291749) deployed successfully. The live page and its hashed JS/CSS assets returned HTTP 200; public Chromium verified Chapter 06 residual/normalization and Chapter 07 causal-mask, candidate-ranking, prompt-append and K/V-cache states at six narration-aligned seeks with zero page errors."
     export:
       status: on_hold
       resolution: 1920x1080
