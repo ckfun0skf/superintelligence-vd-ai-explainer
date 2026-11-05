@@ -1298,3 +1298,32 @@ body{background:#080d14}
 .scene-block .residual-add::after{right:-.72cqw;top:50%;font-size:1.65cqw;z-index:6;text-shadow:0 0 .45cqw #91f2d277}
 .scene-block .residual-route .route-packet{width:4.25cqw;height:2.05cqw;top:-1.05cqw;padding:.2cqw .34cqw;gap:.2cqw}
 .scene-block .residual-route .route-packet b{max-width:.56cqw}
+
+
+/* Full-frame review: the residual bypass is now a real path from the incoming vector to the sum node. */
+.scene-block .residual-route{inset:0!important;left:0!important;right:0!important;top:0!important;bottom:0!important;width:auto!important;height:auto!important;border:0!important;border-radius:0!important;background:none!important;overflow:visible;pointer-events:none;z-index:7}
+.scene-block .residual-route::before{content:none!important;display:none!important}
+.scene-block .residual-route-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.scene-block #residual-route-line{fill:none;stroke:#91f2d2;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 5px #91f2d288)}
+.scene-block #residual-route-arrowhead path{fill:#c9ffeb;stroke:#91f2d2;stroke-width:1}
+.scene-block #residual-route-start{fill:#173b34;stroke:#c9ffeb;stroke-width:2.2;filter:drop-shadow(0 0 7px #91f2d2aa)}
+.scene-block .residual-route .route-label{position:absolute;top:.08cqw;left:52%;right:auto;z-index:2;transform:translateX(-50%);font-size:1.3cqw;letter-spacing:.035em;white-space:nowrap}
+.scene-block .residual-route .route-arrow{display:none!important}
+.scene-block .residual-route .route-packet{position:absolute;left:0;top:0;z-index:3;display:flex;align-items:flex-end;justify-content:center;gap:.16cqw;width:3.25cqw;height:1.55cqw;padding:.18cqw .28cqw;box-sizing:border-box;border:1px solid #a2ffe1;border-radius:.38cqw;background:#102622;box-shadow:0 0 .9cqw #91f2d2bb;transform:translate(-50%,-50%)}
+
+/* Chapter7 starts with the actual prompt in view; that same row expands into the decoder step. */
+.scene-mask .generation-track.prompt-start{display:grid!important;grid-template-columns:9% minmax(0,1fr);grid-template-rows:1fr;grid-template-areas:"label prompt";align-items:center;align-content:center;column-gap:.8cqw;row-gap:0;box-sizing:border-box;padding:.55cqw 1.05cqw;border:1px solid #395364;border-top:1px solid #5c8479;border-radius:.72cqw;background:linear-gradient(100deg,#0d1a24f5,#12212cf7);box-shadow:0 .45cqw 1.35cqw #0006}
+.scene-mask .generation-track.prompt-start .generation-label{grid-area:label;font:700 1.28cqw var(--mono);letter-spacing:.07em;color:#a9e9d7;white-space:nowrap}
+.scene-mask .generation-track.prompt-start .generation-tokens{grid-area:prompt;display:flex;align-items:center;justify-content:flex-start;flex-wrap:nowrap;gap:.42cqw;min-width:0;overflow:hidden}
+.scene-mask .generation-track.prompt-start .gen-token{font:600 1.16cqw var(--sans);line-height:1;padding:.35cqw .48cqw;border:1px solid #36566a;border-radius:.36cqw;background:#102131;color:#dbeef4;white-space:nowrap}
+.scene-mask .generation-track.prompt-start .gen-token[data-generated]{display:none!important}
+.scene-mask .generation-track.prompt-start .next-candidates,.scene-mask .generation-track.prompt-start .kv-cache{display:none!important}
+.scene-mask *,
+.scene-mask *::before,
+.scene-mask *::after{transition:none!important}
+
+.scene-block .residual-demo-flow{position:relative}
+
+.scene-mask .generation-track.prompt-start{height:12%!important;min-height:0!important;max-height:12%!important;box-sizing:border-box}
+
+.scene-mask .generation-track.generation-focus.prompt-hold{min-height:0!important;max-height:15%!important;box-sizing:border-box}

@@ -204,13 +204,13 @@
               </div>
               <div class="block-demo-bottom">
                 <div class="residual-demo" id="residual-demo">
-                  <div class="residual-demo-head"><b>RESIDUAL + NORMALIZATION</b><span>keep a route for the incoming signal</span></div>
+                  <div class="residual-demo-head"><b>RESIDUAL + NORMALIZATION</b><span>BYPASS · SAME INPUT</span></div>
                   <div class="residual-demo-flow">
                     <div class="residual-signal original"><span>incoming vector</span><i><b></b><b></b><b></b><b></b><b></b></i></div>
                     <div class="residual-sublayer"><span>SUB-LAYER</span><b>ATTENTION / MLP</b><i class="residual-transformed-bars"><b></b><b></b><b></b><b></b><b></b></i><small>changed signal</small></div>
                     <div class="residual-add"><b>+</b><span>add both</span></div>
                     <div class="norm-meter"><span>NORM</span><div class="norm-range"><i></i><i></i><i></i><i></i><i></i></div><small>steady useful range</small></div>
-                    <div class="residual-route"><span class="route-label">SAME INPUT · BYPASSES SUB-LAYER</span><span class="route-arrow">→</span><i class="route-packet" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b></i></div>
+                    <div class="residual-route"><svg class="residual-route-svg" id="residual-route-svg" aria-hidden="true"><defs><marker id="residual-route-arrowhead" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" orient="auto" markerUnits="userSpaceOnUse"><path d="M 1 1 L 11 6 L 1 11 Z"></path></marker></defs><path id="residual-route-line" marker-end="url(#residual-route-arrowhead)"></path><circle id="residual-route-start" r="6"></circle></svg><i class="route-packet" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b></i></div>
                   </div>
                 </div>
                 <div class="block-repeat-demo" id="block-repeat-demo">

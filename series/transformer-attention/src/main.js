@@ -217,9 +217,9 @@ const continuityPairs=[
  {from:0,to:1,type:'tokens',source:()=>[...document.querySelectorAll('.scene-hook .hook-sentence [data-word]')],target:()=>[...document.querySelectorAll('.scene-vectors .token-phrase span')]},
  {from:1,to:2,type:'tokens',source:()=>[...document.querySelectorAll('.scene-vectors .token-phrase span')],target:()=>attentionTokens},
  {from:2,to:3,type:'tokens',source:()=>attentionTokens,target:()=>qkvOriginTokens},
- {from:3,to:4,type:'tokens+signal',tokenSource:()=>qkvOriginTokens,tokenTarget:()=>[...document.querySelectorAll('.scene-heads .head-source-sentence>span')],signalSource:()=>[document.querySelector('.scene-qkv .mechanism-mix-result')],signalTarget:()=>[document.getElementById('heads-combine')]},
- {from:4,to:5,type:'tokens+signal',tokenSource:()=>[...document.querySelectorAll('.scene-heads .head-source-sentence>span')],tokenTarget:()=>[...document.querySelectorAll('.scene-block .block-demo-token-row>span')],signalSource:()=>[document.getElementById('heads-combine')],signalTarget:()=>[document.querySelector('#attention-demo .attention-target .attention-vector')]},
- {from:5,to:6,type:'tokens+signal',tokenSource:()=>blockTokens.slice(0,8),tokenTarget:()=>[...generationTokens.children].slice(0,8),signalSource:()=>[blockItToken],signalTarget:()=>[document.getElementById('mask-grid')]},
+ {from:3,to:4,type:'tokens+signal',tokenSource:()=>qkvOriginTokens,tokenTarget:()=>[...document.querySelectorAll('.scene-heads .head-source-sentence>span')],signalSource:()=>[document.querySelector('.scene-qkv .mechanism-mix-result')],signalTarget:()=>[document.querySelector('.scene-heads .head-source-sentence [data-word="it"]')]},
+ {from:4,to:5,type:'tokens+signal',tokenSource:()=>[...document.querySelectorAll('.scene-heads .head-source-sentence>span')],tokenTarget:()=>[...document.querySelectorAll('.scene-block .block-demo-token-row>span')],signalSource:()=>[document.getElementById('heads-combine')],signalTarget:()=>[blockModules.find(module=>module.dataset.module==='attention')]},
+ {from:5,to:6,type:'tokens+signal',tokenSource:()=>[...document.querySelectorAll('.scene-block .block-demo-token-row>span')].slice(0,8),tokenTarget:()=>[...generationTokens.children].slice(0,8),signalSource:()=>[document.querySelector('#block-repeat-demo .late-token-result')],signalTarget:()=>[document.querySelector('.scene-mask .mask-cell[data-r="6"][data-c="6"]')]},
  {from:6,to:7,type:'signal',source:()=>[document.querySelector('#generation-tokens .gen-token[data-generated="1"]')],target:()=>[document.querySelector('#recap-route span')]}
 ];
 function restoreContinuityNodes(){for(const [node,opacity] of continuityHidden)node.style.opacity=opacity;continuityHidden.clear();}
@@ -899,7 +899,8 @@ function renderHeads(p){
   const variationStep=sec>=35.56?3:Math.max(0,Math.floor((sec-24.8)/2.8));
   const variantIndex=variationStep%3;
   const variantLocal=sec<24.8?0:(sec-24.8)/2.8-variationStep;
-  const variantTextFade=1;
+  const variantSwapPoints=[27.6,30.4,33.2];
+  const variantTextFade=Math.min(1,...variantSwapPoints.map(point=>smooth(0,.2,Math.abs(sec-point))));
   headPatternExamples.forEach((example,i)=>{
     const origin=headExampleOrigins[i];
     if(example.parentElement!==origin.parent)origin.parent.insertBefore(example,origin.next);
@@ -1040,12 +1041,14 @@ function renderBlock(p){
   const representationCue=smooth(37.6,39.0,sec);
   const attentionCard=document.getElementById('attention-demo'),mlpCard=document.getElementById('mlp-demo');
   const residualCard=document.getElementById('residual-demo'),repeatCard=document.getElementById('block-repeat-demo');
-  const introCue=1-smooth(2.25,2.95,sec);
+  const introCue=smooth(0,.55,sec)*(1-smooth(2.25,2.95,sec)),introReveal=smooth(0,.55,sec);
   const attentionLevel=attentionCue,mlpLevel=mlpCue;
   const repeatLevel=Math.max(repeatCue,stackedCue,representationCue);
   if(blockModuleRail){
     blockModuleRail.style.top=`${14+4*introCue}%`;
     blockModuleRail.style.height=`${20+60*introCue}%`;
+    blockModuleRail.style.opacity=String(introReveal);
+    blockModuleRail.style.transform=`translateY(${(1-introReveal)*1.15}cqw) scale(${.96+.04*introReveal})`;
     blockModuleRail.style.setProperty('--rail-open',String(introCue));
     blockModuleRail.style.setProperty('--rail-title-size',`${1.4+.9*introCue}cqw`);
     blockModuleRail.style.setProperty('--rail-label-size',`${1.3+1*introCue}cqw`);
@@ -1111,8 +1114,13 @@ function renderBlock(p){
     inputs.forEach((bar,j)=>{bar.style.height=`${28+((i*19+j*27)%60)}%`;bar.style.opacity=String(.5+hot*.3);});
     outputs.forEach((bar,j)=>{const before=28+((i*19+j*27)%60),after=25+((i*31+j*17+37)%70);bar.style.height=`${before+(after-before)*hot}%`;bar.style.filter=`brightness(${.78+hot*.65})`;});
   });
-  const routePacket=document.querySelector('.route-packet'),bypassProgress=smooth(16.55,18.55,sec),bypassVisible=smooth(16.35,16.65,sec)*(1-smooth(19.05,19.45,sec));
-  routePacket.style.left=`${2+bypassProgress*85}%`;routePacket.style.opacity=String(residualCue*bypassVisible);
+  const routePacket=document.querySelector('.route-packet'),routeSvg=document.getElementById('residual-route-svg'),routeLine=document.getElementById('residual-route-line'),routeStart=document.getElementById('residual-route-start'),routeFlow=document.querySelector('.residual-demo-flow'),routeSource=document.querySelector('.residual-signal.original'),routeSublayer=document.querySelector('.residual-sublayer'),routeSum=document.querySelector('.residual-add>b'),bypassProgress=smooth(16.55,18.55,sec),bypassVisible=smooth(16.35,16.65,sec)*(1-smooth(19.05,19.45,sec));
+  const flowRect=routeFlow.getBoundingClientRect(),sourceRect=routeSource.getBoundingClientRect(),sumRect=routeSum.getBoundingClientRect(),sublayerRect=routeSublayer.getBoundingClientRect(),routeWidth=Math.max(1,flowRect.width),routeHeight=Math.max(1,flowRect.height);
+  routeSvg.setAttribute('viewBox',`0 0 ${routeWidth} ${routeHeight}`);routeSvg.setAttribute('width',String(routeWidth));routeSvg.setAttribute('height',String(routeHeight));
+  const sx=sourceRect.right-flowRect.left,sy=sourceRect.top+sourceRect.height*.5-flowRect.top,ex=sumRect.left+sumRect.width*.5-flowRect.left,ey=sumRect.top+sumRect.height*.5-flowRect.top,routeY=-Math.max(36,routeHeight*.16),dx=Math.max(1,ex-sx);
+  routeLine.setAttribute('d',`M ${sx} ${sy} C ${sx+dx*.14} ${routeY}, ${ex-dx*.18} ${routeY}, ${ex} ${ey}`);routeStart.setAttribute('cx',String(sx));routeStart.setAttribute('cy',String(sy));
+  const routeLength=Math.max(1,routeLine.getTotalLength()),routePoint=routeLine.getPointAtLength(routeLength*bypassProgress);
+  routeLine.style.opacity=String(residualCue*bypassVisible);routeStart.style.opacity=String(residualCue*bypassVisible);routePacket.style.left=`${routePoint.x}px`;routePacket.style.top=`${routePoint.y}px`;routePacket.style.opacity=String(residualCue*bypassVisible);routePacket.style.transform='translate(-50%,-50%)';
   routePacket.querySelectorAll('b').forEach((bar,i)=>{bar.style.height=`${34+((i*23+21)%58)}%`;bar.style.opacity=String(.65+.35*pulse(sec,.68,i*.13));});
   const residualSublayer=document.querySelector('.residual-sublayer');
   residualSublayer.style.opacity=String(.62+.38*residualCue);residualSublayer.style.filter=`brightness(${.82+.38*residualCue})`;residualSublayer.style.transform=`translateY(${-residualCue*.08*Math.abs(Math.sin(sec*2.1))}cqw)`;
@@ -1137,7 +1145,7 @@ function renderMask(p){
   const sec=sceneSeconds(6,p);
   const training=sec<30.0;document.querySelectorAll('.mask-mode').forEach(e=>e.classList.toggle('active',e.dataset.mode===(training?'training':'generation')));
   const parallelPhase=training?smooth(19.7,20.25,sec)*(1-smooth(29.6,30.0,sec)):0;
-  const gateProgress=smooth(6.2,16.9,sec),targetReveal=training?smooth(19.7,20.25,sec)*(1-smooth(29.55,30.0,sec)):0;
+  const gateProgress=smooth(9.0,16.9,sec),targetReveal=training?smooth(19.7,20.25,sec)*(1-smooth(29.55,30.0,sec)):0;
   const appendedCount=sec>=42.5?2:sec>=39.7?1:0,rowIndex=training?-1:N-1;
   document.querySelectorAll('.mask-cell').forEach(e=>{
     const r=Number(e.dataset.r),c=Number(e.dataset.c),beat=pulse(sec,.38,r*.08),allowed=c<=r,current=!training&&r===rowIndex&&allowed;
@@ -1150,10 +1158,10 @@ function renderMask(p){
   });
   const targetColumn=document.getElementById('mask-next-column');targetColumn.style.opacity=String(targetReveal);targetColumn.style.transform=`translateX(${(1-targetReveal)*.7}cqw)`;
   document.querySelectorAll('.mask-next-target').forEach((e,i)=>{const beat=.78+.22*Math.sin((sec-19.7)*4+i*.22);e.style.opacity=String(targetReveal*beat);e.style.transform=`translateX(${(1-targetReveal)*.5}cqw) scale(${.92+.08*targetReveal+parallelPhase*.025*beat})`;e.classList.toggle('parallel-target',parallelPhase>.1);});
-  const track=document.querySelector('.generation-track'),generationReveal=smooth(30.35,31.35,sec),cacheFocus=smooth(44.5,45.3,sec);
+  const track=document.querySelector('.generation-track'),generationReveal=smooth(30.35,31.35,sec),cardReveal=smooth(33.5,34.0,sec),cacheFocus=smooth(44.5,45.3,sec),promptReveal=smooth(0,.38,sec);
   const firstHold=smooth(40.2,40.65,sec)*(1-smooth(41.25,41.8,sec)),secondHold=smooth(42.9,43.35,sec)*(1-smooth(44.1,44.5,sec)),compactHold=Math.max(firstHold,secondHold)*(1-cacheFocus);
-  track.style.left=`${21-14*generationReveal}%`;track.style.right='auto';track.style.width=`${58+28*generationReveal}cqw`;track.style.top=`${37-10*generationReveal-10*cacheFocus+19*compactHold}%`;track.style.height=`${18+35*generationReveal-38*compactHold}%`;
-  track.classList.toggle('generation-focus',generationReveal>.02);track.classList.toggle('cache-focus',cacheFocus>.01);track.classList.toggle('prompt-hold',compactHold>.05);track.style.opacity=String(generationReveal);track.style.transform=`translateY(${(1-generationReveal)*.65}cqw)`;
+  track.style.left='7%';track.style.right='auto';track.style.bottom='auto';track.style.width='86cqw';track.style.top=`${78-51*generationReveal-10*cacheFocus+19*compactHold}%`;track.style.height=`${12+41*cardReveal-44*compactHold}%`;
+  track.classList.toggle('generation-focus',cardReveal>.02);track.classList.toggle('cache-focus',cacheFocus>.01);track.classList.toggle('prompt-hold',compactHold>.05);track.classList.toggle('prompt-start',cardReveal<.02);track.style.opacity=String(promptReveal);track.style.transform=`translateY(${(1-generationReveal)*.65}cqw)`;
   const maskContent=document.querySelector('.mask-content'),maskOut=smooth(29.95,31.0,sec);maskContent.style.opacity=String(1-maskOut);maskContent.style.transform=`translateY(${-maskOut*2}cqw) scale(${1-maskOut*.025})`;
   const caption=document.getElementById('mask-caption');caption.textContent=sec<9?'Predicting the next token means each position must respect what comes before.':sec<19.7?'A one-way gate keeps every position from seeing its future.':sec<30?'Many positions compute in parallel, with future tokens still masked.':sec<33.5?'Generation starts from the prompt’s final position.':sec<37.2?'That position scores several possible next tokens.':sec<39.7?'Select one token; it is only the next piece, not a full answer.':sec<44.5?'Append the selected token; now predict from the longer context.':'Reuse cached Keys and Values, then extend one token at a time.';
   const tokenElements=[...generationTokens.children];
