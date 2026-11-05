@@ -35,3 +35,9 @@
 - Chapter 7 prompt hold 經尺寸檢查縮至約 97px 高（1080p），token 列仍在卡片內；候選卡另有足夠空間顯示各項與分數條。
 - 本輪未生成或混入背景音樂；預覽仍以旁白為主。若視覺 QA 確認後要加配樂，可另做低音量、偏 cyber／space-exploration 的氛圍底樂，並在旁白期間 ducking，避免鼓點遮住語音。
 - **下一步：** 請先在公開預覽頁播放／拖曳檢查；確認後再決定是否加配樂及輸出完整 MP4。
+
+## Chapter 04／08 專項補充審查
+
+- **Chapter 04 — Q/K/V 不是字面物件：** 同一個 `It` 位置經三個 learned-matrix glyph（WQ／WK／WV）分別產生帶色的 query、key、value 數值向量；問題符號、資料庫 key 和 word-tag 圖示會在旁白指出誤解時被劃掉。這讓名稱像 mnemonic 的原因，以及網路中實際運作的是數值轉換，能同時看見。
+- **Chapter 08 — 每步都回到 Taipei 例子：** 流程列留在上方，下方依序切換原 prompt/token、Taipei embedding 加 position、自然／地點／預算／旅程長度線索混合、四個 view 匯合、Attention／MLP 重複處理、因果遮罩與下一 token、候選分數及選出的 Maokong／短步道建議。因果遮罩段先顯示只能使用已寫出的答案前綴，再接出同一旅行例子穿過多個 Attention／MLP 子層，清楚表現 attention 只是較大 learned system 的一部分。
+- 使用 Chromium 把 stage 展至 1920×1080，擷取 Chapter 04 三個概念時點與 Chapter 08 十個主要步驟，共 13 張原生輸出尺寸畫面；另以一般響應式預覽尺寸檢查一次。Production build 和 `git diff --check` 通過，無 page errors；因果遮罩列和多層運算列保持分離，未來 token 改用可讀鎖頭 icon，避免微型 `LOCKED` 字樣。
