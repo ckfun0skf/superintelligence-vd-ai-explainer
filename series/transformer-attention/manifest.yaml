@@ -16,8 +16,8 @@ video:
   export_status: on_hold_for_user_page_qa
   export_script: scripts/render-mp4.py
   final_output: ../../renders/transformer-attention-deep-dive-1080p24.mp4
-  deployed_commit: 56016d09eabbd9adc8db22c44880c243bcf11b0d
-  pages_workflow_run: 41800291749
+  deployed_commit: 65882b205c7ecba118054d636cd156b8891ca72b
+  pages_workflow_run: 41998551894
   live_preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/series/transformer-attention/
   runtime_seconds: 420.504
   timeline_seconds: 420.48
@@ -225,6 +225,7 @@ qa:
       - "Chapter 04→05 now routes the contextual-vector signal to the visible 'It' token rather than a hidden VIEW card; Chapter 06 labels the residual route BYPASS · SAME INPUT and carries its packet from the input vector around the sub-layer to the merge node, then normalization."
       - "Chapter 07 candidate-card expansion is synchronized with option-score appearance. Prompt-only holds are compact one-row strips; final 1080p geometry measures the settled hold at 97px with the token row inside the card, while the active candidate stage expands to a full-size score panel."
       - "After the final renderer/CSS build, a repeated Chapter 05 variation seek after an unrelated timestamp produced a pixel-identical 1920x1080 frame; Chromium page errors: zero. The updated full-film review report is series/transformer-attention/visual-review-2026-11-05.md."
+      - "GitHub Pages deployment for commit 65882b2 (run 41998551894) succeeded. The public page and hashed JS/CSS assets returned HTTP 200; public Chromium verified the Chapter 06 residual label and Chapter 07 prompt-start, candidate, compact-hold and cache states with zero page errors."
     export:
       status: on_hold
       resolution: 1920x1080
