@@ -33,6 +33,16 @@ voiceover:
   status: generated
   generation_method: "Eight approved-script chapters generated as separate Charon WAV calls, then assembled with 0.8-second gaps."
   result: "All eight chapter WAVs generated and full-decoded; master MP3 assembled and full-decoded. The opening sample was only a service check and is not part of the master."
+background_music:
+  master: /public/series/transformer-attention/audio/background-music.mp3
+  duration_seconds: 420.528
+  format: "MP3, 48 kHz stereo"
+  style: "Sparse, gentle cyber/space-exploration ambience; no vocals, drums, or prominent melody."
+  assembly: "Three existing instrumental segments, joined with 1-second equal-power crossfades, lightly time-adjusted to the 420.504-second narration, and faded at the opening and close."
+  preview_gain: 0.10
+  player_sync: "Background track follows narration play, pause, seek, and playback rate; narration remains the animation clock."
+  export_mix: "render-mp4.py mixes BGM at 0.10 under the original voiceover; --no-music disables it."
+  qa: "Full music decode passed. Chromium verified seek alignment, synchronized play/pause, and 0.75x playback with no browser errors; gapless player duration matches the 420.504-second narration. A 15-second voice-plus-music mix measured -3.4 dBFS peak."
 chapters:
   - id: 01
     name: "Context window · coreference"

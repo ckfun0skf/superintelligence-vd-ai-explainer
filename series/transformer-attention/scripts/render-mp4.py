@@ -5,8 +5,8 @@ Start the repository's Vite server first, for example:
   npm run dev -- --port 4176
 
 The renderer calls window.renderFrame(absolute_frame) for every frame and
-captures only the #film stage. A full render muxes the approved voiceover MP3;
-partial frame ranges are intentionally restricted to silent QA clips.
+captures only the #film stage. A full render mixes the approved voiceover with
+the quiet background-music track; partial frame ranges are silent QA clips.
 """
 from __future__ import annotations
 
@@ -28,6 +28,7 @@ ROOT = Path(__file__).resolve().parents[3]
 WIDTH, HEIGHT, FPS = 1920, 1080, 24
 DEFAULT_URL = "http://127.0.0.1:4176/series/transformer-attention/"
 DEFAULT_AUDIO = ROOT / "public/series/transformer-attention/audio/voiceover.mp3"
+DEFAULT_MUSIC = ROOT / "public/series/transformer-attention/audio/background-music.mp3"
 DEFAULT_OUTPUT = ROOT / "renders/transformer-attention-deep-dive-1080p24.mp4"
 
 
@@ -35,6 +36,8 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--url", default=DEFAULT_URL, help=f"Vite preview URL (default: {DEFAULT_URL})")
     parser.add_argument("--audio", type=Path, default=DEFAULT_AUDIO, help="Approved audio master")
+    parser.add_argument("--music", type=Path, default=DEFAULT_MUSIC, help="Background music track")
+    parser.add_argument("--no-music", action="store_true", help="Mux narration without background music")
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT, help="Output MP4 path")
     parser.add_argument("--start-frame", type=int, default=0, help="Absolute first frame, inclusive")
     parser.add_argument("--end-frame", type=int, default=None, help="Absolute end frame, exclusive")
@@ -103,8 +106,11 @@ def probe_video(path: Path) -> dict:
 def main() -> int:
     args = parse_args()
     output, audio = args.output.expanduser().resolve(), args.audio.expanduser().resolve()
+    music = None if args.no_music else args.music.expanduser().resolve()
     if not audio.is_file():
         raise FileNotFoundError(f"Audio master not found: {audio}")
+    if music is not None and not music.is_file():
+        raise FileNotFoundError(f"Background music not found: {music}")
     for executable in ("ffmpeg", "ffprobe"):
         if shutil.which(executable) is None:
             raise RuntimeError(f"Required executable not found: {executable}")
@@ -235,10 +241,16 @@ def main() -> int:
 
     if not args.silent_only:
         audio_duration = probe_audio_duration(audio)
-        subprocess.run(["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", str(video_only), "-i", str(audio),
-                        "-map", "0:v:0", "-map", "1:a:0", "-c:v", "copy", "-c:a", "aac", "-b:a", "256k",
-                        "-ar", "44100", "-ac", "2", "-t", f"{audio_duration:.6f}", "-movflags", "+faststart",
-                        str(output)], check=True)
+        mux = ["ffmpeg", "-y", "-hide_banner", "-loglevel", "error", "-i", str(video_only), "-i", str(audio)]
+        if music is not None:
+            mux += ["-i", str(music), "-filter_complex",
+                    "[2:a]volume=0.10[bgm];[1:a][bgm]amix=inputs=2:duration=first:dropout_transition=0:normalize=0[mix]",
+                    "-map", "0:v:0", "-map", "[mix]"]
+        else:
+            mux += ["-map", "0:v:0", "-map", "1:a:0"]
+        mux += ["-c:v", "copy", "-c:a", "aac", "-b:a", "256k", "-ar", "44100", "-ac", "2",
+                "-t", f"{audio_duration:.6f}", "-movflags", "+faststart", str(output)]
+        subprocess.run(mux, check=True)
         if not args.keep_video_only:
             video_only.unlink(missing_ok=True)
 

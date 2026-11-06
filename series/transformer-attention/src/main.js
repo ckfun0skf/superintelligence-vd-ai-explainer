@@ -5,6 +5,16 @@ import { createQkvTimeline } from './qkv-timeline.js';
 
 const film = document.querySelector('#film');
 const audio = document.querySelector('#narration');
+const backgroundMusic = document.querySelector('#background-music');
+const backgroundMusicGain = 0.10;
+if(backgroundMusic)backgroundMusic.volume=backgroundMusicGain;
+function syncBackgroundMusic(force=false){
+  if(!backgroundMusic||!Number.isFinite(audio.currentTime)||backgroundMusic.readyState<1||!Number.isFinite(backgroundMusic.duration))return;
+  backgroundMusic.playbackRate=audio.playbackRate;
+  const target=Math.min(audio.currentTime,Math.max(0,backgroundMusic.duration-.025));
+  if(force||Math.abs(backgroundMusic.currentTime-target)>.32)backgroundMusic.currentTime=target;
+}
+backgroundMusic?.addEventListener('loadedmetadata',()=>syncBackgroundMusic(true));
 const scenes = [...document.querySelectorAll('.scene')];
 const chapterButtons = [...document.querySelectorAll('.chapter-rail button')];
 const chapterRail = document.querySelector('.chapter-rail');
@@ -1330,21 +1340,21 @@ playButton.addEventListener('click',()=>{
   }
   if(audio.paused)audio.play().catch(()=>{});else audio.pause();
 });
-audio.addEventListener('play',()=>{playButton.textContent='❚❚';playButton.setAttribute('aria-label','Pause');audioState.textContent='Narration playing';startAudioFrameLoop();});
-audio.addEventListener('pause',()=>{stopAudioFrameLoop();playButton.textContent='▶';playButton.setAttribute('aria-label','Play');audioState.textContent='Narration paused';renderAt(audio.currentTime);});
+audio.addEventListener('play',()=>{syncBackgroundMusic(true);if(backgroundMusic)backgroundMusic.play().catch(()=>{});playButton.textContent='❚❚';playButton.setAttribute('aria-label','Pause');audioState.textContent='Narration playing';startAudioFrameLoop();});
+audio.addEventListener('pause',()=>{backgroundMusic?.pause();stopAudioFrameLoop();playButton.textContent='▶';playButton.setAttribute('aria-label','Play');audioState.textContent='Narration paused';renderAt(audio.currentTime);});
 function applyAudioMetadata(){
   if(audio.readyState<1||!Number.isFinite(audio.duration)||audio.duration<=0)return false;
   previewOnly=false;duration=audio.duration;calculateChapters(duration);totalTimeEl.textContent=fmt(duration);
   audioState.textContent=`Narration ready · ${fmt(duration)}`;renderAt(audio.currentTime||0);return true;
 }
 audio.addEventListener('loadedmetadata',applyAudioMetadata);
-audio.addEventListener('timeupdate',()=>{if(audio.paused)renderAt(Math.round(audio.currentTime*FPS)/FPS);});
-audio.addEventListener('seeked',()=>{const frame=Math.round(audio.currentTime*FPS);renderAt(frame/FPS);lastAudioFrame=frame;});
-audio.addEventListener('ended',()=>{stopAudioFrameLoop();renderAt(duration);audioState.textContent='Narration complete';});
-audio.addEventListener('error',()=>{stopAudioFrameLoop();previewOnly=true;audioState.textContent='Visual preview · narration pending';totalTimeEl.textContent=fmt(duration);renderAt(manualTime);});
+audio.addEventListener('timeupdate',()=>{syncBackgroundMusic();if(audio.paused)renderAt(Math.round(audio.currentTime*FPS)/FPS);});
+audio.addEventListener('seeked',()=>{syncBackgroundMusic(true);if(!audio.paused&&backgroundMusic)backgroundMusic.play().catch(()=>{});const frame=Math.round(audio.currentTime*FPS);renderAt(frame/FPS);lastAudioFrame=frame;});
+audio.addEventListener('ended',()=>{backgroundMusic?.pause();if(backgroundMusic&&backgroundMusic.readyState>=1)backgroundMusic.currentTime=0;stopAudioFrameLoop();renderAt(duration);audioState.textContent='Narration complete';});
+audio.addEventListener('error',()=>{backgroundMusic?.pause();stopAudioFrameLoop();previewOnly=true;audioState.textContent='Visual preview · narration pending';totalTimeEl.textContent=fmt(duration);renderAt(manualTime);});
 seekBar.addEventListener('input',()=>{const t=Number(seekBar.value)/100*duration;if(!previewOnly)audio.currentTime=t;renderAt(t);showControls();});
 chapterButtons.forEach((button,i)=>button.addEventListener('click',()=>{const t=chapterStarts[i]??0;if(!previewOnly)audio.currentTime=t;renderAt(t);showControls();}));
-playbackRate.addEventListener('change',()=>{audio.playbackRate=Number(playbackRate.value);});
+playbackRate.addEventListener('change',()=>{audio.playbackRate=Number(playbackRate.value);if(backgroundMusic)backgroundMusic.playbackRate=audio.playbackRate;});
 document.querySelector('#fullscreen-toggle').addEventListener('click',async()=>{if(!document.fullscreenElement){await shell.requestFullscreen?.();shell.classList.add('fullscreen');}else await document.exitFullscreen?.();showControls();});
 document.addEventListener('fullscreenchange',()=>{
   if(!document.fullscreenElement){window.clearTimeout(controlsTimer);shell.classList.remove('fullscreen','controls-hidden');}
