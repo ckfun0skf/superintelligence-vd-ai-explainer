@@ -16,8 +16,8 @@ video:
   export_status: on_hold_for_user_page_qa
   export_script: scripts/render-mp4.py
   final_output: ../../renders/transformer-attention-deep-dive-1080p24.mp4
-  deployed_commit: 856d661eb870dac16edd64e32732a61da4e3176c
-  pages_workflow_run: 42005794319
+  deployed_commit: 8971c954e5f88a24dc8df885329de5dea139cbb6
+  pages_workflow_run: 42215399429
   live_preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/series/transformer-attention/
   runtime_seconds: 420.504
   timeline_seconds: 420.48
@@ -42,7 +42,7 @@ background_music:
   preview_gain: 0.10
   player_sync: "Background track follows narration play, pause, seek, and playback rate; narration remains the animation clock."
   export_mix: "render-mp4.py mixes BGM at 0.10 under the original voiceover; --no-music disables it."
-  qa: "Full music decode passed. Chromium verified seek alignment, synchronized play/pause, and 0.75x playback with no browser errors; gapless player duration matches the 420.504-second narration. A 15-second voice-plus-music mix measured -3.4 dBFS peak."
+  qa: "Full music decode passed. Public Chromium verified seek alignment, synchronized play/pause, and 0.75x playback with no browser errors; gapless player durations are 420.480 seconds for voiceover and 420.504 seconds for BGM, with <0.0001 seconds playback drift. A 15-second voice-plus-music mix measured -3.4 dBFS peak."
 chapters:
   - id: 01
     name: "Context window · coreference"
