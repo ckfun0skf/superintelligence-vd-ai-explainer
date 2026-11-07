@@ -741,9 +741,9 @@ function renderQKV(p){
   const rawScores=[2.079,.693,.405,0];
   const rawWidths=[100,33,19,0];
   const vectorFlow=smooth(2.3,3.25,sec)*(1-smooth(32.45,33.15,sec));
-  const mnemonicReveal=smooth(21.05,21.62,sec)*(1-smooth(31.32,31.92,sec));
+  const mnemonicReveal=smooth(21.05,21.62,sec)*(1-smooth(33.0,33.35,sec));
   const learnedProjection=smooth(22.55,23.22,sec)*(1-smooth(31.02,31.72,sec));
-  const literalReject=smooth(28.62,29.12,sec)*(1-smooth(31.05,31.72,sec));
+  const literalReject=smooth(28.62,29.12,sec)*(1-smooth(33.0,33.35,sec));
 
   qkvOriginTokens.forEach((token,i)=>{
     const focus=i===6;
@@ -1224,10 +1224,16 @@ function renderRecap(p){
   const stageStarts=[1.6,3.8,7,14.5,17.8,22.8,43.8];
   const currentStage=stageStarts.reduce((current,start,i)=>sec>=start?i:current,-1);
   const exampleWindows=[[1.6,3.8],[3.8,7],[7,14.5],[14.5,17.8],[17.8,22.8],[22.8,37.5]];
+  let examplePosition=0;
+  for(let i=1;i<exampleWindows.length;i++){
+    const boundary=exampleWindows[i][0];if(sec<boundary-.16)break;
+    examplePosition=(i-1)+smooth(boundary-.16,boundary+.16,sec);
+  }
+  const exampleIntro=smooth(1.4,1.6,sec),exampleExit=smooth(37.3,37.7,sec);
   document.querySelectorAll('.recap-example').forEach((example,i)=>{
-    const [start,end]=exampleWindows[i],enter=smooth(start,start+.32,sec),leave=1-smooth(end-.34,end,sec),show=Math.min(enter,leave);
-    example.style.opacity=String(show);example.style.transform=`translateY(${(1-show)*.55}cqw) scale(${.975+.025*show})`;
-    example.classList.toggle('example-active',show>.5);
+    const offset=i-examplePosition-(i===exampleWindows.length-1?exampleExit:0);
+    example.style.opacity=String(exampleIntro);example.style.transform=`translateX(${offset*100}%) translateY(${(1-exampleIntro)*.3}cqw) scale(${.985+.015*exampleIntro})`;
+    example.classList.toggle('example-active',offset>-.5&&offset<=.5);
   });
   document.querySelectorAll('.recap-token-stream span').forEach((token,i)=>{
     const show=smooth(1.72+i*.16,2.04+i*.16,sec);token.style.opacity=String(show);token.style.transform=`translateY(${(1-show)*.38}cqw) scale(${.9+.1*show})`;
@@ -1255,7 +1261,7 @@ function renderRecap(p){
   const routeReveal=smooth(.5,2.2,sec);recapPath.style.opacity=String(routeReveal*.72);recapPath.style.strokeDasharray='18 22';recapPath.style.strokeDashoffset=String(-sec*44);
   const dotSpeeds=[.29,.37,.43,.32];
   recapDots.forEach((dot,i)=>{const u=phase(sec,dotSpeeds[i%dotSpeeds.length],i*.19),point=recapPath.getPointAtLength(recapPathLength*u);dot.setAttribute('cx',String(point.x));dot.setAttribute('cy',String(point.y));dot.style.opacity=String(routeReveal*(.55+.4*pulse(sec,.72,i*.17)));dot.setAttribute('r',String(3.8+2.8*pulse(sec,.68,i*.16)));});
-  const next=document.getElementById('recap-next'),nextIn=smooth(37.5,38.15,sec);next.classList.toggle('scoring',sec>=43.8);next.style.opacity=String(nextIn);next.style.transform=`translateY(${(1-nextIn)*.7}cqw) scale(${.96+.04*nextIn})`;
+  const next=document.getElementById('recap-next'),nextIn=smooth(37.3,37.7,sec),nextReveal=smooth(37.28,37.4,sec);next.classList.toggle('scoring',sec>=43.8);next.style.opacity=String(nextReveal);next.style.transform=`translateX(${(1-nextIn)*100}%)`;
   const scoreEvolution=smooth(43.8,44.5,sec),scoreWidths=[44+32*smooth(43.8,51.2,sec),58-10*smooth(43.8,51.2,sec),37-8*smooth(43.8,51.2,sec)];
   const nextTitle=document.getElementById('recap-next-title'),nextNote=document.getElementById('recap-next-note');nextTitle.textContent=sec<43.8?'TAIPEI CONSTRAINT → SUGGESTION':'POSSIBLE NEXT TOKENS';nextNote.textContent=sec<43.8?'Nature-first · within $8,000':'Illustrative scores · not measured outputs';
   const candidateLabels=sec<43.8?['Maokong','shaded trail','short hike']:['Maokong','nature-first','trail'];

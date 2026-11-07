@@ -250,3 +250,16 @@ qa:
   pending:
     - "User QA of the deployed preview page before any full MP4 export."
     - "After approval, render the full MP4 and run final media/decode QA."
+
+follow_up_visual_reviews:
+  - date: 2026-11-06
+    scope: "Chapter 04 Q/K/V mnemonic cue; Chapter 08 six Taipei-example handoffs."
+    resolution: 1920x1080
+    frame_rate: 24
+    transition_samples: 54
+    checks:
+      - "Chapter 04 mnemonic and crossed-out literal analogies stay visible through the clarification cue, then fade out cleanly; full-HD spot checks at local 32.9, 33.1, and 33.35 seconds showed opacity 1.00, 0.80, and 0.00."
+      - "Chapter 08 lower example cards now hand off horizontally without crossfade; the final Taipei suggestion panel matches the example-stage footprint."
+      - "Six handoffs sampled at exact 24fps intervals: tokens→vectors, vectors→attention, attention→learned views, learned views→Transformer blocks, blocks→causal mask, and mask→suggestion. Maximum uncovered stage width: 0px; browser errors: zero."
+      - "Returning to the same Chapter 04 and Chapter 08 timestamps after unrelated seeks produced pixel-identical 1920x1080 frames."
+      - "Production build and git diff --check passed; full MP4 remains on hold for user page QA."

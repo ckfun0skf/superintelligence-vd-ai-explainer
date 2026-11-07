@@ -41,3 +41,10 @@
 - **Chapter 04 — Q/K/V 不是字面物件：** 同一個 `It` 位置經三個 learned-matrix glyph（WQ／WK／WV）分別產生帶色的 query、key、value 數值向量；問題符號、資料庫 key 和 word-tag 圖示會在旁白指出誤解時被劃掉。這讓名稱像 mnemonic 的原因，以及網路中實際運作的是數值轉換，能同時看見。
 - **Chapter 08 — 每步都回到 Taipei 例子：** 流程列留在上方，下方依序切換原 prompt/token、Taipei embedding 加 position、自然／地點／預算／旅程長度線索混合、四個 view 匯合、Attention／MLP 重複處理、因果遮罩與下一 token、候選分數及選出的 Maokong／短步道建議。因果遮罩段先顯示只能使用已寫出的答案前綴，再接出同一旅行例子穿過多個 Attention／MLP 子層，清楚表現 attention 只是較大 learned system 的一部分。
 - 使用 Chromium 把 stage 展至 1920×1080，擷取 Chapter 04 三個概念時點與 Chapter 08 十個主要步驟，共 13 張原生輸出尺寸畫面；另以一般響應式預覽尺寸檢查一次。Production build 和 `git diff --check` 通過，無 page errors；因果遮罩列和多層運算列保持分離，未來 token 改用可讀鎖頭 icon，避免微型 `LOCKED` 字樣。
+
+
+## Chapter 04／08 流程連接複查（2026-11-06）
+
+- **Chapter 04 mnemonic：** 再看 Q/K/V 名稱提示轉成 learned numerical vectors、以及劃除字面聯想的段落。1920×1080 取樣中，核心示意到 local 32.9 秒仍完整顯示，33.1 秒開始收束淡出，33.35 秒已退出；畫面與講稿的「它們是 learned numerical transformations，不是字面問題、資料庫 key 或貼在字上的標籤」一致。
+- **Chapter 08 flow examples：** 檢查六個下方例子交接（tokens→vectors、vectors→attention、attention→learned views、learned views→Transformer blocks、blocks→causal mask、mask→suggestion）。改為卡片水平接力，不再交叉淡化；最後建議卡已調成與例子舞台同寬同高，避免窄卡交接造成縫隙。
+- **驗收：** 以 1920×1080、精確 24fps 的相鄰影格間隔掃過六個交接，共 54 個取樣時點；卡片覆蓋最大空隙為 0 px，無 JavaScript／瀏覽器錯誤。Chapter 04 mnemonic cue 與 Chapter 08 轉場各自在跳到其他時間後重 seek，均逐像素一致。完整 MP4 仍維持待使用者預覽 QA 後輸出的狀態。
