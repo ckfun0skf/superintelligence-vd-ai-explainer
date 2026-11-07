@@ -16,8 +16,8 @@ video:
   export_status: on_hold_for_user_page_qa
   export_script: scripts/render-mp4.py
   final_output: ../../renders/transformer-attention-deep-dive-1080p24.mp4
-  deployed_commit: 8971c954e5f88a24dc8df885329de5dea139cbb6
-  pages_workflow_run: 42215399429
+  deployed_commit: 76f6c63272720751899e66a1f10ef042e40a3f03
+  pages_workflow_run: 42346337720
   live_preview: https://ckfun0skf.github.io/superintelligence-vd-ai-explainer/series/transformer-attention/
   runtime_seconds: 420.504
   timeline_seconds: 420.48
@@ -263,3 +263,11 @@ follow_up_visual_reviews:
       - "Six handoffs sampled at exact 24fps intervals: tokens→vectors, vectors→attention, attention→learned views, learned views→Transformer blocks, blocks→causal mask, and mask→suggestion. Maximum uncovered stage width: 0px; browser errors: zero."
       - "Returning to the same Chapter 04 and Chapter 08 timestamps after unrelated seeks produced pixel-identical 1920x1080 frames."
       - "Production build and git diff --check passed; full MP4 remains on hold for user page QA."
+    public_deployment:
+      code_commit: 76f6c63272720751899e66a1f10ef042e40a3f03
+      pages_workflow_run: 42346337720
+      route_http_status: 200
+      chromium_browser_errors: 0
+      checks:
+        - "Public Chapter 04 mnemonic cue remained fully visible at the final spoken word."
+        - "Public Chapter 08 final-handoff panel matched the example-stage dimensions at 1920x1080."

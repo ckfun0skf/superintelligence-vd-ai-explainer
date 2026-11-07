@@ -48,3 +48,5 @@
 - **Chapter 04 mnemonic：** 再看 Q/K/V 名稱提示轉成 learned numerical vectors、以及劃除字面聯想的段落。1920×1080 取樣中，核心示意到 local 32.9 秒仍完整顯示，33.1 秒開始收束淡出，33.35 秒已退出；畫面與講稿的「它們是 learned numerical transformations，不是字面問題、資料庫 key 或貼在字上的標籤」一致。
 - **Chapter 08 flow examples：** 檢查六個下方例子交接（tokens→vectors、vectors→attention、attention→learned views、learned views→Transformer blocks、blocks→causal mask、mask→suggestion）。改為卡片水平接力，不再交叉淡化；最後建議卡已調成與例子舞台同寬同高，避免窄卡交接造成縫隙。
 - **驗收：** 以 1920×1080、精確 24fps 的相鄰影格間隔掃過六個交接，共 54 個取樣時點；卡片覆蓋最大空隙為 0 px，無 JavaScript／瀏覽器錯誤。Chapter 04 mnemonic cue 與 Chapter 08 轉場各自在跳到其他時間後重 seek，均逐像素一致。完整 MP4 仍維持待使用者預覽 QA 後輸出的狀態。
+
+- **公開預覽：** Pages commit `76f6c63`（workflow `42346337720`）成功；公開頁 HTTP 200。Chromium 確認 Chapter 4 mnemonic cue 仍完整可見，Chapter 8 收尾例子卡與下方舞台尺寸一致，瀏覽器錯誤為零。MP4 未輸出，仍等使用者在預覽頁完成 QA。
