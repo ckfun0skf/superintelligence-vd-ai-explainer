@@ -1,0 +1,80 @@
+episode: 02
+chapter: 01
+name: "AI's core idea"
+status: browser_preview_implementation
+language: en-US
+video:
+  design_frame: 1920x1080
+  aspect_ratio: "16:9"
+  frame_rate: 24
+  preview_route: /series/neural-networks/
+  clock: audio.currentTime
+  export_api: window.renderFrame(frame)
+  source_audio: audio/narration/part02-neural-networks-narration.wav
+  preview_audio: public/series/neural-networks/audio/chapter-01.mp3
+  chapter_start_seconds: 0.0
+  chapter_end_seconds: 59.578947
+  source_timing: audio/narration/part02-narration-timing.json
+visual_beats:
+  - cue: "What is the most important thing inside AI?"
+    start: 0.36
+    end: 3.73
+    visual: "Dark AI chat app. Type the question in the bottom composer, send it, and move the same text into the conversation; do not spawn a duplicate message."
+  - cue: "There isn't one answer ... neural network"
+    start: 3.73
+    end: 12.99
+    visual: "Show the caveat before the claim. One assistant reply identifies neural networks as one central engine; a compact node icon grows directly out of that reply."
+  - cue: "The name can sound mysterious"
+    start: 12.99
+    end: 16.0
+    visual: "The chat interface contracts into the same connected node object; no slide or title-card cut."
+  - cue: "A neural network is a mathematical system"
+    start: 16.0
+    end: 18.88
+    visual: "Connected calculation nodes settle into a clear input → calculation → output path."
+  - cue: "Numbers go in ... numbers come out"
+    start: 18.88
+    end: 23.66
+    visual: "Three illustrative number chips enter the central calculation node, travel along moving signals, and produce one output value."
+  - cue: "Training changes the adjustable values"
+    start: 23.66
+    end: 28.55
+    visual: "Weights and bias are distinct dials inside the calculation; the dials move and the output responds. Do not teach an unspoken training algorithm here."
+  - cue: "Model inspired by a biological neuron"
+    start: 28.55
+    end: 34.99
+    visual: "The central math unit morphs into a simplified dendrite–cell-body–axon drawing with input/output pulses."
+  - cue: "In 1943, McCulloch and Pitts"
+    start: 34.99
+    end: 40.63
+    visual: "Large 1943 date and names beside an abstract, non-fabricated paper outline; no fake paper scan or fake title."
+  - cue: "In 1958, Rosenblatt ... perceptron ... separate patterns"
+    start: 40.63
+    end: 48.55
+    visual: "Smithsonian Mark I Perceptron photo inset with visible credit; transform a physical panel cue into a simple classification boundary separating two point patterns."
+  - cue: "Not tiny copies of a brain"
+    start: 48.55
+    end: 51.94
+    visual: "A faint neuron/brain silhouette resolves into abstract calculation blocks; keep the idea of inspiration while rejecting literal mini-brain imagery."
+  - cue: "Building blocks ... follow one number at a time"
+    start: 51.94
+    end: 59.578947
+    visual: "Calculation nodes form a small connected network. The terminal output node moves inward and grows into the central neuron while carrying the glowing 0.8 signal; hold this same neuron and begin sliding in the grey swatch for Chapter 2."
+continuity:
+  persistent_objects:
+    - "One central calculation/neuron node, retained through the chapter and handed into Chapter 2."
+    - "One numeric signal that becomes the final 0.8 token."
+  forbidden:
+    - "No scene-wide white overlay or slideshow title card."
+    - "No small text when unused film space remains."
+    - "No unsupported claim that every AI system uses a neural network."
+    - "No depiction of the 1943 model or perceptron as a literal miniature brain."
+    - "No invented archival document image."
+    - "Do not imply the illustrative example values are measured model outputs."
+qa:
+  browser_preview: pass
+  deterministic_seek: pass
+  audio_clock_play_pause: pass
+  fullscreen_16_9_and_auto_hide: pass
+  mobile_fullscreen: pending
+  narration_sync: chapter_cues_verified_against_audio; fine_grained_sentence_review_pending

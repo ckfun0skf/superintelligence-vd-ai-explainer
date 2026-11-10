@@ -9,6 +9,7 @@ export default defineConfig({
       input: {
         main: resolve(process.cwd(), 'index.html'),
         transformerAttention: resolve(process.cwd(), 'series/transformer-attention/index.html'),
+        neuralNetworks: resolve(process.cwd(), 'series/neural-networks/index.html'),
       },
     },
   },

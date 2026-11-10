@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#070b13" />
+    <title>Deep Dive 02: How Neural Networks Work</title>
+    <meta name="description" content="A visual, audio-synchronized preview of Chapter 1 in the Deep Dive series: the core idea behind neural networks, from early models to the perceptron." />
+    <link rel="icon" href="../../favicon.svg" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="page-heading">
+        <a class="back-link" href="../../">Deep Dive series</a>
+        <div class="series-label">DEEP DIVE · PART 02</div>
+        <h1>How Neural Networks Work</h1>
+      </header>
+
+      <section class="player-shell" id="player-shell" aria-label="Neural networks chapter preview">
+        <div id="film" class="film" role="img" aria-label="Animated explanation of early neural networks and the perceptron">
+          <canvas id="webgl" aria-hidden="true"></canvas>
+          <div class="film-vignette" aria-hidden="true"></div>
+          <div class="film-grain" aria-hidden="true"></div>
+          <div class="film-safe-glow" aria-hidden="true"></div>
+
+          <section class="chat-window" id="chat-window" aria-hidden="true">
+            <div class="chat-header">
+              <span class="assistant-mark"><i></i><i></i><i></i><i></i></span>
+              <b>Assistant</b>
+              <span class="chat-menu">···</span>
+            </div>
+            <div class="chat-body">
+              <div class="user-bubble" id="user-bubble"><span id="prompt-text"></span></div>
+              <div class="assistant-bubble" id="assistant-bubble">
+                <span class="assistant-kicker">A SIMPLE WAY IN</span>
+                <strong id="answer-text"></strong>
+                <div class="mini-neural-mark" id="mini-neural-mark" aria-hidden="true">
+                  <svg viewBox="0 0 180 84"><g class="mini-links"><path d="M18 42 70 18M18 42 70 42M18 42 70 66M70 18 128 28M70 42 128 42M70 66 128 56M128 28 162 42M128 42 162 42M128 56 162 42"/></g><g class="mini-nodes"><circle cx="18" cy="42" r="8"/><circle cx="70" cy="18" r="6"/><circle cx="70" cy="42" r="7"/><circle cx="70" cy="66" r="6"/><circle cx="128" cy="28" r="6"/><circle cx="128" cy="42" r="7"/><circle cx="128" cy="56" r="6"/><circle cx="162" cy="42" r="8"/></g></svg>
+                </div>
+              </div>
+            </div>
+            <div class="chat-composer"><span id="composer-placeholder">Ask a question…</span><span class="composer-send" id="composer-send" aria-hidden="true">↑</span></div>
+          </section>
+
+          <div class="network-title" id="network-title" aria-hidden="true">
+            <span class="eyebrow">ONE CENTRAL ENGINE OF MODERN GENERATIVE AI</span>
+            <b>Neural network</b>
+            <span class="title-pulse"></span>
+          </div>
+
+          <div class="math-system" id="math-system" aria-hidden="true">
+            <div class="math-heading"><span class="eyebrow">A MATHEMATICAL SYSTEM</span><b>Numbers in. Calculations. Numbers out.</b></div>
+            <div class="system-inputs" id="system-inputs">
+              <span class="number-chip" data-index="0">0.3</span><span class="number-chip" data-index="1">0.8</span><span class="number-chip" data-index="2">0.5</span>
+            </div>
+            <svg class="system-lines" id="system-lines" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"><path d="M460 486 C600 486 662 486 790 486"/><path d="M460 540 C620 540 670 540 790 540"/><path d="M460 594 C610 594 668 594 790 594"/><path d="M918 540 C1060 540 1115 540 1260 540"/></svg>
+            <div class="calculation-node" id="calculation-node"><span class="node-halo"></span><b>Σ</b><small>CALCULATE</small></div>
+            <div class="system-output" id="system-output"><span class="output-dot"></span><span class="eyebrow">OUTPUT</span><b>0.71</b></div>
+            <div class="weight-controls" id="weight-controls" aria-hidden="true">
+              <div class="weight-head"><span>INSIDE THE CALCULATION</span><b>Adjustable values</b></div>
+              <div class="weight-dials"><div class="dial"><i></i><b>weight</b></div><div class="dial"><i></i><b>weight</b></div><div class="dial bias-dial"><i></i><b>bias</b></div></div>
+              <div class="weight-track" id="weight-track"><i></i></div>
+            </div>
+          </div>
+
+          <div class="bio-stage" id="bio-stage" aria-hidden="true">
+            <div class="bio-heading" id="bio-heading"><span class="eyebrow">A MATHEMATICAL MODEL INSPIRED BY BIOLOGY</span><b id="bio-date">1943</b><span id="bio-names">Warren McCulloch + Walter Pitts</span></div>
+            <svg class="bio-neuron" viewBox="0 0 1000 540" aria-hidden="true">
+              <g class="dendrites"><path d="M510 269 C400 254 344 206 265 132 C222 92 175 68 122 54"/><path d="M410 243 C351 201 340 140 310 80 C286 34 251 24 220 20"/><path d="M386 275 C300 280 245 266 170 235 C116 213 74 211 30 221"/><path d="M416 302 C333 347 285 391 224 449 C185 486 138 499 91 510"/><path d="M467 324 C417 376 394 437 385 486 C378 516 355 527 331 535"/></g>
+              <path class="axon" d="M583 270 C678 268 746 264 816 266 S912 271 976 268"/>
+              <ellipse class="soma" cx="520" cy="270" rx="78" ry="60"/><circle class="soma-core" cx="520" cy="270" r="19"/>
+              <circle class="bio-signal" id="bio-signal" cx="575" cy="270" r="10"/>
+              <g class="bio-input-pulses"><circle cx="122" cy="54" r="6"/><circle cx="30" cy="221" r="6"/><circle cx="91" cy="510" r="6"/></g>
+            </svg>
+            <div class="bio-label bio-input-label">INPUT SIGNALS</div><div class="bio-label bio-output-label">OUTPUT SIGNAL</div>
+            <div class="paper-outline" id="paper-outline" aria-hidden="true"><span>MODEL</span><i></i><i></i><i></i><i></i><b>NEURON</b></div>
+          </div>
+
+          <div class="history-stage" id="history-stage" aria-hidden="true">
+            <div class="history-copy" id="history-copy"><span class="eyebrow">A LEARNABLE PATTERN SEPARATOR</span><b>1958</b><strong>Frank Rosenblatt</strong><span class="history-perceptron">PERCEPTRON</span></div>
+            <a class="photo-card" id="photo-card" href="https://americanhistory.si.edu/collections/object/nmah_334414" target="_blank" rel="noreferrer" aria-label="View the Smithsonian Mark I Perceptron record">
+              <img src="./references/smithsonian-mark-i-perceptron-reference.jpg" alt="Smithsonian collection photograph of the Mark I Perceptron machine" />
+              <span class="photo-shimmer" aria-hidden="true"></span>
+              <span class="photo-credit">NATIONAL MUSEUM OF AMERICAN HISTORY · SMITHSONIAN</span>
+            </a>
+            <div class="pattern-lab" id="pattern-lab" aria-hidden="true">
+              <div class="pattern-title"><span class="eyebrow">PATTERNS</span><b>One simple boundary</b></div>
+              <svg viewBox="0 0 560 360" class="pattern-plot">
+                <path class="plot-axis" d="M60 24V312H520"/><path class="split-line" id="split-line" d="M102 282 L452 78"/>
+                <g class="pattern-a"><circle cx="138" cy="243" r="11"/><circle cx="188" cy="210" r="9"/><circle cx="232" cy="253" r="10"/><circle cx="263" cy="184" r="8"/><circle cx="310" cy="222" r="10"/></g>
+                <g class="pattern-b"><rect x="350" y="135" width="17" height="17" rx="4"/><rect x="389" y="105" width="17" height="17" rx="4"/><rect x="423" y="156" width="17" height="17" rx="4"/><rect x="458" y="95" width="17" height="17" rx="4"/><rect x="369" y="188" width="17" height="17" rx="4"/></g>
+                <g class="pattern-rings"><circle cx="232" cy="253" r="22"/><circle cx="423" cy="156" r="22"/></g>
+              </svg>
+              <div class="pattern-legend"><span><i class="dot-round"></i>pattern A</span><span><i class="dot-square"></i>pattern B</span></div>
+            </div>
+          </div>
+
+          <div class="not-a-brain" id="not-a-brain" aria-hidden="true">
+            <div class="brain-ghost" id="brain-ghost"><svg viewBox="0 0 460 300"><path d="M228 37c-39-29-94-15-104 24-40-5-71 24-65 61-33 26-25 72 8 87-8 40 25 70 63 65 14 29 56 35 83 13 22 20 60 16 76-8 39 4 69-28 62-64 35-25 32-69-2-90 4-38-28-64-65-57-15-34-48-45-76-31z"/><path d="M230 38v222M135 80l67 38M83 139l117 13M129 215l74-45M319 83l-82 41M376 150l-140 8M318 220l-78-46"/></svg></div>
+            <div class="not-brain-copy" id="not-brain-copy"><span class="eyebrow">INSPIRED BY A NEURON</span><b>Not a tiny copy of a brain.</b><div class="model-pieces"><i></i><i></i><i></i><i></i><span>MODEL</span></div></div>
+          </div>
+
+          <div class="build-stage" id="build-stage" aria-hidden="true">
+            <div class="build-copy"><span class="eyebrow">A NEW KIND OF CALCULATION</span><b>Simple units.<br/>Connected.</b></div>
+            <svg class="build-network" id="build-network" viewBox="0 0 1100 560" aria-hidden="true">
+              <g class="build-edges"><path d="M100 142 360 90M100 142 360 216M100 142 360 342M100 142 360 468M100 418 360 90M100 418 360 216M100 418 360 342M100 418 360 468M360 90 650 148M360 216 650 148M360 342 650 412M360 468 650 412M650 148 960 280M650 412 960 280"/></g>
+              <g class="build-nodes"><circle cx="100" cy="142" r="24"/><circle cx="100" cy="418" r="24"/><circle cx="360" cy="90" r="20"/><circle cx="360" cy="216" r="20"/><circle cx="360" cy="342" r="20"/><circle cx="360" cy="468" r="20"/><circle cx="650" cy="148" r="23"/><circle cx="650" cy="412" r="23"/><circle cx="960" cy="280" r="27"/></g>
+              <g class="build-pulses"><circle id="build-pulse-a" r="9"/><circle id="build-pulse-b" r="9"/></g>
+            </svg>
+          </div>
+
+          <div class="handoff-stage" id="handoff-stage" aria-hidden="true">
+            <div class="handoff-label"><span class="eyebrow">NEXT: ONE NEURON, ONE CALCULATION</span></div>
+            <div class="handoff-neuron" id="handoff-neuron"><span>Σ</span><i></i><i></i><i></i></div>
+            <div class="handoff-number" id="handoff-number">0.8</div>
+            <div class="incoming-swatch" id="incoming-swatch"><span></span><b>RGB INPUT</b></div>
+          </div>
+
+          <div class="beat-indicator" id="beat-indicator" aria-hidden="true"><i></i><span></span></div>
+        </div>
+
+        <div class="external-captions">
+          <div class="caption-meta"><span>REVIEW TRANSCRIPT</span><span id="caption-cue">CHAPTER 01 · 00:00</span></div>
+          <p id="review-transcript">What is the most important thing inside AI? There isn’t one answer for every kind of AI. But one of the central engines behind modern generative AI is the neural network. The name can sound mysterious. A neural network is a mathematical system: numbers go in, calculations transform them, and numbers come out. Training changes the adjustable values inside those calculations. The idea begins with a simplified mathematical model inspired by a biological neuron. In 1943, Warren McCulloch and Walter Pitts described one such model. In 1958, Frank Rosenblatt introduced the perceptron, a simple system that could learn to separate patterns. These were not tiny copies of a brain. They were building blocks for a new kind of calculation. To see how those blocks work, let’s follow one number at a time.</p>
+        </div>
+
+        <div class="player-controls">
+          <button id="play-toggle" class="play-button" type="button" aria-label="Play narration">▶</button>
+          <span id="time-current" class="time-readout">00:00</span>
+          <input id="seek-bar" type="range" min="0" max="1000" value="0" aria-label="Seek chapter" />
+          <span id="time-total" class="time-readout">00:59</span>
+          <select id="playback-rate" aria-label="Playback speed"><option value="1">1×</option><option value="0.75">0.75×</option><option value="0.5">0.5×</option></select>
+          <button id="fullscreen-toggle" class="fullscreen-button" type="button" aria-label="Enter fullscreen">⛶</button>
+        </div>
+        <nav class="chapter-rail" aria-label="Video chapters">
+          <button type="button" class="active" data-chapter="0" aria-current="true">01 · Core idea</button>
+          <button type="button" disabled aria-disabled="true">02 · One neuron</button>
+          <button type="button" disabled aria-disabled="true">03 · Layers</button>
+          <button type="button" disabled aria-disabled="true">04 · Training</button>
+          <button type="button" disabled aria-disabled="true">05 · Evolution</button>
+        </nav>
+      </section>
+
+      <div class="page-note"><span id="audio-state">Loading Chapter 1 narration…</span><span>Historical image credit: <a href="https://americanhistory.si.edu/collections/object/nmah_334414" target="_blank" rel="noreferrer">National Museum of American History, Smithsonian</a></span></div>
+    </main>
+    <audio id="narration" preload="metadata" src="./audio/chapter-01.mp3"></audio>
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
