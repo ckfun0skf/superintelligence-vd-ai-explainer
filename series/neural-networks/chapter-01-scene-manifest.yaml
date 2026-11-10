@@ -1,7 +1,7 @@
 episode: 02
 chapter: 01
 name: "AI's core idea"
-status: browser_preview_implementation
+status: browser_preview_reviewed
 language: en-US
 video:
   design_frame: 1920x1080
@@ -78,3 +78,5 @@ qa:
   fullscreen_16_9_and_auto_hide: pass
   mobile_fullscreen: pending
   narration_sync: chapter_cues_verified_against_audio; fine_grained_sentence_review_pending
+  reviewed_for_chapter_02_handoff: pass
+  voice_clip_opening_and_ending: pass

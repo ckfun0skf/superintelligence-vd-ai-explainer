@@ -1,0 +1,70 @@
+episode: 02
+chapter: 02
+name: "One artificial neuron, step by step"
+status: preview_ready_for_user_review
+language: en-US
+video:
+  design_frame: 1920x1080
+  aspect_ratio: "16:9"
+  frame_rate: 24
+  preview_route: /series/neural-networks/
+  clock: active_chapter_audio.currentTime
+  export_api: window.renderFrame(frame)
+  source_audio: audio/narration/part02-neural-networks-narration.wav
+  preview_audio: public/series/neural-networks/audio/chapter-02.mp3
+  source_audio_start_seconds: 59.50
+  source_chapter_boundary_seconds: 59.578947
+  scene_end_seconds: 174.394737
+  source_timing: audio/narration/part02-narration-timing.json
+  audio_alignment_note: "The extracted clip begins slightly before the nominal chapter boundary to protect the first word; the existing STT transcript places the first spoken sentence after a short opening pause."
+visual_beats:
+  - cue: "Imagine one gray color swatch; decide light or dark"
+    local_start: 0.0
+    visual: "Hold the exact Chapter 1 end pose: the same gray swatch enters the same output neuron carrying 0.8. Fade the old handoff label, then reveal the classification question."
+  - cue: "RGB channels and their 0–255 range"
+    local_start: 8.0
+    visual: "The same swatch opens into three labeled R/G/B lanes; show the familiar 0–255 channel range."
+  - cue: "Rescale 204/255 to about 0.8"
+    local_start: 14.0
+    visual: "A single channel-scale card maps 204 of 255 to 0.8 with one moving fill bar; then reveal the light-gray R/G/B values in spoken order."
+  - cue: "Those three values enter one artificial neuron"
+    local_start: 31.24
+    visual: "Three glowing channel signals converge into the persistent central neuron; the 0.8 signal resolves into the neuron's calculation mark as the narration says it is not thinking."
+  - cue: "Each input is multiplied by an adjustable weight"
+    local_start: 45.2
+    visual: "Reveal one dial attached to each matching RGB lane. The values settle visibly at ×1.0 as the narrator sets all three weights to one."
+  - cue: "Add the weighted values; then bias"
+    local_start: 60.5
+    visual: "Show 0.8×1 + 0.8×1 + 0.8×1 = 2.4, followed by a separate bias chip −1.5 and score 0.9. The bias is never represented as a fourth color channel."
+  - cue: "The score is not yet a probability; sigmoid soft gate"
+    local_start: 92.1
+    visual: "The equation panel recedes; draw a simple S curve and move the 0.9 marker to the upper-right side. No sigmoid equation is displayed."
+  - cue: "0.9 becomes 0.71; seventy-one percent light, twenty-nine percent dark"
+    local_start: 110.78
+    visual: "The output resolves into two readable probability bars, light 71% and dark 29%, with an example-only note."
+  - cue: "Now try a dark gray swatch"
+    local_start: 130.15
+    visual: "Recolor the same incoming swatch; keep the same RGB lanes, neuron, weights and sigmoid. Reveal each 0.2 in the spoken R/G/B order, then update the score to −0.9 and probabilities to 29% light / 71% dark."
+  - cue: "One pixel is not an image; several neurons can be connected"
+    local_start: 162.19
+    visual: "Let the same swatch open into a small 3×3 pixel patch. Keep the original neuron as the first visible unit and grow three downstream units plus one output node from it for the Chapter 3 handoff."
+continuity:
+  persistent_objects:
+    - "The exact central neuron DOM element and gray RGB input swatch from the Chapter 1 terminal frame."
+    - "One set of three R/G/B channels; only their values change for the dark test."
+    - "The same weights, bias, sigmoid and output path are reused across both example swatches."
+  forbidden:
+    - "Do not imply the neuron literally understands or thinks about color."
+    - "Do not present example values as measured results from a real model."
+    - "Do not equate a probability-like output with certainty."
+    - "Do not show bias as a fourth RGB input."
+    - "No formula-heavy sigmoid derivation or slide-title card."
+qa:
+  local_browser_preview: pass
+  deterministic_seek: pass
+  chapter_switch_and_audio_load: pass
+  clip_decode: pass
+  narration_transcript_open_and_close: pass
+  sentence_cue_review: pass_with_approximate_STT_timestamps
+  mobile_fullscreen: pending
+  final_mp4_render: not_started

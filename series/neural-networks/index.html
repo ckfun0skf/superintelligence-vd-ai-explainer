@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#070b13" />
     <title>Deep Dive 02: How Neural Networks Work</title>
-    <meta name="description" content="A visual, audio-synchronized preview of Chapter 1 in the Deep Dive series: the core idea behind neural networks, from early models to the perceptron." />
+    <meta name="description" content="A visual, audio-synchronized preview of the first two chapters in the Deep Dive series: neural-network origins and a step-by-step RGB neuron calculation." />
     <link rel="icon" href="../../favicon.svg" />
   </head>
   <body>
@@ -17,7 +17,7 @@
       </header>
 
       <section class="player-shell" id="player-shell" aria-label="Neural networks chapter preview">
-        <div id="film" class="film" role="img" aria-label="Animated explanation of early neural networks and the perceptron">
+        <div id="film" class="film" role="img" aria-label="Animated explanation of neural-network fundamentals and an RGB light-or-dark classifier">
           <canvas id="webgl" aria-hidden="true"></canvas>
           <div class="film-vignette" aria-hidden="true"></div>
           <div class="film-grain" aria-hidden="true"></div>
@@ -110,11 +110,53 @@
           </div>
 
           <div class="handoff-stage" id="handoff-stage" aria-hidden="true">
-            <div class="handoff-label"><span class="eyebrow">NEXT: ONE NEURON, ONE CALCULATION</span></div>
+            <div class="handoff-label" id="handoff-label"><span class="eyebrow">NEXT: ONE NEURON, ONE CALCULATION</span></div>
             <div class="handoff-neuron" id="handoff-neuron"><span>Σ</span><i></i><i></i><i></i></div>
             <div class="handoff-number" id="handoff-number">0.8</div>
             <div class="incoming-swatch" id="incoming-swatch"><span></span><b>RGB INPUT</b></div>
           </div>
+
+          <section class="chapter2-stage" id="chapter2-stage" aria-hidden="true">
+            <div class="c2-task" id="c2-task"><span class="eyebrow">ONE GREY COLOR</span><b>LIGHT OR DARK?</b></div>
+            <div class="c2-normalize" id="c2-normalize">
+              <span class="eyebrow">ONE CHANNEL · NORMALIZE</span>
+              <div class="c2-normalize-values"><b id="c2-raw-value">0–255</b><span id="c2-raw-denom"></span><i>→</i><b id="c2-normal-value">0–1</b></div>
+              <div class="c2-range"><span>0</span><i><b id="c2-range-fill"></b></i><span>1</span></div>
+            </div>
+            <svg class="c2-wires" id="c2-wires" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true">
+              <path id="c2-wire-r" d="M625 390 C735 390 785 448 850 510"/><path id="c2-wire-g" d="M625 540 C735 540 785 540 850 540"/><path id="c2-wire-b" d="M625 690 C735 690 785 632 850 570"/>
+            </svg>
+            <div class="c2-channels" id="c2-channels">
+              <div class="c2-channel" data-channel="r"><b>R</b><i><span id="c2-bar-r"></span></i><strong id="c2-value-r">0.8</strong></div>
+              <div class="c2-channel" data-channel="g"><b>G</b><i><span id="c2-bar-g"></span></i><strong id="c2-value-g">0.8</strong></div>
+              <div class="c2-channel" data-channel="b"><b>B</b><i><span id="c2-bar-b"></span></i><strong id="c2-value-b">0.8</strong></div>
+            </div>
+            <div class="c2-weights" id="c2-weights">
+              <div class="c2-weight-head"><span class="eyebrow">EACH CHANNEL GETS AN ADJUSTABLE WEIGHT</span><b>How strongly does it contribute?</b></div>
+              <div class="c2-weight-row">
+                <div class="c2-weight" data-weight="r"><b>R</b><i><span id="c2-dial-r"></span></i><strong id="c2-weight-r">× 1.0</strong></div>
+                <div class="c2-weight" data-weight="g"><b>G</b><i><span id="c2-dial-g"></span></i><strong id="c2-weight-g">× 1.0</strong></div>
+                <div class="c2-weight" data-weight="b"><b>B</b><i><span id="c2-dial-b"></span></i><strong id="c2-weight-b">× 1.0</strong></div>
+              </div>
+            </div>
+            <div class="c2-equation" id="c2-equation">
+              <div class="c2-sum-row"><span id="c2-term-r">0.8 × 1</span><i>+</i><span id="c2-term-g">0.8 × 1</span><i>+</i><span id="c2-term-b">0.8 × 1</span><i>=</i><b id="c2-sum-total">2.4</b></div>
+              <div class="c2-bias-row" id="c2-bias-row"><span>weighted total</span><i>+</i><b>−1.5</b><span>bias</span><i>=</i><strong id="c2-score">0.9</strong><em>SCORE</em></div>
+            </div>
+            <div class="c2-sigmoid" id="c2-sigmoid">
+              <div class="c2-sigmoid-head"><span class="eyebrow">ACTIVATION · A SOFT GATE</span><b>Score → value from 0 to 1</b></div>
+              <svg viewBox="0 0 360 190" preserveAspectRatio="none" aria-hidden="true"><path class="c2-sigmoid-curve" d="M20 158 C78 158 92 151 117 137 C146 120 151 94 180 95 C209 96 214 70 243 53 C268 38 282 32 340 32"/><circle id="c2-sigmoid-dot" cx="180" cy="95" r="8"/><path class="c2-sigmoid-axis" d="M20 170H340M180 18V170"/></svg>
+              <div class="c2-score-labels"><span>LOWER SCORE</span><b id="c2-score-value">0.9</b><span>HIGHER SCORE</span></div>
+            </div>
+            <div class="c2-probabilities" id="c2-probabilities">
+              <span class="eyebrow">ILLUSTRATIVE OUTPUT</span>
+              <div class="c2-probability"><b>LIGHT</b><i><span id="c2-light-fill"></span></i><strong id="c2-light-pct">71%</strong></div>
+              <div class="c2-probability"><b>DARK</b><i><span id="c2-dark-fill"></span></i><strong id="c2-dark-pct">29%</strong></div>
+            </div>
+            <div class="c2-example-note" id="c2-example-note">TOY CLASSIFIER · EXAMPLE VALUES, NOT A MEASURED MODEL</div>
+            <div class="c2-pixels" id="c2-pixels" aria-label="A three by three image patch"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            <svg class="c2-next-network" id="c2-next-network" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"><g><path d="M1050 508 C1170 450 1265 430 1395 430M1050 540 C1180 540 1260 540 1395 540M1050 572 C1170 628 1265 650 1395 650M1420 430 C1520 460 1590 505 1695 540M1420 540H1695M1420 650 C1520 620 1590 575 1695 540"/></g><g class="c2-next-nodes"><circle cx="1400" cy="430" r="31"/><circle cx="1400" cy="540" r="31"/><circle cx="1400" cy="650" r="31"/><circle cx="1700" cy="540" r="36"/></g></svg>
+          </section>
 
           <div class="beat-indicator" id="beat-indicator" aria-hidden="true"><i></i><span></span></div>
         </div>
@@ -134,7 +176,7 @@
         </div>
         <nav class="chapter-rail" aria-label="Video chapters">
           <button type="button" class="active" data-chapter="0" aria-current="true">01 · Core idea</button>
-          <button type="button" disabled aria-disabled="true">02 · One neuron</button>
+          <button type="button" data-chapter="1">02 · One neuron</button>
           <button type="button" disabled aria-disabled="true">03 · Layers</button>
           <button type="button" disabled aria-disabled="true">04 · Training</button>
           <button type="button" disabled aria-disabled="true">05 · Evolution</button>

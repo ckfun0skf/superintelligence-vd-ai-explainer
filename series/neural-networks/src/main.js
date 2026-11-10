@@ -1,8 +1,16 @@
 import * as THREE from 'three';
 import '../style.css';
+import { updateChapterTwo } from './chapter-02.js';
 
 const FPS = 24;
 const CHAPTER_END = 59.578947;
+const CHAPTER_TWO_END = 174.394737;
+const chapterData = [
+  { title: 'AI core idea', button: document.querySelector('[data-chapter="0"]'), src: './audio/chapter-01.mp3', end: CHAPTER_END, cue: 'CHAPTER 01', transcript: document.querySelector('#review-transcript').textContent },
+  { title: 'One neuron calculation', button: document.querySelector('[data-chapter="1"]'), src: './audio/chapter-02.mp3', end: CHAPTER_TWO_END, cue: 'CHAPTER 02', transcript: 'Imagine one grey color swatch on a screen. Our task is simple: decide whether it is light or dark. A computer can describe a color with three values: red, green, and blue. Each usually ranges from zero to two hundred and fifty-five. For easier arithmetic, computers often rescale those values between zero and one. So, for example, a channel value of two hundred and four becomes about zero point eight. Let’s use a light grey swatch: red is zero point eight, green is zero point eight, and blue is zero point eight. Those three values enter one artificial neuron. The neuron is not thinking about the color. It performs a calculation. Each input is multiplied by a weight. A weight is an adjustable number that controls how strongly an input contributes. Imagine a small dial attached to each channel. For this simple demonstration, set all three weights to one. Now add the weighted values: zero point eight, plus zero point eight, plus zero point eight. That gives two point four. Next comes the bias. A bias is another adjustable number added to the total. You can think of it as shifting the point at which the system begins to lean toward one answer or the other. For our illustration, set the bias to minus one point five. Two point four minus one point five gives a score of zero point nine. That score is not yet a probability. An activation function transforms it. Here we’ll use a common shape called a sigmoid. You do not need its equation: picture a soft gate that turns any score into a value between zero and one. A score of zero point nine becomes about zero point seven one. For this toy classifier, we read that as a seventy-one percent probability of light. The remaining twenty-nine percent is dark. These numbers are only an example; they are not measured results from a real AI model. Now try a dark grey swatch. Its three normalized values are about zero point two. With the same illustrative weights and bias, the score becomes minus zero point nine. The sigmoid turns that into about twenty-nine percent light and seventy-one percent dark. So one neuron takes three values, scales their influence, adds an offset, and produces a result. The weights, bias, and activation each have a specific job. This is a deliberately easy task on one pixel. It does not mean one neuron can understand an image. To work out why, we need to see how several neurons can be connected.' }
+];
+let activeChapter = 0;
+const activeEnd = () => chapterData[activeChapter].end;
 const film = document.querySelector('#film');
 const audio = document.querySelector('#narration');
 const shell = document.querySelector('#player-shell');
@@ -308,24 +316,24 @@ function updateHandoff(t) {
 }
 
 function renderAt(seconds) {
-  const t = clamp(Number(seconds) || 0,0,CHAPTER_END);
-  updateOpening(t);
-  updateMath(t);
-  updateBiology(t);
-  updateHistory(t);
-  updateBrain(t);
-  updateBuild(t);
-  updateHandoff(t);
-  renderWebGL(t);
-  const cueText = t < 12.99 ? 'AI CORE IDEA' : t < 28.55 ? 'NUMBERS → CALCULATION' : t < 40.63 ? 'BIOLOGICAL INSPIRATION' : t < 48.55 ? 'THE PERCEPTRON · 1958' : t < 51.94 ? 'A MODEL, NOT A MINIATURE BRAIN' : 'FOLLOW ONE NUMBER';
-  if (els['beat-indicator']) {
-    setOpacity(els['beat-indicator'],.6);
-    const dot=els['beat-indicator'].querySelector('i');
-    if(dot)dot.style.transform=`scale(${.8 + .35*(.5+.5*Math.sin(t*3.1))})`;
+  const t = clamp(Number(seconds) || 0,0,activeEnd());
+  let cueText;
+  if(activeChapter===0){
+    updateOpening(t);updateMath(t);updateBiology(t);updateHistory(t);updateBrain(t);updateBuild(t);updateHandoff(t);renderWebGL(t);
+    cueText = t < 12.99 ? 'AI CORE IDEA' : t < 28.55 ? 'NUMBERS → CALCULATION' : t < 40.63 ? 'BIOLOGICAL INSPIRATION' : t < 48.55 ? 'THE PERCEPTRON · 1958' : t < 51.94 ? 'A MODEL, NOT A MINIATURE BRAIN' : 'FOLLOW ONE NUMBER';
+    if (els['beat-indicator']) {
+      setOpacity(els['beat-indicator'],.6);
+      const dot=els['beat-indicator'].querySelector('i');
+      if(dot)dot.style.transform=`scale(${.8 + .35*(.5+.5*Math.sin(t*3.1))})`;
+    }
+  }else{
+    const hold=CHAPTER_END;
+    updateOpening(hold);updateMath(hold);updateBiology(hold);updateHistory(hold);updateBrain(hold);updateBuild(hold);updateHandoff(hold);renderWebGL(hold);
+    cueText=updateChapterTwo(t);
   }
-  if (captionCue) captionCue.textContent = `CHAPTER 01 · ${fmt(t)} · ${cueText}`;
+  if (captionCue) captionCue.textContent = `${chapterData[activeChapter].cue} · ${fmt(t)} · ${cueText}`;
   timeCurrent.textContent = fmt(t);
-  if (!seekBar.matches(':active')) seekBar.value = String(Math.round(t/CHAPTER_END*1000));
+  if (!seekBar.matches(':active')) seekBar.value = String(Math.round(t/activeEnd()*1000));
   return t;
 }
 window.renderFrame = frame => renderAt(frame / FPS);
@@ -335,10 +343,11 @@ window.renderAt = renderAt;
 let lastFrame = -1;
 function tick() {
   if (!audio.paused && !audio.ended) {
-    const t = Math.min(audio.currentTime,CHAPTER_END);
+    const end=activeEnd();
+    const t = Math.min(audio.currentTime,end);
     const frame = Math.floor(t * FPS);
     if (frame !== lastFrame) { renderAt(frame / FPS); lastFrame = frame; }
-    if (audio.currentTime >= CHAPTER_END) { audio.pause(); audio.currentTime = CHAPTER_END; renderAt(CHAPTER_END); }
+    if (audio.currentTime >= end) { audio.pause(); audio.currentTime = end; renderAt(end); }
   }
   requestAnimationFrame(tick);
 }
@@ -346,34 +355,48 @@ function updatePlayButton() {
   const playing = !audio.paused && !audio.ended;
   playButton.textContent = playing ? '❚❚' : '▶';
   playButton.setAttribute('aria-label',playing ? 'Pause narration' : 'Play narration');
-  audioState.textContent = playing ? 'Chapter 1 preview playing' : 'Chapter 1 preview · narration only';
+  audioState.textContent = playing ? `Chapter ${activeChapter+1} preview playing` : `Chapter ${activeChapter+1} preview · narration only`;
 }
 playButton.addEventListener('click', async () => {
   if (audio.paused || audio.ended) {
-    if (audio.ended || audio.currentTime >= CHAPTER_END - .04) audio.currentTime = 0;
+    if (audio.ended || audio.currentTime >= activeEnd() - .04) audio.currentTime = 0;
     try { await audio.play(); } catch (err) { audioState.textContent = 'Tap play again if the browser blocked audio.'; console.warn(err); }
   } else audio.pause();
   updatePlayButton();
 });
 audio.addEventListener('play',updatePlayButton);
 audio.addEventListener('pause',updatePlayButton);
-audio.addEventListener('ended',()=>{renderAt(CHAPTER_END);updatePlayButton();});
-audio.addEventListener('loadedmetadata',()=>{timeTotal.textContent=fmt(CHAPTER_END);audioState.textContent='Chapter 1 narration ready';renderAt(0);});
+audio.addEventListener('ended',()=>{renderAt(activeEnd());updatePlayButton();});
+audio.addEventListener('loadedmetadata',()=>{timeTotal.textContent=fmt(activeEnd());audioState.textContent=`Chapter ${activeChapter+1} narration ready`;renderAt(audio.currentTime);});
 audio.addEventListener('error',()=>{audioState.textContent='Narration could not be loaded';});
 if (audio.readyState >= 1) {
-  timeTotal.textContent = fmt(CHAPTER_END);
-  audioState.textContent = 'Chapter 1 narration ready';
+  timeTotal.textContent=fmt(activeEnd());
+  audioState.textContent='Chapter 1 narration ready';
   renderAt(0);
 }
 seekBar.addEventListener('input',()=>{
-  const t = Number(seekBar.value)/1000*CHAPTER_END;
+  const t = Number(seekBar.value)/1000*activeEnd();
   audio.currentTime = t;
   lastFrame = -1;
   renderAt(t);
   showControls();
 });
 rateSelect.addEventListener('change',()=>{audio.playbackRate=Number(rateSelect.value);});
-document.querySelector('[data-chapter="0"]').addEventListener('click',()=>{audio.currentTime=0;lastFrame=-1;renderAt(0);showControls();});
+function activateChapter(index){
+  if(index<0||index>=chapterData.length)return;
+  const wasPlaying=!audio.paused&&!audio.ended;
+  activeChapter=index;lastFrame=-1;
+  chapterData.forEach((chapter,i)=>{chapter.button.classList.toggle('active',i===index);if(i===index){chapter.button.setAttribute('aria-current','true');chapter.button.removeAttribute('aria-disabled');}else chapter.button.removeAttribute('aria-current');});
+  transcript.textContent=chapterData[index].transcript;
+  timeCurrent.textContent='00:00';timeTotal.textContent=fmt(activeEnd());
+  if(audio.getAttribute('src')!==chapterData[index].src){
+    audio.pause();audio.src=chapterData[index].src;audio.load();
+    const ready=()=>{if(activeChapter!==index)return;audio.currentTime=0;renderAt(0);if(wasPlaying)audio.play().catch(()=>{});};
+    if(audio.readyState>=1)ready();else audio.addEventListener('loadedmetadata',ready,{once:true});
+  }else{audio.currentTime=0;renderAt(0);if(wasPlaying)audio.play().catch(()=>{});}
+  updatePlayButton();showControls();
+}
+chapterData.forEach((chapter,index)=>chapter.button.addEventListener('click',()=>activateChapter(index)));
 
 let controlsTimer=0;
 function showControls(){
@@ -399,11 +422,11 @@ window.addEventListener('keydown',event=>{
   if(event.target instanceof HTMLInputElement || event.target instanceof HTMLSelectElement || event.target instanceof HTMLButtonElement)return;
   if(event.code==='Space'){event.preventDefault();playButton.click();}
   if(event.key==='f'||event.key==='F')document.querySelector('#fullscreen-toggle').click();
-  if(event.key==='ArrowRight'){audio.currentTime=Math.min(CHAPTER_END,audio.currentTime+5);lastFrame=-1;renderAt(audio.currentTime);}
+  if(event.key==='ArrowRight'){audio.currentTime=Math.min(activeEnd(),audio.currentTime+5);lastFrame=-1;renderAt(audio.currentTime);}
   if(event.key==='ArrowLeft'){audio.currentTime=Math.max(0,audio.currentTime-5);lastFrame=-1;renderAt(audio.currentTime);}
 });
-window.addEventListener('resize',()=>{resizeWebGL();renderAt(audio.paused?audio.currentTime:Math.min(audio.currentTime,CHAPTER_END));});
-if ('ResizeObserver' in window) new ResizeObserver(()=>{resizeWebGL();renderAt(audio.paused?audio.currentTime:Math.min(audio.currentTime,CHAPTER_END));}).observe(film);
+window.addEventListener('resize',()=>{resizeWebGL();renderAt(audio.paused?audio.currentTime:Math.min(audio.currentTime,activeEnd()));});
+if ('ResizeObserver' in window) new ResizeObserver(()=>{resizeWebGL();renderAt(audio.paused?audio.currentTime:Math.min(audio.currentTime,activeEnd()));}).observe(film);
 
 renderAt(0);
 requestAnimationFrame(tick);
