@@ -11,9 +11,9 @@ The Part 02 preview is developed chapter by chapter. The current player route is
 - Preview source: `index.html`, `src/main.js`, and `style.css`
 - Historical reference and attribution: `references/README.md`
 
-Run `npm run dev -- --host 0.0.0.0` from the repository root to preview locally. `npm run build` builds both Part 01 and Part 02. Chapters 1 and 2 are enabled in the chapter rail; Chapters 3–5 remain locked until they are implemented and reviewed.
+Run `npm run dev -- --host 0.0.0.0` from the repository root to preview locally. `npm run build` builds both Part 01 and Part 02. Chapters 1–3 are enabled in the chapter rail; Chapters 4–5 remain locked until they are implemented and reviewed.
 
-Current scope: Chapters 1 and 2 are implemented and available for user review. Background music and Chapters 3–5 have not been generated. The final MP4 remains on hold until the user completes page QA.
+Current scope: Chapters 1–3 are implemented and available for user review. Background music and Chapters 4–5 have not been produced yet. The final MP4 remains on hold until the user completes page QA.
 
 ## Chapter 1 QA status
 
@@ -22,3 +22,7 @@ The first 59-second scene has passed browser preview, deterministic seeking, aud
 ## Chapter 2 QA status
 
 The 2:54 one-neuron scene is available in the same 16:9 player. It reuses the exact Chapter 1 neuron and gray swatch; the RGB values flow through normalization, weights, bias, sigmoid, and the light/dark comparison before the same neuron expands into the Chapter 3 network handoff. The separate narration clip decodes cleanly and its opening/closing wording was checked against transcription. Representative cue frames, chapter switching, and deterministic seeking were reviewed in the local browser. Fullscreen on a phone and final MP4 rendering remain pending. See `chapter-02-scene-manifest.yaml` for the cue map and guardrails.
+
+## Chapter 3 QA status
+
+The 2:21 layers scene continues the exact Chapter 2 pixel patch, neuron and connected nodes. It shows the 27 RGB inputs, layer-to-layer signal flow, a clearly labelled toy stripe/plain task, and a phrase-timed transition from a simple straight split to a flexible curved boundary. The narration clip decodes cleanly and its opening/closing wording was checked. Local preview playback, deterministic seeking, chapter switching, and desktop fullscreen were checked; phone-specific fullscreen review and final MP4 rendering remain pending. See `chapter-03-scene-manifest.yaml` for the cue map and technical guardrails.

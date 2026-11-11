@@ -1,0 +1,75 @@
+episode: 02
+chapter: 03
+name: "From one neuron to layers"
+status: ready_for_user_review
+language: en-US
+video:
+  design_frame: 1920x1080
+  aspect_ratio: "16:9"
+  frame_rate: 24
+  preview_route: /series/neural-networks/
+  clock: active_chapter_audio.currentTime
+  export_api: window.renderFrame(frame)
+  source_audio: audio/narration/part02-neural-networks-narration.wav
+  preview_audio: public/series/neural-networks/audio/chapter-03.mp3
+  source_audio_start_seconds: 233.75
+  source_chapter_boundary_seconds: 233.894737
+  source_audio_end_seconds: 374.75
+  scene_end_seconds: 141.0
+  source_timing: audio/narration/part02-narration-timing.json
+  audio_alignment_note: "The clip preserves the approved Charon narration from the existing master, begins just before the nominal chapter boundary, and includes a short tail after the final sentence. Speech-to-text confirms the final word is present and the Chapter 4 phrase is not included."
+visual_beats:
+  - cue: "Replace the single swatch with a tiny image patch; each pixel has RGB values"
+    local_start: 0.15
+    visual: "Keep the exact 3×3 patch introduced at the end of Chapter 2. Gradually vary only its existing nine cells, then show 9 pixels × 3 RGB channels = 27 input values."
+  - cue: "A layer is a group of artificial neurons at the same stage"
+    local_start: 15.39
+    visual: "Preserve the original central neuron, scale it into a layer position, and grow two peer units beside it. The same three downstream nodes and output node remain in place; labels show input, hidden stages, and output."
+  - cue: "Each neuron has its own weights and bias; units respond differently"
+    local_start: 20.99
+    visual: "Send pulses through the connected units, with different brightness and timing, rather than giving internal units fixed human-readable job titles."
+  - cue: "Outputs from one stage become the next stage's inputs"
+    local_start: 32.60
+    visual: "Animate signals leaving the first group and entering the existing downstream group, then combining toward the output."
+  - cue: "The middle stage is called a hidden layer, not a secret thought"
+    local_start: 49.87
+    visual: "Use a visible bracket around stages physically between input and output; do not use a black box or brain metaphor."
+  - cue: "Toy task: classify a patch as stripe or plain"
+    local_start: 61.44
+    visual: "Recolor the same 3×3 patch into high-contrast vertical stripes, pulse example units, and show STRIPE; smoothly turn that same patch uniform and change the same output to PLAIN. Mark it as a toy example."
+  - cue: "Real networks do not have guaranteed job titles for internal units"
+    local_start: 79.97
+    visual: "Let illustrative output labels recede while the same network continues to respond; avoid naming a real unit as a guaranteed stripe detector."
+  - cue: "Activation function; stacking linear calculations alone remains one simple calculation"
+    local_start: 85.99
+    visual: "Bring in a large two-group point plot and a single straight boundary. Preserve the point groups while introducing an activation gate; avoid equations."
+  - cue: "One straight line works for a simple split; a more complex pattern needs a flexible boundary"
+    local_start: 107.55
+    visual: "Hold the separated clusters and straight split through the simple-pattern phrase. At local 116.8, move the same points into a center-versus-ring pattern as the narration says the pattern bends; crossfade out the straight line at 120.1–121.8, then draw the curved boundary at 121.1–124.5 as the narration reaches multiple stages and a flexible boundary."
+  - cue: "More stages do not automatically make a network smarter; layers still need training"
+    local_start: 125.32
+    visual: "Fade the plot away as the narration says a layer is not automatically smarter. Reveal the adjustable-weight dials at local 132.68 with the 'More layers' phrase; show 'STILL NEED TRAINING' at local 138.8 with the matching spoken words. Preserve the same network objects for Chapter 4."
+continuity:
+  persistent_objects:
+    - "The exact Chapter 2 3×3 pixel patch DOM element; its nine cells are recolored in place for the toy task."
+    - "The same Chapter 2 central neuron, reduced in size as the network grows."
+    - "The same three downstream SVG nodes and output node; no replacement network is drawn over them."
+    - "The same RGB input values and network remain under the activation plot and return afterward."
+  forbidden:
+    - "Do not imply the toy 3×3 classifier understands full images."
+    - "Do not assign real neural-network units guaranteed human-readable roles."
+    - "Do not describe hidden layers as secret thoughts."
+    - "Do not imply that stacking linear calculations alone creates an arbitrarily flexible boundary."
+    - "Do not imply more layers are automatically smarter or already trained."
+    - "No formula-heavy title card or unrelated imagery."
+qa:
+  local_browser_preview: pass
+  deterministic_seek: pass
+  chapter_switch_and_audio_load: pass
+  narration_audio_clock_playback: pass
+  desktop_fullscreen_16_9_and_control_autohide: pass
+  clip_decode: pass
+  narration_transcript_open_and_close: pass
+  sentence_cue_review: pass_key_visual_beats
+  mobile_fullscreen: pending
+  final_mp4_render: not_started

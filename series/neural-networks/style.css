@@ -47,3 +47,34 @@
 
 /* Keep the named quantities comfortably readable in the 1080p film frame. */
 .c2-weight-head .eyebrow{font-size:.78cqw}.c2-weight-head>b{font-size:1.18cqw}.c2-weight>strong{font-size:.96cqw}.c2-sum-row{font-size:1.28cqw}.c2-sum-row>b{font-size:1.58cqw}.c2-bias-row{font-size:.98cqw}.c2-bias-row>em{font-size:.66cqw}.c2-probabilities>.eyebrow{font-size:.76cqw}.c2-probability>b{font-size:.82cqw}.c2-probability>strong{font-size:1.24cqw}
+
+
+/* Chapter 3 — preserve the Chapter 2 pixel patch and connected units while revealing layers. */
+.chapter3-stage{position:absolute;z-index:11;inset:0;opacity:0;visibility:hidden;pointer-events:none;color:#edf5f8}
+.c3-input-chip{position:absolute;z-index:5;left:7.2%;top:61.5%;width:15.2%;display:grid;grid-template-columns:auto 1fr;align-items:center;column-gap:.65cqw;padding:.65cqw .8cqw;border:1px solid #38596a;border-radius:.65cqw;background:linear-gradient(140deg,#101f2aee,#0b141eee);box-shadow:0 .7cqw 1.8cqw #0007;opacity:0}
+.c3-input-chip>span{grid-column:1/3;font:700 1.1cqw var(--mono);letter-spacing:.04em;color:#a9c2cd;white-space:nowrap}.c3-input-chip>b{font:700 2.2cqw var(--mono);color:#91f2d2;line-height:1.1}.c3-input-chip>strong{font:700 1.1cqw var(--mono);color:#e7f1f4;letter-spacing:.02em;white-space:nowrap}
+.c3-extra-links,.c3-extra-nodes{position:absolute;z-index:2;inset:0;width:100%;height:100%;overflow:visible;opacity:0}
+.c3-extra-links path{fill:none;stroke:#91f2d2;stroke-width:4;stroke-linecap:round;stroke-dasharray:10 16;filter:drop-shadow(0 0 7px #91f2d266)}
+.c3-extra-nodes circle{fill:#132b35;stroke:#91f2d2;stroke-width:4;filter:drop-shadow(0 0 10px #91f2d277)}
+.c3-hidden-zone{position:absolute;z-index:4;left:45%;top:30%;width:32%;height:41%;border:2px solid #4f9584aa;border-radius:1.5cqw;background:linear-gradient(135deg,#91f2d208,#72c8ff05);box-shadow:inset 0 0 1.8cqw #91f2d20b;opacity:0}
+.c3-graph-labels{position:absolute;z-index:5;inset:0;opacity:0}
+.c3-graph-labels>span{position:absolute;display:block;padding:.48cqw .72cqw;border:1px solid #3a5363;border-radius:99px;background:#0b141eea;color:#bcd2dc;font:700 1.22cqw var(--mono);letter-spacing:.06em;white-space:nowrap;box-shadow:0 .35cqw 1cqw #0005}
+.c3-input-label{left:7.5%;top:34.5%}.c3-hidden-label{left:54%;top:25%;border-color:#3f736c!important;color:#a7f0dc!important}.c3-output-label{left:84%;top:34.5%;border-color:#726642!important;color:#ffdc9d!important}.c3-layer-one{left:46%;top:70.5%;font-size:1.02cqw!important}.c3-layer-two{left:68.5%;top:70.5%;font-size:1.02cqw!important}
+.c3-result{position:absolute;z-index:6;left:80.5%;top:60%;width:14.5%;padding:.7cqw .6cqw;border:1px solid #7b6843;border-radius:.7cqw;background:#111a20ef;text-align:center;box-shadow:0 0 1.4cqw #ffc77622;opacity:0}
+.c3-result>span{display:block;color:#b4c2c8;font:700 .98cqw var(--mono);letter-spacing:.025em}.c3-result>b{display:block;margin-top:.25cqw;color:#ffc776;font:800 1.9cqw var(--mono);letter-spacing:.04em}
+.c3-toy-tag{position:absolute;z-index:6;left:7.5%;bottom:11.5%;padding:.45cqw .7cqw;border:1px solid #4c5b63;border-radius:99px;background:#101a20e8;color:#d5e1e5;font:700 1.08cqw var(--mono);letter-spacing:.06em;opacity:0}
+.c3-boundary-stage{position:absolute;z-index:8;left:25%;top:13%;width:55%;height:72%;padding:1.35cqw 1.7cqw 1.1cqw;border:1px solid #3c596a;border-radius:1.1cqw;background:linear-gradient(145deg,#101e2bf5,#0a131df5);box-shadow:0 1cqw 3cqw #0009,inset 0 0 2cqw #72c8ff0b;opacity:0;visibility:hidden}
+.c3-boundary-head{display:flex;flex-direction:column;gap:.45cqw}.c3-boundary-head>span{color:#91f2d2;font:700 1.08cqw var(--mono);letter-spacing:.08em}.c3-boundary-head>b{color:#edf6f8;font-size:1.7cqw;letter-spacing:-.02em}
+.c3-boundary-plot{display:block;width:100%;height:67%;margin-top:.3cqw;overflow:visible}
+.c3-plot-axis{fill:none;stroke:#69808d;stroke-width:2;stroke-dasharray:5 7;opacity:.6}
+.c3-class-a circle{fill:#91f2d2;stroke:#d6fff4;stroke-width:2;filter:drop-shadow(0 0 7px #91f2d288)}
+.c3-class-b rect{fill:#ffc776;stroke:#fff0ca;stroke-width:2;filter:drop-shadow(0 0 7px #ffc77677)}
+.c3-straight-boundary{fill:none;stroke:#ffc776;stroke-width:7;stroke-linecap:round;filter:drop-shadow(0 0 8px #ffc77688)}
+.c3-flex-boundary{fill:#91f2d215;stroke:#91f2d2;stroke-width:7;stroke-linecap:round;stroke-dasharray:620;stroke-dashoffset:620;filter:drop-shadow(0 0 9px #91f2d2aa)}
+.c3-activation-chip{position:absolute;z-index:3;right:1.5cqw;top:1.15cqw;display:flex;align-items:center;gap:.55cqw;padding:.45cqw .85cqw;border:1px solid #4c8278;border-radius:99px;background:#132a2b;color:#a9f4dc;font:800 1cqw var(--mono);letter-spacing:.06em;box-shadow:0 0 .9cqw #91f2d233;opacity:0}
+.c3-activation-chip svg{display:block;width:4.8cqw;height:2.3cqw;overflow:visible}.c3-activation-chip svg path{fill:none;stroke:#91f2d2;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 3px #91f2d288)}.c3-activation-chip svg .c3-activation-input{stroke:#91f2d277}.c3-activation-chip svg .c3-activation-arrow{stroke:#c7fff0;stroke-width:2.5}.c3-activation-chip svg circle{fill:#eafff8;stroke:#91f2d2;stroke-width:2;filter:drop-shadow(0 0 4px #91f2d2)}
+.c3-boundary-caption{position:absolute;left:1.7cqw;right:1.7cqw;bottom:2.55cqw;text-align:center;color:#f0f6f7;font:800 1.38cqw var(--mono);letter-spacing:.025em}
+.c3-plot-legend{position:absolute;left:1.7cqw;right:1.7cqw;bottom:.8cqw;display:flex;justify-content:center;gap:2cqw;color:#b8c8d0;font:700 .98cqw var(--mono);letter-spacing:.05em}.c3-plot-legend>span{display:flex;align-items:center;gap:.45cqw}.c3-plot-legend i{display:inline-block;width:.85cqw;height:.85cqw;border-radius:50%}.c3-legend-a{background:#91f2d2}.c3-legend-b{background:#ffc776;border-radius:.16cqw!important}
+.c3-training-ready{position:absolute;z-index:6;left:30%;bottom:8%;display:flex;align-items:center;gap:1cqw;padding:.8cqw 1.2cqw;border:1px solid #3b5b65;border-radius:.8cqw;background:#0c1720ee;box-shadow:0 .7cqw 2cqw #0007;opacity:0}
+.c3-training-ready>span{color:#a9c6ce;font:800 1.12cqw var(--mono);letter-spacing:.05em}.c3-training-ready>b{color:#91f2d2;font:800 1.12cqw var(--mono);letter-spacing:.025em;opacity:0}
+.c3-ready-dial{position:relative;width:1.55cqw;height:1.55cqw;border:1px solid #75c5cc;border-radius:50%;background:radial-gradient(circle,#183341,#0b141e);box-shadow:0 0 .5cqw #72c8ff33}.c3-ready-dial i{position:absolute;left:48%;top:12%;height:39%;width:2px;background:#dcfff7;transform-origin:50% 100%;transform:rotate(-25deg)}

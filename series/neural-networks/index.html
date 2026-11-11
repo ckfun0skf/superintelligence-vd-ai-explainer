@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#070b13" />
     <title>Deep Dive 02: How Neural Networks Work</title>
-    <meta name="description" content="A visual, audio-synchronized preview of the first two chapters in the Deep Dive series: neural-network origins and a step-by-step RGB neuron calculation." />
+    <meta name="description" content="A visual, audio-synchronized preview of the first three chapters in the Deep Dive series: neural-network origins, an RGB neuron calculation, and how layers combine." />
     <link rel="icon" href="../../favicon.svg" />
   </head>
   <body>
@@ -158,6 +158,48 @@
             <svg class="c2-next-network" id="c2-next-network" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"><g><path d="M1050 508 C1170 450 1265 430 1395 430M1050 540 C1180 540 1260 540 1395 540M1050 572 C1170 628 1265 650 1395 650M1420 430 C1520 460 1590 505 1695 540M1420 540H1695M1420 650 C1520 620 1590 575 1695 540"/></g><g class="c2-next-nodes"><circle cx="1400" cy="430" r="31"/><circle cx="1400" cy="540" r="31"/><circle cx="1400" cy="650" r="31"/><circle cx="1700" cy="540" r="36"/></g></svg>
           </section>
 
+          <section class="chapter3-stage" id="chapter3-stage" aria-hidden="true">
+            <div class="c3-input-chip" id="c3-input-chip"><span>9 PIXELS × 3 RGB CHANNELS</span><b>27</b><strong>INPUT VALUES</strong></div>
+            <svg class="c3-extra-links" id="c3-extra-links" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true">
+              <g id="c3-input-single"><path d="M338 528 C520 515 690 507 846 507"/></g>
+              <g id="c3-input-edges"><path d="M338 478 C520 420 705 374 918 370M338 580 C540 632 720 649 918 650"/></g>
+              <g id="c3-hidden-edges"><path d="M990 370 C1110 366 1240 397 1368 430M990 370 C1132 400 1260 472 1368 540M990 650 C1120 642 1250 598 1368 540M990 650 C1110 654 1240 652 1368 650"/></g>
+            </svg>
+            <svg class="c3-extra-nodes" id="c3-extra-nodes" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"><circle cx="960" cy="370" r="32"/><circle cx="960" cy="650" r="32"/></svg>
+            <div class="c3-hidden-zone" id="c3-hidden-zone" aria-hidden="true"></div>
+            <div class="c3-graph-labels" id="c3-graph-labels">
+              <span class="c3-input-label">INPUT</span>
+              <span class="c3-hidden-label">HIDDEN LAYERS</span>
+              <span class="c3-output-label">OUTPUT</span>
+              <span class="c3-layer-one">STAGE 1</span>
+              <span class="c3-layer-two">STAGE 2</span>
+            </div>
+            <div class="c3-result" id="c3-result"><span>TOY TASK · NETWORK OUTPUT</span><b id="c3-result-text">STRIPE</b></div>
+            <div class="c3-toy-tag" id="c3-toy-tag">TOY EXAMPLE</div>
+
+            <div class="c3-boundary-stage" id="c3-boundary-stage">
+              <div class="c3-boundary-head"><span>ACTIVATION FUNCTION</span><b>From a straight split to a flexible boundary</b></div>
+              <div class="c3-activation-chip" id="c3-activation-chip"><svg viewBox="0 0 100 48" aria-hidden="true"><path class="c3-activation-input" d="M3 39H23"/><path class="c3-activation-curve" d="M23 39C40 39 57 8 74 8H96"/><path class="c3-activation-arrow" d="M90 3L97 8L90 13"/><circle id="c3-activation-dot" cx="3" cy="39" r="4"/></svg><span>ACTIVATION</span></div>
+              <svg class="c3-boundary-plot" viewBox="0 0 760 420" aria-label="A straight boundary and a flexible curved boundary separating two groups">
+                <path class="c3-plot-axis" d="M72 32V362H706"/>
+                <g class="c3-simple-cloud" id="c3-simple-cloud">
+                  <g class="c3-class-a"><circle cx="142" cy="286" r="12"/><circle cx="188" cy="250" r="12"/><circle cx="224" cy="310" r="12"/><circle cx="268" cy="264" r="12"/><circle cx="304" cy="320" r="12"/></g>
+                  <g class="c3-class-b"><rect x="468" y="110" width="23" height="23" rx="5"/><rect x="520" y="156" width="23" height="23" rx="5"/><rect x="568" y="102" width="23" height="23" rx="5"/><rect x="614" y="148" width="23" height="23" rx="5"/><rect x="552" y="210" width="23" height="23" rx="5"/></g>
+                </g>
+                <g class="c3-complex-cloud" id="c3-complex-cloud">
+                  <g class="c3-class-a"><circle cx="252" cy="193" r="13"/><circle cx="283" cy="111" r="13"/><circle cx="365" cy="83" r="13"/><circle cx="453" cy="110" r="13"/><circle cx="492" cy="194" r="13"/><circle cx="454" cy="277" r="13"/><circle cx="365" cy="305" r="13"/><circle cx="282" cy="277" r="13"/></g>
+                  <g class="c3-class-b"><rect x="345" y="154" width="26" height="26" rx="5"/><rect x="380" y="188" width="26" height="26" rx="5"/><rect x="345" y="222" width="26" height="26" rx="5"/><rect x="380" y="222" width="26" height="26" rx="5"/></g>
+                </g>
+                <path class="c3-straight-boundary" id="c3-straight-boundary" d="M112 324 L646 70"/>
+                <path class="c3-flex-boundary" id="c3-flex-boundary" d="M365 128 C421 128 465 170 465 212 C465 255 421 291 365 291 C309 291 267 255 267 212 C267 170 309 128 365 128Z"/>
+              </svg>
+              <div class="c3-boundary-caption" id="c3-boundary-caption">ONE LINE CAN SPLIT A SIMPLE PATTERN</div>
+              <div class="c3-plot-legend"><span><i class="c3-legend-a"></i>GROUP A</span><span><i class="c3-legend-b"></i>GROUP B</span></div>
+            </div>
+
+            <div class="c3-training-ready" id="c3-training-ready"><span>ADJUSTABLE WEIGHTS</span><div class="c3-ready-dial"><i></i></div><div class="c3-ready-dial"><i></i></div><div class="c3-ready-dial"><i></i></div><b id="c3-training-label">STILL NEED TRAINING</b></div>
+          </section>
+
           <div class="beat-indicator" id="beat-indicator" aria-hidden="true"><i></i><span></span></div>
         </div>
 
@@ -177,7 +219,7 @@
         <nav class="chapter-rail" aria-label="Video chapters">
           <button type="button" class="active" data-chapter="0" aria-current="true">01 · Core idea</button>
           <button type="button" data-chapter="1">02 · One neuron</button>
-          <button type="button" disabled aria-disabled="true">03 · Layers</button>
+          <button type="button" data-chapter="2">03 · Layers</button>
           <button type="button" disabled aria-disabled="true">04 · Training</button>
           <button type="button" disabled aria-disabled="true">05 · Evolution</button>
         </nav>

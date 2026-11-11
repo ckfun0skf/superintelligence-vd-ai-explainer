@@ -31,8 +31,9 @@ export function updateChapterTwo(t){
   opacity('c2-sigmoid',phase(t,94.8,167.0,.6,.65));
   opacity('c2-probabilities',phase(t,109.8,166.4,.65,.65));
   opacity('c2-example-note',phase(t,124.2,160.8,.45,.6));
-  opacity('c2-pixels',phase(t,165.8,174.32,.55,.15));
-  opacity('c2-next-network',phase(t,169.0,174.32,.65,.05));
+  // The patch and connected nodes are the carried objects at the Chapter 3 handoff.
+  opacity('c2-pixels',smooth(165.8,166.4,t));
+  opacity('c2-next-network',smooth(169.0,170.0,t));
 
   // A channel first has a familiar 0–255 range, then the same position is rescaled to 0–1.
   const rawP=smooth(23.1,27.5,t);
