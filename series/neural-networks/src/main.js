@@ -2,16 +2,20 @@ import * as THREE from 'three';
 import '../style.css';
 import { updateChapterTwo } from './chapter-02.js';
 import { updateChapterThree } from './chapter-03.js';
+import { updateChapterFour } from './chapter-04.js';
+import { chapterFourTranscript } from './chapter-04-transcript.js';
 
 const FPS = 24;
 const CHAPTER_END = 59.578947;
 const CHAPTER_TWO_END = 174.394737;
 const CHAPTER_THREE_END = 141.0;
+const CHAPTER_FOUR_END = 299.6;
 const chapterData = [
   { title: 'AI core idea', button: document.querySelector('[data-chapter="0"]'), src: './audio/chapter-01.mp3', end: CHAPTER_END, cue: 'CHAPTER 01', transcript: document.querySelector('#review-transcript').textContent },
   { title: 'One neuron calculation', button: document.querySelector('[data-chapter="1"]'), src: './audio/chapter-02.mp3', end: CHAPTER_TWO_END, cue: 'CHAPTER 02', transcript: 'Imagine one grey color swatch on a screen. Our task is simple: decide whether it is light or dark. A computer can describe a color with three values: red, green, and blue. Each usually ranges from zero to two hundred and fifty-five. For easier arithmetic, computers often rescale those values between zero and one. So, for example, a channel value of two hundred and four becomes about zero point eight. Let’s use a light grey swatch: red is zero point eight, green is zero point eight, and blue is zero point eight. Those three values enter one artificial neuron. The neuron is not thinking about the color. It performs a calculation. Each input is multiplied by a weight. A weight is an adjustable number that controls how strongly an input contributes. Imagine a small dial attached to each channel. For this simple demonstration, set all three weights to one. Now add the weighted values: zero point eight, plus zero point eight, plus zero point eight. That gives two point four. Next comes the bias. A bias is another adjustable number added to the total. You can think of it as shifting the point at which the system begins to lean toward one answer or the other. For our illustration, set the bias to minus one point five. Two point four minus one point five gives a score of zero point nine. That score is not yet a probability. An activation function transforms it. Here we’ll use a common shape called a sigmoid. You do not need its equation: picture a soft gate that turns any score into a value between zero and one. A score of zero point nine becomes about zero point seven one. For this toy classifier, we read that as a seventy-one percent probability of light. The remaining twenty-nine percent is dark. These numbers are only an example; they are not measured results from a real AI model. Now try a dark grey swatch. Its three normalized values are about zero point two. With the same illustrative weights and bias, the score becomes minus zero point nine. The sigmoid turns that into about twenty-nine percent light and seventy-one percent dark. So one neuron takes three values, scales their influence, adds an offset, and produces a result. The weights, bias, and activation each have a specific job. This is a deliberately easy task on one pixel. It does not mean one neuron can understand an image. To work out why, we need to see how several neurons can be connected.' },
   { title: 'From one neuron to layers', button: document.querySelector('[data-chapter="2"]'), src: './audio/chapter-03.mp3', end: CHAPTER_THREE_END, cue: 'CHAPTER 03', transcript: `Replace the single color swatch with a tiny image patch made of several pixels. Each pixel has its own red, green, and blue values. Even a very small patch therefore contains many more numbers than one color. A layer is a group of artificial neurons that calculate at the same stage. Each neuron receives numbers, applies its own weights and bias, and produces an output. The neurons in a layer can respond differently because their adjustable values are different. The collection of outputs from one layer becomes the input to the next. The first layer receives the pixel values. A middle layer receives the first layer’s outputs. A later layer combines those new values and passes another result forward. That middle stage is called a hidden layer—not because it contains a secret thought, but because it is between the network’s input and its final output. For a toy example, imagine classifying a small patch as “stripe” or “plain.” Intermediate units can respond to simple arrangements in the pixels, and a later unit can combine those signals. Those labels help us understand the demonstration. Real networks do not usually have neat, guaranteed job titles for their internal units. There is one more important piece: the activation function. If every layer only added and multiplied numbers, stacking layers would still behave like one larger, simple calculation. An activation function changes that. It lets the network combine simple signals into more varied patterns. Visually, imagine trying to separate two groups of examples with one straight line. One line can handle a simple split. But when the pattern bends or has several parts, a network can combine multiple stages to form a more flexible boundary. A layer is not automatically smarter than one neuron. It is a way to combine several calculations. More layers give the network more stages in which to transform its representation, but those layers still need to be trained.` }
 ];
+chapterData.push({ title: 'Labelled examples and backpropagation', button: document.querySelector('[data-chapter="3"]'), src: './audio/chapter-04.mp3', end: CHAPTER_FOUR_END, cue: 'CHAPTER 04', transcript: chapterFourTranscript });
 let activeChapter = 0;
 const activeEnd = () => chapterData[activeChapter].end;
 const film = document.querySelector('#film');
@@ -228,10 +232,16 @@ function updateBiology(t) {
   const visible = phase(t, 28.45, 41.15, .55, .62);
   setOpacity(els['bio-stage'], visible);
   const histP = smooth(34.85,35.35,t);
-  setOpacity(els['bio-heading'], histP * (1-smooth(40.0,41.3,t)));
+  setOpacity(els['bio-heading'],histP * (1-smooth(40.0,41.3,t)));
   const paperP = phase(t, 35.55, 40.85, .5, .45);
   setOpacity(els['paper-outline'], paperP);
-  setOffset(els['paper-outline'], 0, .7*(1-paperP), 1, mix(5,0,smooth(36.0,39.5,t)));
+  const noteLand=smooth(35.55,36.35,t), noteSettle=smooth(36.0,39.0,t);
+  const noteFlex=1-noteSettle, noteFlutter=Math.sin((t-35.55)*8.2)*noteFlex;
+  if(els['paper-outline']){
+    els['paper-outline'].style.translate='0 0';els['paper-outline'].style.scale='1';els['paper-outline'].style.rotate='none';
+    els['paper-outline'].style.transform=`perspective(1000px) translate3d(0,${mix(-12,0,noteLand)}%,0) rotateX(${mix(15,0,noteLand)+noteFlutter*3.2}deg) rotateY(${mix(-12,0,noteLand)+Math.cos((t-35.55)*7)*noteFlex*3}deg) rotateZ(${mix(7,1,noteLand)+noteFlutter*2.2}deg) scale(${mix(.92,1,noteLand)})`;
+    els['paper-outline'].style.setProperty('--paper-fold',String(.7*noteFlex));
+  }
   const signalP = clamp((t - 29.6) / 5.2);
   const x = 575 + 385 * easeOut(signalP);
   const signal = document.getElementById('bio-signal');
@@ -249,7 +259,13 @@ function updateHistory(t) {
   setOffset(els['history-copy'], -1.7*(1-cp), 0, 1);
   const photoP = phase(t, 41.15, 48.75, .62, .45);
   setOpacity(els['photo-card'], photoP);
-  setOffset(els['photo-card'], 0, 2.2*(1-photoP), 1, mix(-2,0,smooth(42,47,t)));
+  const photoLand=smooth(41.15,42.05,t), photoSettle=smooth(41.25,43.6,t);
+  const paperFlex=1-photoSettle, paperFlutter=Math.sin((t-41.15)*8.6)*paperFlex;
+  if(els['photo-card']){
+    els['photo-card'].style.translate='0 0';els['photo-card'].style.scale='1';els['photo-card'].style.rotate='none';
+    els['photo-card'].style.transform=`perspective(1200px) translate3d(${mix(7,0,photoLand)}%,${mix(13,0,photoLand)+paperFlutter*1.8}%,0) rotateX(${mix(20,0,photoLand)+paperFlutter*4.2}deg) rotateY(${mix(-16,0,photoLand)+Math.cos((t-41.15)*7.4)*paperFlex*5}deg) rotateZ(${mix(7,-1.5,photoLand)+paperFlutter*3.5}deg) skewY(${paperFlutter*1.15}deg) scale(${mix(.94,1,photoLand)})`;
+    els['photo-card'].style.setProperty('--paper-fold',String(.9*paperFlex));
+  }
   const img = els['photo-card']?.querySelector('img');
   if (img) img.style.transform = `scale(${1.04 + .04 * smooth(41.4,48.3,t)}) translate3d(${Math.sin(t*.33)*.6}%,${Math.cos(t*.27)*.45}%,0)`;
   const shimmer = els['photo-card']?.querySelector('.photo-shimmer');
@@ -322,6 +338,12 @@ function renderAt(seconds) {
   const t = clamp(Number(seconds) || 0,0,activeEnd());
   let cueText;
   if(activeChapter===0){
+    // Clear later-chapter overlays before drawing this chapter. Without this reset,
+    // a chapter jump from 2/3 can leave its network and labels on top of Chapter 1.
+    film.classList.remove('chapter4-active');
+    updateChapterFour(0);
+    updateChapterThree(0);
+    updateChapterTwo(0);
     updateOpening(t);updateMath(t);updateBiology(t);updateHistory(t);updateBrain(t);updateBuild(t);updateHandoff(t);renderWebGL(t);
     cueText = t < 12.99 ? 'AI CORE IDEA' : t < 28.55 ? 'NUMBERS → CALCULATION' : t < 40.63 ? 'BIOLOGICAL INSPIRATION' : t < 48.55 ? 'THE PERCEPTRON · 1958' : t < 51.94 ? 'A MODEL, NOT A MINIATURE BRAIN' : 'FOLLOW ONE NUMBER';
     if (els['beat-indicator']) {
@@ -332,12 +354,24 @@ function renderAt(seconds) {
   }else if(activeChapter===1){
     const hold=CHAPTER_END;
     updateOpening(hold);updateMath(hold);updateBiology(hold);updateHistory(hold);updateBrain(hold);updateBuild(hold);updateHandoff(hold);renderWebGL(hold);
+    film.classList.remove('chapter4-active');
+    updateChapterFour(0);
+    updateChapterThree(0);
     cueText=updateChapterTwo(t);
+  }else if(activeChapter===2){
+    const hold=CHAPTER_END;
+    updateOpening(hold);updateMath(hold);updateBiology(hold);updateHistory(hold);updateBrain(hold);updateBuild(hold);updateHandoff(hold);renderWebGL(hold);
+    film.classList.remove('chapter4-active');
+    updateChapterFour(0);
+    updateChapterTwo(CHAPTER_TWO_END);
+    cueText=updateChapterThree(t);
   }else{
     const hold=CHAPTER_END;
     updateOpening(hold);updateMath(hold);updateBiology(hold);updateHistory(hold);updateBrain(hold);updateBuild(hold);updateHandoff(hold);renderWebGL(hold);
+    film.classList.add('chapter4-active');
     updateChapterTwo(CHAPTER_TWO_END);
-    cueText=updateChapterThree(t);
+    updateChapterThree(CHAPTER_THREE_END);
+    cueText=updateChapterFour(t);
   }
   if (captionCue) captionCue.textContent = `${chapterData[activeChapter].cue} · ${fmt(t)} · ${cueText}`;
   timeCurrent.textContent = fmt(t);

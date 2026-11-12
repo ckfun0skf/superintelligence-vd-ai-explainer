@@ -20,7 +20,7 @@ video:
 visual_beats:
   - cue: "Imagine one gray color swatch; decide light or dark"
     local_start: 0.0
-    visual: "Hold the exact Chapter 1 end pose: the same gray swatch enters the same output neuron carrying 0.8. Fade the old handoff label, then reveal the classification question."
+    visual: "Hold the exact Chapter 1 end pose: the same, enlarged gray swatch enters the same output neuron carrying 0.8. Keep the RGB INPUT label legible; fade the old handoff label, then reveal the classification question."
   - cue: "RGB channels and their 0–255 range"
     local_start: 8.0
     visual: "The same swatch opens into three labeled R/G/B lanes; show the familiar 0–255 channel range."
@@ -66,5 +66,7 @@ qa:
   clip_decode: pass
   narration_transcript_open_and_close: pass
   sentence_cue_review: pass_with_approximate_STT_timestamps
+  opening_swatch_and_label_legibility: pass
+  visible_text_bounds_and_overflow_scan: pass_sampled_cues
   mobile_fullscreen: pending
   final_mp4_render: not_started

@@ -1,0 +1,86 @@
+episode: 02
+chapter: 04
+name: "Labelled examples and backpropagation"
+status: ready_for_user_review
+language: en-US
+video:
+  design_frame: 1920x1080
+  aspect_ratio: "16:9"
+  frame_rate: 24
+  preview_route: /series/neural-networks/
+  clock: active_chapter_audio.currentTime
+  export_api: window.renderFrame(frame)
+  source_audio: audio/narration/part02-neural-networks-narration.wav
+  preview_audio: public/series/neural-networks/audio/chapter-04.mp3
+  source_audio_start_seconds: 374.35
+  source_chapter_boundary_seconds: 374.499
+  source_audio_end_seconds: 674.014
+  scene_end_seconds: 299.6
+  source_timing: audio/narration/part02-narration-timing.json
+  audio_alignment_note: "Extracted from the approved master at the chapter boundary with a short opening lead-in and tail; preview clip is 299.664 seconds, decodes cleanly, and is capped by the player at 299.6 seconds."
+visual_beats:
+  - cue: "A real network has adjustable values; people prepare labelled examples"
+    local_start: 15.2
+    visual: "Continue the exact Chapter 3 network and pixel patch. Put pale grey→LIGHT and dark blue→DARK examples outside the network in a labelled-set tray."
+  - cue: "The network sees examples and supplied answers, not the rule"
+    local_start: 47.2
+    visual: "Show the shared human label rule separately from the network; the selected example enters only as RGB values."
+  - cue: "Initial weights may be random or unhelpful; pass one example through"
+    local_start: 65.0
+    visual: "Keep the adjustable-weight dials attached to the same network; mark one patch as the selected input and animate forward particles along existing network paths."
+  - cue: "The first prediction may be LIGHT 20%, DARK 80%; reveal the supplied label"
+    local_start: 76.7
+    visual: "Show the wrong probability split on the output side. Reveal LIGHT on a separate answer lane only at the spoken answer cue."
+  - cue: "Compare prediction and label; task loss is large for this example"
+    local_start: 92.5
+    visual: "A dashed amber target path meets a large task-loss meter. Keep the warning contextual: loss measures this task's mismatch, not intelligence or truth."
+  - cue: "Training is supervised; example coverage and label consistency matter"
+    local_start: 111.9
+    visual: "Show the supplied label guiding updates, followed by an explicit conflicting-label example and missing-coverage cue."
+  - cue: "Which weights affected the incorrect prediction? Backpropagation and chain rule"
+    local_start: 142.6
+    visual: "Trace amber particles backward through existing SVG connection paths from output toward earlier layers; use a concise explanation card."
+  - cue: "Gradients indicate which small change could lower loss"
+    local_start: 176.7
+    visual: "Present up/down adjustment marks by the existing adjustable-weight dials, not as a free-floating equation."
+  - cue: "Optimizer makes a small update; same color returns and probability can rise"
+    local_start: 190.3
+    visual: "Rotate the same weight dials slightly, show the illustrative probability moving 20%→31%, and visibly shorten the loss meter; keep answer and prediction distinct."
+  - cue: "Predict, compare, update repeats over examples and batches"
+    local_start: 217.2
+    visual: "Cycle a forward signal and highlight PREDICT→COMPARE→UPDATE in a compact loop; recolor the original patch in place and show example cards accumulating."
+  - cue: "Researchers check examples that were held aside"
+    local_start: 250.1
+    visual: "Separate practice examples from the held-out check lane; explicitly state that this can reveal memorization risk but cannot guarantee perfect performance."
+  - cue: "Targets can be classes, numbers, or sequences; text can provide its next-word target"
+    local_start: 270.3
+    visual: "Show three task target forms briefly, then a short text prefix whose next-word tile travels into a target position. Do not begin tokenization, Transformer, or LLM mechanics here."
+continuity:
+  persistent_objects:
+    - "Exact Chapter 3 3×3 pixel patch; cells are recolored in place for training and held-out examples."
+    - "Exact Chapter 3 neuron, hidden-layer nodes, output node, and network SVG paths."
+    - "Existing adjustable-weight dials remain attached to the network and receive small deterministic rotations."
+  deterministic_state:
+    - "All cue opacity, particle positions, probability/loss bars, and dial rotations are computed from active chapter audio time."
+    - "window.renderAt(seconds) supports repeatable seek QA and window.renderFrame(frame) remains available for export."
+  forbidden:
+    - "Do not imply the network knows the human label rule before seeing examples."
+    - "Do not route the supplied answer back into the RGB input."
+    - "Do not imply loss is an IQ, truth, or general usefulness score."
+    - "Do not imply one small update guarantees a perfect prediction."
+    - "Do not imply a held-out check guarantees correct real-world performance."
+    - "Do not begin explaining tokenization, Transformer architecture, or LLM mechanics in the next-word teaser."
+qa:
+  project_build: pass
+  preview_audio_decode: pass
+  audio_clock_seek: pass_sampled_cues
+  cue_timing_vs_master: pass_primary_sentence_cues
+  chapter_switch_and_audio_load: pass
+  persistent_rgb_patch_and_network: pass
+  reverse_signal_paths: pass_sampled_cues
+  representative_layout_and_text_legibility: pass_sampled_cues
+  deterministic_repeat_seek: pass_sampled_frames
+  visible_text_bounds_and_overflow_scan: pass_20_sampled_cues
+  desktop_fullscreen: pending
+  mobile_fullscreen: pending
+  final_mp4_render: not_started

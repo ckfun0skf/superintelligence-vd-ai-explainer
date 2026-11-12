@@ -30,7 +30,7 @@ visual_beats:
     visual: "Send pulses through the connected units, with different brightness and timing, rather than giving internal units fixed human-readable job titles."
   - cue: "Outputs from one stage become the next stage's inputs"
     local_start: 32.60
-    visual: "Animate signals leaving the first group and entering the existing downstream group, then combining toward the output."
+    visual: "Animate distinct signal particles along dedicated SVG paths, leaving the first group, entering the existing downstream group, then combining toward the output. Keep the network nodes and connections persistent."
   - cue: "The middle stage is called a hidden layer, not a secret thought"
     local_start: 49.87
     visual: "Use a visible bracket around stages physically between input and output; do not use a black box or brain metaphor."
@@ -71,5 +71,7 @@ qa:
   clip_decode: pass
   narration_transcript_open_and_close: pass
   sentence_cue_review: pass_key_visual_beats
+  layer_signal_particle_paths: pass
+  visible_text_bounds_and_overflow_scan: pass_sampled_cues
   mobile_fullscreen: pending
   final_mp4_render: not_started

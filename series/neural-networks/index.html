@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#070b13" />
     <title>Deep Dive 02: How Neural Networks Work</title>
-    <meta name="description" content="A visual, audio-synchronized preview of the first three chapters in the Deep Dive series: neural-network origins, an RGB neuron calculation, and how layers combine." />
+    <meta name="description" content="A visual, audio-synchronized preview of the first four chapters in the Deep Dive series: neural-network origins, an RGB neuron calculation, layers, and labelled-example training." />
     <link rel="icon" href="../../favicon.svg" />
   </head>
   <body>
@@ -73,7 +73,7 @@
               <g class="bio-input-pulses"><circle cx="122" cy="54" r="6"/><circle cx="30" cy="221" r="6"/><circle cx="91" cy="510" r="6"/></g>
             </svg>
             <div class="bio-label bio-input-label">INPUT SIGNALS</div><div class="bio-label bio-output-label">OUTPUT SIGNAL</div>
-            <div class="paper-outline" id="paper-outline" aria-hidden="true"><span>MODEL</span><i></i><i></i><i></i><i></i><b>NEURON</b></div>
+            <div class="paper-outline" id="paper-outline" aria-hidden="true"><span>MODERN SKETCH · NOT ARCHIVAL</span><svg class="paper-neuron-sketch" viewBox="0 0 180 70"><g><path d="M18 15 72 34M18 35H69M18 55 72 36M108 35H160M153 30 162 35 153 40"/><circle cx="16" cy="15" r="4"/><circle cx="16" cy="35" r="4"/><circle cx="16" cy="55" r="4"/><circle cx="90" cy="35" r="16"/><circle cx="164" cy="35" r="4"/></g><text x="2" y="8">INPUT</text><text x="72" y="65">UNIT</text><text x="139" y="14">OUTPUT</text></svg><b>NEURON MODEL</b></div>
           </div>
 
           <div class="history-stage" id="history-stage" aria-hidden="true">
@@ -81,7 +81,8 @@
             <a class="photo-card" id="photo-card" href="https://americanhistory.si.edu/collections/object/nmah_334414" target="_blank" rel="noreferrer" aria-label="View the Smithsonian Mark I Perceptron record">
               <img src="./references/smithsonian-mark-i-perceptron-reference.jpg" alt="Smithsonian collection photograph of the Mark I Perceptron machine" />
               <span class="photo-shimmer" aria-hidden="true"></span>
-              <span class="photo-credit">NATIONAL MUSEUM OF AMERICAN HISTORY · SMITHSONIAN</span>
+              <span class="photo-caption">MARK I PERCEPTRON · 1958</span>
+              <span class="photo-credit">PHOTO: NATIONAL MUSEUM OF AMERICAN HISTORY · SMITHSONIAN</span>
             </a>
             <div class="pattern-lab" id="pattern-lab" aria-hidden="true">
               <div class="pattern-title"><span class="eyebrow">PATTERNS</span><b>One simple boundary</b></div>
@@ -155,7 +156,7 @@
             </div>
             <div class="c2-example-note" id="c2-example-note">TOY CLASSIFIER · EXAMPLE VALUES, NOT A MEASURED MODEL</div>
             <div class="c2-pixels" id="c2-pixels" aria-label="A three by three image patch"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-            <svg class="c2-next-network" id="c2-next-network" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"><g><path d="M1050 508 C1170 450 1265 430 1395 430M1050 540 C1180 540 1260 540 1395 540M1050 572 C1170 628 1265 650 1395 650M1420 430 C1520 460 1590 505 1695 540M1420 540H1695M1420 650 C1520 620 1590 575 1695 540"/></g><g class="c2-next-nodes"><circle cx="1400" cy="430" r="31"/><circle cx="1400" cy="540" r="31"/><circle cx="1400" cy="650" r="31"/><circle cx="1700" cy="540" r="36"/></g></svg>
+            <svg class="c2-next-network" id="c2-next-network" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true"><g><path d="M1050 508 C1170 450 1265 430 1395 430"/><path d="M1050 540 C1180 540 1260 540 1395 540"/><path d="M1050 572 C1170 628 1265 650 1395 650"/><path d="M1420 430 C1520 460 1590 505 1695 540"/><path d="M1420 540H1695"/><path d="M1420 650 C1520 620 1590 575 1695 540"/></g><g class="c2-next-nodes"><circle cx="1400" cy="430" r="31"/><circle cx="1400" cy="540" r="31"/><circle cx="1400" cy="650" r="31"/><circle cx="1700" cy="540" r="36"/></g><g class="c3-signal-pulses"><circle id="c3-flow-a" r="11"/><circle id="c3-flow-b" r="11"/></g></svg>
           </section>
 
           <section class="chapter3-stage" id="chapter3-stage" aria-hidden="true">
@@ -200,6 +201,69 @@
             <div class="c3-training-ready" id="c3-training-ready"><span>ADJUSTABLE WEIGHTS</span><div class="c3-ready-dial"><i></i></div><div class="c3-ready-dial"><i></i></div><div class="c3-ready-dial"><i></i></div><b id="c3-training-label">STILL NEED TRAINING</b></div>
           </section>
 
+          <section class="chapter4-stage" id="chapter4-stage" aria-hidden="true">
+            <div class="c4-dataset" id="c4-dataset">
+              <div class="c4-panel-title"><span class="eyebrow">PEOPLE PREPARE EXAMPLES</span><b>LABELLED TRAINING SET</b></div>
+              <div class="c4-example-row" id="c4-sample-light"><i class="c4-swatch c4-swatch-light"></i><span><small>INPUT</small><b>PALE GREY</b></span><strong>LIGHT</strong></div>
+              <div class="c4-example-row" id="c4-sample-dark"><i class="c4-swatch c4-swatch-dark"></i><span><small>INPUT</small><b>DARK BLUE</b></span><strong>DARK</strong></div>
+              <div class="c4-dataset-foot"><i></i><i></i><i></i><i></i><span>MORE EXAMPLES</span></div>
+            </div>
+            <div class="c4-rule-note" id="c4-rule-note"><span>SHARED LABEL RULE</span><b>People agree what counts as light or dark.</b><small>The network is shown examples and answers; it does not know the rule in advance.</small></div>
+            <div class="c4-active-ring" id="c4-active-ring"><span>ONE EXAMPLE ENTERS THE NETWORK</span></div>
+
+            <svg class="c4-target-wire" id="c4-target-wire" viewBox="0 0 1920 1080" preserveAspectRatio="none" aria-hidden="true">
+              <path id="c4-target-path" d="M1590 150 C1610 330 1610 550 1584 736"/><circle id="c4-target-dot" r="12"/>
+            </svg>
+            <div class="c4-target-card" id="c4-target-card"><span>SUPPLIED ANSWER</span><b id="c4-target-text">LIGHT</b><small>Separate from the input</small></div>
+
+            <div class="c4-prediction-card" id="c4-prediction-card">
+              <span class="c4-card-kicker">NETWORK PREDICTION</span><b id="c4-prediction-state">FIRST GUESS</b>
+              <div class="c4-prob-row"><span>LIGHT</span><i><em id="c4-light-fill"></em></i><strong id="c4-light-value">20%</strong></div>
+              <div class="c4-prob-row"><span>DARK</span><i><em id="c4-dark-fill"></em></i><strong id="c4-dark-value">80%</strong></div>
+            </div>
+            <div class="c4-loss-card" id="c4-loss-card">
+              <span class="c4-card-kicker">COMPARE THIS PREDICTION WITH THE LABEL</span><b>TASK LOSS</b>
+              <div class="c4-loss-track"><i id="c4-loss-fill"></i></div><strong id="c4-loss-level">HIGH · THIS EXAMPLE</strong>
+            </div>
+            <div class="c4-not-iq" id="c4-not-iq"><b>NOT AN IQ SCORE</b><span>Only the mismatch for this task.</span></div>
+            <div class="c4-supervised-note" id="c4-supervised-note"><span>SUPERVISED TRAINING</span><b>A supplied answer guides the update.</b></div>
+
+            <div class="c4-quality-note" id="c4-quality-note">
+              <span class="c4-card-kicker">THE EXAMPLES SHAPE THE RULE</span>
+              <div class="c4-quality-rows"><div class="c4-quality-row"><i></i><b>PALE GREY</b><span>→ LIGHT</span></div><div class="c4-quality-row"><i></i><b>PALE GREY</b><span>→ DARK</span></div></div>
+              <strong id="c4-quality-state">MISSING EXAMPLES LEAVE GAPS</strong>
+            </div>
+
+            <div class="c4-backprop-label" id="c4-backprop-label"><span id="c4-backprop-word">WHICH WEIGHTS MATTERED?</span><b id="c4-backprop-copy">Which small change might lower the error?</b></div>
+            <div class="c4-gradient-card" id="c4-gradient-card"><span>GRADIENTS</span><b>Which small change could lower the loss?</b><div class="c4-gradient-arrows"><i>↓</i><i>↑</i><i>↓</i></div></div>
+            <div class="c4-chain-note" id="c4-chain-note"><span>CHAIN RULE</span><b>Trace how earlier weights affect the final result.</b></div>
+
+            <div class="c4-update-card" id="c4-update-card"><span>OPTIMIZER · SMALL PARAMETER UPDATE</span><div><b>LIGHT</b><strong>20% <i>→</i> 31%</strong></div><small>Same input · same network · slightly lower loss</small><div class="c4-mini-update-meter"><span>LOSS</span><i><em id="c4-update-loss-fill"></em></i><b>LOWER</b></div></div>
+            <div class="c4-loop-card" id="c4-loop-card">
+              <span>THE TRAINING LOOP · <b id="c4-loop-count">1 EXAMPLE</b></span>
+              <div class="c4-loop-steps"><b id="c4-step-predict">PREDICT</b><b id="c4-step-compare">COMPARE</b><b id="c4-step-update">UPDATE</b></div>
+            </div>
+            <div class="c4-batch-stack" id="c4-batch-stack"><i></i><i></i><i></i><i></i><span>EXAMPLES · OFTEN IN BATCHES</span></div>
+            <div class="c4-practice-check" id="c4-practice-check">
+              <div><span>PRACTICE SET</span><b>Used to adjust weights</b><i class="c4-training-cards"><em></em><em></em><em></em></i></div>
+              <div class="c4-check-divider"><span>NOT USED TO UPDATE</span><i></i></div>
+              <div class="c4-heldout"><span>HELD-OUT CHECK</span><b>New examples test whether the pattern carries over.</b><i class="c4-check-track"><em id="c4-heldout-dot"></em></i></div>
+            </div>
+            <div class="c4-generalization-note" id="c4-generalization-note">A separate check can reveal memorization risk — it cannot guarantee perfect performance.</div>
+
+            <div class="c4-task-targets" id="c4-task-targets">
+              <span class="c4-card-kicker">THE TASK DEFINES THE TARGET</span>
+              <div class="c4-target-types"><div><small>CLASS</small><b>LIGHT / DARK</b></div><div><small>NUMBER</small><b>0.72</b></div><div><small>WORD SEQUENCE</small><b>… next words</b></div></div>
+            </div>
+            <div class="c4-text-target" id="c4-text-target">
+              <span class="c4-card-kicker">THE TEXT CAN PROVIDE ITS OWN TARGET</span>
+              <div class="c4-sentence"><span>The sky looked</span><b class="c4-blank">_____</b></div>
+              <svg class="c4-word-wire" id="c4-next-word-wire" viewBox="0 0 300 100" aria-hidden="true"><path d="M258 8 C210 24 122 65 75 94"/><circle id="c4-word-dot" r="8" cx="258" cy="8"/></svg>
+              <div class="c4-next-word" id="c4-next-word"><span>NEXT WORD · TARGET</span><b>blue</b></div>
+              <strong class="c4-no-written-label" id="c4-no-written-label">No separate human-written answer for every sentence.</strong>
+            </div>
+          </section>
+
           <div class="beat-indicator" id="beat-indicator" aria-hidden="true"><i></i><span></span></div>
         </div>
 
@@ -220,7 +284,7 @@
           <button type="button" class="active" data-chapter="0" aria-current="true">01 · Core idea</button>
           <button type="button" data-chapter="1">02 · One neuron</button>
           <button type="button" data-chapter="2">03 · Layers</button>
-          <button type="button" disabled aria-disabled="true">04 · Training</button>
+          <button type="button" data-chapter="3">04 · Training</button>
           <button type="button" disabled aria-disabled="true">05 · Evolution</button>
         </nav>
       </section>

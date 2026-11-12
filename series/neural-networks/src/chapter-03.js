@@ -60,6 +60,17 @@ export function updateChapterThree(t){
   });
   [...document.querySelectorAll('#c3-extra-links path')].forEach((path,i)=>{path.style.strokeDashoffset=String(-t*32-i*15);});
   [...document.querySelectorAll('#c2-next-network path')].forEach((path,i)=>{path.style.strokeDashoffset=String(-t*29-i*13);});
+  // A pair of particles makes the handoff between layer stages visible, not just implied by dashed lines.
+  const flowPaths=[...document.querySelectorAll('#c2-next-network g:first-child path')];
+  const flowWindow=phase(t,32.45,61.25,.35,.65);
+  [['c3-flow-a',0,0],['c3-flow-b',3,.72]].forEach(([id,pathIndex,delay])=>{
+    const dot=document.getElementById(id),path=flowPaths[pathIndex];
+    if(!dot||!path||!flowWindow){if(dot)dot.style.opacity='0';return;}
+    const u=((((t-32.45-delay)*.62)%1)+1)%1;
+    const point=path.getPointAtLength(path.getTotalLength()*u);
+    dot.setAttribute('cx',point.x.toFixed(2));dot.setAttribute('cy',point.y.toFixed(2));
+    dot.style.opacity=String(flowWindow);
+  });
 
   // One illustrative output follows the same small network from stripes to a plain patch.
   const stripeOut=phase(t,67.0,72.8,.3,.45);

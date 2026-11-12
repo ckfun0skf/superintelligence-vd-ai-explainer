@@ -47,11 +47,11 @@ visual_beats:
   - cue: "In 1943, McCulloch and Pitts"
     start: 34.99
     end: 40.63
-    visual: "Large 1943 date and names beside an abstract, non-fabricated paper outline; no fake paper scan or fake title."
+    visual: "Large 1943 date and names beside a modern schematic on a softly flexing parchment-texture overlay. Explicitly present it as a modern diagram, not an archival paper or reproduced manuscript."
   - cue: "In 1958, Rosenblatt ... perceptron ... separate patterns"
     start: 40.63
     end: 48.55
-    visual: "Smithsonian Mark I Perceptron photo inset with visible credit; transform a physical panel cue into a simple classification boundary separating two point patterns."
+    visual: "Smithsonian Mark I Perceptron photo enters on a gently bending paper-like overlay with legible National Museum of American History, Smithsonian Institution credit; transform a panel cue into a simple classification boundary separating two point patterns."
   - cue: "Not tiny copies of a brain"
     start: 48.55
     end: 51.94
@@ -76,6 +76,8 @@ qa:
   deterministic_seek: pass
   audio_clock_play_pause: pass
   fullscreen_16_9_and_auto_hide: pass
+  historical_paper_overlays: pass_sampled_entry_and_settle_cues
+  visible_text_bounds_and_overflow_scan: pass_sampled_cues
   mobile_fullscreen: pending
   narration_sync: chapter_cues_verified_against_audio; fine_grained_sentence_review_pending
   reviewed_for_chapter_02_handoff: pass
