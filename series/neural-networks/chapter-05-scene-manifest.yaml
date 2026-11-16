@@ -1,0 +1,96 @@
+episode: 02
+chapter: 05
+name: "自然選擇與 Snake 神經演化"
+status: chapter_05_public_preview_review
+language: en-US
+video:
+  design_frame: 1920x1080
+  aspect_ratio: "16:9"
+  frame_rate: 24
+  preview_route: /series/neural-networks/
+  clock: active_chapter_audio.currentTime
+  export_api: window.renderFrame(frame)
+  preview_audio: public/series/neural-networks/audio/chapter-05.mp3
+  source_audio: audio/narration/part02-neural-networks-narration.wav
+  source_timing: audio/narration/part02-narration-timing.json
+  source_chapter_boundary_seconds: 673.684
+  preview_clip_seconds: 372.336
+  scene_end_seconds: 372.1
+  audio_alignment_note: "由已核准 master narration 擷取；MP3 可完整解碼。cue 時間為預覽 clip 的 local seconds。"
+visual_beats:
+  - cue: "監督式學習已示範輸入、答案、誤差與梯度；有些任務難以逐步標註正確動作"
+    local_start: 0.0
+    local_end: 18.5
+    visual: "接續上一章的網絡物件；將有標準答案的示例與只可評分的結果並列，再以簡潔好/壞分數卡引出候選群體。"
+  - cue: "多個 candidate networks 進行任務並按表現評分"
+    local_start: 17.5
+    local_end: 48.5
+    visual: "顯示六個可辨識的小型網絡與 Snake 棋盤、fitness 分數條；分數只代表本任務表現，不等於一般智能。"
+  - cue: "生物演化作為 selection 與 mutation 的類比；先看個體差異和胡椒蛾"
+    local_start: 65.8
+    local_end: 137.1
+    visual: "候選網絡群粒子化轉場成胡椒蛾族群；由淺色、長地衣樹皮開始，以鳥類、蛾色差異和族群比例條展示自然選擇。煤煙令樹皮變暗時，暗色型的相對比例逐代增加；清潔空氣後環境再變，比例改變而非個體即時變色。"
+  - cue: "自然選擇跨世代改變族群比例，而非改造單一個體；大滅絕例子和鳥類存續"
+    local_start: 133.7
+    local_end: 159.2
+    visual: "用樹林淡出、隕石和非鳥恐龍剪影展示滅絕，再以鳥形線條標明倖存的恐龍支系；此處是簡化類比，不宣稱演化必然保證最適者生存。"
+  - cue: "把自然選擇的簡化模式轉為演算法：評估候選網絡並保留表現較好的個體"
+    local_start: 155.5
+    local_end: 187.2
+    visual: "蛾群散作粒子，重組成候選神經網絡群；清楚標示演算法候選網絡不是生物個體。"
+  - cue: "Snake board state 流入一個 network；輸出直行、左轉、右轉的 action scores"
+    local_start: 186.3
+    local_end: 210.5
+    visual: "用同一條連續移動的蛇展示 food、wall、body、heading 等觀測；脈衝沿網絡由輸入行至輸出，三個動作分數隨 narration clock 改變，最高分動作由遊戲採用。"
+  - cue: "多個網絡試玩 Snake；蘋果加分、撞牆或撞身體扣分，按整局計算 fitness"
+    local_start: 205.5
+    local_end: 238.3
+    visual: "候選牌逐局更新 Snake 小棋盤與分數，失敗個體顯示 crash；避免假裝每個 board state 都有人工標記的正確動作。"
+  - cue: "選擇較高分網絡、複製參數並加入隨機變化；mutation 不知道好壞方向"
+    local_start: 230.8
+    local_end: 252.0
+    visual: "以 parent → child network 對照表示複製和權重變化；在旁白提到結構突變時才淡入新增 neuron／connection，變化以 amber 點線標示。"
+  - cue: "重複試玩、評分、選擇及 mutation；一代代表一次完整群體評估，跨棋盤可減少僥倖"
+    local_start: 252.4
+    local_end: 286.5
+    visual: "顯示 PLAY → SCORE → SELECT → MUTATE 循環和逐代增加的 generation label；補充以多棋盤評估降低單次僥倖選中的機會。"
+  - cue: "遊戲設計者選擇 fitness score；poorly chosen score 可能導致非預期取巧"
+    local_start: 286.5
+    local_end: 298.0
+    visual: "獨立主卡展示 what counts as better 是人為定義，並以警示提示 reward hacking risk。"
+  - cue: "監督式學習使用每個 input 的 target；neuroevolution 比較整個候選網絡的 task score"
+    local_start: 297.2
+    local_end: 335.0
+    visual: "兩張同尺寸卡片比較 supplied answer + gradients 與 whole-candidate score + selection/mutation；附註 neuroevolution 只是其中一類訓練法，非每個 modern network 或 LLM 的訓練方式。"
+  - cue: "從單一已定義任務轉至語言模型可回應多種請求，提出下一段問題並 like/subscribe"
+    local_start: 334.3
+    local_end: 372.1
+    visual: "同一個中心問題配合 explain/compare/write/plan 四類簡單 UI chip；再逐步顯示研究問題、下一段標籤與 CTA，避免提早展示全套文字。"
+continuity:
+  persistent_objects:
+    - "章首短暫沿用 Chapter 4 network，再由其粒子轉為 candidate network 群。"
+    - "Snake head 由 head coordinate 推算三節連續身體位置，seek 時不會出現分離的蛇頭。"
+    - "自然場景、候選牌、Snake 棋盤、脈衝位置、分數與章末卡片均依 narration clip 絕對秒數求值。"
+  deterministic_state:
+    - "場景不使用自主 CSS keyframe，也不使用 Math.random；動態 SVG/DOM 狀態由 updateChapterFive(active audio time) 直接計算。"
+    - "window.renderAt(seconds) 供重複 seek QA；window.renderFrame(frame) 保留給未來逐幀匯出。"
+  forbidden:
+    - "不可暗示突變知道哪種變化較佳；突變提供差異，fitness/selection 才篩選。"
+    - "不可暗示自然選擇會在個體一生內即時改變個體。"
+    - "不可暗示 Snake 任務成功代表一般智能，或神經演化就是 LLM 的標準訓練法。"
+    - "不可把 fitness 說成一般智力、真理或通用效能指標。"
+qa:
+  project_build: pass_latest_build
+  preview_audio_decode: pass_372_336_seconds
+  chapter_switch_and_audio_load: pass_sampled
+  audio_clock_seek: pass_sampled_cues
+  representative_browser_frames: pass_10_cues
+  visible_text_bounds_and_overflow_scan: pending_full_scan
+  deterministic_repeat_seek: pass_identical_dom_snapshot_at_247_2s
+  desktop_fullscreen: pending
+  mobile_fullscreen: pending
+  continuous_real_time_playback: pending
+  final_mp4_render: not_started
+publication:
+  public_github_pages: updated_by_main_push
+  release_scope: "Chapter 5 only, based on public Chapter 4 HEAD; uncommitted local Chapter 1 portrait changes were excluded."

@@ -4,9 +4,9 @@ The Part 02 preview is developed chapter by chapter. The player renders a fixed 
 
 ## Project status
 
-Chapters 1–4 are implemented and available on the preview page. Chapter 4 reuses the exact RGB pixel patch, neuron, network paths, and adjustable weights from Chapter 3 to explain labelled examples, prediction versus supplied answer, task loss, backpropagation, gradients, small optimizer updates, repeated training, held-out checks, and task-specific targets. Chapter 5 is not implemented yet. Background music has not been produced, and final MP4 rendering remains on hold until the user finishes page QA.
+Chapters 1–5 are implemented and available on the preview page. Chapter 4 reuses the exact RGB pixel patch, neuron, network paths, and adjustable weights from Chapter 3 to explain labelled examples, prediction versus supplied answer, task loss, backpropagation, gradients, small optimizer updates, repeated training, held-out checks, and task-specific targets. Chapter 5 covers natural selection, a Snake-game example, fitness scoring, selection, mutation, and neuroevolution. Background music has not been produced, and final MP4 rendering remains on hold until the user finishes page QA.
 
-Run `npm run dev -- --host 0.0.0.0` from the repository root to preview locally. `npm run build` builds both Part 01 and Part 02. The chapter rail currently supports Chapters 1–4; Chapter 5 remains a placeholder until its scene and audio are ready.
+Run `npm run dev -- --host 0.0.0.0` from the repository root to preview locally. `npm run build` builds both Part 01 and Part 02. The chapter rail supports all five chapters.
 
 ## Current visual QA updates
 
@@ -31,3 +31,10 @@ The 2:21 layers scene continues the exact Chapter 2 3×3 pixel patch, neuron, an
 ## Chapter 4 QA status
 
 The 4:59 training scene preserves the Chapter 3 network and RGB patch. Sampled browser frames reviewed labelled examples, initial weights and forward input, the 20%/80% first guess versus separate LIGHT target, task loss, backward amber signal flow, gradients, the 20%→31% illustrative small update, the training loop/batches, held-out check, and class/number/word-sequence targets. Audio decode and production build pass. The preview remains in iterative review; full cue-by-cue overflow scan, desktop/mobile fullscreen and MP4 export remain pending. See `chapter-04-scene-manifest.yaml`.
+
+
+## Chapter 5 QA status
+
+第五章已加入公開預覽，含胡椒蛾與環境改變、滅絕類比、Snake 棋盤到 action scores、fitness、selection、mutation、generation loop，並比較 neuroevolution 與監督式訓練。使用 narration audio clock；代表性 cue 與重複 seek 已抽查。完整連續播放、溢位掃描、手機全螢幕及 MP4 輸出仍待檢查。音軌使用 root public 路徑並已在瀏覽器確認可載入。
+
+See `chapter-05-scene-manifest.yaml` for cue timings and QA notes.
