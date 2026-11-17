@@ -11,7 +11,21 @@ Animated, narration-synchronized explainer in five chapters (~17.5 min):
 | 5 | Evolution, mutation and selection (neuroevolution + Snake) | 6:12 |
 
 Run `npm run dev` from the repository root and open `/series/neural-networks/`.
-Chapters play back-to-back; the rail jumps between them.
+The player plays the whole film from one soundtrack (`audio/full-film.mp3`); the chapter
+buttons seek to each chapter's start time.
+
+## Download MP4 (in the page)
+
+The **Download MP4** button renders the film frame by frame (Three.js background +
+SVG stage), encodes H.264 with WebCodecs, mixes in the narration (AAC, or Opus where
+AAC is unavailable) and saves an MP4. Desktop Chrome/Edge stream the file straight to
+disk; other browsers build it in memory. Needs a WebCodecs browser (recent Chrome/Edge,
+incl. Android). Rendering speed is roughly 2–3× real time in headless Chromium, i.e. ~40 min
+for the full film at 1080p; 720p is faster. `?exportSeconds=N` exports only the first N
+seconds (QA).
+
+The soundtrack and chapter offsets (`src/film-timing.js`) are built by
+`python3 scripts/build-neural-networks-film-audio.py` (run after re-aligning).
 
 ## How the animation is built
 
@@ -39,9 +53,9 @@ Sentence-by-sentence visual mapping: [`storyboard.md`](./storyboard.md).
 
 ## QA / export hooks
 
-- `window.renderAt(seconds, chapterIndex)` — render any moment (0-based chapter).
-- `window.renderFrame(frame, chapterIndex)` — same, at 24 fps frame numbers.
-- `window.chapterDurations` — per-chapter durations (last word + 1.2 s hold).
+- `window.renderAt(seconds)` — render a film time; `renderAt(seconds, chapterIndex)` is chapter-local.
+- `window.renderFrame(frame)` — film frame at 24 fps.
+- `window.filmDuration`, `window.chapterDurations`.
 
 Review captions (with the current word highlighted) sit below the film frame, not in it.
 
