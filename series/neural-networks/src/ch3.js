@@ -121,6 +121,23 @@ export function createChapter3(root, cue) {
     const tx = txt(gg, 0, 2, s, { size: 26, weight: 700, fill: C.cyan });
     return { g: gg, tx };
   });
+  // what a real unit "responds to": a messy mix across several patterns
+  const PAT = [[0, 1, 0, 0, 1, 0, 0, 1, 0], [1, 0, 0, 0, 1, 0, 0, 0, 1], [0, 0, 0, 0, 1, 0, 0, 0, 0], [1, 1, 1, 0, 0, 0, 0, 0, 0]];
+  const profiles = [0, 1, 2].map(u => {
+    const gg = g(root);
+    rect(gg, -10, -46, 300, 92, { r: 14, fill: '#0e1b27', stroke: '#2e4a60', sw: 2 });
+    const bars = PAT.map((pt, k) => {
+      const cx = 30 + k * 68;
+      pt.forEach((on, q) => rect(gg, cx - 21 + (q % 3) * 14, -40 + Math.floor(q / 3) * 14, 13, 13, { r: 2, fill: on ? '#e5e7eb' : '#334155', stroke: 'none' }));
+      const bar = rect(gg, cx - 21, 8, 0, 12, { r: 4, fill: C.amber, stroke: 'none' });
+      return { bar, v: 0.15 + hash(u * 7 + k * 3 + 1) * 0.85 };
+    });
+    return { g: gg, bars };
+  });
+  const bigNet = g(root);
+  for (let c = 0; c < 9; c++) for (let r = 0; r < 14; r++) el('circle', { cx: 120 + c * 210 + (r % 2) * 40, cy: 120 + r * 62, r: 9, fill: 'none', stroke: C.teal, 'stroke-width': 2, opacity: 0.35 }, bigNet);
+  root.insertBefore(bigNet, root.firstChild);
+  const bigTx = txt(root, 960, 1010, 'real networks: thousands to billions of units — roles are mixed and overlapping', { size: 30, weight: 700, fill: C.dim });
   const ourLabels = txt(root, 1240, 960, 'labels we added to explain the demo', { size: 32, weight: 700, fill: C.cyan });
 
   // ---------- activation: linear stacking vs bending ----------
@@ -163,6 +180,7 @@ export function createChapter3(root, cue) {
   const endTitle = txt(endG, 960, 120, '', { size: 46, weight: 800 });
   const extraCols = [900, 1500].map(x => [380, 540, 700].map(y => { const n = neuron(endG, 48, { symbol: 'Σ' }); set(n.label, { 'font-size': 34 }); move(n.g, x, y); return n; }));
   const reprPatches = [0, 1, 2, 3].map(i => { const gg = g(endG); for (let k = 0; k < 9; k++) rect(gg, (k % 3) * 34 - 51, Math.floor(k / 3) * 34 - 51, 30, 30, { r: 4, fill: C.teal, stroke: 'none' }); return gg; });
+  const guessTx = txt(root, 1790, 620, 'just guessing', { size: 28, weight: 800, fill: C.red });
   const needTrain = g(root);
   rect(needTrain, -330, -50, 660, 100, { r: 50, fill: '#2a210b', stroke: C.amber, sw: 4 });
   txt(needTrain, 0, 4, 'still need to be trained', { size: 44, weight: 800, fill: C.amber });
@@ -245,7 +263,7 @@ export function createChapter3(root, cue) {
     }));
     unitDials.forEach((ds, i) => ds.forEach((d, k) => { show(d.g, netVis * vis(t, T.diff, T.coll + 0.4)); d.setValue(hash(i * 3 + k) * 4 - 2, -2, 2); }));
     // pulses: forward flow
-    const flowOn = Math.max(vis(t, T.coll, T.hidden, 0.3, 0.3), vis(t, T.toy + 1, T.labels, 0.3, 0.3));
+    const flowOn = Math.max(vis(t, T.coll, T.hidden, 0.3, 0.3), vis(t, T.toy + 1, T.labels, 0.3, 0.3), vis(t, T.wayTo, T.more, 0.3, 0.3));
     links.forEach((l, i) => {
       const startL = l.li === 0 ? 0 : 0.5;
       const cyc = ((t * 0.8) + startL) % 1;
@@ -277,11 +295,23 @@ export function createChapter3(root, cue) {
       const u = units[1][i];
       move(j.g, u.x + 190, u.y - 0, 1);
       const on = vis(t, T.arrangements + i * 0.3, T.piece, 0.4, 0.5);
-      show(j.g, on);
-      set(j.tx, { text: t > T.jobTitles ? '?' : ['dark column?', 'light column?', 'contrast?'][i] });
+      // at "Real networks…" the neat labels peel off and fall away
+      const peel = p(t, T.real + 0.2 + i * 0.25, 1.1, x => x * x);
+      move(j.g, u.x + 190 + peel * 40, u.y + peel * 420, 1, peel * (i % 2 ? 35 : -30));
+      show(j.g, on * (1 - peel));
+      set(j.tx, { text: ['dark column?', 'light column?', 'contrast?'][i] });
+      const pr = profiles[i];
+      move(pr.g, u.x + 90, u.y, 1);
+      const prOn = vis(t, T.jobTitles - 0.4 + i * 0.2, T.piece + 0.2, 0.4, 0.4);
+      show(pr.g, prOn);
+      pr.bars.forEach((b2, k) => set(b2.bar, { width: 42 * b2.v * p(t, T.jobTitles - 0.2 + i * 0.2 + k * 0.1, 0.5) }));
     });
-    show(ourLabels, vis(t, T.labels, T.piece));
-    set(ourLabels, { text: t < T.real ? 'labels WE added to explain the demo' : 'real units: no guaranteed job titles' });
+    const hideOut = vis(t, T.jobTitles - 0.4, T.piece + 0.2, 0.4, 0.4);
+    if (hideOut > 0) { show(units[2][0].n.g, showLayer(2) * (1 - hideOut)); show(units[2][0].val, 0); show(resG, netVis * (1 - hideOut)); }
+    show(ourLabels, vis(t, T.labels, T.real + 0.4));
+    show(bigNet, 0.8 * vis(t, T.real + 0.3, T.piece + 0.2, 0.8, 0.5));
+    show(bigTx, vis(t, T.jobTitles - 0.4, T.piece + 0.2, 0.5, 0.4));
+    
 
     // ----- activation function: why bending matters -----
     const actOn = vis(t, T.ifEvery - 0.3, T.visually - 0.2, 0.6, 0.6);
@@ -350,8 +380,12 @@ export function createChapter3(root, cue) {
       const sh = p(t, T.more, 0.8);
       units.forEach((col, li) => col.forEach(u => { const nx = [860, 1240, 1600][li]; move(u.n.g, lerp(nx, [600, 1200, 1800][li], sh), u.y); }));
       set(linkG, { opacity: 1 - sh });
-      show(resG, 0);
-    } else { units.forEach((col, li) => col.forEach(u => move(u.n.g, u.x, u.y))); set(linkG, { opacity: netVis }); }
+      // untrained: more units do not mean a better answer — the output just guesses
+      const guessOn = vis(t, T.notSmarter + 0.4, T.more, 0.3, 0.4);
+      move(resG, 1790, 540); show(resG, guessOn);
+      set(resTx, { text: Math.floor(t * 2.5) % 2 ? 'STRIPE?' : 'PLAIN?' });
+      show(guessTx, guessOn);
+    } else { units.forEach((col, li) => col.forEach(u => move(u.n.g, u.x, u.y))); set(linkG, { opacity: netVis }); show(guessTx, 0); }
     show(needTrain, p(t, T.still - 0.2, 0.5, easeBack));
     show(endTitle, eOn * (1 - p(t, T.still - 0.3, 0.3)));
     endLinks.forEach(l => set(l, { opacity: 0.35 * p(t, T.more + 0.8, 0.8) }));

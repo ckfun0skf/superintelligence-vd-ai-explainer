@@ -55,10 +55,13 @@ export function createChapter2(root, cue) {
   rect(scr, -90, 135, 180, 14, { r: 7, fill: '#2a3e4f', stroke: 'none' });
   const sw = rect(scr, -95, -85, 190, 150, { r: 10, fill: grey(0.8), stroke: '#ffffff40', sw: 3 });
   const scrLabel = txt(scr, 0, 200, 'one grey swatch', { size: 30, weight: 600, fill: C.dim });
+  // zoomed-in view of the swatch: every pixel is made of red, green and blue light
+  const triad = g(scr);
+  const triadR = [C.R, C.G, C.B].map((c, i) => rect(triad, -95 + i * 64, -85, 60, 150, { r: 8, fill: c, stroke: 'none', attrs: { opacity: 0.85 } }));
+  const beams = [C.R, C.G, C.B].map(c => el('circle', { r: 16, fill: c, filter: 'url(#glow)' }, root));
 
   // light/dark question
   const task = g(root);
-  const qTx = txt(task, 960, 120, 'Light or dark?', { size: 64, weight: 800 });
   const binL = g(task), binD = g(task);
   [[binL, 'LIGHT', grey(0.9), '#111'], [binD, 'DARK', '#1b2026', C.ink]].forEach(([b, s, f, tc]) => {
     rect(b, -120, -46, 240, 92, { r: 46, fill: f, stroke: '#ffffff30', sw: 3 });
@@ -136,11 +139,12 @@ export function createChapter2(root, cue) {
   }
   const leanUp = txt(meter, MX + 110, M0 - 2.6 * MU, '↑ leans LIGHT', { size: 28, weight: 700, fill: C.light, anchor: 'start' });
   const leanDn = txt(meter, MX + 110, M0 + 1.4 * MU, '↓ leans DARK', { size: 28, weight: 700, fill: C.dim, anchor: 'start' });
+  const biasMove = txt(meter, MX - 70, M0 + 2.75 * MU, 'bias moves the whole stack ↕', { size: 28, weight: 800, fill: C.violet, anchor: 'start' });
   const segs = chan.map(([, col]) => rect(meter, MX - 40, M0, 80, 0, { r: 6, fill: col, stroke: '#0008', sw: 2 }));
   const biasSeg = rect(meter, MX - 40, M0, 80, 0, { r: 6, fill: C.violet, stroke: C.violet, sw: 2, attrs: { opacity: 0.55 } });
   const tip = g(meter);
   el('line', { x1: MX - 80, y1: 0, x2: MX + 90, y2: 0, stroke: C.ink, 'stroke-width': 4, 'stroke-dasharray': '10 8' }, tip);
-  txt(tip, MX + 100, 0, 'tipping point', { size: 26, weight: 700, fill: C.ink, anchor: 'start' });
+  txt(tip, MX + 100, 0, 'tipping point (0)', { size: 26, weight: 700, fill: C.ink, anchor: 'start' });
   const scoreChip = g(world);
   rect(scoreChip, -90, -40, 180, 80, { r: 18, fill: '#0c2a26', stroke: C.teal, sw: 4 });
   const scoreTx = txt(scoreChip, 0, 3, '2.4', { size: 42, weight: 800, fill: C.teal, mono: true });
@@ -191,7 +195,7 @@ export function createChapter2(root, cue) {
   const recap = g(world);
   const recapDefs = [
     ['three values', BX + 150, 230, C.cyan], ['weights: how much each counts', DX + 40, 150, C.amber],
-    ['bias: shifts the tipping point', NX, 1010, C.violet], ['activation: squeezes to 0–1', (CX0 + CX1) / 2, CY0 - 150, C.teal],
+    ['bias: shifts the whole score', NX, 1010, C.violet], ['activation: squeezes to 0–1', (CX0 + CX1) / 2, CY0 - 150, C.teal],
   ].map(([s, x, y, f]) => txt(recap, x, y, s, { size: 40, weight: 800, fill: f }));
 
   // ---------- one pixel vs image; several neurons ----------
@@ -241,7 +245,20 @@ export function createChapter2(root, cue) {
     const zk = p(t, T.z2, 1.2);
     const inV = lerp(0.8, 0.2, zk);
     // screen + swatch
-    move(scr, 230, 540, 1);
+    const big = 1 - p(t, T.three + 0.6, 1.2);
+    const scX = lerp(230, 960, big), scY = lerp(540, 560, big), scS = lerp(1, 2.3, big);
+    move(scr, scX, scY, scS);
+    const triOn = vis(t, T.three + 0.2, T.range + 0.5, 0.6, 0.6);
+    show(triad, triOn);
+    triadR.forEach((r, i) => set(r, { opacity: 0.85 * (0.6 + 0.4 * Math.sin(t * 3 + i)) }));
+    beams.forEach((bm, i) => {
+      const t0 = [T.red, T.green, T.blue][i];
+      const k = p(t, t0, 0.9, easeOut);
+      const sx = scX + (-63 + i * 64) * scS, sy = scY - 10 * scS;
+      // world→screen for the bar position at camera 1 (world == screen before the first pan)
+      set(bm, { cx: lerp(sx, BX + 10, k), cy: lerp(sy, rows[i], k) });
+      show(bm, k > 0 && k < 1 ? 1 : 0);
+    });
     show(scr, p(t, T.swatch - 0.2, 0.6));
     set(sw, { fill: grey(lerp(0.8, 0.2, dk)) });
     set(scrLabel, { text: dk > 0.5 ? 'dark grey' : t > T.use ? 'light grey' : 'one grey swatch' });
@@ -249,8 +266,8 @@ export function createChapter2(root, cue) {
     // task question
     const taskVis = vis(t, T.task, T.three + 0.2);
     show(task, taskVis);
-    move(binL, 760, 230, p(t, T.light, 0.4, easeBack)); show(binL, p(t, T.light, 0.3));
-    move(binD, 1160, 230, p(t, T.dark, 0.4, easeBack)); show(binD, p(t, T.dark, 0.3));
+    move(binL, 760, 170, p(t, T.light, 0.4, easeBack)); show(binL, p(t, T.light, 0.3));
+    move(binD, 1160, 170, p(t, T.dark, 0.4, easeBack)); show(binD, p(t, T.dark, 0.3));
 
     // bars
     const chanT = [T.red, T.green, T.blue];
@@ -275,7 +292,7 @@ export function createChapter2(root, cue) {
     // neuron enters
     const nIn = p(t, 0.8, 1.2);
     move(nGroup, lerp(960, NX, nIn), NY);
-    show(nGroup, lerp(0.35, 1, p(t, T.enter, 0.8)) * (t < 1 ? 1 : 1) + (t < 1.2 ? 0.65 * (1 - p(t, 0.6, 0.6)) : 0));
+    show(nGroup, t < T.three ? 1 - p(t, 0.4, 0.8) : p(t, T.enter - 0.8, 0.8));
     set(N.core, { opacity: 0.1 + 0.25 * vis(t, T.add, T.minus + 2) });
     show(sigma, p(t, T.calc, 0.5));
     show(thought, vis(t, T.notThink, T.calc + 0.6));
@@ -289,7 +306,8 @@ export function createChapter2(root, cue) {
     });
     // the three values travel in
     travel.forEach((tr, i) => {
-      const k = pl(t, T.enter + 0.2 + i * 0.25, 1.5);
+      let k = pl(t, T.enter + 0.2 + i * 0.25, 1.5);
+      if (t > T.so) k = pl(t, T.so + 0.5 + i * 0.15, 1.3);
       const pt = pointOn(wires[i], k);
       move(tr, pt.x, pt.y);
       show(tr, k > 0 && k < 1 ? 1 : 0);
@@ -307,6 +325,8 @@ export function createChapter2(root, cue) {
       let w = preW[i];
       if (t > T.setOne && t < T.toOne + 0.6) { const k = p(t, T.toOne - 0.2, 0.8); w = lerp(i === 0 ? demoW : preW[i], 1, k); }
       if (t >= T.toOne + 0.6) w = 1;
+      const wig = Math.sin(Math.PI * pl(t, T.scales, 1.3));
+      if (wig > 0) w = 1 + wig * [0.7, -0.6, 0.5][i];
       d.d.setValue(w, 0, 2);
       set(d.wt, { text: `×${w.toFixed(1)}` });
       set(wires[i], { 'stroke-width': 3 + 6 * w });
@@ -324,8 +344,11 @@ export function createChapter2(root, cue) {
     const segT = [T.s1, T.s2 + 0.3, T.s3 + 0.3];
     let top = 0;
     const products = [inV, inV, inV];
-    const biasOn = p(t, T.minus + 0.3, 1.2);   // stack slides down by 1.5
-    const shiftDown = 1.5 * biasOn;
+    // bias = how far the whole stack is shifted. Demo: it swings up and down, then settles at −1.5.
+    let biasV = 0;
+    if (t >= T.shift && t < T.setBias) biasV = Math.sin(pl(t, T.shift + 0.3, T.setBias - T.shift - 0.6) * Math.PI * 2) * 2.0;
+    if (t >= T.setBias) biasV = -1.5 * p(t, T.m15, 0.9);
+    const shiftDown = -biasV;
     segs.forEach((s, i) => {
       const k = p(t, segT[i], 0.6, easeOut);
       const h = products[i] * k;
@@ -333,14 +356,16 @@ export function createChapter2(root, cue) {
       set(s, { y: y0 - h * MU, height: Math.max(0, h * MU) });
       top += h;
     });
-    // bias segment: shows what gets removed
-    const bk = p(t, T.m15, 0.6);
-    set(biasSeg, { y: M0 - (top - shiftDown) * MU, height: 1.5 * MU * bk * (1 - biasOn) });
-    // tipping point line: moves while "shifting the point"
-    const tipShift = t < T.shift ? 0 : t < T.setBias ? Math.sin(pl(t, T.lean - 0.5, 2.6) * Math.PI * 2) * 1.0 : t < T.minus ? 1.5 * p(t, T.m15, 0.6) : 1.5 * (1 - biasOn);
-    move(tip, 0, M0 - tipShift * MU);
+    // bias ghost: the part of the stack pushed below where it used to be (shows "2.4 − 1.5")
+    const ghostOn = Math.max(vis(t, T.minus - 0.2, T.notProb + 0.5, 0.4, 0.5), vis(t, T.offset - 0.1, T.result, 0.3, 0.3));
+    set(biasSeg, { y: M0 - top * MU, height: Math.max(0, shiftDown) * MU * ghostOn });
+    move(tip, 0, M0);
     show(tip, p(t, T.bias + 1.0, 0.5));
     show(leanUp, p(t, T.lean, 0.4)); show(leanDn, p(t, T.lean, 0.4));
+    const sc0 = top - shiftDown;
+    set(leanUp, { 'font-size': sc0 > 0 && t > T.lean ? 34 : 28, fill: sc0 > 0 ? C.light : C.faint });
+    set(leanDn, { 'font-size': sc0 <= 0 && t > T.lean ? 34 : 28, fill: sc0 <= 0 ? C.ink : C.faint });
+    show(biasMove, vis(t, T.shift, T.minus + 0.5));
     const score = top - shiftDown;
     move(scoreChip, MX + 210, M0 - Math.max(score, -1.5) * MU - 0, 1);
     show(scoreChip, p(t, T.gives24, 0.4) * (t > T.notProb + 0.2 ? 1 : 1));
@@ -350,7 +375,9 @@ export function createChapter2(root, cue) {
     // bias chip
     show(biasG, p(t, T.bias, 0.6));
     draw(biasWire, p(t, T.bias + 0.2, 0.6));
-    set(biasTx, { text: t > T.m15 ? 'bias −1.5' : 'bias  ?' });
+    set(biasTx, { text: t < T.shift ? 'bias  ?' : `bias ${biasV >= 0 ? '+' : '−'}${Math.abs(biasV).toFixed(1)}` });
+    const bpulse = Math.sin(Math.PI * pl(t, T.offset, 1.1));
+    move(biasChip, NX, NY + 360, 1 + 0.15 * bpulse);
     show(biasNote, vis(t, T.total - 0.4, T.shift + 1));
 
     // activation chart
@@ -385,9 +412,9 @@ export function createChapter2(root, cue) {
     // probability bar
     const pr = sig(sv);
     show(prob, p(t, T.p71 - 0.4, 0.5));
-    const lk = t < T.darkSw ? p(t, T.p71 - 0.4, 0.8) : 1;
+    const lk = t < T.darkSw ? p(t, T.p71 - 0.4, 0.8) : t > T.result - 0.1 && t < T.jobs ? p(t, T.result - 0.1, 0.9) : 1;
     set(pLight, { width: PW * pr * lk });
-    set(pDark, { x: PX0 + PW * pr, width: PW * (1 - pr) });
+    set(pDark, { x: PX0 + PW * pr * lk, width: PW * (1 - pr * lk) });
     show(pDark, t < T.darkSw ? p(t, T.p29 - 0.2, 0.5) : 1);
     show(pDtx, t < T.darkSw ? p(t, T.p29 - 0.2, 0.5) : 1);
     set(pLtx, { text: `LIGHT ${Math.round(pr * 100)}%` });

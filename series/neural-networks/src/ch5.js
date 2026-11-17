@@ -187,8 +187,30 @@ export function createChapter5(root, cue) {
     const bar = rect(gg, -80, 55, 160 * sc / 100, 14, { r: 7, fill: C.green, stroke: 'none' });
     return { g: gg, bg, sc, bar };
   });
-  const selFunnel = chip(S2, 'SELECTION: favour better scores', C.green, 560);
-  const mutChip = chip(S2, 'MUTATION: random changes', C.amber, 520);
+  // next generation: copies of the best (more copies for better scores), slightly changed
+  const parentOf = [0, 0, 0, 1, 1, 2, 2, 0];
+  const genKids = parentOf.map((pi, i) => {
+    const gg = g(S2);
+    const bg = rect(gg, -110, -90, 220, 180, { r: 20, fill: '#0f1d2a', stroke: C.amber });
+    const net = miniNet(gg, 900 + i);
+    const spark = el('circle', { cx: 20 - (i % 3) * 18, cy: -10 + (i % 2) * 22, r: 12, fill: 'none', stroke: C.amber, 'stroke-width': 4 }, gg);
+    const bar = rect(gg, -80, 55, 0, 14, { r: 7, fill: C.green, stroke: 'none' });
+    return { g: gg, bg, net, spark, bar, pi, sc: 0 };
+  });
+  const copyArrows = genKids.map(() => el('path', { d: '', fill: 'none', stroke: C.green, 'stroke-width': 3, 'stroke-dasharray': '6 8', opacity: 0.7 }, S2));
+  const genA = txt(S2, 90, 300, 'gen 1', { size: 28, weight: 800, fill: C.dim, mono: true, anchor: 'start' });
+  const genB = txt(S2, 90, 680, 'gen 2', { size: 28, weight: 800, fill: C.dim, mono: true, anchor: 'start' });
+  // the two ideas as pictures
+  const funnel = g(S2);
+  el('path', { d: 'M -170 -150 L 170 -150 L 40 30 L 40 120 L -40 120 L -40 30 Z', fill: '#0f2a1f', stroke: C.green, 'stroke-width': 5 }, funnel);
+  const fDots = Array.from({ length: 10 }, (_, i) => el('circle', { r: 13, fill: i < 3 ? C.green : '#64748b' }, funnel));
+  const selFunnel = chip(funnel, 'SELECTION: favour better scores', C.green, 560); move(selFunnel.g, 0, 210);
+  const mutG = g(S2);
+  rect(mutG, -170, -130, 340, 260, { r: 24, fill: '#0f1d2a', stroke: C.amber, sw: 4 });
+  const mNet = miniNet(mutG, 77); set(mNet, { transform: 'scale(2.6)' });
+  const mLink = el('line', { x1: 0, y1: -47, x2: 104, y2: 0, stroke: C.amber, 'stroke-width': 9, 'stroke-linecap': 'round' }, mutG);
+  const mDie = g(mutG); rect(mDie, -32, -32, 64, 64, { r: 12, fill: C.amber, stroke: 'none' }); [[-13, -13], [13, 13], [0, 0], [13, -13], [-13, 13]].forEach(([x, y]) => el('circle', { cx: x, cy: y, r: 6, fill: '#0b1520' }, mDie)); move(mDie, 150, -120);
+  const mutChip = chip(mutG, 'MUTATION: random changes', C.amber, 520); move(mutChip.g, 0, 210);
   const dna = g(S2);
   for (let i = 0; i < 14; i++) { const y = -130 + i * 20; const xo = Math.sin(i * 0.6) * 50; el('line', { x1: -xo, y1: y, x2: xo, y2: y, stroke: '#94a3b8', 'stroke-width': 4 }, dna); el('circle', { cx: -xo, cy: y, r: 7, fill: C.teal }, dna); el('circle', { cx: xo, cy: y, r: 7, fill: C.violet }, dna); }
   const bioTx = txt(S2, 960, 900, 'inspired in part by biological evolution', { size: 38, weight: 800, fill: C.violet });
@@ -269,9 +291,14 @@ export function createChapter5(root, cue) {
   const np1 = chip(noProm, 'best-suited ≠ guaranteed survival', C.amber, 620); move(np1.g, 960, 860);
   const np2 = chip(noProm, 'chance', C.violet, 220); move(np2.g, 780, 960);
   const np3 = chip(noProm, 'speed of change', C.violet, 320); move(np3.g, 1100, 960);
+  const crown = g(S4); el('path', { d: 'M -40 20 L -40 -14 L -20 4 L 0 -24 L 20 4 L 40 -14 L 40 20 Z', fill: C.amber }, crown);
+  txt(crown, 0, 52, 'well suited for 100+ million years', { size: 26, weight: 800, fill: C.amber });
+  const dieS = g(S4); rect(dieS, -36, -36, 72, 72, { r: 12, fill: C.ink, stroke: 'none' }); [[-15, -15], [15, 15], [0, 0], [15, -15], [-15, 15]].forEach(([x, y]) => el('circle', { cx: x, cy: y, r: 6, fill: '#0b1520' }, dieS));
+  const clock = g(S4); el('circle', { r: 40, fill: 'none', stroke: C.violet, 'stroke-width': 6 }, clock); const hand = el('line', { x1: 0, y1: 0, x2: 0, y2: -30, stroke: C.violet, 'stroke-width': 6, 'stroke-linecap': 'round' }, clock);
 
   // ====== S5: algorithm population ======
   const S5 = g(root);
+  const algoMoths = Array.from({ length: 10 }, (_, i) => moth(S5, 0.15 + hash(i + 3) * 0.75, 1.2));
   const algoNets = Array.from({ length: 10 }, (_, i) => { const gg = g(S5); rect(gg, -90, -80, 180, 160, { r: 18, fill: '#0f1d2a', stroke: '#2e4a60' }); miniNet(gg, i + 20); const sc = Math.round(5 + hash(i + 90) * 90); const bar = rect(gg, -70, 52, 140 * sc / 100, 12, { r: 6, fill: C.green, stroke: 'none' }); return { g: gg, sc, bar }; });
   const notOrg = g(S5); moth(notOrg, 0.5, 1.4); move(cross(notOrg, 60, 10), 0, 0);
   const notOrgTx = txt(notOrg, 0, 110, 'not living organisms', { size: 30, weight: 800, fill: C.red });
@@ -382,7 +409,20 @@ export function createChapter5(root, cue) {
     const gg = g(S11);
     rect(gg, -420, -330, 840, 660, { r: 30, fill: '#0f1d2a', stroke: c, sw: 4 });
     txt(gg, 0, -270, h, { size: 46, weight: 800, fill: c });
-    const rs = rows.map((r, k) => { const rg = g(gg); txt(rg, 0, 0, r, { size: 34, weight: 700, fill: C.ink }); move(rg, 0, -150 + k * 120); return rg; });
+    const rs = rows.map((r, k) => {
+      const rg = g(gg);
+      txt(rg, -250, 0, r, { size: 32, weight: 700, fill: C.ink, anchor: 'start' });
+      const ic = g(rg); move(ic, -320, 0);
+      if (i === 0 && k === 0) { rect(ic, -40, -22, 36, 44, { r: 6, fill: '#d4d4d4', stroke: 'none' }); rect(ic, 6, -16, 52, 32, { r: 16, fill: '#ece7dc', stroke: 'none' }); }
+      if (i === 0 && k === 1) { rect(ic, -45, -12, 100, 24, { r: 8, fill: '#132433', stroke: 'none' }); rect(ic, -45, -12, 24, 24, { r: 8, fill: '#ece7dc', stroke: 'none' }); ic.__gap = rect(ic, -21, -12, 76, 24, { r: 8, fill: C.red, stroke: 'none', attrs: { opacity: 0.6 } }); }
+      if (i === 0 && k === 2) { ic.__dial = dial(ic, 24); }
+      if (i === 1 && k === 0) { [0, 1, 2].forEach(q => { const b = board(ic, 4, 11); move(b.g, -38 + q * 38, 0); b.render(simulate(4, 70 + q, 0.6, 3)[2]); }); }
+      if (i === 1 && k === 1) { [0.3, 0.9, 0.5].forEach((v, q) => rect(ic, -45 + q * 34, 22 - 44 * v, 24, 44 * v, { r: 4, fill: C.green, stroke: 'none' })); }
+      if (i === 1 && k === 2) { ic.__die = g(ic); rect(ic.__die, -22, -22, 44, 44, { r: 8, fill: C.amber, stroke: 'none' }); [[-9, -9], [9, 9], [0, 0]].forEach(([x, y]) => el('circle', { cx: x, cy: y, r: 4, fill: '#0b1520' }, ic.__die)); }
+      rg.__ic = ic;
+      move(rg, 0, -150 + k * 120);
+      return rg;
+    });
     move(gg, 500 + i * 920, 520);
     return { g: gg, rs };
   });
@@ -398,8 +438,8 @@ export function createChapter5(root, cue) {
   const jSw = rect(journey, -90, -90, 180, 180, { r: 20, fill: '#d4d4d4', stroke: 'none' }); move(jSw, 0, 0);
   const jArrow = el('path', { d: 'M 120 0 L 520 0', stroke: C.dim, 'stroke-width': 8, fill: 'none' }, journey);
   const jBoard = board(journey, 6, 34); move(jBoard.g, 660, 0); jBoard.render(simulate(6, 9, 0.9, 10)[8]);
-  txt(journey, 0, 140, 'classify a colour', { size: 32, weight: 800, fill: C.ink });
-  txt(journey, 660, 160, 'learn a game', { size: 32, weight: 800, fill: C.ink });
+  const jL1 = txt(journey, 0, 140, 'classify a colour', { size: 32, weight: 800, fill: C.ink });
+  const jL2 = txt(journey, 660, 160, 'learn a game', { size: 32, weight: 800, fill: C.ink });
   move(journey, 630, 480);
   const chat = g(S12);
   rect(chat, -520, -330, 1040, 660, { r: 32, fill: '#0d1a26', stroke: '#2b4559', sw: 3 });
@@ -408,11 +448,36 @@ export function createChapter5(root, cue) {
   const reqs = [['Explain an idea', C.cyan], ['Compare options', C.green], ['Write a message', C.amber], ['Lay out a plan', C.violet]].map(([s, c], i) => { const ch = chip(chat, s, c, 400); move(ch.g, i % 2 ? 230 : -230, -170 + Math.floor(i / 2) * 130); return ch; });
   const llmCore = neuron(chat, 64, { symbol: '?' }); set(llmCore.label, { 'font-size': 60, fill: C.amber }); move(llmCore.g, 0, 90);
   move(chat, 960, 540);
-  const qs = ['How can one model handle so many requests?', 'What happens inside when it seems to understand, reason, plan?', 'Where are the limits?'].map((s, i) => txt(S12, 960, 300 + i * 130, s, { size: 46, weight: 800, fill: [C.ink, C.ink, C.amber][i] }));
+  // one model, many requests → what is inside? → where are the limits?
+  const orbit = g(S12);
+  const limitRing = el('circle', { cx: 0, cy: 0, r: 330, fill: 'none', stroke: C.amber, 'stroke-width': 5, 'stroke-dasharray': '18 14' }, orbit);
+  const spokes = g(orbit);
+  const reqNames = [['Explain an idea', C.cyan], ['Compare options', C.green], ['Write a message', C.amber], ['Lay out a plan', C.violet], ['Summarize', C.cyan], ['Translate', C.green], ['Answer a question', C.amber], ['Write code', C.violet], ['Plan a trip', C.cyan], ['Brainstorm', C.green]];
+  const orbitChips = reqNames.map(([s, c], i) => { const line = el('line', { x1: 0, y1: 0, x2: 0, y2: 0, stroke: c, 'stroke-width': 3, opacity: 0.6 }, spokes); const ch = chip(orbit, s, c, Math.max(220, s.length * 17 + 60)); return { ...ch, line, ang: -Math.PI / 2 + i * (Math.PI * 2 / reqNames.length), outside: i === 7 || i === 2 || i === 9 }; });
+  const core = g(orbit);
+  el('circle', { r: 150, fill: '#0c1f2a', stroke: C.teal, 'stroke-width': 6 }, core);
+  const coreHalo = el('circle', { r: 190, fill: C.teal, opacity: 0.08 }, core);
+  const inner = g(core);
+  const IN = [[-90, -60], [-90, 0], [-90, 60], [-25, -80], [-25, -27], [-25, 27], [-25, 80], [40, -55], [40, 0], [40, 55], [100, 0]];
+  const innerLinks = [];
+  [[0, 3], [0, 4], [1, 4], [1, 5], [2, 5], [2, 6], [3, 7], [4, 7], [4, 8], [5, 8], [5, 9], [6, 9], [7, 10], [8, 10], [9, 10]].forEach(([a1, b1]) => innerLinks.push(el('line', { x1: IN[a1][0], y1: IN[a1][1], x2: IN[b1][0], y2: IN[b1][1], stroke: C.teal, 'stroke-width': 2.5, opacity: 0.6 }, inner)));
+  const innerNodes = IN.map(([x, y]) => el('circle', { cx: x, cy: y, r: 11, fill: '#0c1f2a', stroke: C.teal, 'stroke-width': 3 }, inner));
+  const coreQ = txt(core, 0, 6, '?', { size: 120, weight: 800, fill: C.amber });
+  const thinkTags = [['understand?', -270, -210], ['reason?', 280, -150], ['plan?', 250, 220]].map(([s, x, y]) => { const ch = chip(orbit, s, C.violet, 240); move(ch.g, x, y); return ch; });
+  move(orbit, 960, 560);
+  const qs = ['How can one model handle so many requests?', 'What happens inside when it seems to understand, reason, plan?', 'Where are the limits?'].map((s, i) => txt(S12, 960, 135, s, { size: 44, weight: 800, fill: [C.ink, C.ink, C.amber][i] }));
   const nextG = g(S12);
-  const nx = chip(nextG, 'NEXT: inside a language model', C.teal, 640); move(nx.g, 960, 760);
-  const likeB = chip(nextG, 'Like', C.cyan, 240); move(likeB.g, 820, 900);
-  const subB = chip(nextG, 'Subscribe', C.red, 260); move(subB.g, 1110, 900);
+  const nx = chip(nextG, 'NEXT: inside a language model', C.teal, 640); move(nx.g, 960, 820);
+  const likeB = g(nextG);
+  const likeBg = rect(likeB, -130, -40, 260, 80, { r: 40, fill: '#0f2433', stroke: C.cyan, sw: 4 });
+  el('path', { d: 'M -78 14 L -78 -8 L -64 -8 L -52 -32 C -46 -36 -38 -32 -40 -24 L -44 -10 L -24 -10 C -16 -10 -12 -4 -14 2 L -20 18 C -22 22 -26 24 -30 24 L -78 24 Z', fill: C.cyan }, likeB);
+  const likeTx = txt(likeB, 30, 3, 'Like', { size: 32, weight: 800, fill: C.cyan });
+  move(likeB, 800, 950);
+  const subBg_ = g(nextG);
+  const subBg = rect(subBg_, -150, -40, 300, 80, { r: 40, fill: '#c81e1e', stroke: 'none' });
+  const subTx = txt(subBg_, 0, 3, 'SUBSCRIBE', { size: 32, weight: 800, fill: '#fff' });
+  move(subBg_, 1120, 950);
+  const tapDot = el('circle', { r: 26, fill: '#ffffff', opacity: 0 }, nextG);
 
   return function update(t) {
     // ---------- title ----------
@@ -432,7 +497,7 @@ export function createChapter5(root, cue) {
     // ---------- S1 ----------
     const s1 = vis(t, 0, T.game - 0.2, 0.01, 0.5);
     show(S1, s1);
-    recap.forEach((r, i) => show(r, p(t, [T.give, T.measure, T.grads][i] - 0.2, 0.5) * (1 - 0.6 * p(t, T.notAvail, 0.5))));
+    recap.forEach((r, i) => show(r, p(t, [T.seen + 0.3, T.measure, T.grads][i] - 0.2, 0.5) * (1 - 0.6 * p(t, T.notAvail, 0.5))));
     move(noAns, 960, 820, p(t, T.notAvail, 0.5, easeBack)); show(noAns, p(t, T.notAvail, 0.4));
     const s1b = vis(t, T.game - 0.3, T.imagine - 0.2, 0.5, 0.5);
     show(S1b, s1b);
@@ -446,21 +511,46 @@ export function createChapter5(root, cue) {
     // ---------- S2 ----------
     const s2 = vis(t, T.imagine - 0.3, T.living + 0.4, 0.5, 0.6);
     show(S2, s2);
-    const sorted = p(t, T.keeping, 1.0);
     const order = cands.map((c, i) => i).sort((x, y) => cands[y].sc - cands[x].sc);
+    const dimRows = 1 - 0.85 * p(t, T.twoIdeas - 0.2, 0.6);
+    const sorted = p(t, T.imagine + 2.2, 0.9);
     cands.forEach((c, i) => {
       const r = order.indexOf(i);
-      const gx = 300 + (i % 4) * 440, gy = 330 + Math.floor(i / 4) * 260;
-      const sx = 300 + (r % 4) * 440, sy = 330 + Math.floor(r / 4) * 260;
-      move(c.g, lerp(gx, sx, sorted), lerp(gy, sy, sorted), 1);
+      const x = lerp(250 + i * 203, 250 + r * 203, sorted);
+      move(c.g, x, 300, 0.85);
       const keep = r < 3;
-      show(c.g, p(t, T.imagine + i * 0.1, 0.4) * (1 - (keep ? 0 : 0.7 * p(t, T.keeping + 0.6, 0.6))) * (1 - p(t, T.twoIdeas - 0.2, 0.5) * 0.85));
-      set(c.bg, { stroke: keep && t > T.keeping + 0.6 ? C.green : t > T.small && r >= 3 && r < 6 ? C.amber : '#2e4a60' });
+      show(c.g, p(t, T.imagine + i * 0.1, 0.4) * (keep ? 1 : 1 - 0.65 * p(t, T.keeping + 0.4, 0.6)) * dimRows);
+      set(c.bg, { stroke: keep && t > T.keeping ? C.green : '#2e4a60', 'stroke-width': keep && t > T.keeping ? 5 : 2 });
       set(c.bar, { width: 160 * c.sc / 100 * p(t, T.imagine + 1.0, 0.8) });
     });
-    // copies of best into slots 3..5 with random changes
-    move(selFunnel.g, 960, 700); show(selFunnel.g, p(t, T.selection, 0.5) * (1 - p(t, T.inspired - 0.2, 0.5)));
-    move(mutChip.g, 960, 800); show(mutChip.g, p(t, T.mutation, 0.5) * (1 - p(t, T.inspired - 0.2, 0.5)));
+    show(genA, p(t, T.imagine, 0.4) * dimRows); show(genB, p(t, T.keeping + 0.4, 0.4) * dimRows);
+    genKids.forEach((k, i) => {
+      const par = order[k.pi];
+      const px = 250 + k.pi * 203;
+      const appear = p(t, T.keeping + 0.4 + i * 0.18, 0.6, easeOut);
+      const x = 250 + i * 203;
+      move(k.g, lerp(px, x, appear), lerp(300, 680, appear), 0.85);
+      show(k.g, appear * dimRows);
+      set(copyArrows[i], { d: `M ${px} 385 C ${px} 520 ${x} 520 ${x} 590` });
+      draw(copyArrows[i], appear); show(copyArrows[i], dimRows * (1 - p(t, T.tryAgain + 0.6, 0.5)));
+      const mut = p(t, T.small + i * 0.15, 0.4);
+      show(k.spark, mut * (0.6 + 0.4 * Math.sin(t * 8 + i)));
+      set(k.net, { transform: `rotate(${mut * Math.sin(i * 2.3) * 6})` });
+      const sc = clamp(cands[par].sc / 100 + (hash(i + 300) - 0.4) * 0.35, 0.05, 1);
+      set(k.bar, { width: 160 * sc * p(t, T.tryAgain + i * 0.1, 0.6) });
+    });
+    // the two ideas, as pictures
+    move(funnel, 600, 600); show(funnel, p(t, T.selection - 0.2, 0.5) * (1 - p(t, T.inspired - 0.2, 0.5)));
+    fDots.forEach((d, i) => {
+      const k = ((t - T.selection) * 0.6 + i / 10) % 1;
+      const pass = i < 3;
+      const y = lerp(-220, pass ? 170 : -120, k);
+      const x = pass ? lerp((i - 1) * 80, 0, clamp(k * 1.6)) : lerp((i - 6) * 40, (i - 6) * 50, k);
+      set(d, { cx: x, cy: y, opacity: pass ? 1 : 1 - k });
+    });
+    move(mutG, 1320, 600); show(mutG, p(t, T.mutation - 0.2, 0.5) * (1 - p(t, T.inspired - 0.2, 0.5)));
+    set(mLink, { opacity: 0.5 + 0.5 * Math.sin(t * 6) });
+    set(mDie, { transform: `translate(150 -120) rotate(${Math.floor(t * 5) * 41 % 360})` });
     move(dna, 960, 520, 1.6, t * 20); show(dna, vis(t, T.inspired, T.living + 0.4));
     show(bioTx, vis(t, T.bio - 0.2, T.living + 0.4));
 
@@ -533,21 +623,31 @@ export function createChapter5(root, cue) {
     show(rock, dOn * (1 - impact));
     set(flash, { opacity: 0.85 * vis(t, T.asteroid + 0.6, T.asteroid + 1.0, 0.1, 0.8) });
     const gone = p(t, T.extinction, 1.5);
-    dinos.forEach(d => { set(d.d, { opacity: dOn * (1 - gone) }); });
+    dinos.forEach(d => { set(d.d, { opacity: dOn * (1 - gone) + 0.22 * vis(t, T.noPromise - 0.2, T.algo - 0.3, 0.5, 0.4) }); });
     show(birdS, dOn * p(t, T.birds - 0.3, 0.5)); move(birdS, 1500, 560 + Math.sin(t * 3) * 10, 1.5);
     show(noProm, 1);
     show(np1.g, p(t, T.noPromise, 0.5)); show(np2.g, p(t, T.chance, 0.4)); show(np3.g, p(t, T.chance + 0.8, 0.4));
+    // the dinosaurs were well suited for a very long time — then chance struck, faster than they could adapt
+    move(crown, 820, 440); show(crown, vis(t, T.around + 0.5, T.extinction + 0.3, 0.4, 0.6) + vis(t, T.noPromise, T.algo - 0.3, 0.4, 0.4) * 0.6);
+    move(dieS, 640, 960, 1, Math.floor(t * 6) * 47 % 360); show(dieS, p(t, T.chance, 0.4));
+    move(clock, 1310, 960); set(hand, { transform: `rotate(${(t - T.chance) * 720})` }); show(clock, p(t, T.chance + 0.8, 0.4));
     set(ground, { fill: mix('#1c2b1f', '#2b2118', gone) });
 
     // ---------- S5: algorithm ----------
     const s5 = vis(t, T.algo - 0.3, T.snake - 0.2, 0.6, 0.5);
     show(S5, s5);
+    // moths turn into candidate networks: same idea, but these are programs, not organisms
+    const morph = p(t, T.keeps - 0.3, 0.9);
+    algoMoths.forEach((m, i) => {
+      move(m, 260 + (i % 5) * 230, 380 + Math.floor(i / 5) * 230, 1.2 * (1 - 0.6 * morph), morph * 90);
+      show(m, p(t, T.algo - 0.2 + i * 0.05, 0.4) * (1 - morph));
+    });
     algoNets.forEach((n, i) => {
       move(n.g, 260 + (i % 5) * 230, 380 + Math.floor(i / 5) * 230);
       show(n.g, p(t, T.keeps + i * 0.08, 0.4));
       set(n.bar, { width: 140 * n.sc / 100 * p(t, T.evaluates, 0.8) });
     });
-    move(notOrg, 960, 520); show(notOrg, vis(t, T.notRepro - 0.2, T.keeps, 0.4, 0.4));
+    move(notOrg, 960, 860); show(notOrg, vis(t, T.notRepro - 0.2, T.keeps, 0.4, 0.4));
     show(nextGenArrow, p(t, T.nextGen - 0.3, 0.5)); show(nextGenTx, p(t, T.nextGen - 0.3, 0.5));
     draw(nextGenArrow, p(t, T.nextGen - 0.3, 0.6));
     nextGenNets.forEach((n, i) => show(n, p(t, T.nextGen + i * 0.2, 0.4)));
@@ -630,7 +730,13 @@ export function createChapter5(root, cue) {
     // ---------- S11: comparison ----------
     const s11 = vis(t, T.diff - 0.3, T.seenNow - 0.2, 0.5, 0.5);
     show(S11, s11);
-    cols.forEach((c, i) => { show(c.g, p(t, i ? T.neCmp - 0.3 : T.diff + 0.3, 0.5)); c.rs.forEach((r, k) => show(r, p(t, (i ? T.neCmp : T.supCmp) + k * 1.6, 0.4))); });
+    cols.forEach((c, i) => { show(c.g, p(t, i ? T.neCmp - 0.3 : T.diff + 0.3, 0.5)); c.rs.forEach((r, k) => {
+      show(r, p(t, (i ? T.neCmp : T.supCmp) + k * 1.6, 0.4));
+      const ic = r.__ic;
+      if (ic.__gap) set(ic.__gap, { width: 76 * (0.6 + 0.4 * Math.sin(t * 2)) });
+      if (ic.__dial) ic.__dial.setValue(Math.sin(t * 1.5) * 1.2, -2, 2);
+      if (ic.__die) set(ic.__die, { transform: `rotate(${Math.floor(t * 5) * 37 % 360})` });
+    }); });
     show(evoWhat, p(t, T.some - 0.2, 0.5)); show(ew2.g, p(t, T.others, 0.5));
     show(oneWay, p(t, T.oneWay, 0.5));
 
@@ -638,12 +744,52 @@ export function createChapter5(root, cue) {
     const s12 = vis(t, T.seenNow - 0.3, 9999, 0.5);
     show(S12, s12);
     show(journey, vis(t, T.seenNow, T.modern - 0.2, 0.4, 0.5));
-    show(jSw, p(t, T.color, 0.4)); draw(jArrow, p(t, T.learnGame - 0.5, 0.8)); show(jBoard.g, p(t, T.learnGame, 0.4));
+    show(jSw, p(t, T.color, 0.4)); show(jL1, p(t, T.color, 0.4)); show(jL2, p(t, T.learnGame, 0.4)); draw(jArrow, p(t, T.learnGame - 0.5, 0.8)); show(jBoard.g, p(t, T.learnGame, 0.4));
     show(chat, vis(t, T.modern - 0.2, T.howCan - 0.2, 0.5, 0.5));
     reqs.forEach((r, i) => show(r.g, p(t, [T.explain, T.compare, T.write, T.plan][i] - 0.1, 0.4, easeBack)));
     show(llmCore.g, p(t, T.withText, 0.5));
-    qs.forEach((q, i) => show(q, vis(t, [T.howCan, T.inside, T.limits][i] - 0.1, T.next - 0.2, 0.5, 0.5)));
+    const qT = [T.howCan, T.inside, T.limits, T.next];
+    qs.forEach((q, i) => show(q, vis(t, qT[i] - 0.1, qT[i + 1] - 0.2, 0.4, 0.3)));
+    // many requests orbit one model
+    const zoomIn = p(t, T.next, 2.2);
+    const oOn = p(t, T.howCan - 0.4, 0.6) * (1 - 0.55 * zoomIn);
+    show(orbit, oOn);
+    set(orbit, { transform: `translate(960 ${lerp(560, 520, zoomIn)}) scale(${lerp(1, 3.2, easeOut(zoomIn))})` });
+    const spin = (t - T.howCan) * 0.12;
+    orbitChips.forEach((c, i) => {
+      const k = p(t, T.howCan + i * 0.15, 0.6, easeBack);
+      const lim = p(t, T.limits, 0.8);
+      const R = lerp(160, c.outside ? lerp(420, 470, lim) : 420, k);
+      const x = Math.cos(c.ang + spin) * R * 1.6, y = Math.sin(c.ang + spin) * R * 0.92;
+      move(c.g, x, y, k);
+      show(c.g, k * (1 - zoomIn));
+      set(c.tx, { fill: c.outside && lim > 0.5 && Math.floor(t * 3) % 2 ? C.red : reqNames[i][1] });
+      set(c.line, { x2: x, y2: y, opacity: 0.6 * k * (c.outside ? 1 - 0.8 * lim : 1) * (1 - zoomIn) });
+    });
+    // inside the model
+    const reveal = p(t, T.inside, 0.9);
+    show(coreQ, 1 - reveal);
+    show(inner, reveal);
+    innerNodes.forEach((n, i) => set(n, { fill: mix('#0c1f2a', C.teal, 0.5 + 0.5 * Math.sin(t * 3 + i * 1.3)) }));
+    innerLinks.forEach((l, i) => set(l, { opacity: 0.3 + 0.6 * Math.max(0, Math.sin(t * 4 - i * 0.6)) }));
+    set(core, { transform: `scale(${lerp(1, 1.35, reveal)})` });
+    set(coreHalo, { opacity: 0.08 + 0.1 * reveal });
+    const tw = [cue.at('appears to understand'), cue.at('reason, or plan'), cue.at('or plan')];
+    thinkTags.forEach((c, i) => { show(c.g, vis(t, tw[i], T.limits, 0.3, 0.4) * (1 - zoomIn)); });
+    // limits: a boundary ring; some requests sit outside it
+    show(limitRing, p(t, T.limits, 0.6) * (1 - zoomIn));
+    set(limitRing, { r: lerp(560, 330, p(t, T.limits, 0.8)) });
+    // next + like / subscribe
     show(nextG, p(t, T.next - 0.2, 0.5));
-    show(nx.g, p(t, T.next - 0.2, 0.5)); show(likeB.g, p(t, T.like + 2.5, 0.4, easeBack)); show(subB.g, p(t, T.subscribe, 0.4, easeBack));
+    show(nx.g, p(t, T.next + 0.6, 0.5, easeBack));
+    const likeT = cue.at('please like'), subT = T.subscribe;
+    const liked = p(t, likeT + 0.2, 0.3);
+    show(likeB, p(t, T.like + 1.2, 0.4)); set(likeB, { transform: `translate(800 950) scale(${1 + 0.18 * Math.sin(Math.PI * pl(t, likeT, 0.4))})` });
+    set(likeBg, { fill: mix('#0f2433', '#155e75', liked) }); set(likeTx, { text: liked > 0.5 ? 'Liked' : 'Like' });
+    const subbed = p(t, subT + 0.3, 0.3);
+    show(subBg_, p(t, T.like + 1.5, 0.4)); set(subBg_, { transform: `translate(1120 950) scale(${1 + 0.18 * Math.sin(Math.PI * pl(t, subT + 0.1, 0.4))})` });
+    set(subBg, { fill: mix('#c81e1e', '#374151', subbed) }); set(subTx, { text: subbed > 0.5 ? 'SUBSCRIBED ✓' : 'SUBSCRIBE' });
+    const tapX = t < subT ? 800 : 1120, tapOn = Math.max(vis(t, likeT - 0.2, likeT + 0.5, 0.2, 0.3), vis(t, subT - 0.1, subT + 0.6, 0.2, 0.3));
+    set(tapDot, { cx: tapX - 40, cy: 975, opacity: 0.45 * tapOn, r: 26 - 8 * tapOn });
   };
 }

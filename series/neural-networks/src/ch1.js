@@ -1,6 +1,9 @@
 // Chapter 1 — What is the core idea behind modern AI?
 import photoUrl from '../references/smithsonian-mark-i-perceptron-reference.jpg';
-import { el, set, show, move, g, txt, rect, card, neuron, dial, draw, pointOn, headAt, arrowHead,
+// Optional historical portraits: drop references/mcculloch.jpg and references/pitts.jpg in to use them.
+const PORTRAITS = import.meta.glob('../references/{mcculloch,pitts}.{jpg,jpeg,png}', { eager: true, query: '?url', import: 'default' });
+const portraitUrl = name => Object.entries(PORTRAITS).find(([k]) => k.includes(`/${name}.`))?.[1];
+import { el, set, show, move, g, txt, rect, card, neuron, person, dial, draw, pointOn, headAt, arrowHead,
   p, pl, vis, lerp, clamp, easeOut, easeBack, mix, fmt, hash, C, MONO } from './engine.js';
 
 export function createChapter1(root, cue) {
@@ -170,6 +173,21 @@ export function createChapter1(root, cue) {
   const mp = g(D);
   card(mp, -330, -300, 660, 470, { r: 26 });
   const mpNames = txt(mp, 0, -250, 'Warren McCulloch & Walter Pitts', { size: 32, weight: 700 });
+  const portraits = [['mcculloch', 'Warren McCulloch', 'neurophysiologist', -520], ['pitts', 'Walter Pitts', 'logician', 520]].map(([key, name, role, x], i) => {
+    const gg = g(D);
+    rect(gg, -125, -165, 250, 330, { r: 14, fill: '#e9dfc7', stroke: '#b9a77f', sw: 3 });
+    const url = portraitUrl(key);
+    if (url) {
+      el('clipPath', { id: `pclip${i}` }, gg).appendChild(el('rect', { x: -110, y: -150, width: 220, height: 260, rx: 6 }));
+      el('image', { href: url, x: -110, y: -150, width: 220, height: 260, preserveAspectRatio: 'xMidYMid slice', 'clip-path': `url(#pclip${i})`, style: 'filter:grayscale(1) sepia(.25)' }, gg);
+    } else {
+      rect(gg, -110, -150, 220, 260, { r: 6, fill: '#cbbd9e', stroke: 'none' });
+      const sil = person(gg, 2.2, '#8a7a5c'); move(sil, 0, 30);
+    }
+    txt(gg, 0, 135, name, { size: 24, weight: 800, fill: '#2a2216' });
+    txt(gg, 0, 192, role, { size: 22, weight: 600, fill: C.dim });
+    return gg;
+  });
   const mpModel = g(mp);
   const mpIns = [-90, 0, 90].map((y, i) => {
     const gg = g(mpModel);
@@ -187,22 +205,62 @@ export function createChapter1(root, cue) {
   const mpCap = txt(mp, 0, 130, 'fires 1 when enough inputs are on', { size: 28, weight: 500, fill: C.dim });
   // 1958 perceptron photo + learning
   const pc = g(D);
-  card(pc, -330, -300, 660, 470, { r: 26 });
+  card(pc, -380, -300, 760, 470, { r: 26 });
   const pcName = txt(pc, 0, -250, 'Frank Rosenblatt · the perceptron', { size: 32, weight: 700 });
-  el('clipPath', { id: 'photoClip' }, pc).appendChild(el('rect', { x: -300, y: -210, width: 290, height: 330, rx: 14 }));
-  const photo = el('image', { href: photoUrl, x: -300, y: -210, width: 290, height: 330, preserveAspectRatio: 'xMidYMid slice', 'clip-path': 'url(#photoClip)' }, pc);
-  txt(pc, -155, 145, 'Mark I Perceptron · Smithsonian NMAH', { size: 18, weight: 500, fill: C.dim });
-  const plot = g(pc, { transform: 'translate(160 -40)' });
-  rect(plot, -140, -160, 280, 300, { r: 14, fill: '#0a141e', stroke: C.line });
-  const dots = [];
-  for (let i = 0; i < 16; i++) {
-    const cls = i % 2;
-    const x = (cls ? 40 : -70) + (hash(i + 7) - 0.5) * 120 * 0.8;
-    const y = (cls ? -60 : 50) + (hash(i + 21) - 0.5) * 140 * 0.8;
-    dots.push(cls ? el('rect', { x: x - 10, y: y - 10, width: 20, height: 20, rx: 4, fill: C.amber }, plot) : el('circle', { cx: x, cy: y, r: 11, fill: C.cyan }, plot));
+  el('clipPath', { id: 'photoClip' }, pc).appendChild(el('rect', { x: -355, y: -210, width: 250, height: 320, rx: 14 }));
+  const photo = el('image', { href: photoUrl, x: -355, y: -210, width: 250, height: 320, preserveAspectRatio: 'xMidYMid slice', 'clip-path': 'url(#photoClip)' }, pc);
+  txt(pc, -230, 140, 'Mark I Perceptron · Smithsonian NMAH', { size: 17, weight: 500, fill: C.dim });
+  // learning plot: real perceptron rule on a small 2-feature data set
+  const PLX = 150, PLY = -40;
+  const plot = g(pc, { transform: `translate(${PLX} ${PLY})` });
+  const PX0 = -205, PX1 = 205, PY0 = -170, PY1 = 150;
+  const mapX = u => lerp(PX0 + 20, PX1 - 20, (u + 1) / 2), mapY = v => lerp(PY1 - 20, PY0 + 20, (v + 1) / 2);
+  rect(plot, PX0, PY0, PX1 - PX0, PY1 - PY0, { r: 12, fill: '#0a141e', stroke: C.line });
+  el('clipPath', { id: 'plotClip' }, plot).appendChild(el('rect', { x: PX0, y: PY0, width: PX1 - PX0, height: PY1 - PY0, rx: 12 }));
+  const plotInner = g(plot, { 'clip-path': 'url(#plotClip)' });
+  const regionA = el('path', { d: '', fill: C.cyan, 'fill-opacity': 0.14 }, plotInner);
+  const regionB = el('path', { d: '', fill: C.amber, 'fill-opacity': 0.14 }, plotInner);
+  for (let k = -2; k <= 2; k++) {
+    el('line', { x1: mapX(k / 2), y1: PY0, x2: mapX(k / 2), y2: PY1, stroke: '#16283a', 'stroke-width': 1.5 }, plotInner);
+    el('line', { x1: PX0, y1: mapY(k / 2), x2: PX1, y2: mapY(k / 2), stroke: '#16283a', 'stroke-width': 1.5 }, plotInner);
   }
-  const sepLine = el('line', { x1: -130, y1: 0, x2: 130, y2: 0, stroke: C.ink, 'stroke-width': 5, 'stroke-linecap': 'round' }, plot);
-  const pcCap = txt(pc, 160, 140, 'learns a dividing line', { size: 26, weight: 600, fill: C.dim });
+  txt(plot, PX1, PY1 + 26, 'feature 1 →', { size: 20, weight: 600, fill: C.dim, anchor: 'end' });
+  txt(plot, PX0 - 22, (PY0 + PY1) / 2, 'feature 2 →', { size: 20, weight: 600, fill: C.dim, attrs: { transform: `rotate(-90 ${PX0 - 22} ${(PY0 + PY1) / 2})` } });
+  const pData = [];
+  for (let i = 0; i < 14; i++) {
+    const y = i % 2 ? 1 : -1;
+    pData.push({ u: (y > 0 ? 0.42 : -0.38) + (hash(i + 7) - 0.5) * 0.75, v: (y > 0 ? 0.38 : -0.36) + (hash(i + 21) - 0.5) * 0.75, y });
+  }
+  // run the perceptron learning rule and record every update
+  let pw = [0.15, -1.0], pb = 0.35;
+  const pSteps = [{ w: [...pw], b: pb, pt: -1 }];
+  const errsOf = (w, b) => pData.filter(d => d.y * (w[0] * d.u + w[1] * d.v + b) <= 0).length;
+  outer: for (let epoch = 0; epoch < 6; epoch++) for (let i = 0; i < pData.length; i++) {
+    const d = pData[i];
+    if (d.y * (pw[0] * d.u + pw[1] * d.v + pb) <= 0) {
+      pw = [pw[0] + 0.5 * d.y * d.u, pw[1] + 0.5 * d.y * d.v]; pb += 0.5 * d.y;
+      pSteps.push({ w: [...pw], b: pb, pt: i });
+      if (pSteps.length > 9 || errsOf(pw, pb) === 0) break outer;
+    }
+  }
+  pSteps.forEach(st => { st.err = errsOf(st.w, st.b); });
+  const pDots = pData.map(d => d.y > 0
+    ? el('rect', { x: mapX(d.u) - 10, y: mapY(d.v) - 10, width: 20, height: 20, rx: 4, fill: C.amber }, plotInner)
+    : el('circle', { cx: mapX(d.u), cy: mapY(d.v), r: 11, fill: C.cyan }, plotInner));
+  const sepLine = el('line', { x1: 0, y1: 0, x2: 0, y2: 0, stroke: C.ink, 'stroke-width': 5, 'stroke-linecap': 'round' }, plotInner);
+  const checkRing = el('circle', { r: 20, fill: 'none', stroke: C.red, 'stroke-width': 4 }, plotInner);
+  const wrongRings = pData.map(() => el('circle', { r: 17, fill: 'none', stroke: C.red, 'stroke-width': 3, 'stroke-dasharray': '4 4' }, plotInner));
+  const legend = g(plot);
+  el('circle', { cx: PX0 + 12, cy: PY1 + 26, r: 9, fill: C.cyan }, legend); txt(legend, PX0 + 28, PY1 + 27, 'group A', { size: 19, weight: 600, fill: C.dim, anchor: 'start' });
+  el('rect', { x: PX0 + 112, y: PY1 + 17, width: 18, height: 18, rx: 4, fill: C.amber }, legend); txt(legend, PX0 + 138, PY1 + 27, 'group B', { size: 19, weight: 600, fill: C.dim, anchor: 'start' });
+  const pcStat = txt(plot, PX1 - 12, PY0 + 22, '', { size: 20, weight: 800, fill: C.red, anchor: 'end', mono: true });
+  const halfPlane = (w, b, sign) => {
+    const L = Math.hypot(w[0], w[1]) || 1, n = [w[0] / L, w[1] / L], d = -b / L, pp = [-n[1], n[0]];
+    const c = [n[0] * d, n[1] * d];
+    const q = (a, k) => `${mapX(c[0] + pp[0] * a + n[0] * k)} ${mapY(c[1] + pp[1] * a + n[1] * k)}`;
+    return `M ${q(-5, 0)} L ${q(5, 0)} L ${q(5, 5 * sign)} L ${q(-5, 5 * sign)} Z`;
+  };
+  const pcCap = txt(pc, PLX, 190, 'nudges its dividing line after each mistake', { size: 24, weight: 600, fill: C.dim });
 
   // =========== Scene E: not a tiny brain → building blocks → one number ===========
   const E = g(root);
@@ -387,6 +445,12 @@ export function createChapter1(root, cue) {
       move(mp, lerp(0, -440, shiftL), -60, lerp(1, 0.78, shiftL));
       show(mp, Math.max(mpOn, 0.45 * p(t, T.y58, 0.8)));
       show(mpNames, p(t, T.names43, 0.5));
+      const pOut = 1 - p(t, T.y58 - 0.3, 0.5);
+      portraits.forEach((pg, i) => {
+        const k = p(t, i ? cue.at('Walter Pitts') - 0.2 : T.names43 - 0.2, 0.6, easeOut);
+        move(pg, (i ? 1 : -1) * lerp(700, 560, k), -60, 1, (i ? 3 : -3) * k);
+        show(pg, k * pOut);
+      });
       show(mpModel, p(t, T.model43 - 0.6, 0.6));
       show(mpCap, p(t, T.model43, 0.6));
       // inputs flip on/off; fires when ≥2 on
@@ -403,12 +467,26 @@ export function createChapter1(root, cue) {
       show(pc, pcOn);
       show(pcName, p(t, T.rosen, 0.5));
       show(photo, p(t, T.rosen, 0.7));
-      // learning: the line rotates into a separating position
-      const lk = p(t, T.learn, T.sep - T.learn + 0.8);
-      const ang = lerp(70, -28, lk) + Math.sin(lk * 9) * 12 * (1 - lk);
-      const off = lerp(60, 0, lk);
-      set(sepLine, { transform: `translate(0 ${off}) rotate(${ang})` });
-      show(sepLine, p(t, T.perc, 0.5));
+      // learning: step through the recorded perceptron updates
+      const tA = T.perc + 0.4, tB = T.notCopy - 0.7, n = pSteps.length - 1;
+      const pos = clamp((t - tA) / (tB - tA)) * n;
+      const si = Math.min(n, Math.floor(pos)), fr = pos - si;
+      const cur = pSteps[si], nxt = pSteps[Math.min(n, si + 1)];
+      const mv = si >= n ? 0 : p(fr, 0.45, 0.5);
+      const w = [lerp(cur.w[0], nxt.w[0], mv), lerp(cur.w[1], nxt.w[1], mv)], b = lerp(cur.b, nxt.b, mv);
+      const Lw = Math.hypot(w[0], w[1]) || 1, nn = [w[0] / Lw, w[1] / Lw], d0 = -b / Lw;
+      const ax = nn[0] * d0, ay = nn[1] * d0;
+      set(sepLine, { x1: mapX(ax - nn[1] * 3), y1: mapY(ay + nn[0] * 3), x2: mapX(ax + nn[1] * 3), y2: mapY(ay - nn[0] * 3) });
+      set(regionB, { d: halfPlane(w, b, 1) }); set(regionA, { d: halfPlane(w, b, -1) });
+      const lineOn = p(t, T.perc, 0.5);
+      show(sepLine, lineOn); show(regionA, lineOn); show(regionB, lineOn);
+      const checking = si < n && t > tA ? nxt.pt : -1;
+      if (checking >= 0) { const dd = pData[checking]; set(checkRing, { cx: mapX(dd.u), cy: mapY(dd.v) }); }
+      show(checkRing, checking >= 0 ? 1 - 0.6 * mv : 0);
+      wrongRings.forEach((r, i) => { const dd = pData[i]; set(r, { cx: mapX(dd.u), cy: mapY(dd.v) }); show(r, lineOn * (dd.y * (w[0] * dd.u + w[1] * dd.v + b) <= 0 ? 0.9 : 0)); });
+      const errs = errsOf(w, b);
+      set(pcStat, { text: errs ? `mistakes: ${errs}` : 'mistakes: 0 ✓', fill: errs ? C.red : C.green });
+      show(pcStat, lineOn);
       show(pcCap, p(t, T.learn, 0.5));
     }
 

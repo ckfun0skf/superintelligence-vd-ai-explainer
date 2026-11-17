@@ -51,6 +51,12 @@ error on load.
 
 Sentence-by-sentence visual mapping: [`storyboard.md`](./storyboard.md).
 
+## Historical portraits
+
+Chapter 1 shows portrait frames for McCulloch and Pitts. Put `references/mcculloch.jpg` and
+`references/pitts.jpg` (or .png) in place and they are used automatically; until then a neutral
+portrait placeholder is shown. Check each photo's licence before publishing.
+
 ## QA / export hooks
 
 - `window.renderAt(seconds)` — render a film time; `renderAt(seconds, chapterIndex)` is chapter-local.

@@ -97,9 +97,22 @@ export function createChapter4(root, cue) {
   const grads = dials.map(({ l }, k) => {
     const gg = g(NET);
     const ar = el('path', { d: '', fill: C.amber, stroke: 'none' }, gg);
-    return { g: gg, ar, val: (hash(k + 400) - 0.5) * 2 };
+    const num = txt(gg, 0, 0, '', { size: 18, weight: 800, fill: C.amber, mono: true, anchor: 'start' });
+    return { g: gg, ar, num, val: (hash(k + 400) - 0.5) * 2 };
   });
   const qBadges = dials.map(() => txt(NET, 0, 0, '?', { size: 30, weight: 800, fill: C.amber }));
+  // each weight's share of the blame for the loss (bigger near the output in this toy)
+  grads.forEach((gr, k) => { if (dials[k].l.li === 0) gr.val *= 0.45; });
+  const blame = dials.map((_, k) => {
+    const gg = g(NET);
+    const bar = rect(gg, 0, -10, 0, 20, { r: 6, fill: C.red, stroke: 'none' });
+    const num = txt(gg, 0, -24, '', { size: 22, weight: 800, fill: C.red, mono: true, anchor: 'start' });
+    return { g: gg, bar, num };
+  });
+  const sensRing = el('circle', { r: 32, fill: 'none', stroke: C.amber, 'stroke-width': 5 }, NET);
+  const sensTx = txt(NET, 0, 0, '', { size: 26, weight: 800, fill: C.amber });
+  const kBig = dials.reduce((bi, d, k) => (d.l.li === 1 && Math.abs(grads[k].val) > Math.abs(grads[bi].val) ? k : bi), dials.length - 1);
+  const kSmall = dials.reduce((bi, d, k) => (d.l.li === 0 && Math.abs(grads[k].val) < Math.abs(grads[bi].val) ? k : bi), 0);
   // in-network annotation
   const netNote = txt(root, 940, 120, '', { size: 46, weight: 800 });
   const netSub = txt(root, 940, 180, '', { size: 32, weight: 600, fill: C.dim });
@@ -177,6 +190,10 @@ export function createChapter4(root, cue) {
   const tagIn = txt(DS, 0, 0, 'INPUT', { size: 28, weight: 800, fill: C.cyan });
   const tagAns = txt(DS, 0, 0, 'ANSWER (label)', { size: 28, weight: 800, fill: C.amber });
   const people = [0, 1].map(i => person(DS, 1.4, i ? '#94a3b8' : '#cbd5e1'));
+  // people sort a pile of colour swatches into LIGHT and DARK baskets
+  const sortG = g(DS);
+  const baskets = ['LIGHT', 'DARK'].map((l, i) => { const gg = g(sortG); el('path', { d: 'M -110 -40 L 110 -40 L 85 60 L -85 60 Z', fill: '#132433', stroke: i ? '#5b6b78' : '#ece7dc', 'stroke-width': 4 }, gg); const pp = pill(gg, l, { w: 150, size: 26 }); move(pp.g, 0, 100); move(gg, 660 + i * 600, 640); return gg; });
+  const pile = COLORS.map(([c, l], i) => ({ r: rect(sortG, -32, -32, 64, 64, { r: 10, fill: c, stroke: '#ffffff50', sw: 2 }), l, i }));
   const ruleAxis = g(DS);
   const rg = el('linearGradient', { id: 'lumGrad' }, ruleAxis);
   el('stop', { offset: '0%', 'stop-color': '#000' }, rg); el('stop', { offset: '100%', 'stop-color': '#fff' }, rg);
@@ -249,21 +266,36 @@ export function createChapter4(root, cue) {
     move(gg, LCX + Math.cos(ang) * LR, LCY + Math.sin(ang) * LR);
     return { g: gg, bg, ang };
   });
-  const loopTx = txt(LP, LCX, LCY, 'training loop', { size: 44, weight: 800 });
-  const passTx = txt(LP, LCX, LCY + 60, '', { size: 32, weight: 700, fill: C.dim, mono: true });
+  const loopTx = txt(LP, LCX, LCY - 125, 'training loop', { size: 44, weight: 800 });
+  const passTx = txt(LP, LCX, LCY + 125, '', { size: 32, weight: 700, fill: C.dim, mono: true });
   // stream of examples / batches
   const stream = Array.from({ length: 16 }, (_, i) => rect(LP, -26, -26, 52, 52, { r: 8, fill: COLORS[i % 8][0], stroke: '#ffffff40', sw: 2 }));
   const batchBox = rect(LP, 0, 0, 0, 0, { r: 14, fill: 'none', stroke: C.cyan, sw: 4, attrs: { 'stroke-dasharray': '10 8' } });
   const batchTx = txt(LP, 0, 0, 'batch', { size: 28, weight: 800, fill: C.cyan });
   // loss curve
+  // probability the network gives to the CORRECT answer, example after example
   const curveG = g(LP);
-  rect(curveG, 1240, 280, 560, 400, { r: 22, fill: '#0b1824', stroke: '#24405a' });
-  txt(curveG, 1520, 320, 'loss over many examples', { size: 30, weight: 800, fill: C.red });
-  el('line', { x1: 1290, y1: 640, x2: 1760, y2: 640, stroke: C.faint, 'stroke-width': 3 }, curveG);
-  el('line', { x1: 1290, y1: 640, x2: 1290, y2: 350, stroke: C.faint, 'stroke-width': 3 }, curveG);
-  let dl = '';
-  for (let i = 0; i <= 100; i++) { const x = 1290 + i * 4.6; const y = 640 - (40 + 240 * Math.exp(-i / 22) + (hash(i) - 0.5) * 36 * Math.exp(-i / 60)); dl += `${i ? 'L' : 'M'} ${x} ${y} `; }
-  const lossCurve = el('path', { d: dl, fill: 'none', stroke: C.red, 'stroke-width': 5 }, curveG);
+  const CX0 = 1250, CX1 = 1790, CY0 = 300, CY1 = 660;
+  rect(curveG, CX0 - 50, CY0 - 80, CX1 - CX0 + 80, CY1 - CY0 + 130, { r: 22, fill: '#0b1824', stroke: '#24405a' });
+  txt(curveG, (CX0 + CX1) / 2 - 10, CY0 - 45, 'probability given to the correct answer', { size: 26, weight: 800, fill: C.green });
+  [0, 0.5, 1].forEach(v => { const y = lerp(CY1, CY0, v); el('line', { x1: CX0, y1: y, x2: CX1, y2: y, stroke: '#16283a', 'stroke-width': 2 }, curveG); txt(curveG, CX0 - 12, y, `${v * 100}%`, { size: 18, weight: 700, fill: C.dim, mono: true, anchor: 'end' }); });
+  txt(curveG, CX1, CY1 + 30, 'examples seen →', { size: 20, weight: 600, fill: C.dim, anchor: 'end' });
+  const NEX = 56;
+  const exP = Array.from({ length: NEX }, (_, i) => clamp(0.24 + 0.66 * (1 - Math.exp(-i / 15)) + (hash(i * 3 + 1) - 0.5) * 0.34 * (1 - 0.45 * i / NEX), 0.05, 0.97));
+  const exX = i => lerp(CX0 + 12, CX1 - 8, i / (NEX - 1)), exY = v => lerp(CY1, CY0, v);
+  let dTrend = '';
+  for (let i = 0; i < NEX; i++) dTrend += `${i ? 'L' : 'M'} ${exX(i)} ${exY(0.24 + 0.66 * (1 - Math.exp(-i / 15)))} `;
+  const trend = el('path', { d: dTrend, fill: 'none', stroke: C.green, 'stroke-width': 4, 'stroke-dasharray': '10 8', opacity: 0.8 }, curveG);
+  const exLine = el('path', { d: '', fill: 'none', stroke: '#64748b', 'stroke-width': 2 }, curveG);
+  const exDots = exP.map((v, i) => el('rect', { x: exX(i) - 8, y: exY(v) - 8, width: 16, height: 16, rx: 4, fill: COLORS[i % 8][0], stroke: '#ffffff', 'stroke-width': 1.5 }, curveG));
+  const trendTx = txt(curveG, CX1 - 10, CY0 + 30, 'trend ↗', { size: 24, weight: 800, fill: C.green, anchor: 'end' });
+  const dipTx = txt(curveG, 0, 0, 'sometimes worse', { size: 18, weight: 700, fill: C.red });
+  // the example currently in the loop
+  const curEx = g(LP);
+  const curSw = rect(curEx, -45, -45, 90, 90, { r: 12, fill: '#ccc', stroke: '#ffffff60', sw: 2 });
+  const curLab = txt(curEx, 0, 72, '', { size: 26, weight: 800, fill: C.ink });
+  const curP = txt(curEx, 0, 106, '', { size: 24, weight: 800, fill: C.green, mono: true });
+  move(curEx, LCX, LCY - 30);
   const oneExTx = txt(LP, 1520, 760, '', { size: 32, weight: 800, fill: C.ink });
   const stamp = g(LP);
   rect(stamp, -200, -40, 400, 80, { r: 16, fill: 'none', stroke: C.red, sw: 5 });
@@ -324,6 +356,7 @@ export function createChapter4(root, cue) {
   move(noHuman, 1760, 640);
 
   // ======================= update =======================
+  let sensWobble = 0;
   return function update(t) {
     const dsOn = vis(t, T.forOur - 0.4, T.beginning - 0.2, 0.6, 0.6);
     const netOn = Math.max(vis(t, 0, T.real + 0.3, 0.01, 0.5), vis(t, T.training + 1.5, T.forOur - 0.2, 0.5, 0.5), vis(t, T.beginning - 0.4, T.repeats + 0.2, 0.6, 0.6));
@@ -350,11 +383,13 @@ export function createChapter4(root, cue) {
       const pt = pointOn(l.path, 0.5);
       move(d.g, pt.x, pt.y);
       show(d.g, netOn);
-      const jiggle = handOn > 0 && hd === dials[k] ? Math.sin(t * 9) * 0.4 : 0;
+      let jiggle = handOn > 0 && hd === dials[k] ? Math.sin(t * 9) * 0.4 : 0;
+      if (k === kBig) jiggle += Math.sin((t - T.backprop) * 9) * 0.6 * vis(t, T.backprop + 0.2, T.backprop + 2.6, 0.2, 0.2);
+      if (k === kSmall) jiggle += Math.sin((t - T.backprop) * 9) * 0.6 * vis(t, T.backprop + 2.8, T.backward - 0.1, 0.2, 0.2);
       d.setValue(wOf(l, k) + jiggle, -2.5, 2.5);
       set(l.path, { 'stroke-width': 2 + Math.abs(wOf(l, k)) * 2 });
     });
-    set(netNote, { text: t < T.forOur ? (t < T.real ? 'So far: weights set by hand' : 'Training: find settings that work') : t < T.take ? 'Start: random or unhelpful weights' : t < T.reveal ? 'Pass ONLY the colour values in' : t < T.decide ? 'Compare with the supplied answer' : t < T.backprop ? 'What should change?' : t < T.gradients ? 'Backpropagation: trace the mismatch backward' : t < T.optimizer ? 'Gradients: how each weight affected the loss' : t < T.sees ? 'Optimizer: small update' : 'Try the same colour again' });
+    set(netNote, { text: t < T.forOur ? (t < T.real ? 'So far: weights set by hand' : 'Training: find settings that work') : t < T.take ? 'Start: random or unhelpful weights' : t < T.reveal ? 'Pass ONLY the colour values in' : t < T.decide ? 'Compare with the supplied answer' : t < T.backprop ? 'What should change?' : t < T.backward ? 'How strongly does the loss react to each weight?' : t < T.chain ? 'Work backward from the mismatch' : t < T.assigns ? 'Chain rule: link the effects step by step' : t < T.gradients ? 'Each weight gets its share of the blame' : t < T.optimizer ? 'Gradient = how much, and which way' : t < T.sees ? 'Optimizer: small step against the blame' : 'Try the same colour again' });
     set(netSub, { text: t < T.forOur ? '' : t >= T.lossMeasures && t < T.supplied ? '' : '' });
 
     // ---- many dials grid ----
@@ -390,7 +425,16 @@ export function createChapter4(root, cue) {
     const tagOn = vis(t, T.asInput - 0.2, T.row2);
     set(tagIn, { x: 960 - 145, y: 290 }); show(tagIn, tagOn);
     set(tagAns, { x: 960 + 100, y: 290 }); show(tagAns, tagOn * p(t, T.asAnswer, 0.4));
-    people.forEach((pp, i) => { const pv = vis(t, T.prepare - 0.3, T.twoParts, 0.4, 0.4) + vis(t, T.agree - 0.3, T.noKnow, 0.4, 0.4); move(pp, pv > 0 && t > T.rule ? 860 + i * 200 : 820 + i * 280, t > T.rule ? 300 : 560); show(pp, Math.min(1, pv)); });
+    people.forEach((pp, i) => { const pv = vis(t, T.forOur - 0.2, T.twoParts, 0.5, 0.4) + vis(t, T.agree - 0.3, T.noKnow, 0.4, 0.4); move(pp, t > T.rule ? 860 + i * 200 : 660 + i * 600, t > T.rule ? 300 : 430); show(pp, Math.min(1, pv)); });
+    const sortOn = vis(t, T.forOur - 0.2, T.twoParts - 0.1, 0.5, 0.4);
+    show(sortG, sortOn);
+    pile.forEach(({ r, l, i }) => {
+      const k = p(t, T.prepare + 0.4 + i * 0.5, 0.6, easeOut);
+      const tx = l === 'LIGHT' ? 660 : 1260, ty = 600 - Math.floor(i / 2) * 6;
+      const px = 960 + (i % 3 - 1) * 26, py = 680 - i * 14;
+      const arc = Math.sin(Math.PI * k) * -160;
+      move(r, lerp(px, tx + (i % 4 - 1.5) * 30, k), lerp(py, ty, k) + arc, 1, k * (i % 2 ? 20 : -20));
+    });
     show(ruleAxis, toAxis * (1 - toNet));
     move(ruleLine, 200 + 0.5 * 1520, 0); show(ruleLine, p(t, T.consistent, 0.5) * (1 - toNet));
     set(agreeTx, { x: 960, y: 220 }); show(agreeTx, vis(t, T.agree + 1.0, T.noKnow));
@@ -431,8 +475,37 @@ export function createChapter4(root, cue) {
       const sensitivityHL = t > T.tracing ? 1 : l.li === 1 ? 1 : p(t, T.backward, 0.6);
       show(bwd[i], bwdOn * sensitivityHL * (kb > 0 && kb < 1 ? 1 : 0));
     });
+    // links glow red by how much blame flows back through them
+    const flow1 = vis(t, T.backward - 0.2, T.optimizer, 0.6, 0.6), flow0 = vis(t, T.tracing, T.optimizer, 0.6, 0.6);
+    links.forEach((l, i) => {
+      const k = dials.findIndex(d => d.l === l);
+      const mag = k >= 0 ? Math.abs(grads[k].val) : 0.3;
+      const f = l.li === 1 ? flow1 : flow0;
+      if (f > 0) set(l.path, { stroke: mix(C.teal, C.red, f), 'stroke-width': 2 + (l.li ? 2 : 1) * 4 * mag * f + Math.abs(wOf(l, Math.max(0, k))) * 2 * (1 - f) });
+      else set(l.path, { stroke: C.teal });
+    });
+    // sensitivity test: wiggle one weight, watch the loss react
+    const sBig = vis(t, T.backprop + 0.2, T.backprop + 2.6, 0.2, 0.2), sSmall = vis(t, T.backprop + 2.8, T.backward - 0.1, 0.2, 0.2);
+    const sk = sBig > 0 ? kBig : kSmall;
+    const spt = pointOn(dials[sk].l.path, 0.5);
+    set(sensRing, { cx: spt.x, cy: spt.y }); show(sensRing, Math.max(sBig, sSmall));
+    set(sensTx, { x: spt.x, y: spt.y - 52, text: sBig > 0 ? 'loss reacts a lot' : 'loss barely moves' });
+    show(sensTx, Math.max(sBig, sSmall));
+    sensWobble = Math.sin((t - T.backprop) * 9) * (0.3 * sBig + 0.03 * sSmall);
+    // blame tags: each parameter's measured share of the loss
+    const blameOn = vis(t, T.assigns + 0.8, T.gradW + 0.2, 0.4, 0.4);
+    const order = dials.map((d, k) => k).sort((a1, b1) => dials[b1].l.li - dials[a1].l.li);
+    dials.forEach(({ l }, k) => {
+      const pt = pointOn(l.path, 0.5);
+      const bl = blame[k];
+      move(bl.g, pt.x + 24, pt.y + 26);
+      const appear = p(t, T.assigns + 0.8 + order.indexOf(k) * 0.35, 0.4);
+      set(bl.bar, { width: 72 * Math.abs(grads[k].val) * appear });
+      set(bl.num, { text: Math.abs(grads[k].val).toFixed(2) });
+      show(bl.g, blameOn * appear);
+    });
     // gradients / ? badges
-    const gOnN = vis(t, T.assigns + 1.5, T.small + 1.0, 0.5, 0.5);
+    const gOnN = vis(t, T.gradW - 0.1, T.small + 1.0, 0.5, 0.5);
     dials.forEach(({ l }, k) => {
       const pt = pointOn(l.path, 0.5);
       set(qBadges[k], { x: pt.x + 26, y: pt.y - 26 });
@@ -440,6 +513,7 @@ export function createChapter4(root, cue) {
       const gr = grads[k];
       const len = 14 + Math.abs(gr.val) * 26, dir = gr.val > 0 ? -1 : 1;
       set(gr.ar, { d: `M ${pt.x + 30} ${pt.y} l 0 ${dir * len} l -9 ${-dir * 10} m 9 ${dir * 10} l 9 ${-dir * 10}` , stroke: gr.val > 0 ? C.green : C.amber, 'stroke-width': 5, fill: 'none' });
+      set(gr.num, { x: pt.x + 44, y: pt.y + dir * len * 0.6, text: `${gr.val > 0 ? '+' : '−'}${Math.abs(gr.val).toFixed(2)}`, fill: gr.val > 0 ? C.green : C.amber });
       show(gr.g, gOnN);
     });
     show(chainG, vis(t, T.chain - 0.2, T.assigns));
@@ -466,7 +540,7 @@ export function createChapter4(root, cue) {
     const lossV = -Math.log(pl0) / 2;
     const lossOn = vis(t, T.lossLarge - 0.4, T.repeats + 0.6, 0.5, 0.5);
     show(LOSS, lossOn * (1 - vis(t, T.quality - 0.3, T.decide - 0.2, 0.5, 0.5)) * (1 - gdOn));
-    set(lossFill, { width: (PW + 80) * lossV * p(t, T.lossLarge - 0.3, 0.8) });
+    set(lossFill, { width: (PW + 80) * Math.min(1, lossV * (1 + sensWobble)) * p(t, T.lossLarge - 0.3, 0.8) });
     show(lossSub, p(t, T.lossMeasures, 0.5));
     const notOn = vis(t, T.notGeneral - 0.2, T.supplied);
     show(notLabel, notOn);
@@ -509,8 +583,21 @@ export function createChapter4(root, cue) {
     const bOn = vis(t, T.batches, T.oneEx + 0.5) * (batchX !== null ? 1 : 0);
     if (batchX !== null) { set(batchBox, { x: batchX - 3 * 90 - 40, y: CY - 50, width: 3 * 90 + 80, height: 100 }); set(batchTx, { x: batchX - 135, y: CY - 78 }); }
     show(batchBox, bOn); show(batchTx, bOn);
-    show(curveG, p(t, T.gradually - 0.3, 0.5));
-    draw(lossCurve, p(t, T.gradually, T.after - T.gradually - 0.5, x => x));
+    show(curveG, p(t, T.pPredict - 0.3, 0.5));
+    const exI = clamp(Math.floor((t - T.pPredict) / ((T.after - 0.6 - T.pPredict) / NEX)), 0, NEX - 1);
+    let dl2 = '';
+    exDots.forEach((r, i) => { show(r, t > T.pPredict && i <= exI ? 1 : 0); if (i <= exI) dl2 += `${i ? 'L' : 'M'} ${exX(i)} ${exY(exP[i])} `; });
+    set(exLine, { d: dl2 || 'M 0 0' }); show(exLine, t > T.pPredict ? 1 : 0);
+    show(trend, p(t, T.gradually, 0.8)); show(trendTx, p(t, T.gradually, 0.8));
+    // point out a step that got worse (one example is not a permanent fact)
+    const dipI = exP.findIndex((v, i) => i > 4 && i <= exI && v < exP[i - 1] - 0.12);
+    if (dipI > 0) set(dipTx, { x: exX(dipI), y: exY(exP[dipI]) + 34 });
+    show(dipTx, dipI > 0 ? vis(t, T.oneEx - 0.3, T.after - 0.6, 0.4, 0.4) : 0);
+    const isL = COLORS[exI % 8][1] === 'LIGHT';
+    set(curSw, { fill: COLORS[exI % 8][0] });
+    set(curLab, { text: `answer: ${COLORS[exI % 8][1]}` });
+    set(curP, { text: `network: ${Math.round(exP[exI] * 100)}% ${isL ? 'light' : 'dark'}` });
+    show(curEx, vis(t, T.pPredict, T.after - 0.4, 0.4, 0.4));
     set(oneExTx, { text: t < T.gradually ? 'one example ≠ a permanent fact' : 'small nudges, many examples' });
     show(oneExTx, p(t, T.oneEx, 0.4));
     show(stamp, vis(t, T.oneEx + 0.3, T.gradually + 1.5));
