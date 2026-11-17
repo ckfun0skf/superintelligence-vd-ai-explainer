@@ -1,6 +1,6 @@
 // Chapter 5 — Another way to train: evolution, mutation and selection.
 import { el, set, show, move, g, txt, rect, neuron, dial, draw, pointOn, person,
-  p, pl, vis, lerp, clamp, easeOut, easeBack, mix, grey, hash, C, hush } from './engine.js';
+  p, pl, vis, lerp, clamp, easeOut, easeBack, mix, grey, hash, C, SANS, hush } from './engine.js';
 
 // ---------------- deterministic Snake simulation ----------------
 const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]];
@@ -549,6 +549,21 @@ export function createChapter5(root, cue) {
   move(subBg_, 1120, 950);
   const tapDot = el('circle', { r: 26, fill: '#ffffff', opacity: 0 }, nextG);
 
+  // ====== Neuroevolution title reveal ======
+  const NE = g(root);
+  const neFlash = el('rect', { x: 0, y: 0, width: 1920, height: 1080, fill: '#ecfeff', opacity: 0 }, NE);
+  const neRays = g(NE);
+  const rays = Array.from({ length: 28 }, (_, i) => el('path', { d: '', fill: i % 2 ? '#5eead4' : '#c084fc', opacity: 0.12 }, neRays));
+  const neRings = [0, 1, 2].map(i => el('circle', { cx: 960, cy: 540, r: 0, fill: 'none', stroke: i === 1 ? C.violet : C.teal, 'stroke-width': 10 - i * 2, filter: 'url(#glow)' }, NE));
+  const neCore = el('circle', { cx: 960, cy: 540, r: 0, fill: '#ecfeff', filter: 'url(#glowBig)' }, NE);
+  const neBits = Array.from({ length: 60 }, (_, i) => ({ el: el('circle', { r: 3 + hash(i + 5) * 5, fill: i % 2 ? C.teal : C.violet, filter: 'url(#glow)' }, NE), a: hash(i) * Math.PI * 2, sp: 0.4 + hash(i + 9) * 0.9 }));
+  const neTitle = el('text', { x: 960, y: 560, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-family': SANS, 'font-size': 168, 'font-weight': 900, filter: 'url(#glow)' }, NE);
+  const tNeuro = el('tspan', { fill: C.teal, text: 'NEURO' }, neTitle);
+  const tEvo = el('tspan', { fill: C.violet, text: 'EVOLUTION' }, neTitle);
+  const neBar = el('rect', { x: 960, y: 660, width: 0, height: 10, rx: 5, fill: 'url(#neGrad)' }, NE);
+  const neg = el('linearGradient', { id: 'neGrad' }, NE);
+  el('stop', { offset: '0%', 'stop-color': C.teal }, neg); el('stop', { offset: '100%', 'stop-color': C.violet }, neg);
+
   // captions that only repeated the narration are removed from the picture
   hush(title, qLabel, easyLabel, bioTx, envTx, np1.g, notOrgTx, wholeTx, genSub, designTx, ng.g, oneWay, qs);
   return function update(t) {
@@ -793,7 +808,7 @@ export function createChapter5(root, cue) {
     set(ground, { fill: mix('#1c2b1f', '#2b2118', gone) });
 
     // ---------- S5: algorithm ----------
-    const s5 = vis(t, T.algo - 0.3, T.snake - 0.2, 0.6, 0.5);
+    const s5 = vis(t, T.algo - 0.3, cue.at('neuroevolution') + 0.05, 0.6, 0.15);
     show(S5, s5);
     // moths turn into candidate networks: same idea, but these are programs, not organisms
     const morph = p(t, T.keeps - 0.3, 0.9);
@@ -810,6 +825,37 @@ export function createChapter5(root, cue) {
     show(nextGenArrow, p(t, T.nextGen - 0.3, 0.5)); show(nextGenTx, p(t, T.nextGen - 0.3, 0.5));
     draw(nextGenArrow, p(t, T.nextGen - 0.3, 0.6));
     nextGenNets.forEach((n, i) => show(n, p(t, T.nextGen + i * 0.2, 0.4)));
+
+    // ---------- Neuroevolution reveal ----------
+    const tF = T.family, tW = cue.at('neuroevolution'), tOut = T.snake - 0.4;
+    const pull = p(t, tF + 0.2, tW - tF - 0.1, x => x * x * x);     // networks get sucked into the centre
+    if (pull > 0) {
+      algoNets.forEach((n, i) => {
+        const x0 = 260 + (i % 5) * 230, y0 = 380 + Math.floor(i / 5) * 230;
+        move(n.g, lerp(x0, 960, pull), lerp(y0, 540, pull), 1 - 0.9 * pull, pull * 200 * (i % 2 ? 1 : -1));
+      });
+      nextGenNets.forEach(n => set(n, { opacity: 1 - pull }));
+      set(nextGenArrow, { opacity: 1 - pull }); set(nextGenTx, { opacity: 1 - pull });
+    }
+    const boom = t >= tW ? 1 : 0;
+    const neOn = boom * (1 - p(t, tOut + 0.6, 0.8));
+    show(NE, Math.max(neOn, pull > 0 && t < tW ? 1 : 0));
+    set(neCore, { r: t < tW ? 70 * pull : 70 * (1 - p(t, tW, 0.5)) });
+    set(neFlash, { opacity: 0.75 * vis(t, tW, tW + 0.15, 0.04, 0.6) });
+    neRings.forEach((r, i) => { const k = pl(t, tW + i * 0.12, 1.4); set(r, { r: 1200 * easeOut(k), opacity: boom * (1 - k) }); });
+    const rayOn = boom * p(t, tW, 0.4) * (1 - p(t, tOut, 0.8));
+    rays.forEach((r, i) => { const a0 = i / rays.length * Math.PI * 2 + (t - tW) * 0.15, w = 0.05; set(r, { d: `M 960 540 L ${960 + Math.cos(a0 - w) * 1400} ${540 + Math.sin(a0 - w) * 1400} L ${960 + Math.cos(a0 + w) * 1400} ${540 + Math.sin(a0 + w) * 1400} Z`, opacity: 0.13 * rayOn }); });
+    neBits.forEach((b2, i) => { const k = pl(t, tW, 2.2); const d = 900 * b2.sp * easeOut(k); set(b2.el, { cx: 960 + Math.cos(b2.a) * d, cy: 540 + Math.sin(b2.a) * d * 0.7, opacity: boom * (1 - k) }); });
+    // title slams in from oversized, letters snapping together; then shrinks away for the next scene
+    const slam = p(t, tW, 0.55, easeOut);
+    const exitK = p(t, tOut, 0.9);
+    const sc = lerp(2.4, 1, slam) * lerp(1, 0.42, exitK);
+    set(neTitle, { transform: `translate(960 ${lerp(540, 110, exitK)}) scale(${sc}) translate(-960 -560)`, 'letter-spacing': lerp(70, 6, slam), opacity: slam * (1 - p(t, tOut + 0.6, 0.8)) });
+    set(neBar, { x: 960 - 560 * p(t, tW + 0.35, 0.6), width: 1120 * p(t, tW + 0.35, 0.6), opacity: 1 - exitK });
+    // camera shake on impact
+    const shake = boom * (1 - pl(t, tW, 0.5));
+    const sxo = Math.sin(t * 90) * 14 * shake, syo = Math.cos(t * 77) * 10 * shake;
+    set(S5, { transform: `translate(${sxo} ${syo})` });
 
     // ---------- S6: Snake + network ----------
     const s6 = vis(t, T.snake - 0.3, T.start - 0.2, 0.5, 0.5);
