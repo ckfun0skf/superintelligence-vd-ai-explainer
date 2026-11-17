@@ -179,14 +179,26 @@ export function createChapter5(root, cue) {
   move(noAns, 960, 820);
   // game: score is easy, correct move for every board is not
   const S1b = g(root);
-  const boardsQ = Array.from({ length: 12 }, (_, i) => { const b = board(S1b, 6, 26); b.render(simulate(6, 50 + i, 0.5, 6)[Math.floor(hash(i) * 5)]); const q = txt(b.g, 0, 0, '?', { size: 90, weight: 800, fill: C.amber }); move(b.g, 200 + (i % 4) * 190, 330 + Math.floor(i / 4) * 190); return b; });
-  const qLabel = txt(S1b, 485, 920, 'correct move for every board?', { size: 34, weight: 800, fill: C.amber });
-  const scoreCard = g(S1b);
+  const camB = g(S1b);
+  // a 5×3 wall of boards; the playing board sits in the centre cell
+  const QPOS = [];
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 5; c++) if (!(r === 1 && c === 2)) QPOS.push([960 + (c - 2) * 330, 540 + (r - 1) * 300]);
+  const boardsQ = QPOS.map(([x, y], i) => {
+    const gg = g(camB);
+    rect(gg, -125, -125, 250, 250, { r: 20, fill: '#0f1d2a', stroke: '#2e4a60', sw: 3 });
+    const b = board(gg, 6, 30); b.render(simulate(6, 50 + i, 0.5, 6)[1 + Math.floor(hash(i) * 4)]);
+    const q = txt(gg, 0, 4, '?', { size: 110, weight: 800, fill: C.amber, attrs: { opacity: 0.9 } });
+    move(gg, x, y);
+    return { g: gg, q, d: Math.hypot(x - 960, (y - 540) * 1.2) };
+  });
+  const qLabel = txt(S1b, 485, 920, '', { size: 1 });
+  const scoreCard = g(camB);
   rect(scoreCard, -260, -220, 520, 440, { r: 30, fill: '#0f1d2a', stroke: C.green, sw: 4 });
   const bigBoard = board(scoreCard, 8, 34); move(bigBoard.g, 0, -40);
   const bigStates = simulate(8, 7, 0.9, 40);
   const scoreTx = txt(scoreCard, 0, 180, '', { size: 44, weight: 800, fill: C.green, mono: true });
-  move(scoreCard, 1450, 520);
+  const scoreTick = txt(scoreCard, 215, -180, '✓', { size: 60, weight: 800, fill: C.green });
+  move(scoreCard, 960, 540, 0.56);
   const easyLabel = txt(S1b, 1450, 920, 'how well did it do? easy to score ✓', { size: 34, weight: 800, fill: C.green });
 
   // ====== S2: many candidates, keep better, random changes ======
@@ -557,11 +569,22 @@ export function createChapter5(root, cue) {
     move(noAns, 960, 820, p(t, T.notAvail, 0.5, easeBack)); show(noAns, p(t, T.notAvail, 0.4));
     const s1b = vis(t, T.game - 0.3, T.imagine - 0.2, 0.5, 0.5);
     show(S1b, s1b);
-    show(scoreCard, p(t, T.howWell - 0.3, 0.5));
-    bigBoard.render(stateAt(bigStates, t, T.howWell - 0.3, 6));
-    set(scoreTx, { text: `score: ${stateAt(bigStates, t, T.howWell - 0.3, 6).apples * 10}` });
-    show(easyLabel, p(t, T.howWell + 0.6, 0.4));
-    boardsQ.forEach((b, i) => show(b.g, p(t, T.writeDown + (i < 4 ? i * 0.15 : 1.2 + i * 0.12), 0.3)));
+    // starts on one big playing board, then the camera pulls back to a wall of unlabelled boards
+    const zoomOut = p(t, T.writeDown - 0.2, 2.2);
+    const z = lerp(1.75, 1, zoomOut);
+    set(camB, { transform: `translate(960 ${lerp(500, 540, zoomOut)}) scale(${z}) translate(-960 -540)` });
+    show(scoreCard, p(t, T.game - 0.3, 0.5));
+    const st0 = T.game + 0.2;
+    bigBoard.render(stateAt(bigStates, t, st0, 5));
+    set(scoreTx, { text: `score: ${stateAt(bigStates, t, st0, 5).apples * 10}` });
+    show(scoreTx, p(t, T.howWell - 0.2, 0.4));
+    show(scoreTick, p(t, T.howWell + 0.6, 0.3));
+    set(scoreTick, { transform: `translate(215 -180) scale(${p(t, T.howWell + 0.6, 0.4, easeBack)}) translate(-215 180)` });
+    boardsQ.forEach((b, i) => {
+      const k = p(t, T.writeDown + 0.1 + b.d / 900, 0.4);
+      show(b.g, k);
+      set(b.q, { opacity: 0.9 * p(t, T.writeDown + 0.5 + b.d / 900, 0.3) * (0.75 + 0.25 * Math.sin(t * 4 + i)) });
+    });
     show(qLabel, p(t, T.writeDown + 0.4, 0.4));
 
     // ---------- S2 ----------
