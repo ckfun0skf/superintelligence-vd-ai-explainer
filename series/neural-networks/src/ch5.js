@@ -49,7 +49,7 @@ function board(parent, N, cell) {
       set(food, { cx: -S / 2 + (st.food[0] + 0.5) * cell, cy: -S / 2 + (st.food[1] + 0.5) * cell });
       segs.forEach((r, i) => {
         const b = st.body[i];
-        if (!b) return show(r, 0);
+        if (!b) { set(r, { x: 0, y: 0 }); return show(r, 0); }
         show(r, 1);
         set(r, { x: -S / 2 + b[0] * cell + 1.5, y: -S / 2 + b[1] * cell + 1.5, fill: st.crashed && i === 0 ? C.red : i ? C.green : '#bbf7d0' });
       });
@@ -331,7 +331,7 @@ export function createChapter5(root, cue) {
   const rock = g(S4);
   const tg = el('linearGradient', { id: 'tailGrad', x1: '0', y1: '0', x2: '1', y2: '0' }, rock);
   el('stop', { offset: '0%', 'stop-color': '#fde68a', 'stop-opacity': 0.95 }, tg); el('stop', { offset: '35%', 'stop-color': '#fb923c', 'stop-opacity': 0.7 }, tg); el('stop', { offset: '100%', 'stop-color': '#7c2d12', 'stop-opacity': 0 }, tg);
-  const tail = g(rock, { transform: 'rotate(-150)' });
+  const tail = g(rock, { transform: 'rotate(-55)' });  // points back along the flight path (up-right)
   el('path', { d: 'M 0 -38 C 160 -30 380 -10 560 0 C 380 10 160 30 0 38 Z', fill: 'url(#tailGrad)', filter: 'url(#glow)' }, tail);
   el('circle', { r: 46, fill: '#fde68a', opacity: 0.35, filter: 'url(#glowBig)' }, rock);
   el('circle', { r: 30, fill: '#7c2d12', stroke: '#fed7aa', 'stroke-width': 5 }, rock);
@@ -492,45 +492,104 @@ export function createChapter5(root, cue) {
   const notGenG = g(S10);
   const ng = chip(notGenG, 'good at Snake ≠ general intelligence', C.amber, 700); move(ng.g, 960, 990);
 
-  // ====== S11: comparison ======
+  // ====== S11: comparison — two live panels ======
   const S11 = g(root);
-  const colDefs = [['Supervised learning', C.cyan, ['each input + a supplied answer', 'measure the mismatch', 'gradients adjust weights']], ['Neuroevolution', C.green, ['whole candidates play the task', 'one score per candidate', 'selection + mutation']]];
-  const cols = colDefs.map(([h, c, rows], i) => {
+  const panel = (cx, col, title) => {
     const gg = g(S11);
-    rect(gg, -420, -330, 840, 660, { r: 30, fill: '#0f1d2a', stroke: c, sw: 4 });
-    txt(gg, 0, -270, h, { size: 46, weight: 800, fill: c });
-    const rs = rows.map((r, k) => {
-      const rg = g(gg);
-      txt(rg, -250, 0, r, { size: 32, weight: 700, fill: C.ink, anchor: 'start' });
-      const ic = g(rg); move(ic, -320, 0);
-      if (i === 0 && k === 0) { rect(ic, -40, -22, 36, 44, { r: 6, fill: '#d4d4d4', stroke: 'none' }); rect(ic, 6, -16, 52, 32, { r: 16, fill: '#ece7dc', stroke: 'none' }); }
-      if (i === 0 && k === 1) { rect(ic, -45, -12, 100, 24, { r: 8, fill: '#132433', stroke: 'none' }); rect(ic, -45, -12, 24, 24, { r: 8, fill: '#ece7dc', stroke: 'none' }); ic.__gap = rect(ic, -21, -12, 76, 24, { r: 8, fill: C.red, stroke: 'none', attrs: { opacity: 0.6 } }); }
-      if (i === 0 && k === 2) { ic.__dial = dial(ic, 24); }
-      if (i === 1 && k === 0) { [0, 1, 2].forEach(q => { const b = board(ic, 4, 11); move(b.g, -38 + q * 38, 0); b.render(simulate(4, 70 + q, 0.6, 3)[2]); }); }
-      if (i === 1 && k === 1) { [0.3, 0.9, 0.5].forEach((v, q) => rect(ic, -45 + q * 34, 22 - 44 * v, 24, 44 * v, { r: 4, fill: C.green, stroke: 'none' })); }
-      if (i === 1 && k === 2) { ic.__die = g(ic); rect(ic.__die, -22, -22, 44, 44, { r: 8, fill: C.amber, stroke: 'none' }); [[-9, -9], [9, 9], [0, 0]].forEach(([x, y]) => el('circle', { cx: x, cy: y, r: 4, fill: '#0b1520' }, ic.__die)); }
-      rg.__ic = ic;
-      move(rg, 0, -150 + k * 120);
-      return rg;
-    });
-    move(gg, 500 + i * 920, 520);
-    return { g: gg, rs };
+    const bg = rect(gg, -420, -310, 840, 620, { r: 30, fill: '#0f1d2a', stroke: col, sw: 4 });
+    txt(gg, 0, -255, title, { size: 44, weight: 800, fill: col });
+    move(gg, cx, 470);
+    return { g: gg, bg };
+  };
+  const PL = panel(500, C.cyan, 'Supervised learning'), PR = panel(1420, C.green, 'Neuroevolution');
+  const capRow = (pg, k, text, col) => { const gg = g(pg); el('circle', { cx: -360, cy: 0, r: 8, fill: col }, gg); txt(gg, -340, 2, text, { size: 26, weight: 700, fill: C.ink, anchor: 'start' }); move(gg, 0, 185 + k * 42); return gg; };
+  // left: swatch → network → answer, then gradients flow back
+  const SWL = [['#d4d4d4', 'LIGHT'], ['#1e3a8a', 'DARK'], ['#fde68a', 'LIGHT'], ['#111111', 'DARK'], ['#fbcfe8', 'LIGHT'], ['#14532d', 'DARK']];
+  const lSw = rect(PL.g, -350, -120, 110, 110, { r: 14, fill: '#d4d4d4', stroke: '#ffffff40', sw: 2 });
+  const LN = [[-170, [-140, -65, 10]], [0, [-150, -65, 20]], [170, [-110, -20]]];
+  const lNodes = []; LN.forEach(([x, ys], li) => ys.forEach(y => lNodes.push({ x, y, li })));
+  const lEdges = []; lNodes.forEach(a2 => lNodes.forEach(b2 => { if (b2.li === a2.li + 1) lEdges.push({ a: a2, b: b2, el: el('line', { x1: a2.x, y1: a2.y, x2: b2.x, y2: b2.y, stroke: C.teal, 'stroke-width': 2.5, opacity: 0.5 }, PL.g) }); }));
+  lNodes.forEach(n => el('circle', { cx: n.x, cy: n.y, r: 16, fill: '#0c1f2a', stroke: C.teal, 'stroke-width': 3 }, PL.g));
+  const lPul = lEdges.map(() => el('circle', { r: 6, fill: C.cyan, filter: 'url(#glow)' }, PL.g));
+  const lPill = rect(PL.g, 230, -95, 150, 60, { r: 30, fill: '#ece7dc', stroke: 'none' });
+  const lPillTx = txt(PL.g, 305, -64, 'LIGHT', { size: 26, weight: 800, fill: '#111' });
+  const lDials = [0, 1, 2].map(i => { const d = dial(PL.g, 18); const e = lEdges[i * 4 + 1]; move(d.g, (e.a.x + e.b.x) / 2, (e.a.y + e.b.y) / 2); return d; });
+  rect(PL.g, -300, 70, 600, 30, { r: 10, fill: '#132433', stroke: 'none' });
+  const lPred = rect(PL.g, -300, 70, 0, 30, { r: 10, fill: '#ece7dc', stroke: 'none' });
+  const lGap = rect(PL.g, -300, 70, 0, 30, { r: 10, fill: C.red, stroke: 'none', attrs: { opacity: 0.55 } });
+  const lCaps = [capRow(PL.g, 0, 'each input + a supplied answer', C.amber), capRow(PL.g, 1, 'measure the mismatch', C.red), capRow(PL.g, 2, 'gradients adjust the weights', C.teal)];
+  // right: a population of games, scored, selected, mutated
+  const rCards = [0, 1, 2, 3, 4, 5].map(i => {
+    const gg = g(PR.g);
+    const bg = rect(gg, -95, -95, 190, 190, { r: 14, fill: '#0a141e', stroke: '#2e4a60', sw: 3 });
+    const b = board(gg, 6, 26); move(b.g, 0, -10);
+    const bar = rect(gg, -70, 74, 0, 10, { r: 5, fill: C.green, stroke: 'none' });
+    const mut = el('circle', { r: 0, fill: 'none', stroke: C.amber, 'stroke-width': 6 }, gg);
+    move(gg, -270 + (i % 3) * 270, -110 + Math.floor(i / 3) * 200);
+    return { g: gg, bg, b, bar, mut };
   });
+  const rCaps = [capRow(PR.g, 0, 'whole candidates play the task', C.cyan), capRow(PR.g, 1, 'one score per candidate', C.green), capRow(PR.g, 2, 'selection + mutation', C.amber)];
+  const rSimCache = new Map();
+  const rSim = (r, i) => { const k = r * 6 + i; if (!rSimCache.has(k)) rSimCache.set(k, simulate(6, 700 + r * 11 + i * 5, clamp(0.1 + 0.15 * r + 0.5 * hash(k + 9)), 30)); return rSimCache.get(k); };
+  // "only weights / also structure": one evolving network
+  const evoNet = g(PR.g);
+  const EN = [[-200, [-120, 0, 120]], [0, [-150, -50, 50, 150]], [200, [-60, 60]]];
+  const enNodes = []; EN.forEach(([x, ys], li) => ys.forEach(y => enNodes.push({ x, y, li })));
+  const enEdges = []; enNodes.forEach((a2, i) => enNodes.forEach((b2, j) => { if (b2.li === a2.li + 1) enEdges.push(el('line', { x1: a2.x, y1: a2.y, x2: b2.x, y2: b2.y, stroke: C.green, 'stroke-width': 3, opacity: 0.7 }, evoNet)); }));
+  enNodes.forEach(n => el('circle', { cx: n.x, cy: n.y, r: 18, fill: '#0c1f2a', stroke: C.green, 'stroke-width': 4 }, evoNet));
+  const newLinks = [el('path', { d: 'M -200 -120 C -100 -260 100 -260 200 -60', fill: 'none', stroke: C.amber, 'stroke-width': 5 }, evoNet), el('path', { d: 'M 0 150 C 60 230 160 200 200 60', fill: 'none', stroke: C.amber, 'stroke-width': 5 }, evoNet)];
+  const newNode = el('circle', { cx: 100, cy: -210, r: 0, fill: '#2a210b', stroke: C.amber, 'stroke-width': 5 }, evoNet);
+  const newNodeLinks = [el('line', { x1: 0, y1: -150, x2: 100, y2: -210, stroke: C.amber, 'stroke-width': 4 }, evoNet), el('line', { x1: 100, y1: -210, x2: 200, y2: -60, stroke: C.amber, 'stroke-width': 4 }, evoNet)];
+  move(evoNet, 0, -20);
   const evoWhat = g(S11);
   const ew1 = chip(evoWhat, 'evolve weights only', C.green, 380); move(ew1.g, -220, 0);
-  const ew2 = chip(evoWhat, '…or connections & structure', C.green, 480); move(ew2.g, 240, 0);
-  move(evoWhat, 1420, 960);
+  const ew2 = chip(evoWhat, '…or connections & structure', C.amber, 480); move(ew2.g, 240, 0);
+  move(evoWhat, 1420, 840);
+  // "one way to train — not how every LLM is trained": a landscape of training methods
+  const land = g(S11);
+  const bGrad = g(land); el('circle', { r: 190, fill: '#0e2a3a', stroke: C.cyan, 'stroke-width': 5 }, bGrad); txt(bGrad, 0, -20, 'gradient-based', { size: 34, weight: 800, fill: C.cyan }); txt(bGrad, 0, 24, 'training', { size: 34, weight: 800, fill: C.cyan }); move(bGrad, 640, 760);
+  const bEvo = g(land); el('circle', { r: 118, fill: '#0f2a1f', stroke: C.green, 'stroke-width': 5 }, bEvo); txt(bEvo, 0, 2, 'neuroevolution', { size: 26, weight: 800, fill: C.green }); move(bEvo, 1075, 820);
+  const bOther = g(land); el('circle', { r: 70, fill: '#141c26', stroke: C.dim, 'stroke-width': 4, 'stroke-dasharray': '8 8' }, bOther); txt(bOther, 0, 2, 'others…', { size: 24, weight: 700, fill: C.dim }); move(bOther, 1320, 740);
+  const orbitNets = [0, 1, 2, 3, 4].map(i => { const m = miniNet(land, 60 + i, C.cyan); return m; });
+  const llm = g(land);
+  rect(llm, -110, -60, 220, 120, { r: 26, fill: '#1a1330', stroke: C.violet, sw: 5 });
+  txt(llm, 0, 4, 'LLM', { size: 48, weight: 800, fill: C.violet });
+  move(llm, 1640, 800);
+  const llmToGrad = el('path', { d: 'M 1530 790 C 1300 600 950 600 830 700', fill: 'none', stroke: C.cyan, 'stroke-width': 6 }, land);
+  const llmPulse = el('circle', { r: 10, fill: C.cyan, filter: 'url(#glow)' }, land);
+  const llmToEvo = el('path', { d: 'M 1530 830 C 1350 900 1250 900 1155 840', fill: 'none', stroke: C.green, 'stroke-width': 5, 'stroke-dasharray': '10 10' }, land);
+  const llmX = cross(land, 26, 8); move(llmX, 1340, 885);
   const oneWay = txt(S11, 500, 960, 'one way to train — not how every LLM is trained', { size: 32, weight: 800, fill: C.amber });
 
   // ====== S12: outro ======
   const S12 = g(root);
   const journey = g(S12);
-  const jSw = rect(journey, -90, -90, 180, 180, { r: 20, fill: '#d4d4d4', stroke: 'none' }); move(jSw, 0, 0);
-  const jArrow = el('path', { d: 'M 120 0 L 520 0', stroke: C.dim, 'stroke-width': 8, fill: 'none' }, journey);
-  const jBoard = board(journey, 6, 34); move(jBoard.g, 660, 0); jBoard.render(simulate(6, 9, 0.9, 10)[8]);
-  const jL1 = txt(journey, 0, 140, 'classify a colour', { size: 32, weight: 800, fill: C.ink });
-  const jL2 = txt(journey, 660, 160, 'learn a game', { size: 32, weight: 800, fill: C.ink });
-  move(journey, 630, 480);
+  // left station: the colour classifier, still working
+  const jLeft = g(journey);
+  const jFrameL = rect(jLeft, -230, -170, 460, 340, { r: 28, fill: '#0f1d2a', stroke: C.cyan, sw: 4 });
+  const jSw = rect(jLeft, -190, -60, 120, 120, { r: 16, fill: '#d4d4d4', stroke: '#ffffff40', sw: 2 });
+  el('line', { x1: -60, y1: 0, x2: -10, y2: 0, stroke: C.dim, 'stroke-width': 5 }, jLeft);
+  const jNeu = neuron(jLeft, 40, { symbol: 'Σ' }); set(jNeu.label, { 'font-size': 34 }); move(jNeu.g, 40, 0);
+  el('line', { x1: 82, y1: 0, x2: 110, y2: 0, stroke: C.dim, 'stroke-width': 5 }, jLeft);
+  const jPill = rect(jLeft, 112, -30, 100, 60, { r: 30, fill: '#ece7dc', stroke: 'none' });
+  const jPillTx = txt(jLeft, 162, 2, 'LIGHT', { size: 22, weight: 800, fill: '#111' });
+  const jL1 = txt(jLeft, 0, 130, 'classify a colour', { size: 30, weight: 800, fill: C.cyan });
+  move(jLeft, 420, 520);
+  // right station: learning a game through repeated trials
+  const jRight = g(journey);
+  const jGhosts = [0, 1, 2, 3].map(i => { const gg = g(jRight); rect(gg, -170, -170, 340, 340, { r: 24, fill: '#0f1d2a', stroke: '#2e4a60', sw: 3 }); const b = board(gg, 8, 34); return { g: gg, b }; });
+  const jMain = g(jRight);
+  const jFrameR = rect(jMain, -170, -170, 340, 340, { r: 24, fill: '#0f1d2a', stroke: C.green, sw: 4 });
+  const jBoard = board(jMain, 8, 34);
+  const jTrial = txt(jRight, 0, -215, '', { size: 30, weight: 800, fill: C.green, mono: true });
+  const jSpark = el('path', { d: '', fill: 'none', stroke: C.green, 'stroke-width': 5, 'stroke-linejoin': 'round' }, jRight);
+  const jL2 = txt(jRight, 0, 345, 'learn a game', { size: 30, weight: 800, fill: C.green });
+  move(jRight, 1460, 500);
+  // the path between them, with a comet
+  const jArrow = el('path', { d: 'M 660 520 C 860 330 1060 330 1260 480', fill: 'none', stroke: C.dim, 'stroke-width': 5, 'stroke-dasharray': '6 14' }, journey);
+  const jComet = Array.from({ length: 7 }, (_, i) => el('circle', { r: 14 - i * 1.6, fill: i ? C.teal : '#ecfeff', opacity: 1 - i * 0.13, filter: 'url(#glow)' }, journey));
+  const jStates = [0, 1, 2, 3, 4].map(i => simulate(8, 40 + i * 7, 0.55 + 0.1 * i, 60));
+  const jAt = (k, step) => { const st = jStates[k]; const n = st.length; return st[((Math.floor(Math.max(0, step)) % n) + n) % n]; };
   const chat = g(S12);
   rect(chat, -520, -330, 1040, 660, { r: 32, fill: '#0d1a26', stroke: '#2b4559', sw: 3 });
   rect(chat, -470, 200, 940, 84, { r: 42, fill: '#0a141e', stroke: '#2f4a5e' });
@@ -557,17 +616,34 @@ export function createChapter5(root, cue) {
   move(orbit, 960, 560);
   const qs = ['How can one model handle so many requests?', 'What happens inside when it seems to understand, reason, plan?', 'Where are the limits?'].map((s, i) => txt(S12, 960, 135, s, { size: 44, weight: 800, fill: [C.ink, C.ink, C.amber][i] }));
   const nextG = g(S12);
-  const nx = chip(nextG, 'NEXT: inside a language model', C.teal, 640); move(nx.g, 960, 820);
+  const nx = chip(nextG, 'NEXT: inside a language model', C.teal, 640); move(nx.g, 960, 380);
   const likeB = g(nextG);
   const likeBg = rect(likeB, -130, -40, 260, 80, { r: 40, fill: '#0f2433', stroke: C.cyan, sw: 4 });
   el('path', { d: 'M -78 14 L -78 -8 L -64 -8 L -52 -32 C -46 -36 -38 -32 -40 -24 L -44 -10 L -24 -10 C -16 -10 -12 -4 -14 2 L -20 18 C -22 22 -26 24 -30 24 L -78 24 Z', fill: C.cyan }, likeB);
-  const likeTx = txt(likeB, 30, 3, 'Like', { size: 32, weight: 800, fill: C.cyan });
+  const likeTx = txt(likeB, 40, 3, 'Like', { size: 32, weight: 800, fill: C.cyan });
   move(likeB, 800, 950);
   const subBg_ = g(nextG);
   const subBg = rect(subBg_, -150, -40, 300, 80, { r: 40, fill: '#c81e1e', stroke: 'none' });
   const subTx = txt(subBg_, 0, 3, 'SUBSCRIBE', { size: 32, weight: 800, fill: '#fff' });
   move(subBg_, 1120, 950);
   const tapDot = el('circle', { r: 26, fill: '#ffffff', opacity: 0 }, nextG);
+  // next-episode teaser: a sentence predicting its next word
+  const teaser = g(S12);
+  const tzKicker = txt(teaser, 960, 150, 'NEXT EPISODE', { size: 30, weight: 800, fill: C.amber, mono: true, ls: 10 });
+  const tzTitle = txt(teaser, 960, 225, '', { size: 70, weight: 800, fill: C.ink });
+  const tzCaret = el('rect', { x: 0, y: 190, width: 6, height: 70, fill: C.teal }, teaser);
+  const TZW = ['The', 'cat', 'sat', 'on', 'the'];
+  const tzTok = TZW.map((w, i) => { const gg = g(teaser); rect(gg, -70, -36, 140, 72, { r: 14, fill: '#13283a', stroke: C.teal, sw: 3 }); txt(gg, 0, 3, w, { size: 34, weight: 700 }); move(gg, 420 + i * 170, 400); return gg; });
+  const tzQ = g(teaser); const tzQbg = rect(tzQ, -70, -36, 140, 72, { r: 14, fill: '#2a210b', stroke: C.amber, sw: 4 }); const tzQtx = txt(tzQ, 0, 3, '?', { size: 40, weight: 800, fill: C.amber }); move(tzQ, 420 + 5 * 170, 400);
+  const tzCand = [['mat', 0.62], ['sofa', 0.21], ['floor', 0.09]].map(([w, v], i) => { const gg = g(teaser); txt(gg, -10, 0, w, { size: 30, weight: 700, fill: C.ink, anchor: 'end' }); rect(gg, 0, -14, 260, 28, { r: 8, fill: '#132433', stroke: 'none' }); const f = rect(gg, 0, -14, 0, 28, { r: 8, fill: i ? '#3b5568' : C.teal, stroke: 'none' }); const pc = txt(gg, 275, 0, `${Math.round(v * 100)}%`, { size: 26, weight: 800, fill: i ? C.dim : C.teal, mono: true, anchor: 'start' }); move(gg, 1470, 360 + i * 46); return { g: gg, f, v }; });
+  const tzLines = tzCand.map((c5, i) => el('path', { d: `M ${1390} ${400} L ${1450} ${360 + i * 46}`, stroke: C.dim, 'stroke-width': 2, fill: 'none' }, teaser));
+  const sparkles = Array.from({ length: 50 }, (_, i) => el('circle', { r: 1.5 + hash(i + 7) * 3, fill: i % 3 ? C.teal : C.violet, opacity: 0 }, S12));
+  // bell (notifications)
+  const bell = g(nextG);
+  el('circle', { r: 46, fill: '#0f2433', stroke: C.amber, 'stroke-width': 4 }, bell);
+  const bellBody = g(bell);
+  el('path', { d: 'M -20 12 C -20 -6 -16 -22 0 -24 C 16 -22 20 -6 20 12 L 26 18 L -26 18 Z', fill: C.amber }, bellBody);
+  el('circle', { cx: 0, cy: 24, r: 6, fill: C.amber }, bellBody);
 
   // ====== Neuroevolution title reveal ======
   const NE = g(root);
@@ -577,10 +653,24 @@ export function createChapter5(root, cue) {
   const neRings = [0, 1, 2].map(i => el('circle', { cx: 960, cy: 540, r: 0, fill: 'none', stroke: i === 1 ? C.violet : C.teal, 'stroke-width': 10 - i * 2, filter: 'url(#glow)' }, NE));
   const neCore = el('circle', { cx: 960, cy: 540, r: 0, fill: '#ecfeff', filter: 'url(#glowBig)' }, NE);
   const neBits = Array.from({ length: 60 }, (_, i) => ({ el: el('circle', { r: 3 + hash(i + 5) * 5, fill: i % 2 ? C.teal : C.violet, filter: 'url(#glow)' }, NE), a: hash(i) * Math.PI * 2, sp: 0.4 + hash(i + 9) * 0.9 }));
-  const neTitle = el('text', { x: 960, y: 560, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-family': SANS, 'font-size': 168, 'font-weight': 900, filter: 'url(#glow)' }, NE);
+  // after the burst, particles gather into a network constellation around the title
+  const NEL = [[200, [250, 360, 820]], [470, [210, 330, 860]], [740, [270, 880]], [1180, [250, 840]], [1450, [210, 330, 870]], [1720, [260, 370, 820]]];
+  const neNodes = [];
+  NEL.forEach(([x, ys], li) => ys.forEach(y => neNodes.push({ x, y, li, c: li < 3 ? C.teal : C.violet })));
+  const neEdges = [];
+  neNodes.forEach((a2, i) => neNodes.forEach((b2, j) => { if (b2.li === a2.li + 1 && (Math.abs(a2.y - b2.y) < 200 || hash(i * 31 + j) > 0.75)) neEdges.push({ a: a2, b: b2, el: el('line', { x1: a2.x, y1: a2.y, x2: b2.x, y2: b2.y, stroke: a2.c, 'stroke-width': 2.5, opacity: 0 }, NE) }); }));
+  const nePulse = neEdges.map((e, k) => el('circle', { r: 6, fill: k % 7 === 3 ? C.amber : e.a.c, filter: 'url(#glow)' }, NE));
+  const neNodeEls = neNodes.map(n => el('circle', { cx: n.x, cy: n.y, r: 12, fill: '#0c1f2a', stroke: n.c, 'stroke-width': 4, opacity: 0 }, NE));
+  const neTitle = el('text', { x: 960, y: 560, 'text-anchor': 'middle', 'dominant-baseline': 'middle', 'font-family': SANS, 'font-size': 150, 'font-weight': 800 }, NE);
   const tNeuro = el('tspan', { fill: C.teal, text: 'NEURO' }, neTitle);
   const tEvo = el('tspan', { fill: C.violet, text: 'EVOLUTION' }, neTitle);
   const neBar = el('rect', { x: 960, y: 660, width: 0, height: 10, rx: 5, fill: 'url(#neGrad)' }, NE);
+  // NEURO = a network, EVOLUTION = DNA
+  const neEmb = g(NE);
+  const embNet = miniNet(neEmb, 5, C.teal); set(embNet, { transform: 'translate(-300 0) scale(1.6)' });
+  txt(neEmb, 0, 4, '+', { size: 70, weight: 800, fill: C.dim });
+  const embDNA = g(neEmb, { transform: 'translate(300 0)' });
+  for (let i = 0; i < 9; i++) { const x = -90 + i * 22, a3 = i * 0.75; const y1 = Math.sin(a3) * 34; el('line', { x1: x, y1, x2: x, y2: -y1, stroke: '#94a3b8', 'stroke-width': 3 }, embDNA); el('circle', { cx: x, cy: y1, r: 7, fill: C.teal }, embDNA); el('circle', { cx: x, cy: -y1, r: 7, fill: C.violet }, embDNA); }
   const neg = el('linearGradient', { id: 'neGrad' }, NE);
   el('stop', { offset: '0%', 'stop-color': C.teal }, neg); el('stop', { offset: '100%', 'stop-color': C.violet }, neg);
 
@@ -863,15 +953,30 @@ export function createChapter5(root, cue) {
     set(neCore, { r: t < tW ? 70 * pull : 70 * (1 - p(t, tW, 0.5)) });
     set(neFlash, { opacity: 0.75 * vis(t, tW, tW + 0.15, 0.04, 0.6) });
     neRings.forEach((r, i) => { const k = pl(t, tW + i * 0.12, 1.4); set(r, { r: 1200 * easeOut(k), opacity: boom * (1 - k) }); });
-    const rayOn = boom * p(t, tW, 0.4) * (1 - p(t, tOut, 0.8));
+    const exitK0 = p(t, tOut, 0.9);
+    const rayOn = 0.35 * boom * p(t, tW, 0.4) * (1 - p(t, tOut, 0.8));
+    // particles that settle into the constellation
+    const settle = p(t, tW + 0.6, 1.0, easeOut);
+    const neFade = 1 - p(t, tOut + 0.3, 0.8);
+    neNodeEls.forEach((n, i) => { set(n, { opacity: neFade * p(t, tW + 1.2 + i * 0.03, 0.4), r: 12 + 4 * Math.sin(t * 3 + i) }); });
+    neEdges.forEach((e, k) => set(e.el, { opacity: 0.45 * neFade * p(t, tW + 1.4 + (k % 9) * 0.05, 0.5) }));
+    nePulse.forEach((pu, k) => { const e = neEdges[k]; const c3 = ((t - tW) * 0.9 + hash(k)) % 1; set(pu, { cx: lerp(e.a.x, e.b.x, c3), cy: lerp(e.a.y, e.b.y, c3), opacity: neFade * p(t, tW + 1.8, 0.5) * Math.sin(Math.PI * c3) }); });
+    show(neEmb, neFade * p(t, tW + 0.5, 0.5, easeBack) * (1 - exitK0));
+    move(neEmb, 960, 720, p(t, tW + 0.5, 0.5, easeBack));
     rays.forEach((r, i) => { const a0 = i / rays.length * Math.PI * 2 + (t - tW) * 0.15, w = 0.05; set(r, { d: `M 960 540 L ${960 + Math.cos(a0 - w) * 1400} ${540 + Math.sin(a0 - w) * 1400} L ${960 + Math.cos(a0 + w) * 1400} ${540 + Math.sin(a0 + w) * 1400} Z`, opacity: 0.13 * rayOn }); });
-    neBits.forEach((b2, i) => { const k = pl(t, tW, 2.2); const d = 900 * b2.sp * easeOut(k); set(b2.el, { cx: 960 + Math.cos(b2.a) * d, cy: 540 + Math.sin(b2.a) * d * 0.7, opacity: boom * (1 - k) }); });
+    neBits.forEach((b2, i) => {
+      const k = pl(t, tW, 0.9); const d = 700 * b2.sp * easeOut(k);
+      let x = 960 + Math.cos(b2.a) * d, y = 540 + Math.sin(b2.a) * d * 0.7;
+      const target = neNodes[i % neNodes.length];
+      if (i < neNodes.length) { x = lerp(x, target.x, settle); y = lerp(y, target.y, settle); }
+      set(b2.el, { cx: x, cy: y, opacity: boom * (i < neNodes.length ? (1 - p(t, tW + 1.4, 0.4)) : 1 - pl(t, tW + 0.4, 1.0)) });
+    });
     // title slams in from oversized, letters snapping together; then shrinks away for the next scene
     const slam = p(t, tW, 0.55, easeOut);
     const exitK = p(t, tOut, 0.9);
     const sc = lerp(2.4, 1, slam) * lerp(1, 0.42, exitK);
-    set(neTitle, { transform: `translate(960 ${lerp(540, 110, exitK)}) scale(${sc}) translate(-960 -560)`, 'letter-spacing': lerp(70, 6, slam), opacity: slam * (1 - p(t, tOut + 0.6, 0.8)) });
-    set(neBar, { x: 960 - 560 * p(t, tW + 0.35, 0.6), width: 1120 * p(t, tW + 0.35, 0.6), opacity: 1 - exitK });
+    set(neTitle, { transform: `translate(960 ${lerp(540, 110, exitK)}) scale(${sc}) translate(-960 -560)`, 'letter-spacing': lerp(18, 4, slam), opacity: slam * (1 - p(t, tOut + 0.6, 0.8)) });
+    set(neBar, { x: 960 - 520 * p(t, tW + 0.35, 0.6), y: 640, width: 1040 * p(t, tW + 0.35, 0.6), height: 6, opacity: 1 - exitK });
     // camera shake on impact
     const shake = boom * (1 - pl(t, tW, 0.5));
     const sxo = Math.sin(t * 90) * 14 * shake, syo = Math.cos(t * 77) * 10 * shake;
@@ -1024,21 +1129,92 @@ export function createChapter5(root, cue) {
     // ---------- S11: comparison ----------
     const s11 = vis(t, T.diff - 0.3, T.seenNow - 0.2, 0.5, 0.5);
     show(S11, s11);
-    cols.forEach((c, i) => { show(c.g, p(t, i ? T.neCmp - 0.3 : T.diff + 0.3, 0.5)); c.rs.forEach((r, k) => {
-      show(r, p(t, (i ? T.neCmp : T.supCmp) + k * 1.6, 0.4));
-      const ic = r.__ic;
-      if (ic.__gap) set(ic.__gap, { width: 76 * (0.6 + 0.4 * Math.sin(t * 2)) });
-      if (ic.__dial) ic.__dial.setValue(Math.sin(t * 1.5) * 1.2, -2, 2);
-      if (ic.__die) set(ic.__die, { transform: `rotate(${Math.floor(t * 5) * 37 % 360})` });
-    }); });
-    show(evoWhat, p(t, T.some - 0.2, 0.5)); show(ew2.g, p(t, T.others, 0.5));
-    show(oneWay, p(t, T.oneWay, 0.5));
+    const lift = p(t, T.oneWay - 0.3, 0.9);
+    set(PL.g, { transform: `translate(${lerp(500, 560, lift)} ${lerp(470, 250, lift)}) scale(${lerp(1, 0.55, lift)})` });
+    set(PR.g, { transform: `translate(${lerp(1420, 1360, lift)} ${lerp(470, 250, lift)}) scale(${lerp(1, 0.55, lift)})` });
+    show(PL.g, p(t, T.diff + 0.2, 0.5)); show(PR.g, p(t, T.diff + 0.6, 0.5));
+    // left panel loop (1.8 s): forward, compare, backward
+    const cyc = Math.max(0, t - T.supCmp) / 1.8, ci = Math.floor(cyc), ph = cyc - ci;
+    const lEx = SWL[ci % SWL.length];
+    set(lSw, { fill: t < T.supCmp ? '#d4d4d4' : lEx[0] });
+    set(lPill, { fill: lEx[1] === 'LIGHT' ? '#ece7dc' : '#1f262e' }); set(lPillTx, { text: lEx[1], fill: lEx[1] === 'LIGHT' ? '#111' : C.ink });
+    const runL = t > T.supCmp ? 1 : 0;
+    lEdges.forEach((e, k) => {
+      const fwd = ph < 0.45, kk = fwd ? ph / 0.45 : 1 - (ph - 0.55) / 0.45;
+      const segK = e.a.li === 0 ? clamp(kk * 2) : clamp(kk * 2 - 1);
+      set(lPul[k], { cx: lerp(e.a.x, e.b.x, segK), cy: lerp(e.a.y, e.b.y, segK), fill: fwd ? C.cyan : C.red, opacity: runL * (ph > 0.45 && ph < 0.55 ? 0 : 1) * (segK > 0.02 && segK < 0.98 ? 1 : 0) });
+    });
+    lDials.forEach((d, i) => d.setValue(Math.sin(t * 2 + i) * 1.4 * (ph > 0.55 ? 1 : 0.3), -2, 2));
+    const lossNow = 0.75 * Math.exp(-ci * 0.25) + 0.08;
+    set(lPred, { width: 600 * (1 - lossNow) * runL }); set(lGap, { x: -300 + 600 * (1 - lossNow), width: 600 * lossNow * p(t, cue.at('supplied target answer'), 0.4) });
+    const supT = [T.supCmp, cue.at('supplied target answer'), cue.at('uses gradients')];
+    lCaps.forEach((c2, k) => show(c2, p(t, supT[k], 0.4)));
+    // right panel: rounds of 3 s — play, score, select, mutate
+    const neT = [T.neCmp, cue.at('by their task score'), cue.at('selection and mutation')];
+    const rr = Math.max(0, Math.floor((t - T.neCmp) / 3)), ru = Math.max(0, t - T.neCmp) - rr * 3;
+    const rSt = rCards.map((c2, i) => stateAt(rSim(rr, i), T.neCmp + rr * 3 + Math.min(ru, 1.9), T.neCmp + rr * 3, 10));
+    const rFit = rSt.map(st => st.apples * 10 + st.body.length * 2 - (st.crashed ? 5 : 0));
+    const rOrd = rFit.map((f, i) => i).sort((a1, b1) => rFit[b1] - rFit[a1]);
+    const evoMode = p(t, T.some - 0.3, 0.6);
+    rCards.forEach((c2, i) => {
+      c2.b.render(rSt[i]);
+      const selOn0 = t > neT[2] && ru > 2.2, top0 = rOrd.indexOf(i) < 2;
+      show(c2.g, p(t, T.neCmp - 0.2 + i * 0.08, 0.4) * (1 - evoMode) * (selOn0 && !top0 ? 0.45 : 1));
+      const scored = t > neT[1] && ru > 1.9;
+      set(c2.bar, { width: scored ? 140 * clamp(rFit[i] / 40) : 0 });
+      const top = rOrd.indexOf(i) < 2, selOn = t > neT[2] && ru > 2.2;
+      set(c2.bg, { stroke: selOn && top ? C.green : '#2e4a60', 'stroke-width': selOn && top ? 6 : 3 });
+      const mk = t > neT[2] ? pl(ru, 2.5, 0.5) : 0;
+      set(c2.mut, { r: !top ? 120 * mk : 0, opacity: !top ? 1 - mk : 0 });
+    });
+    rCaps.forEach((c2, k) => show(c2, p(t, neT[k], 0.4)));
+    // weights only → structure too
+    show(evoNet, evoMode);
+    enEdges.forEach((e, k) => set(e, { 'stroke-width': 2 + 5 * Math.abs(Math.sin(t * 2.3 + k * 1.7)), stroke: Math.sin(t * 2.3 + k * 1.7) > 0.85 ? C.amber : C.green }));
+    newLinks.forEach((l, i) => draw(l, p(t, T.others + 0.3 + i * 0.5, 0.7)));
+    set(newNode, { r: 18 * p(t, cue.at('network structure') - 0.2, 0.4, easeBack) });
+    newNodeLinks.forEach(l => set(l, { opacity: p(t, cue.at('network structure'), 0.4) }));
+    show(evoWhat, p(t, T.some - 0.2, 0.5) * (1 - lift)); show(ew2.g, p(t, T.others, 0.5));
+    // the landscape of training methods
+    show(land, lift);
+    show(bGrad, p(t, T.oneWay, 0.5, easeBack)); show(bEvo, p(t, T.oneWay + 0.4, 0.5, easeBack)); show(bOther, p(t, T.oneWay + 0.8, 0.5, easeBack));
+    set(bEvo, { transform: `translate(1075 820) scale(${p(t, T.oneWay + 0.4, 0.5, easeBack) * (1 + 0.08 * Math.sin(Math.PI * pl(t, cue.at('It is one way'), 0.8)))})` });
+    orbitNets.forEach((m, i) => { const a4 = t * 0.6 + i * 1.26; set(m, { transform: `translate(${640 + Math.cos(a4) * 250} ${760 + Math.sin(a4) * 150}) scale(0.9)`, opacity: p(t, cue.at('every modern network') - 0.2 + i * 0.1, 0.4) }); });
+    const llmOn = p(t, T.llm - 0.4, 0.5, easeBack);
+    show(llm, llmOn); set(llm, { transform: `translate(1640 800) scale(${llmOn})` });
+    draw(llmToGrad, p(t, T.llm, 0.8)); show(llmToGrad, t > T.llm ? 1 : 0);
+    const pp = pointOn(llmToGrad, ((t - T.llm) * 0.8) % 1); set(llmPulse, { cx: pp.x, cy: pp.y }); show(llmPulse, p(t, T.llm + 0.8, 0.3));
+    draw(llmToEvo, p(t, T.llm + 0.3, 0.6)); show(llmToEvo, t > T.llm + 0.3 ? 1 : 0);
+    move(llmX, 1340, 885, p(t, T.llm + 0.9, 0.3, easeBack)); show(llmX, p(t, T.llm + 0.9, 0.3));
 
     // ---------- S12: outro ----------
     const s12 = vis(t, T.seenNow - 0.3, 9999, 0.5);
     show(S12, s12);
-    show(journey, vis(t, T.seenNow, T.modern - 0.2, 0.4, 0.5));
-    show(jSw, p(t, T.seenNow + 0.3, 0.5)); show(jL1, p(t, T.color - 0.3, 0.4)); show(jL2, p(t, T.learnGame, 0.4)); draw(jArrow, p(t, T.learnGame - 0.5, 0.8)); show(jBoard.g, p(t, T.learnGame, 0.4));
+    show(journey, vis(t, T.seenNow - 0.1, T.modern - 0.2, 0.3, 0.5));
+    const jIn = p(t, T.seenNow - 0.1, 0.6, easeBack);
+    set(jLeft, { transform: `translate(420 520) scale(${jIn * (1 + 0.07 * Math.sin(Math.PI * pl(t, T.color, 0.7)))})` });
+    const jEx = SWL[Math.floor(Math.max(0, t - T.seenNow) / 0.6) % SWL.length];
+    set(jSw, { fill: jEx[0] }); set(jPill, { fill: jEx[1] === 'LIGHT' ? '#ece7dc' : '#1f262e' }); set(jPillTx, { text: jEx[1], fill: jEx[1] === 'LIGHT' ? '#111' : C.ink });
+    set(jNeu.core, { opacity: 0.3 + 0.3 * Math.sin(t * 6) });
+    set(jFrameL, { 'stroke-width': 4 + 4 * vis(t, T.color - 0.1, T.learnGame - 0.3, 0.2, 0.3) });
+    show(jL1, p(t, T.color - 0.3, 0.4));
+    // comet travels to the game
+    const jk = p(t, T.learnGame - 0.6, 1.1);
+    draw(jArrow, 1); show(jArrow, p(t, T.seenNow + 0.4, 0.5));
+    jComet.forEach((c4, i) => { const q = pointOn(jArrow, clamp(jk - i * 0.035)); set(c4, { cx: q.x, cy: q.y }); show(c4, jk > 0 && jk < 1 ? 1 - i * 0.13 : 0); });
+    const rIn = p(t, T.learnGame + 0.2, 0.6, easeBack);
+    set(jRight, { transform: `translate(1460 500) scale(${rIn})` }); show(jRight, rIn > 0.01 ? 1 : 0);
+    const trialT = cue.at('through repeated trials');
+    const fan = p(t, trialT - 0.2, 0.8, easeOut);
+    const trialRate = t > trialT ? 3.5 : 0.8;
+    const trial = 1 + Math.floor(Math.max(0, t - T.learnGame) * trialRate + (t > trialT ? 0 : 0));
+    jGhosts.forEach((gh, i) => { set(gh.g, { transform: `translate(${(i + 1) * 26 * fan} ${-(i + 1) * 20 * fan}) rotate(${(i + 1) * 3 * fan})`, opacity: 0.35 * fan * (1 - i * 0.18) }); gh.b.render(jAt((trial + i + 1) % 5, t * 6 + i * 7)); });
+    jBoard.render(jAt(trial % 5, (t - T.learnGame) * 6));
+    set(jTrial, { text: `trial ${trial}` }); show(jTrial, p(t, T.learnGame + 0.4, 0.4));
+    let dS = ''; const nPts = Math.min(40, trial);
+    for (let i = 0; i < nPts; i++) dS += `${i ? 'L' : 'M'} ${-160 + i * 8} ${290 - 60 * (1 - Math.exp(-i / 12)) - (hash(i + 3) - 0.5) * 18}`;
+    set(jSpark, { d: dS || 'M 0 0' }); show(jSpark, p(t, trialT, 0.4));
+    set(jFrameR, { 'stroke-width': 4 + 4 * Math.sin(Math.PI * pl(t, T.learnGame + 0.2, 0.8)) });
     show(chat, vis(t, T.modern - 0.2, T.howCan - 0.2, 0.5, 0.5));
     reqs.forEach((r, i) => show(r.g, p(t, [T.explain, T.compare, T.write, T.plan][i] - 0.1, 0.4, easeBack)));
     show(llmCore.g, p(t, T.withText, 0.5));
@@ -1046,7 +1222,7 @@ export function createChapter5(root, cue) {
     qs.forEach((q, i) => show(q, vis(t, qT[i] - 0.1, qT[i + 1] - 0.2, 0.4, 0.3)));
     // many requests orbit one model
     const zoomIn = p(t, T.next, 2.2);
-    const oOn = p(t, T.howCan - 0.4, 0.6) * (1 - 0.55 * zoomIn);
+    const oOn = p(t, T.howCan - 0.4, 0.6) * (1 - 0.82 * zoomIn);
     show(orbit, oOn);
     set(orbit, { transform: `translate(960 ${lerp(560, 520, zoomIn)}) scale(${lerp(1, 3.2, easeOut(zoomIn))})` });
     const spin = (t - T.howCan) * 0.12;
@@ -1056,9 +1232,9 @@ export function createChapter5(root, cue) {
       const R = lerp(160, c.outside ? lerp(420, 470, lim) : 420, k);
       const x = Math.cos(c.ang + spin) * R * 1.6, y = Math.sin(c.ang + spin) * R * 0.92;
       move(c.g, x, y, k);
-      show(c.g, k * (1 - zoomIn));
+      show(c.g, k * (1 - p(t, T.next - 0.2, 0.5)));
       set(c.tx, { fill: c.outside && lim > 0.5 && Math.floor(t * 3) % 2 ? C.red : reqNames[i][1] });
-      set(c.line, { x2: x, y2: y, opacity: 0.6 * k * (c.outside ? 1 - 0.8 * lim : 1) * (1 - zoomIn) });
+      set(c.line, { x2: x, y2: y, opacity: 0.6 * k * (c.outside ? 1 - 0.8 * lim : 1) * (1 - p(t, T.next - 0.2, 0.5)) });
     });
     // inside the model
     const reveal = p(t, T.inside, 0.9);
@@ -1075,15 +1251,35 @@ export function createChapter5(root, cue) {
     set(limitRing, { r: lerp(560, 330, p(t, T.limits, 0.8)) });
     // next + like / subscribe
     show(nextG, p(t, T.next - 0.2, 0.5));
-    show(nx.g, p(t, T.next + 0.6, 0.5, easeBack));
+    show(nx.g, 0);
+    // teaser for the next episode
+    const tz0 = T.next - 0.1;
+    show(teaser, p(t, tz0, 0.4));
+    show(tzKicker, p(t, tz0, 0.4)); set(tzKicker, { 'letter-spacing': lerp(30, 10, p(t, tz0, 0.8)) });
+    const TITLE = 'Inside a Language Model';
+    const nCh = Math.floor(TITLE.length * p(t, tz0 + 0.3, 1.6, x => x));
+    set(tzTitle, { text: TITLE.slice(0, nCh) });
+    const tw2 = tzTitle.getComputedTextLength ? tzTitle.getComputedTextLength() : 0;
+    set(tzCaret, { x: 960 + tw2 / 2 + 8, opacity: Math.floor(t * 2.5) % 2 ? 1 : 0.15 });
+    tzTok.forEach((tk, i) => { const k = p(t, tz0 + 0.6 + i * 0.18, 0.4, easeBack); move(tk, 420 + i * 170 - (1 - k) * 60, 400, k); show(tk, k > 0.01 ? 1 : 0); });
+    const qk = p(t, tz0 + 1.6, 0.4, easeBack); move(tzQ, 1270, 400, qk); show(tzQ, qk > 0.01 ? 1 : 0);
+    tzCand.forEach((c5, i) => { show(c5.g, p(t, tz0 + 2.0 + i * 0.15, 0.3)); set(c5.f, { width: 260 * c5.v * p(t, tz0 + 2.1 + i * 0.15, 0.6) }); show(tzLines[i], p(t, tz0 + 2.0 + i * 0.15, 0.3)); });
+    const pick = p(t, tz0 + 3.2, 0.4);
+    set(tzQtx, { text: pick > 0.5 ? 'mat' : '?' }); set(tzQbg, { fill: mix('#2a210b', '#0d3b36', pick), stroke: pick > 0.5 ? C.teal : C.amber });
+    sparkles.forEach((sp, i) => { const y = 1100 - ((t - tz0) * (40 + hash(i) * 70) + hash(i + 3) * 1100) % 1150; set(sp, { cx: hash(i + 11) * 1920 + Math.sin(t + i) * 20, cy: y, opacity: 0.6 * p(t, tz0, 1) }); });
+    // bell rings after subscribing
+    const bellOn = p(t, T.like + 1.8, 0.4);
+    show(bell, bellOn);
+    set(bell, { transform: `translate(1505 760) scale(${1.6 * (1 + 0.12 * Math.sin(Math.PI * pl(t, T.subscribe + 0.5, 0.4)))})` });
+    set(bellBody, { transform: `rotate(${Math.sin((t - T.subscribe - 0.5) * 22) * 22 * vis(t, T.subscribe + 0.5, T.subscribe + 1.6, 0.05, 0.3)})` });
     const likeT = cue.at('please like'), subT = T.subscribe;
     const liked = p(t, likeT + 0.2, 0.3);
-    show(likeB, p(t, T.like + 1.2, 0.4)); set(likeB, { transform: `translate(800 950) scale(${1 + 0.18 * Math.sin(Math.PI * pl(t, likeT, 0.4))})` });
+    show(likeB, p(t, T.like + 1.2, 0.4)); set(likeB, { transform: `translate(565 760) scale(${1.6 * (1 + 0.15 * Math.sin(Math.PI * pl(t, likeT, 0.4)))})` });
     set(likeBg, { fill: mix('#0f2433', '#155e75', liked) }); set(likeTx, { text: liked > 0.5 ? 'Liked' : 'Like' });
     const subbed = p(t, subT + 0.3, 0.3);
-    show(subBg_, p(t, T.like + 1.5, 0.4)); set(subBg_, { transform: `translate(1120 950) scale(${1 + 0.18 * Math.sin(Math.PI * pl(t, subT + 0.1, 0.4))})` });
+    show(subBg_, p(t, T.like + 1.5, 0.4)); set(subBg_, { transform: `translate(1045 760) scale(${1.6 * (1 + 0.15 * Math.sin(Math.PI * pl(t, subT + 0.1, 0.4)))})` });
     set(subBg, { fill: mix('#c81e1e', '#374151', subbed) }); set(subTx, { text: subbed > 0.5 ? 'SUBSCRIBED ✓' : 'SUBSCRIBE' });
-    const tapX = t < subT ? 800 : 1120, tapOn = Math.max(vis(t, likeT - 0.2, likeT + 0.5, 0.2, 0.3), vis(t, subT - 0.1, subT + 0.6, 0.2, 0.3));
-    set(tapDot, { cx: tapX - 40, cy: 975, opacity: 0.45 * tapOn, r: 26 - 8 * tapOn });
+    const tapX = t < subT ? 565 : 1045, tapOn = Math.max(vis(t, likeT - 0.2, likeT + 0.5, 0.2, 0.3), vis(t, subT - 0.1, subT + 0.6, 0.2, 0.3));
+    set(tapDot, { cx: tapX - 50, cy: 790, opacity: 0.45 * tapOn, r: 44 - 14 * tapOn });
   };
 }
