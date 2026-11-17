@@ -9,3 +9,10 @@ The [Smithsonian National Museum of American History object record](https://amer
 For the image credit, the museum asks users to cite it as from the collection of the **National Museum of American History, Smithsonian Institution**. The preview includes that credit beside the inset and links it to the object record. Do not imply Smithsonian sponsorship or endorsement. If the individual downloadable file presents a separate restriction beyond the object-page CC0 status, replace it with an original stylized reconstruction before release.
 
 The image was found through image search and copied into this project’s `references/` directory. SHA-256: `cac45ce5c316560773d327b7c85264cf64a6c3493c611726fdfafb510a754a80`.
+
+## Portraits (Chapter 1)
+
+- `pitts.jpg` — Walter Pitts, cropped to head and shoulders from a photo supplied by the project owner.
+- `mcculloch.jpg` — Warren McCulloch, cropped from a photo supplied by the project owner.
+
+Confirm the source and licence of both photos before public release, and add credits if required.
