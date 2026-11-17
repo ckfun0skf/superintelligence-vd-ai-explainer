@@ -154,12 +154,24 @@ export function createChapter5(root, cue) {
     move(gg, 380 + i * 580, 470);
     return gg;
   });
-  { // icons
-    const r0 = recap[0]; rect(r0, -170, -80, 110, 110, { r: 14, fill: '#d4d4d4', stroke: 'none' }); el('path', { d: 'M -40 -25 L 20 -25', stroke: C.dim, 'stroke-width': 5 }, r0);
-    rect(r0, 30, -60, 150, 70, { r: 35, fill: '#ece7dc', stroke: 'none' }); txt(r0, 105, -24, 'LIGHT', { size: 30, weight: 800, fill: '#111' });
-    const r1 = recap[1]; rect(r1, -180, -60, 360, 50, { r: 12, fill: '#132433', stroke: 'none' }); rect(r1, -180, -60, 70, 50, { r: 12, fill: '#ece7dc', stroke: 'none' }); rect(r1, -110, -60, 290, 50, { r: 12, fill: C.red, stroke: 'none', attrs: { opacity: 0.4 } });
-    const r2 = recap[2]; const d = dial(r2, 50); move(d.g, -40, -30); d.setValue(0.8, -2, 2); txt(r2, 60, -30, '↻', { size: 70, weight: 800, fill: C.amber });
-  }
+  // icons that act out each step
+  const SW = [['#d4d4d4', 'LIGHT'], ['#1e3a8a', 'DARK'], ['#fde68a', 'LIGHT'], ['#111111', 'DARK'], ['#fbcfe8', 'LIGHT'], ['#14532d', 'DARK'], ['#fafaf9', 'LIGHT'], ['#4b5563', 'DARK']];
+  const r0 = recap[0];
+  const rcSw = rect(r0, -170, -80, 110, 110, { r: 14, fill: '#d4d4d4', stroke: '#ffffff40', sw: 2 });
+  el('path', { d: 'M -40 -25 L 20 -25', stroke: C.dim, 'stroke-width': 5 }, r0);
+  const rcPill = rect(r0, 30, -60, 150, 70, { r: 35, fill: '#ece7dc', stroke: '#ffffff50', sw: 2 });
+  const rcLab = txt(r0, 105, -24, 'LIGHT', { size: 30, weight: 800, fill: '#111' });
+  const r1 = recap[1];
+  rect(r1, -180, -60, 360, 50, { r: 12, fill: '#132433', stroke: 'none' });
+  const rcGap = rect(r1, -180, -60, 360, 50, { r: 12, fill: C.red, stroke: 'none', attrs: { opacity: 0.4 } });
+  const rcPred = rect(r1, -180, -60, 70, 50, { r: 12, fill: '#ece7dc', stroke: 'none' });
+  el('line', { x1: 180, y1: -72, x2: 180, y2: 2, stroke: C.amber, 'stroke-width': 4, 'stroke-dasharray': '6 5' }, r1);
+  const rcPct = txt(r1, 0, 30, '', { size: 34, weight: 800, fill: C.ink, mono: true });
+  const rcOk = el('rect', { x: -250, y: -150, width: 500, height: 300, rx: 26, fill: 'none', stroke: C.green, 'stroke-width': 6 }, r1);
+  const rcTick = txt(r1, 215, -115, '✓', { size: 56, weight: 800, fill: C.green });
+  const r2 = recap[2];
+  const rcDial = dial(r2, 50); move(rcDial.g, -40, -30);
+  const rcSpin = txt(r2, 60, -30, '↻', { size: 70, weight: 800, fill: C.amber });
   const noAns = g(S1);
   rect(noAns, -230, -60, 460, 120, { r: 22, fill: '#0f1d2a', stroke: C.red, sw: 3 });
   rect(noAns, -205, -40, 80, 80, { r: 12, fill: '#6b7280', stroke: 'none' });
@@ -522,6 +534,26 @@ export function createChapter5(root, cue) {
     const s1 = vis(t, 0, T.game - 0.2, 0.01, 0.5);
     show(S1, s1);
     recap.forEach((r, i) => show(r, p(t, [T.seen + 0.3, T.measure, T.grads][i] - 0.2, 0.5) * (1 - 0.6 * p(t, T.notAvail, 0.5))));
+    // 1. examples: the swatch keeps changing and its label flips LIGHT / DARK
+    const ex = SW[Math.max(0, Math.floor((t - T.give) / 0.55)) % SW.length];
+    const exPop = t > T.give ? 1 + 0.08 * Math.sin(Math.PI * (((t - T.give) / 0.55) % 1)) : 1;
+    set(rcSw, { fill: t < T.give ? '#d4d4d4' : ex[0], transform: `translate(-115 -25) scale(${exPop}) translate(115 25)` });
+    const isL = t < T.give || ex[1] === 'LIGHT';
+    set(rcPill, { fill: isL ? '#ece7dc' : '#1f262e' }); set(rcLab, { text: isL ? 'LIGHT' : 'DARK', fill: isL ? '#111' : C.ink });
+    // 2. mismatch: the prediction bar goes up and down, then settles at 80 %
+    const mA = T.measure, mB = cue.at('and use gradients') - 0.4;
+    const mk = clamp((t - mA) / (mB - mA));
+    const wob = 0.2 + 0.6 * mk + Math.sin((t - mA) * 5.2) * 0.22 * (1 - mk) + Math.sin((t - mA) * 2.3) * 0.12 * (1 - mk);
+    const pr = t < mA ? 0.2 : clamp(wob, 0.05, 0.95);
+    set(rcPred, { width: 360 * pr });
+    set(rcPct, { text: t < mA ? '' : `${Math.round(pr * 100)}%` });
+    const done = p(t, mB, 0.4, easeBack);
+    show(rcOk, p(t, mB, 0.4)); show(rcTick, p(t, mB, 0.3)); set(rcTick, { transform: `translate(215 -115) scale(${done}) translate(-215 115)` });
+    // 3. gradients adjust weights: the dial keeps turning
+    const g0 = cue.at('and use gradients');
+    const gSpin = t > g0 ? (t - g0) * 220 : 0;
+    set(rcDial.needle, { transform: `rotate(${40 + gSpin + 40 * Math.sin((t - g0) * 3)})` });
+    set(rcSpin, { transform: `rotate(${gSpin * 1.3} 60 -30)` });
     move(noAns, 960, 820, p(t, T.notAvail, 0.5, easeBack)); show(noAns, p(t, T.notAvail, 0.4));
     const s1b = vis(t, T.game - 0.3, T.imagine - 0.2, 0.5, 0.5);
     show(S1b, s1b);
