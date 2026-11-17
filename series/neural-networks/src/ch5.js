@@ -154,12 +154,24 @@ export function createChapter5(root, cue) {
     move(gg, 380 + i * 580, 470);
     return gg;
   });
-  { // icons
-    const r0 = recap[0]; rect(r0, -170, -80, 110, 110, { r: 14, fill: '#d4d4d4', stroke: 'none' }); el('path', { d: 'M -40 -25 L 20 -25', stroke: C.dim, 'stroke-width': 5 }, r0);
-    rect(r0, 30, -60, 150, 70, { r: 35, fill: '#ece7dc', stroke: 'none' }); txt(r0, 105, -24, 'LIGHT', { size: 30, weight: 800, fill: '#111' });
-    const r1 = recap[1]; rect(r1, -180, -60, 360, 50, { r: 12, fill: '#132433', stroke: 'none' }); rect(r1, -180, -60, 70, 50, { r: 12, fill: '#ece7dc', stroke: 'none' }); rect(r1, -110, -60, 290, 50, { r: 12, fill: C.red, stroke: 'none', attrs: { opacity: 0.4 } });
-    const r2 = recap[2]; const d = dial(r2, 50); move(d.g, -40, -30); d.setValue(0.8, -2, 2); txt(r2, 60, -30, '↻', { size: 70, weight: 800, fill: C.amber });
-  }
+  // icons that act out each step
+  const SW = [['#d4d4d4', 'LIGHT'], ['#1e3a8a', 'DARK'], ['#fde68a', 'LIGHT'], ['#111111', 'DARK'], ['#fbcfe8', 'LIGHT'], ['#14532d', 'DARK'], ['#fafaf9', 'LIGHT'], ['#4b5563', 'DARK']];
+  const r0 = recap[0];
+  const rcSw = rect(r0, -170, -80, 110, 110, { r: 14, fill: '#d4d4d4', stroke: '#ffffff40', sw: 2 });
+  el('path', { d: 'M -40 -25 L 20 -25', stroke: C.dim, 'stroke-width': 5 }, r0);
+  const rcPill = rect(r0, 30, -60, 150, 70, { r: 35, fill: '#ece7dc', stroke: '#ffffff50', sw: 2 });
+  const rcLab = txt(r0, 105, -24, 'LIGHT', { size: 30, weight: 800, fill: '#111' });
+  const r1 = recap[1];
+  rect(r1, -180, -60, 360, 50, { r: 12, fill: '#132433', stroke: 'none' });
+  const rcGap = rect(r1, -180, -60, 360, 50, { r: 12, fill: C.red, stroke: 'none', attrs: { opacity: 0.4 } });
+  const rcPred = rect(r1, -180, -60, 70, 50, { r: 12, fill: '#ece7dc', stroke: 'none' });
+  el('line', { x1: 180, y1: -72, x2: 180, y2: 2, stroke: C.amber, 'stroke-width': 4, 'stroke-dasharray': '6 5' }, r1);
+  const rcPct = txt(r1, 0, 30, '', { size: 34, weight: 800, fill: C.ink, mono: true });
+  const rcOk = el('rect', { x: -250, y: -150, width: 500, height: 300, rx: 26, fill: 'none', stroke: C.green, 'stroke-width': 6 }, r1);
+  const rcTick = txt(r1, 215, -115, '✓', { size: 56, weight: 800, fill: C.green });
+  const r2 = recap[2];
+  const rcDial = dial(r2, 50); move(rcDial.g, -40, -30);
+  const rcSpin = txt(r2, 60, -30, '↻', { size: 70, weight: 800, fill: C.amber });
   const noAns = g(S1);
   rect(noAns, -230, -60, 460, 120, { r: 22, fill: '#0f1d2a', stroke: C.red, sw: 3 });
   rect(noAns, -205, -40, 80, 80, { r: 12, fill: '#6b7280', stroke: 'none' });
@@ -167,14 +179,26 @@ export function createChapter5(root, cue) {
   move(noAns, 960, 820);
   // game: score is easy, correct move for every board is not
   const S1b = g(root);
-  const boardsQ = Array.from({ length: 12 }, (_, i) => { const b = board(S1b, 6, 26); b.render(simulate(6, 50 + i, 0.5, 6)[Math.floor(hash(i) * 5)]); const q = txt(b.g, 0, 0, '?', { size: 90, weight: 800, fill: C.amber }); move(b.g, 200 + (i % 4) * 190, 330 + Math.floor(i / 4) * 190); return b; });
-  const qLabel = txt(S1b, 485, 920, 'correct move for every board?', { size: 34, weight: 800, fill: C.amber });
-  const scoreCard = g(S1b);
+  const camB = g(S1b);
+  // a 5×3 wall of boards; the playing board sits in the centre cell
+  const QPOS = [];
+  for (let r = 0; r < 3; r++) for (let c = 0; c < 5; c++) if (!(r === 1 && c === 2)) QPOS.push([960 + (c - 2) * 330, 540 + (r - 1) * 300]);
+  const boardsQ = QPOS.map(([x, y], i) => {
+    const gg = g(camB);
+    rect(gg, -125, -125, 250, 250, { r: 20, fill: '#0f1d2a', stroke: '#2e4a60', sw: 3 });
+    const b = board(gg, 6, 30); b.render(simulate(6, 50 + i, 0.5, 6)[1 + Math.floor(hash(i) * 4)]);
+    const q = txt(gg, 0, 4, '?', { size: 110, weight: 800, fill: C.amber, attrs: { opacity: 0.9 } });
+    move(gg, x, y);
+    return { g: gg, q, d: Math.hypot(x - 960, (y - 540) * 1.2) };
+  });
+  const qLabel = txt(S1b, 485, 920, '', { size: 1 });
+  const scoreCard = g(camB);
   rect(scoreCard, -260, -220, 520, 440, { r: 30, fill: '#0f1d2a', stroke: C.green, sw: 4 });
   const bigBoard = board(scoreCard, 8, 34); move(bigBoard.g, 0, -40);
   const bigStates = simulate(8, 7, 0.9, 40);
   const scoreTx = txt(scoreCard, 0, 180, '', { size: 44, weight: 800, fill: C.green, mono: true });
-  move(scoreCard, 1450, 520);
+  const scoreTick = txt(scoreCard, 215, -180, '✓', { size: 60, weight: 800, fill: C.green });
+  move(scoreCard, 960, 540, 0.56);
   const easyLabel = txt(S1b, 1450, 920, 'how well did it do? easy to score ✓', { size: 34, weight: 800, fill: C.green });
 
   // ====== S2: many candidates, keep better, random changes ======
@@ -522,14 +546,45 @@ export function createChapter5(root, cue) {
     const s1 = vis(t, 0, T.game - 0.2, 0.01, 0.5);
     show(S1, s1);
     recap.forEach((r, i) => show(r, p(t, [T.seen + 0.3, T.measure, T.grads][i] - 0.2, 0.5) * (1 - 0.6 * p(t, T.notAvail, 0.5))));
+    // 1. examples: the swatch keeps changing and its label flips LIGHT / DARK
+    const ex = SW[Math.max(0, Math.floor((t - T.give) / 0.55)) % SW.length];
+    const exPop = t > T.give ? 1 + 0.08 * Math.sin(Math.PI * (((t - T.give) / 0.55) % 1)) : 1;
+    set(rcSw, { fill: t < T.give ? '#d4d4d4' : ex[0], transform: `translate(-115 -25) scale(${exPop}) translate(115 25)` });
+    const isL = t < T.give || ex[1] === 'LIGHT';
+    set(rcPill, { fill: isL ? '#ece7dc' : '#1f262e' }); set(rcLab, { text: isL ? 'LIGHT' : 'DARK', fill: isL ? '#111' : C.ink });
+    // 2. mismatch: the prediction bar goes up and down, then settles at 80 %
+    const mA = T.measure, mB = cue.at('and use gradients') - 0.4;
+    const mk = clamp((t - mA) / (mB - mA));
+    const wob = 0.2 + 0.6 * mk + Math.sin((t - mA) * 5.2) * 0.22 * (1 - mk) + Math.sin((t - mA) * 2.3) * 0.12 * (1 - mk);
+    const pr = t < mA ? 0.2 : clamp(wob, 0.05, 0.95);
+    set(rcPred, { width: 360 * pr });
+    set(rcPct, { text: t < mA ? '' : `${Math.round(pr * 100)}%` });
+    const done = p(t, mB, 0.4, easeBack);
+    show(rcOk, p(t, mB, 0.4)); show(rcTick, p(t, mB, 0.3)); set(rcTick, { transform: `translate(215 -115) scale(${done}) translate(-215 115)` });
+    // 3. gradients adjust weights: the dial keeps turning
+    const g0 = cue.at('and use gradients');
+    const gSpin = t > g0 ? (t - g0) * 220 : 0;
+    set(rcDial.needle, { transform: `rotate(${40 + gSpin + 40 * Math.sin((t - g0) * 3)})` });
+    set(rcSpin, { transform: `rotate(${gSpin * 1.3} 60 -30)` });
     move(noAns, 960, 820, p(t, T.notAvail, 0.5, easeBack)); show(noAns, p(t, T.notAvail, 0.4));
     const s1b = vis(t, T.game - 0.3, T.imagine - 0.2, 0.5, 0.5);
     show(S1b, s1b);
-    show(scoreCard, p(t, T.howWell - 0.3, 0.5));
-    bigBoard.render(stateAt(bigStates, t, T.howWell - 0.3, 6));
-    set(scoreTx, { text: `score: ${stateAt(bigStates, t, T.howWell - 0.3, 6).apples * 10}` });
-    show(easyLabel, p(t, T.howWell + 0.6, 0.4));
-    boardsQ.forEach((b, i) => show(b.g, p(t, T.writeDown + (i < 4 ? i * 0.15 : 1.2 + i * 0.12), 0.3)));
+    // starts on one big playing board, then the camera pulls back to a wall of unlabelled boards
+    const zoomOut = p(t, T.writeDown - 0.2, 2.2);
+    const z = lerp(1.75, 1, zoomOut);
+    set(camB, { transform: `translate(960 ${lerp(500, 540, zoomOut)}) scale(${z}) translate(-960 -540)` });
+    show(scoreCard, p(t, T.game - 0.3, 0.5));
+    const st0 = T.game + 0.2;
+    bigBoard.render(stateAt(bigStates, t, st0, 5));
+    set(scoreTx, { text: `score: ${stateAt(bigStates, t, st0, 5).apples * 10}` });
+    show(scoreTx, p(t, T.howWell - 0.2, 0.4));
+    show(scoreTick, p(t, T.howWell + 0.6, 0.3));
+    set(scoreTick, { transform: `translate(215 -180) scale(${p(t, T.howWell + 0.6, 0.4, easeBack)}) translate(-215 180)` });
+    boardsQ.forEach((b, i) => {
+      const k = p(t, T.writeDown + 0.1 + b.d / 900, 0.4);
+      show(b.g, k);
+      set(b.q, { opacity: 0.9 * p(t, T.writeDown + 0.5 + b.d / 900, 0.3) * (0.75 + 0.25 * Math.sin(t * 4 + i)) });
+    });
     show(qLabel, p(t, T.writeDown + 0.4, 0.4));
 
     // ---------- S2 ----------
