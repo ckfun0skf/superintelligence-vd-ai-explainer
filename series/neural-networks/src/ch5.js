@@ -382,15 +382,24 @@ export function createChapter5(root, cue) {
   const snkStates = simulate(10, 3, 0.95, 60);
   const inG = g(S6);
   const inDefs = [['food', C.red], ['danger', C.amber], ['heading', C.green]];
-  const inNodes = inDefs.map(([s, c], i) => { const gg = g(inG); rect(gg, -110, -40, 220, 80, { r: 20, fill: mix('#0b1520', c, 0.15), stroke: c, sw: 3 }); const tx = txt(gg, 0, 3, s, { size: 32, weight: 800, fill: c }); move(gg, 1000, 380 + i * 160); return { g: gg, tx }; });
+  const inNodes = inDefs.map(([s, c], i) => { const gg = g(inG); rect(gg, -125, -40, 250, 80, { r: 20, fill: mix('#0b1520', c, 0.15), stroke: c, sw: 3 }); const tx = txt(gg, 0, 3, s, { size: 32, weight: 800, fill: c }); move(gg, 1000, 380 + i * 160); return { g: gg, tx }; });
   const hidN = [0, 1, 2, 3].map(i => { const n = neuron(S6, 34, { symbol: '' }); move(n.g, 1260, 330 + i * 120); return n; });
   const outDefs = ['straight', 'left', 'right'];
   const outBars = outDefs.map((s, i) => { const gg = g(S6); txt(gg, 0, -30, s, { size: 30, weight: 800, fill: C.ink, anchor: 'start' }); rect(gg, 0, -8, 300, 36, { r: 10, fill: '#132433', stroke: 'none' }); const f = rect(gg, 0, -8, 0, 36, { r: 10, fill: C.cyan, stroke: 'none' }); move(gg, 1460, 380 + i * 160); return { g: gg, f }; });
   const s6Links = g(S6); S6.insertBefore(s6Links, S6.firstChild);
-  inNodes.forEach((_, i) => hidN.forEach((__, j) => el('line', { x1: 1110, y1: 380 + i * 160, x2: 1226, y2: 330 + j * 120, stroke: C.teal, 'stroke-width': 2, opacity: 0.5 }, s6Links)));
+  inNodes.forEach((_, i) => hidN.forEach((__, j) => el('line', { x1: 1125, y1: 380 + i * 160, x2: 1226, y2: 330 + j * 120, stroke: C.teal, 'stroke-width': 2, opacity: 0.5 }, s6Links)));
   hidN.forEach((_, j) => outDefs.forEach((__, i) => el('line', { x1: 1294, y1: 330 + j * 120, x2: 1450, y2: 386 + i * 160, stroke: C.teal, 'stroke-width': 2, opacity: 0.5 }, s6Links)));
   const boardToNet = el('path', { d: 'M 780 560 L 880 560', stroke: C.dim, 'stroke-width': 6, fill: 'none' }, S6);
   const chosen = txt(S6, 1610, 880, '', { size: 34, weight: 800, fill: C.cyan });
+  // what the network "sees": colour-matched highlights on the board + numbers that fly to each input
+  const hlG = g(S6);
+  const hlFood = el('circle', { r: 30, fill: 'none', stroke: C.red, 'stroke-width': 6, filter: 'url(#glow)' }, hlG);
+  const hlFoodLine = el('path', { d: '', fill: 'none', stroke: C.red, 'stroke-width': 4, 'stroke-dasharray': '8 8' }, hlG);
+  const hlWall = el('line', { stroke: C.amber, 'stroke-width': 14, 'stroke-linecap': 'round' }, hlG);
+  const hlRay = el('path', { d: '', fill: 'none', stroke: C.amber, 'stroke-width': 4, 'stroke-dasharray': '8 8' }, hlG);
+  const hlHead = el('rect', { width: 64, height: 64, rx: 14, fill: 'none', stroke: C.green, 'stroke-width': 6, filter: 'url(#glow)' }, hlG);
+  const hlArrow = el('path', { d: '', fill: C.green, filter: 'url(#glow)' }, hlG);
+  const flyChips = inDefs.map(([, c]) => { const gg = g(S6); const r = rect(gg, -70, -28, 140, 56, { r: 16, fill: '#0b1520', stroke: c, sw: 3 }); const tx = txt(gg, 0, 2, '', { size: 28, weight: 800, fill: c, mono: true }); return { g: gg, r, tx }; });
 
   // ====== S7: many networks play; fitness ======
   const S7 = g(root);
@@ -873,6 +882,41 @@ export function createChapter5(root, cue) {
       set(b.f, { width: 300 * sc, fill: (t < T.follows - 0.5 ? i === 0 : st.act === i) ? C.cyan : '#3b5568' });
     });
     set(chosen, { text: `game takes: ${outDefs[t < T.follows - 0.5 ? 0 : st.act]}` }); show(chosen, p(t, T.follows, 0.4));
+    // ---- inputs: highlight on the board, then the value flies into its label ----
+    const cur = t < T.follows - 0.5 ? snkStates[0] : st;
+    const B0x = 470 - 280, B0y = 560 - 280, CS = 56;
+    const cx = c => B0x + (c + 0.5) * CS, cy = r => B0y + (r + 0.5) * CS;
+    const [hx, hy] = cur.body[0], [fx, fy] = cur.food, [ddx, ddy] = DIRS[cur.dir];
+    let free = 0; { let x = hx + ddx, y = hy + ddy; while (x >= 0 && y >= 0 && x < 10 && y < 10 && !cur.body.some(b2 => b2[0] === x && b2[1] === y)) { free++; x += ddx; y += ddy; } }
+    const wx = hx + ddx * (free + 1), wy = hy + ddy * (free + 1);
+    const vals = [`${fx - hx >= 0 ? '+' : ''}${fx - hx}, ${fy - hy >= 0 ? '+' : ''}${fy - hy}`, `${free}`, ['→', '↓', '←', '↑'][cur.dir]];
+    const wT = [T.food, T.danger, T.moving];
+    const hlOn = i => p(t, wT[i] - 0.1, 0.35) * (1 - p(t, T.produces + 0.5, 0.6) * 0.65);
+    const pulse = i => 1 + 0.15 * Math.sin(Math.PI * pl(t, wT[i], 0.6));
+    // food (red)
+    set(hlFood, { cx: cx(fx), cy: cy(fy), r: 30 * pulse(0) }); show(hlFood, hlOn(0));
+    set(hlFoodLine, { d: `M ${cx(hx)} ${cy(hy)} L ${cx(fx)} ${cy(hy)} L ${cx(fx)} ${cy(fy)}` }); show(hlFoodLine, hlOn(0));
+    // danger (amber): the wall or body cell ahead
+    const edgeX = cx(wx) - ddx * CS / 2, edgeY = cy(wy) - ddy * CS / 2;
+    set(hlWall, { x1: edgeX - ddy * CS * 1.5, y1: edgeY - ddx * CS * 1.5, x2: edgeX + ddy * CS * 1.5, y2: edgeY + ddx * CS * 1.5 }); show(hlWall, hlOn(1));
+    set(hlRay, { d: `M ${cx(hx)} ${cy(hy)} L ${edgeX} ${edgeY}` }); show(hlRay, hlOn(1));
+    // heading (green): head outlined + arrow
+    set(hlHead, { x: cx(hx) - 32, y: cy(hy) - 32, transform: `rotate(0)` }); show(hlHead, hlOn(2));
+    const hax = cx(hx) + ddx * 52, hay = cy(hy) + ddy * 52, hs2 = pulse(2);
+    set(hlArrow, { d: `M ${hax + ddx * 26 * hs2} ${hay + ddy * 26 * hs2} L ${hax - ddy * 18 * hs2} ${hay + ddx * 18 * hs2} L ${hax + ddy * 18 * hs2} ${hay - ddx * 18 * hs2} Z` }); show(hlArrow, hlOn(2));
+    // numbers fly from the board element into the label, which then shows the value
+    const srcs = [[cx(fx), cy(fy) - 50], [edgeX, edgeY - 50], [cx(hx), cy(hy) - 60]];
+    flyChips.forEach((fc, i) => {
+      const k = p(t, wT[i] + 0.25, 0.9);
+      const tx2 = 1000, ty2 = 380 + i * 160;
+      const arc = Math.sin(Math.PI * k) * -120;
+      move(fc.g, lerp(srcs[i][0], tx2, k), lerp(srcs[i][1], ty2, k) + arc, lerp(1, 0.6, k));
+      set(fc.tx, { text: vals[i] });
+      show(fc.g, t > wT[i] + 0.05 && k < 0.98 ? 1 : 0);
+      const arrived = k >= 0.98;
+      set(inNodes[i].tx, { text: arrived ? `${inDefs[i][0]} ${vals[i]}` : inDefs[i][0], 'font-size': arrived ? 26 : 32 });
+      set(inNodes[i].g, { transform: `translate(1000 ${380 + i * 160}) scale(${1 + 0.12 * Math.sin(Math.PI * pl(t, wT[i] + 1.15, 0.4))})` });
+    });
 
     // ---------- S7: many networks; fitness ----------
     const s7 = vis(t, T.start - 0.3, T.select - 0.2, 0.5, 0.5);
