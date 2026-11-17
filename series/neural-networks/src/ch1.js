@@ -4,7 +4,7 @@ import photoUrl from '../references/smithsonian-mark-i-perceptron-reference.jpg'
 const PORTRAITS = import.meta.glob('../references/{mcculloch,pitts}.{jpg,jpeg,png}', { eager: true, query: '?url', import: 'default' });
 const portraitUrl = name => Object.entries(PORTRAITS).find(([k]) => k.includes(`/${name}.`))?.[1];
 import { el, set, show, move, g, txt, rect, card, neuron, person, dial, draw, pointOn, headAt, arrowHead,
-  p, pl, vis, lerp, clamp, easeOut, easeBack, mix, fmt, hash, C, MONO } from './engine.js';
+  p, pl, vis, lerp, clamp, easeOut, easeBack, mix, fmt, hash, C, MONO, hush } from './engine.js';
 
 export function createChapter1(root, cue) {
   const T = {
@@ -297,6 +297,8 @@ export function createChapter1(root, cue) {
   const bigN = neuron(followG, 110, { symbol: '' });
 
   // =========== update ===========
+  // captions that only repeated the narration are removed from the picture
+  hush(headB, knobLabel, notCopyTx, blockTx, engineLabel);
   return function update(t) {
     // ---- Scene A ----
     const aVis = vis(t, 0, T.myst - 0.2, 0.01, 0.7);

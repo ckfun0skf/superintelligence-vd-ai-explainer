@@ -1,6 +1,6 @@
 // Chapter 2 — One artificial neuron, step by step.
 import { el, set, show, move, g, txt, rect, card, neuron, dial, draw, pointOn, arrowHead,
-  p, pl, vis, lerp, clamp, easeOut, easeBack, mix, grey, fmt, hash, C, MONO } from './engine.js';
+  p, pl, vis, lerp, clamp, easeOut, easeBack, mix, grey, fmt, hash, C, MONO, hush } from './engine.js';
 
 const sig = x => 1 / (1 + Math.exp(-x));
 
@@ -228,10 +228,12 @@ export function createChapter2(root, cue) {
   const netN = netNodes.map(([x, y], i) => { const n = neuron(net, i === 5 ? 64 : 54, { symbol: 'Σ' }); set(n.label, { 'font-size': 40 }); move(n.g, x, y); return n; });
 
   // ---------- update ----------
+  // captions that only repeated the narration are removed from the picture
+  hush(calcTx, multTx, dialHead, biasNote, biasMove, notProb, exTag, recap, imgTx, scrLabel);
   return function update(t) {
     // camera
     const cams = [
-      [0, 960, 1], [T.add - 0.6, 1180, 1], [T.notProb - 0.5, 1900, 1], [T.darkSw - 0.8, 1290, 0.74], [T.jobs - 0.3, 1290, 0.74],
+      [0, 960, 1], [T.three + 0.6, 640, 1.3], [T.enter - 1.0, 960, 1], [T.add - 0.6, 1180, 1], [T.notProb - 0.5, 1900, 1], [T.darkSw - 0.8, 1290, 0.74], [T.jobs - 0.3, 1290, 0.74],
     ];
     let cx = 960, cs = 1;
     for (const [ta, x, s] of cams) { const k = p(t, ta, 1.2); cx = lerp(cx, x, k); cs = lerp(cs, s, k); }
@@ -256,7 +258,8 @@ export function createChapter2(root, cue) {
       const k = p(t, t0, 0.9, easeOut);
       const sx = scX + (-63 + i * 64) * scS, sy = scY - 10 * scS;
       // world→screen for the bar position at camera 1 (world == screen before the first pan)
-      set(bm, { cx: lerp(sx, BX + 10, k), cy: lerp(sy, rows[i], k) });
+      const wx = lerp(sx, BX + 10, k), wy = lerp(sy, rows[i], k);
+      set(bm, { cx: 960 + (wx - cx) * cs, cy: 540 + (wy - 540) * cs, r: 16 * cs });
       show(bm, k > 0 && k < 1 ? 1 : 0);
     });
     show(scr, p(t, T.swatch - 0.2, 0.6));

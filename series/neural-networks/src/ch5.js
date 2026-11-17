@@ -1,6 +1,6 @@
 // Chapter 5 — Another way to train: evolution, mutation and selection.
 import { el, set, show, move, g, txt, rect, neuron, dial, draw, person,
-  p, pl, vis, lerp, clamp, easeOut, easeBack, mix, grey, hash, C } from './engine.js';
+  p, pl, vis, lerp, clamp, easeOut, easeBack, mix, grey, hash, C, hush } from './engine.js';
 
 // ---------------- deterministic Snake simulation ----------------
 const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]];
@@ -211,8 +211,30 @@ export function createChapter5(root, cue) {
   const mLink = el('line', { x1: 0, y1: -47, x2: 104, y2: 0, stroke: C.amber, 'stroke-width': 9, 'stroke-linecap': 'round' }, mutG);
   const mDie = g(mutG); rect(mDie, -32, -32, 64, 64, { r: 12, fill: C.amber, stroke: 'none' }); [[-13, -13], [13, 13], [0, 0], [13, -13], [-13, 13]].forEach(([x, y]) => el('circle', { cx: x, cy: y, r: 6, fill: '#0b1520' }, mDie)); move(mDie, 150, -120);
   const mutChip = chip(mutG, 'MUTATION: random changes', C.amber, 520); move(mutChip.g, 0, 210);
+  // 3D double helix, projected each frame (rotates about its long axis, tilted toward the viewer)
   const dna = g(S2);
-  for (let i = 0; i < 14; i++) { const y = -130 + i * 20; const xo = Math.sin(i * 0.6) * 50; el('line', { x1: -xo, y1: y, x2: xo, y2: y, stroke: '#94a3b8', 'stroke-width': 4 }, dna); el('circle', { cx: -xo, cy: y, r: 7, fill: C.teal }, dna); el('circle', { cx: xo, cy: y, r: 7, fill: C.violet }, dna); }
+  const NB = 26, HR = 120, HSTEP = 26;
+  const backA = el('path', { d: '', fill: 'none', stroke: C.teal, 'stroke-width': 7, 'stroke-linecap': 'round', opacity: 0.85 }, dna);
+  const backB = el('path', { d: '', fill: 'none', stroke: C.violet, 'stroke-width': 7, 'stroke-linecap': 'round', opacity: 0.85 }, dna);
+  const rungs = Array.from({ length: NB }, () => el('line', { stroke: '#94a3b8', 'stroke-width': 5, 'stroke-linecap': 'round' }, dna));
+  const beadsA = Array.from({ length: NB }, () => el('circle', { r: 10, fill: C.teal }, dna));
+  const beadsB = Array.from({ length: NB }, () => el('circle', { r: 10, fill: C.violet }, dna));
+  const proj = (x, y, z) => { const tilt = 0.35; const y2 = y * Math.cos(tilt) - z * Math.sin(tilt), z2 = y * Math.sin(tilt) + z * Math.cos(tilt); const f = 900 / (900 - z2); return [x * f, y2 * f, z2]; };
+  const drawDNA = t => {
+    const spin = t * 1.4;
+    let dA = '', dB = '';
+    for (let i = 0; i < NB; i++) {
+      const y = (i - (NB - 1) / 2) * HSTEP, th = i * 0.5 + spin;
+      const [ax, ay, az] = proj(HR * Math.cos(th), y, HR * Math.sin(th));
+      const [bx, by, bz] = proj(HR * Math.cos(th + Math.PI), y, HR * Math.sin(th + Math.PI));
+      dA += `${i ? 'L' : 'M'} ${ax} ${ay} `; dB += `${i ? 'L' : 'M'} ${bx} ${by} `;
+      const da = (az + HR) / (2 * HR), db = (bz + HR) / (2 * HR);
+      set(beadsA[i], { cx: ax, cy: ay, r: 6 + 7 * da, opacity: 0.35 + 0.65 * da });
+      set(beadsB[i], { cx: bx, cy: by, r: 6 + 7 * db, opacity: 0.35 + 0.65 * db });
+      set(rungs[i], { x1: ax, y1: ay, x2: bx, y2: by, opacity: 0.25 + 0.5 * (1 - Math.abs(Math.cos(th))) });
+    }
+    set(backA, { d: dA }); set(backB, { d: dB });
+  };
   const bioTx = txt(S2, 960, 900, 'inspired in part by biological evolution', { size: 38, weight: 800, fill: C.violet });
 
   // ====== S3: moths ======
@@ -479,6 +501,8 @@ export function createChapter5(root, cue) {
   move(subBg_, 1120, 950);
   const tapDot = el('circle', { r: 26, fill: '#ffffff', opacity: 0 }, nextG);
 
+  // captions that only repeated the narration are removed from the picture
+  hush(title, qLabel, easyLabel, bioTx, envTx, np1.g, notOrgTx, wholeTx, genSub, designTx, ng.g, oneWay, qs);
   return function update(t) {
     // ---------- title ----------
     const titles = [
@@ -512,7 +536,7 @@ export function createChapter5(root, cue) {
     const s2 = vis(t, T.imagine - 0.3, T.living + 0.4, 0.5, 0.6);
     show(S2, s2);
     const order = cands.map((c, i) => i).sort((x, y) => cands[y].sc - cands[x].sc);
-    const dimRows = 1 - 0.85 * p(t, T.twoIdeas - 0.2, 0.6);
+    const dimRows = (1 - 0.85 * p(t, T.twoIdeas - 0.2, 0.6)) * (1 - p(t, T.inspired - 0.3, 0.5));
     const sorted = p(t, T.imagine + 2.2, 0.9);
     cands.forEach((c, i) => {
       const r = order.indexOf(i);
@@ -551,7 +575,8 @@ export function createChapter5(root, cue) {
     move(mutG, 1320, 600); show(mutG, p(t, T.mutation - 0.2, 0.5) * (1 - p(t, T.inspired - 0.2, 0.5)));
     set(mLink, { opacity: 0.5 + 0.5 * Math.sin(t * 6) });
     set(mDie, { transform: `translate(150 -120) rotate(${Math.floor(t * 5) * 41 % 360})` });
-    move(dna, 960, 520, 1.6, t * 20); show(dna, vis(t, T.inspired, T.living + 0.4));
+    const dnaOn = vis(t, T.inspired, T.living + 0.4);
+    move(dna, 960, 545, 1.15, 18); show(dna, dnaOn); if (dnaOn > 0) drawDNA(t);
     show(bioTx, vis(t, T.bio - 0.2, T.living + 0.4));
 
     // ---------- S3: moths ----------
@@ -744,7 +769,7 @@ export function createChapter5(root, cue) {
     const s12 = vis(t, T.seenNow - 0.3, 9999, 0.5);
     show(S12, s12);
     show(journey, vis(t, T.seenNow, T.modern - 0.2, 0.4, 0.5));
-    show(jSw, p(t, T.color, 0.4)); show(jL1, p(t, T.color, 0.4)); show(jL2, p(t, T.learnGame, 0.4)); draw(jArrow, p(t, T.learnGame - 0.5, 0.8)); show(jBoard.g, p(t, T.learnGame, 0.4));
+    show(jSw, p(t, T.seenNow + 0.3, 0.5)); show(jL1, p(t, T.color - 0.3, 0.4)); show(jL2, p(t, T.learnGame, 0.4)); draw(jArrow, p(t, T.learnGame - 0.5, 0.8)); show(jBoard.g, p(t, T.learnGame, 0.4));
     show(chat, vis(t, T.modern - 0.2, T.howCan - 0.2, 0.5, 0.5));
     reqs.forEach((r, i) => show(r.g, p(t, [T.explain, T.compare, T.write, T.plan][i] - 0.1, 0.4, easeBack)));
     show(llmCore.g, p(t, T.withText, 0.5));
