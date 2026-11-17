@@ -160,6 +160,7 @@ export function createChapter3(root, cue) {
     const lab = txt(gg, 0, 165, i === 3 ? 'all stacked' : `layer ${i + 1}`, { size: 30, weight: 700, fill: i === 3 ? C.amber : C.dim });
     return { g: gg, ln, lab };
   });
+  const probes = plots.map(pl_ => el('circle', { r: 10, fill: C.amber, filter: 'url(#glow)' }, pl_.g));
   const ops = ['→', '→', '='].map(s => txt(actG, 0, 0, s, { size: 60, weight: 800, fill: C.dim }));
   const actNote = txt(actG, 960, 900, '', { size: 40, weight: 800, fill: C.ink });
 
@@ -177,6 +178,8 @@ export function createChapter3(root, cue) {
     const node = isTeal ? el('circle', { r: 15, fill: C.teal }, bpG) : el('rect', { x: -14, y: -14, width: 28, height: 28, rx: 5, fill: C.amber }, bpG);
     return { node, s1, s2, isTeal };
   });
+  const halfL = el('rect', { x: BPX - BPW / 2, y: BPY - BPH / 2, width: BPW / 2, height: BPH, rx: 26, fill: C.teal, opacity: 0 }, bpG);
+  const halfR = el('rect', { x: BPX, y: BPY - BPH / 2, width: BPW / 2, height: BPH, rx: 26, fill: C.amber, opacity: 0 }, bpG);
   const sLine = el('line', { x1: 0, y1: -280, x2: 0, y2: 280, stroke: C.ink, 'stroke-width': 7, 'stroke-linecap': 'round' }, bpG);
   const flex = el('path', { d: 'M 150 0 C 150 -110 90 -150 0 -150 C -100 -150 -160 -90 -150 0 C -150 100 -90 160 0 150 C 100 150 150 100 150 0 Z', fill: '#fbbf2410', stroke: C.ink, 'stroke-width': 7 }, bpG);
   set(flex, { transform: `translate(${BPX} ${BPY})` });
@@ -292,10 +295,12 @@ export function createChapter3(root, cue) {
       set(u.val, { text: v.toFixed(2) });
       show(u.val, shown * netVis);
       set(u.n.core, { opacity: 0.55 * v * shown });
+      // while the layer is introduced, its units flicker as if computing together
+      if (li === 0 && t > T.layer && t < T.output) set(u.n.core, { opacity: 0.15 + 0.35 * Math.max(0, Math.sin(t * 5 + i * 1.7)) });
     }));
     unitDials.forEach((ds, i) => ds.forEach((d, k) => { show(d.g, netVis * vis(t, T.diff, T.coll + 0.4)); d.setValue(hash(i * 3 + k) * 4 - 2, -2, 2); }));
     // pulses: forward flow
-    const flowOn = Math.max(vis(t, T.coll, T.hidden, 0.3, 0.3), vis(t, T.toy + 1, T.labels, 0.3, 0.3), vis(t, T.wayTo, T.more, 0.3, 0.3));
+    const flowOn = Math.max(vis(t, T.coll, T.hidden, 0.3, 0.3), vis(t, T.toy + 1, T.real + 0.4, 0.3, 0.3), vis(t, T.wayTo, T.more, 0.3, 0.3));
     links.forEach((l, i) => {
       const startL = l.li === 0 ? 0 : 0.5;
       const cyc = ((t * 0.8) + startL) % 1;
@@ -354,6 +359,9 @@ export function createChapter3(root, cue) {
       x => 0.6 * x + 0.1, x => -0.8 * x + 0.5, x => 1.2 * x - 0.2,
     ];
     const relu = (x, k) => (x < 0 ? lerp(x, 0.15 * x, k) : x);
+    const yOf = (i, x) => { if (i < 3) return relu(fns[i](x), bend * 0.95); let v = x; for (let k = 0; k < 3; k++) v = relu(fns[k](v), bend * 0.95); const v2 = relu(fns[1](relu(fns[0](-x * 1.3 + 0.2), bend)), bend); return v + v2 * p(t, T.combine, 1) * 0.9; };
+    // a probe point sweeps x and is carried through every graph, layer by layer
+    const px = -1 + 2 * (((t - T.ifEvery) * 0.42) % 1 + 1) % 1;
     plots.forEach((pl_, i) => {
       move(pl_.g, 300 + i * 440, 520);
       show(pl_.g, i < 3 ? p(t, T.ifEvery + i * 0.4, 0.5) : p(t, T.stacking + 0.3, 0.5));
@@ -380,6 +388,8 @@ export function createChapter3(root, cue) {
         d += `${s ? 'L' : 'M'} ${X} ${Y} `;
       }
       set(pl_.ln, { d });
+      set(probes[i], { cx: px * 110, cy: -yOf(i, px) * 80 });
+      show(probes[i], (i < 3 ? 1 : 1 - p(t, T.combine + 0.2, 0.4)) * p(t, T.ifEvery + 1.2, 0.4));
     });
     ops.forEach((o, i) => { set(o, { x: 520 + i * 440, y: 520 }); show(o, p(t, T.stacking + i * 0.2, 0.4)); });
     set(actNote, { text: t < T.changes ? 'Straight lines stacked = still one straight line' : t < T.combine ? 'Bends add up to new shapes' : 'Simple signals → more varied patterns' });
@@ -410,6 +420,8 @@ export function createChapter3(root, cue) {
     set(bnLink, { d: `M ${bnOut[0] + 46} ${bnOut[1]} L ${BPX - BPW / 2 - 10} ${BPY}` }); show(bnLink, p(t, T.straight, 0.6));
     show(bnG, p(t, T.visually, 0.6));
     draw(flex, p(t, T.flexible - 0.3, 1.4));
+    const half = vis(t, T.simple - 0.1, T.bends + 0.3, 0.4, 0.4) * (0.08 + 0.06 * Math.sin(t * 4));
+    set(halfL, { opacity: half }); set(halfR, { opacity: half });
     show(okMark, vis(t, T.simple + 0.6, T.bends + 0.2, 0.3, 0.3) + p(t, T.flexible, 0.4));
     show(noMark, vis(t, T.parts, T.multi + 0.3, 0.3, 0.3));
 

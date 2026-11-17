@@ -54,6 +54,9 @@ export function createChapter2(root, cue) {
   rect(scr, -40, 105, 80, 30, { r: 4, fill: '#2a3e4f', stroke: 'none' });
   rect(scr, -90, 135, 180, 14, { r: 7, fill: '#2a3e4f', stroke: 'none' });
   const sw = rect(scr, -95, -85, 190, 150, { r: 10, fill: grey(0.8), stroke: '#ffffff40', sw: 3 });
+  el('clipPath', { id: 'swClip' }, scr).appendChild(el('rect', { x: -95, y: -85, width: 190, height: 150, rx: 10 }));
+  const sheenClip = g(scr, { 'clip-path': 'url(#swClip)' });
+  const sheen = el('rect', { x: -60, y: -120, width: 50, height: 230, fill: '#ffffff', opacity: 0.22 }, sheenClip);
   const scrLabel = txt(scr, 0, 200, 'one grey swatch', { size: 30, weight: 600, fill: C.dim });
   // zoomed-in view of the swatch: every pixel is made of red, green and blue light
   const triad = g(scr);
@@ -137,14 +140,14 @@ export function createChapter2(root, cue) {
     el('line', { x1: MX - 14, y1: M0 - v * MU, x2: MX + 14, y2: M0 - v * MU, stroke: C.faint, 'stroke-width': 3 }, meter);
     txt(meter, MX - 50, M0 - v * MU, String(v).replace('-', '−'), { size: 24, weight: 600, fill: C.dim, mono: true });
   }
-  const leanUp = txt(meter, MX + 110, M0 - 2.6 * MU, '↑ leans LIGHT', { size: 28, weight: 700, fill: C.light, anchor: 'start' });
-  const leanDn = txt(meter, MX + 110, M0 + 1.4 * MU, '↓ leans DARK', { size: 28, weight: 700, fill: C.dim, anchor: 'start' });
+  const leanUp = txt(meter, MX + 100, M0 - 22, '↑ LIGHT', { size: 24, weight: 800, fill: C.light, anchor: 'start' });
+  const leanDn = txt(meter, MX + 100, M0 + 24, '↓ DARK', { size: 24, weight: 800, fill: C.dim, anchor: 'start' });
   const biasMove = txt(meter, MX - 70, M0 + 2.75 * MU, 'bias moves the whole stack ↕', { size: 28, weight: 800, fill: C.violet, anchor: 'start' });
   const segs = chan.map(([, col]) => rect(meter, MX - 40, M0, 80, 0, { r: 6, fill: col, stroke: '#0008', sw: 2 }));
   const biasSeg = rect(meter, MX - 40, M0, 80, 0, { r: 6, fill: C.violet, stroke: C.violet, sw: 2, attrs: { opacity: 0.55 } });
   const tip = g(meter);
   el('line', { x1: MX - 80, y1: 0, x2: MX + 90, y2: 0, stroke: C.ink, 'stroke-width': 4, 'stroke-dasharray': '10 8' }, tip);
-  txt(tip, MX + 100, 0, 'tipping point (0)', { size: 26, weight: 700, fill: C.ink, anchor: 'start' });
+  const tipTx = txt(tip, MX + 240, 0, 'tipping point (0)', { size: 26, weight: 700, fill: C.ink, anchor: 'start' });
   const scoreChip = g(world);
   rect(scoreChip, -90, -40, 180, 80, { r: 18, fill: '#0c2a26', stroke: C.teal, sw: 4 });
   const scoreTx = txt(scoreChip, 0, 3, '2.4', { size: 42, weight: 800, fill: C.teal, mono: true });
@@ -234,6 +237,7 @@ export function createChapter2(root, cue) {
 
   // spotlight frames that follow the narration (world coordinates)
   const spots = [0, 1, 2, 3].map(() => el('rect', { fill: 'none', stroke: C.amber, 'stroke-width': 7, rx: 26, filter: 'url(#glow)' }, world));
+  const exDash = el('rect', { x: CX0 - 80, y: CY0 - 110, width: CX1 - CX0 + 160, height: 1090 - CY0, rx: 30, fill: 'none', stroke: C.amber, 'stroke-width': 5, 'stroke-dasharray': '22 16' }, world);
   const spot = (k, x0, y0, x1, y1, on, col = C.amber) => {
     const pad = 18 + 10 * (1 - on);
     set(spots[k], { x: x0 - pad, y: y0 - pad, width: x1 - x0 + 2 * pad, height: y1 - y0 + 2 * pad, stroke: col });
@@ -276,6 +280,7 @@ export function createChapter2(root, cue) {
       show(bm, k > 0 && k < 1 ? 1 : 0);
     });
     show(scr, p(t, T.swatch - 0.2, 0.6));
+    set(sheen, { transform: `translate(${-120 + ((t * 120) % 360)} 0) skewX(-20)` }); show(sheen, 1 - p(t, T.three, 0.5));
     set(sw, { fill: grey(lerp(0.8, 0.2, dk)) });
     set(scrLabel, { text: dk > 0.5 ? 'dark grey' : t > T.use ? 'light grey' : 'one grey swatch' });
 
@@ -291,12 +296,15 @@ export function createChapter2(root, cue) {
     bars.forEach((b, i) => {
       show(b.g, p(t, chanT[i] - 0.1, 0.4) * vis(t, 0, T.easy));
       const shownV = t < valT[i] ? 0 : inV * p(t, valT[i], 0.7);
-      set(b.fill, { width: BW * shownV });
+      // while the range is explained, each channel sweeps through its values (0–255, then rescaled 0–1)
+      const sweepOn = vis(t, T.range - 0.2, T.example - 0.2, 0.4, 0.4);
+      const sweep = 0.5 + 0.5 * Math.sin((t - T.range) * 1.9 + i * 1.1 - Math.PI / 2);
+      set(b.fill, { width: BW * (t < valT[i] ? sweep * sweepOn : shownV) });
       show(b.lo, vis(t, T.range, T.add - 0.6));
       show(b.hi255, vis(t, T.range + (i * 0.15), T.rescale + 1.0));
       show(b.hi1, vis(t, T.between01, T.add - 0.6));
-      show(b.val, p(t, valT[i] + 0.2, 0.4, easeBack) * (1 - p(t, T.enter, 0.6)));
-      set(b.vt, { text: shownV.toFixed(1) });
+      show(b.val, Math.max(sweepOn, p(t, valT[i] + 0.2, 0.4, easeBack)) * (1 - p(t, T.enter, 0.6)));
+      set(b.vt, { text: t < T.example ? (t < T.between01 ? String(Math.round(sweep * 255)) : sweep.toFixed(2)) : shownV.toFixed(1) });
     });
     // 204 example on red bar
     const exV = vis(t, T.v204 - 0.2, T.use + 0.2);
@@ -362,6 +370,8 @@ export function createChapter2(root, cue) {
     const products = [inV, inV, inV];
     // bias = how far the whole stack is shifted. Demo: it swings up and down, then settles at −1.5.
     let biasV = 0;
+    // "added to the total": the bias briefly lifts the whole stack, then lets go
+    if (t >= T.biasDef && t < T.shift) biasV = 0.8 * Math.sin(Math.PI * pl(t, T.total - 0.2, 1.4));
     if (t >= T.shift && t < T.setBias) biasV = Math.sin(pl(t, T.shift + 0.3, T.setBias - T.shift - 0.6) * Math.PI * 2) * 2.0;
     if (t >= T.setBias) biasV = -1.5 * p(t, T.m15, 0.9);
     const shiftDown = -biasV;
@@ -376,11 +386,12 @@ export function createChapter2(root, cue) {
     const ghostOn = Math.max(vis(t, T.minus - 0.2, T.notProb + 0.5, 0.4, 0.5), vis(t, T.offset - 0.1, T.result, 0.3, 0.3));
     set(biasSeg, { y: M0 - top * MU, height: Math.max(0, shiftDown) * MU * ghostOn });
     move(tip, 0, M0);
+    show(tipTx, 1 - p(t, T.act - 0.3, 0.5));
     show(tip, p(t, T.bias + 1.0, 0.5));
     show(leanUp, p(t, T.lean, 0.4)); show(leanDn, p(t, T.lean, 0.4));
     const sc0 = top - shiftDown;
-    set(leanUp, { 'font-size': sc0 > 0 && t > T.lean ? 34 : 28, fill: sc0 > 0 ? C.light : C.faint });
-    set(leanDn, { 'font-size': sc0 <= 0 && t > T.lean ? 34 : 28, fill: sc0 <= 0 ? C.ink : C.faint });
+    set(leanUp, { 'font-size': sc0 > 0 && t > T.lean ? 28 : 24, fill: sc0 > 0 ? C.light : C.faint });
+    set(leanDn, { 'font-size': sc0 <= 0 && t > T.lean ? 28 : 24, fill: sc0 <= 0 ? C.ink : C.faint });
     show(biasMove, vis(t, T.shift, T.minus + 0.5));
     const score = top - shiftDown;
     move(scoreChip, MX + 210, M0 - Math.max(score, -1.5) * MU - 0, 1);
@@ -443,8 +454,14 @@ export function createChapter2(root, cue) {
     const wBias = vis(t, cue.at('bias, and activation each'), cue.at('activation each') - 0.05, 0.25, 0.3);
     const wAct = vis(t, cue.at('activation each'), cue.at('specific job') - 0.05, 0.25, 0.3);
     const wAll = vis(t, cue.at('specific job'), T.easy - 0.3, 0.25, 0.4);
-    spot(0, DX - 96, DY(0) - 50, DX + 134, DY(2) + 50, Math.max(wDial, wAll));
-    spot(1, NX - 120, NY + 314, NX + 120, NY + 406, Math.max(wBias, wAll), C.violet);
+    const sameW = vis(t, cue.at('illustrative weights'), cue.at('and bias, the score'), 0.25, 0.3);
+    const sameB = vis(t, cue.at('and bias, the score'), cue.at('the score becomes minus'), 0.25, 0.3);
+    spot(0, DX - 96, DY(0) - 50, DX + 134, DY(2) + 50, Math.max(wDial, wAll, sameW));
+    spot(1, NX - 120, NY + 314, NX + 120, NY + 406, Math.max(wBias, wAll, sameB), C.violet);
+    // "only an example": a marching dashed outline around the illustrative numbers
+    const exOn = vis(t, T.onlyEx, T.darkSw, 0.3, 0.4);
+    set(exDash, { 'stroke-dashoffset': -t * 60 }); show(exDash, exOn);
+    set(scoreChip, { transform: `translate(${MX + 210} ${M0 - Math.max(score, -1.5) * MU}) scale(${1 + 0.25 * Math.sin(Math.PI * pl(t, T.m09, 0.6))})` });
     spot(2, CX0 - 60, CY0 - 90, CX1 + 60, CY1 + 80, Math.max(wAct, wAll), C.teal);
     // dark-swatch result: "the sigmoid turns that into… 29% light… 71% dark"
     const prDark = sig(-0.9);

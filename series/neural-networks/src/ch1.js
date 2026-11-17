@@ -303,7 +303,7 @@ export function createChapter1(root, cue) {
     // ---- Scene A ----
     const aVis = vis(t, 0, T.myst - 0.2, 0.01, 0.7);
     show(A, aVis);
-    if (aVis > 0) {
+    { // always update (a) so seeking is deterministic
       const lift = p(t, T.noOne - 0.3, 0.8);
       move(chat, 960, lerp(540, 200, lift), lerp(1, 0.62, lift));
       show(chat, 1 - p(t, T.nn + 0.3, 0.6));
@@ -346,7 +346,7 @@ export function createChapter1(root, cue) {
     // ---- Scene B: mysterious → math system → knobs ----
     const bVis = vis(t, T.myst - 0.4, T.idea - 0.1, 0.7, 0.6);
     show(B, bVis);
-    if (bVis > 0) {
+    { // always update (b) so seeking is deterministic
       move(B, 960, 560);
       const myst = vis(t, T.myst - 0.2, T.math + 0.2, 0.6, 1.0);
       set(mystBlob, { opacity: 0.09 * myst });
@@ -402,7 +402,7 @@ export function createChapter1(root, cue) {
     // ---- Scene C: biological neuron → math model ----
     const cVis = vis(t, T.idea - 0.3, T.y43 - 0.2, 0.6, 0.6);
     show(Cg, cVis);
-    if (cVis > 0) {
+    { // always update (c) so seeking is deterministic
       const split = p(t, T.simplified - 0.2, 0.8);
       move(bio, lerp(960, 560, split), 560, lerp(1.25, 0.95, split));
       move(bioTitle, lerp(960, 560, split), 300);
@@ -435,7 +435,7 @@ export function createChapter1(root, cue) {
     // ---- Scene D: 1943 and 1958 ----
     const dVis = vis(t, T.y43 - 0.3, T.notCopy - 0.2, 0.6, 0.6);
     show(D, dVis);
-    if (dVis > 0) {
+    { // always update (d) so seeking is deterministic
       move(D, 960, 520, 1.25);
       move(tl, 0, 330);
       const fillTo = t < T.y58 ? lerp(-760, -380, p(t, T.y43, 0.8)) : lerp(-380, 380, p(t, T.y58, 0.9));
@@ -495,7 +495,7 @@ export function createChapter1(root, cue) {
     // ---- Scene E ----
     const eVis = vis(t, T.notCopy - 0.3, 99, 0.6);
     show(E, eVis);
-    if (eVis > 0) {
+    { // always update (e) so seeking is deterministic
       move(E, 960, 540);
       const brainOn = vis(t, T.notCopy - 0.2, T.blocks - 0.1, 0.6, 0.5);
       move(brainG, -420, -20, 1.4);
