@@ -442,19 +442,30 @@ export function createChapter5(root, cue) {
 
   // ====== S9: generation loop ======
   const S9 = g(root);
-  const loopSteps = ['PLAY', 'SCORE', 'SELECT', 'COPY + MUTATE'];
-  const loopCol = [C.cyan, C.green, C.green, C.amber];
-  const LCX = 660, LCY = 570, LR = 330;
-  el('circle', { cx: LCX, cy: LCY, r: LR, fill: 'none', stroke: C.faint, 'stroke-width': 6, 'stroke-dasharray': '4 14' }, S9);
-  const lsG = loopSteps.map((s, i) => { const ang = -Math.PI / 2 + i * Math.PI / 2; const c = chip(S9, s, loopCol[i], s.length > 6 ? 320 : 200); move(c.g, LCX + Math.cos(ang) * LR, LCY + Math.sin(ang) * LR); return c; });
-  const genCount = txt(S9, LCX, LCY - 20, '', { size: 46, weight: 800, fill: C.ink, mono: true });
-  const genSub = txt(S9, LCX, LCY + 40, 'one generation = one full round', { size: 28, weight: 700, fill: C.dim });
+  // a real generation: 8 boards play, get scored, the best are selected, copied and mutated, repeat
+  const genGrid = g(S9);
+  const SLOT = Array.from({ length: 8 }, (_, i) => [960 + ((i % 4) - 1.5) * 250, 450 + Math.floor(i / 4) * 290]);
+  const cards = SLOT.map(([x, y], i) => {
+    const gg = g(genGrid);
+    const bg = rect(gg, -112, -130, 224, 260, { r: 18, fill: '#0f1d2a', stroke: '#2e4a60', sw: 3 });
+    const b = board(gg, 7, 26); move(b.g, 0, -22);
+    const sc = txt(gg, 0, 104, '', { size: 34, weight: 800, fill: C.green, mono: true });
+    const mut = el('circle', { r: 0, fill: 'none', stroke: C.amber, 'stroke-width': 8, filter: 'url(#glow)' }, gg);
+    move(gg, x, y);
+    return { g: gg, bg, b, sc, mut };
+  });
+  const ghosts = SLOT.map(() => { const gg = g(genGrid); rect(gg, -112, -130, 224, 260, { r: 18, fill: '#0f1d2a', stroke: C.green, sw: 4 }); const b = board(gg, 7, 26); move(b.g, 0, -22); return { g: gg, b }; });
+  const genCount = txt(S9, 960, 205, '', { size: 56, weight: 800, fill: C.ink, mono: true });
+  const genFrame = el('rect', { x: 960 - 525, y: 300, width: 1050, height: 590, rx: 30, fill: 'none', stroke: C.teal, 'stroke-width': 4, 'stroke-dasharray': '14 10' }, genGrid);
+  const genSub = txt(S9, 960, 960, '', { size: 1 });
+  const simCache = new Map();
+  const simFor = (r, i) => { const k = r * 8 + i; if (!simCache.has(k)) simCache.set(k, simulate(7, 900 + r * 17 + i * 3, clamp(0.08 + 0.14 * r + 0.55 * hash(r * 8 + i + 3)), 40)); return simCache.get(k); };
   const luckyG = g(S9);
   txt(luckyG, 0, -250, 'same network, 3 different boards', { size: 32, weight: 800, fill: C.ink });
   const luckyBoards = [0, 1, 2].map(i => { const b = board(luckyG, 6, 30); move(b.g, -260 + i * 260, -60); const st = simulate(6, 300 + i, i === 0 ? 0.95 : 0.05, 20); return { b, st }; });
   const luckyScores = ['31', '2', '3'].map((s, i) => txt(luckyG, -260 + i * 260, 100, s, { size: 44, weight: 800, fill: i ? C.red : C.green, mono: true }));
   const luckyAvg = txt(luckyG, 0, 190, 'average ≈ 12 → the first game was just luck', { size: 32, weight: 800, fill: C.amber });
-  move(luckyG, 1400, 560);
+  move(luckyG, 1420, 560);
 
   // ====== S10: progress, designer, trick ======
   const S10 = g(root);
@@ -949,12 +960,46 @@ export function createChapter5(root, cue) {
     // ---------- S9: generation loop ----------
     const s9 = vis(t, T.again - 0.3, T.overGens - 0.2, 0.5, 0.5);
     show(S9, s9);
-    const loopT = t < T.repeat ? -1 : (t - T.repeat) * 1.2;
-    const activeStep = t < T.scoreThem ? 0 : t < T.repeat ? Math.min(3, Math.floor((t - T.scoreThem) / 1.4) + 1) : Math.floor(loopT) % 4;
-    lsG.forEach((c, i) => { show(c.g, p(t, T.again + i * 0.4, 0.4)); set(c.g, { opacity: i === activeStep ? 1 : 0.45 }); });
-    const genN = 2 + Math.max(0, Math.floor(loopT / 4));
-    set(genCount, { text: `generation ${genN}` });
-    show(genSub, p(t, T.genDef, 0.4));
+    // ---- schedule: round 0 follows the words; later rounds keep cycling ----
+    const sel0 = cue.at('select some'), copy0 = cue.at('copy and mutate', 255), P = 4.0;
+    let r, t0, tS, tSel, tCp, tEnd;
+    if (t < T.repeat) { r = 0; t0 = T.again; tS = T.scoreThem; tSel = sel0; tCp = copy0; tEnd = T.repeat; }
+    else { r = 1 + Math.floor((t - T.repeat) / P); t0 = T.repeat + (r - 1) * P; tS = t0 + 2.2; tSel = t0 + 2.7; tCp = t0 + 3.2; tEnd = t0 + P; }
+    const playRate = 30 / (tS - t0);
+    const states = cards.map((c, i) => stateAt(simFor(r, i), Math.min(t, tS), t0, Math.min(playRate, 7)));
+    const fit = states.map(st => st.apples * 10 + st.body.length * 2 - (st.crashed ? 5 : 0));
+    const gOrder = fit.map((f, i) => i).sort((a1, b1) => fit[b1] - fit[a1]);
+    const winners = gOrder.slice(0, 3);
+    const selK = p(t, tSel, 0.4), cpK = p(t, tCp, 0.7);
+    const shrink = p(t, T.several - 0.3, 0.8);
+    set(genGrid, { transform: `translate(${lerp(0, -500, shrink)} ${lerp(0, 40, shrink)}) translate(960 540) scale(${lerp(1, 0.66, shrink)}) translate(-960 -540)` });
+    cards.forEach((c, i) => {
+      c.b.render(!winners.includes(i) && cpK > 0.6 && t < tEnd ? states[winners[i % 3]] : states[i]);
+      const appear = r === 0 ? p(t, T.again - 0.2 + i * 0.06, 0.4, easeBack) : 1;
+      const win = winners.includes(i);
+      const loser = !win;
+      // losers fade during select; replaced by mutated copies of winners on copy
+      const fade = loser ? selK * (1 - cpK) : 0;
+      move(c.g, SLOT[i][0], SLOT[i][1] + (loser ? 30 * fade : 0), appear * (win ? 1 + 0.06 * selK * (1 - cpK) : 1));
+      show(c.g, Math.min(1, appear) * (1 - 0.75 * fade));
+      set(c.bg, { stroke: win && selK > 0.5 && cpK < 1 ? C.green : '#2e4a60', 'stroke-width': win && selK > 0.5 ? 5 : 3 });
+      set(c.sc, { text: String(fit[i]) }); show(c.sc, p(t, tS, 0.3) * (t < tEnd ? 1 : 0) * (!winners.includes(i) && cpK > 0.6 ? 0 : 1));
+      const mk = pl(t, tCp + 0.35, 0.6);
+      set(c.mut, { r: loser ? 150 * easeOut(mk) : 0, opacity: loser ? 1 - mk : 0 });
+    });
+    // copies fly from winners to the empty slots
+    ghosts.forEach((gh, i) => {
+      const loser = !winners.includes(i);
+      const src = SLOT[winners[i % 3]];
+      const k = p(t, tCp, 0.5, easeOut);
+      move(gh.g, lerp(src[0], SLOT[i][0], k), lerp(src[1], SLOT[i][1], k), 1);
+      gh.b.render(states[winners[i % 3]]);
+      show(gh.g, loser && t > tCp && k < 0.97 ? 1 : 0);
+    });
+    set(genCount, { text: `generation ${2 + r}`, transform: `translate(960 205) scale(${1 + 0.18 * Math.sin(Math.PI * pl(t, t0, 0.5))}) translate(-960 -205)` });
+    show(genCount, p(t, T.again, 0.4) * (1 - shrink));
+    // "a generation means one round…": the round is framed
+    show(genFrame, vis(t, T.genDef - 0.1, T.several - 0.4, 0.4, 0.4));
     show(luckyG, p(t, T.several - 0.3, 0.5));
     luckyBoards.forEach((lb, i) => lb.b.render(stateAt(lb.st, t, T.several + i * 0.4, 3)));
     luckyScores.forEach((s, i) => show(s, p(t, T.several + 3 + i * 0.4, 0.4)));
