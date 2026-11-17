@@ -320,13 +320,36 @@ export function createChapter5(root, cue) {
 
   // ====== S4: extinction ======
   const S4 = g(root);
+  // a prehistoric landscape: sky, distant hills, ferns, ground
+  const sky = rect(S4, 0, 0, 1920, 1080, { r: 0, fill: '#14324a', stroke: 'none' });
+  const skyGlow = el('ellipse', { cx: 1380, cy: 760, rx: 900, ry: 420, fill: '#fb923c', opacity: 0, filter: 'url(#glowBig)' }, S4);
+  const hills = el('path', { d: 'M 0 760 C 200 640 380 690 560 650 C 760 600 900 700 1080 660 C 1260 620 1420 690 1600 640 C 1760 600 1860 660 1920 650 L 1920 780 L 0 780 Z', fill: '#16302a' }, S4);
+  const ferns = [160, 640, 1000, 1560, 1780].map((x, i) => { const gg = g(S4); for (let k = -3; k <= 3; k++) el('path', { d: `M 0 0 Q ${k * 18} -60 ${k * 34} -${110 - Math.abs(k) * 12}`, fill: 'none', stroke: '#2f6b45', 'stroke-width': 7, 'stroke-linecap': 'round' }, gg); move(gg, x, 790, 0.9 + hash(i) * 0.5); return gg; });
   const ground = rect(S4, 0, 760, 1920, 320, { r: 0, fill: '#1c2b1f', stroke: 'none' });
-  const dinos = [[420, 700, '#4d7c5f', 1], [820, 720, '#5b6b4a', 0.8], [1180, 700, '#6b5a3e', 1.1]].map(([x, y, c, s]) => { const d = dino(S4, c); move(d, x, y + 30, s * 1.5); return { d, c }; });
-  const birdS = bird(S4, '#e2e8f0');
+  const dinos = [[420, 700, '#4d7c5f', 1], [820, 720, '#5b6b4a', 0.8], [1180, 700, '#6b5a3e', 1.1]].map(([x, y, c, s]) => { const d = dino(S4, c); move(d, x, y + 30, s * 1.5); return { d, c, x, y, s }; });
+  // asteroid: glowing core with a tapered fiery tail
   const rock = g(S4);
-  el('path', { d: 'M 0 0 L -300 -170', stroke: '#fb923c', 'stroke-width': 26, 'stroke-linecap': 'round', opacity: 0.6, filter: 'url(#glow)' }, rock);
-  el('circle', { r: 34, fill: '#78350f', stroke: '#fb923c', 'stroke-width': 6 }, rock);
-  const flash = el('rect', { x: 0, y: 0, width: 1920, height: 1080, fill: '#fde68a', opacity: 0 }, S4);
+  const tg = el('linearGradient', { id: 'tailGrad', x1: '0', y1: '0', x2: '1', y2: '0' }, rock);
+  el('stop', { offset: '0%', 'stop-color': '#fde68a', 'stop-opacity': 0.95 }, tg); el('stop', { offset: '35%', 'stop-color': '#fb923c', 'stop-opacity': 0.7 }, tg); el('stop', { offset: '100%', 'stop-color': '#7c2d12', 'stop-opacity': 0 }, tg);
+  const tail = g(rock, { transform: 'rotate(-150)' });
+  el('path', { d: 'M 0 -38 C 160 -30 380 -10 560 0 C 380 10 160 30 0 38 Z', fill: 'url(#tailGrad)', filter: 'url(#glow)' }, tail);
+  el('circle', { r: 46, fill: '#fde68a', opacity: 0.35, filter: 'url(#glowBig)' }, rock);
+  el('circle', { r: 30, fill: '#7c2d12', stroke: '#fed7aa', 'stroke-width': 5 }, rock);
+  const sparks = Array.from({ length: 14 }, () => el('circle', { r: 4, fill: '#fdba74' }, S4));
+  // impact: flash, shockwave, rising dust cloud, falling ash
+  const IX = 1380, IY = 770;
+  const shock = el('ellipse', { cx: IX, cy: IY, rx: 0, ry: 0, fill: 'none', stroke: '#fde68a', 'stroke-width': 14, filter: 'url(#glow)' }, S4);
+  const fireball = el('ellipse', { cx: IX, cy: IY, rx: 0, ry: 0, fill: '#fb923c', filter: 'url(#glowBig)' }, S4);
+  const dust = Array.from({ length: 22 }, (_, i) => ({ el: el('circle', { r: 0, fill: mix('#3f3a36', '#6b4a33', hash(i + 5)), filter: 'url(#glow)' }, S4), a: -Math.PI * (0.1 + 0.8 * hash(i)), sp: 0.5 + hash(i + 9), r0: 40 + hash(i + 3) * 60 }));
+  const ash = Array.from({ length: 70 }, (_, i) => ({ el: el('circle', { r: 2 + hash(i + 40) * 3, fill: '#9ca3af' }, S4), x: hash(i + 11) * 1920, v: 40 + hash(i + 21) * 70, ph: hash(i + 31) * 1080 }));
+  const birdS = bird(S4, '#e2e8f0');
+  const lineageArc = el('path', { d: '', fill: 'none', stroke: C.teal, 'stroke-width': 8, filter: 'url(#glow)', 'stroke-dasharray': '4 12', 'stroke-linecap': 'round' }, S4);
+  // a long reign, abruptly cut: a time bar across the ground
+  const reign = g(S4);
+  el('rect', { x: 140, y: 870, width: 1640, height: 22, rx: 11, fill: '#132433' }, reign);
+  const reignFill = el('rect', { x: 140, y: 870, width: 0, height: 22, rx: 11, fill: '#4d7c5f' }, reign);
+  const reignCut = el('path', { d: 'M 1700 845 L 1716 880 L 1696 888 L 1712 920', fill: 'none', stroke: C.red, 'stroke-width': 7, 'stroke-linecap': 'round' }, reign);
+  const flash = el('rect', { x: 0, y: 0, width: 1920, height: 1080, fill: '#fef3c7', opacity: 0 }, S4);
   const mya = txt(S4, 960, 210, '≈ 66 million years ago', { size: 48, weight: 800, fill: C.amber });
   // lineage tree
   const linG = g(S4);
@@ -340,8 +363,6 @@ export function createChapter5(root, cue) {
   const np1 = chip(noProm, 'best-suited ≠ guaranteed survival', C.amber, 620); move(np1.g, 960, 860);
   const np2 = chip(noProm, 'chance', C.violet, 220); move(np2.g, 780, 960);
   const np3 = chip(noProm, 'speed of change', C.violet, 320); move(np3.g, 1100, 960);
-  const crown = g(S4); el('path', { d: 'M -40 20 L -40 -14 L -20 4 L 0 -24 L 20 4 L 40 -14 L 40 20 Z', fill: C.amber }, crown);
-  txt(crown, 0, 52, 'well suited for 100+ million years', { size: 26, weight: 800, fill: C.amber });
   const dieS = g(S4); rect(dieS, -36, -36, 72, 72, { r: 12, fill: C.ink, stroke: 'none' }); [[-15, -15], [15, 15], [0, 0], [15, -15], [-15, 15]].forEach(([x, y]) => el('circle', { cx: x, cy: y, r: 6, fill: '#0b1520' }, dieS));
   const clock = g(S4); el('circle', { r: 40, fill: 'none', stroke: C.violet, 'stroke-width': 6 }, clock); const hand = el('line', { x1: 0, y1: 0, x2: 0, y2: -30, stroke: C.violet, 'stroke-width': 6, 'stroke-linecap': 'round' }, clock);
 
@@ -712,23 +733,61 @@ export function createChapter5(root, cue) {
     // ---------- S4: extinction ----------
     const s4 = vis(t, T.severe - 0.3, T.algo - 0.3, 0.6, 0.6);
     show(S4, s4);
-    const linOn = vis(t, T.severe - 0.2, T.around, 0.5, 0.5);
+    const linOn = vis(t, T.severe - 0.2, T.around - 0.6, 0.5, 0.5);
     show(linG, linOn);
     linPaths.forEach((l, i) => draw(l, p(t, T.severe + i * 0.6, 0.8)));
     show(linEnd, p(t, T.lineage, 0.4)); show(linTx1, p(t, T.lineage, 0.4)); show(linTx2, p(t, T.severe + 2, 0.4));
     const dOn = p(t, T.around - 0.2, 0.6);
-    const impact = p(t, T.asteroid + 0.6, 0.15);
-    show(ground, dOn); show(mya, vis(t, T.around, T.noPromise));
-    move(rock, lerp(1900, 1000, pl(t, T.around + 0.5, T.asteroid + 0.6 - T.around - 0.5)), lerp(-100, 640, pl(t, T.around + 0.5, T.asteroid + 0.6 - T.around - 0.5)));
-    show(rock, dOn * (1 - impact));
-    set(flash, { opacity: 0.85 * vis(t, T.asteroid + 0.6, T.asteroid + 1.0, 0.1, 0.8) });
-    const gone = p(t, T.extinction, 1.5);
-    dinos.forEach(d => { set(d.d, { opacity: dOn * (1 - gone) + 0.22 * vis(t, T.noPromise - 0.2, T.algo - 0.3, 0.5, 0.4) }); });
-    show(birdS, dOn * p(t, T.birds - 0.3, 0.5)); move(birdS, 1500, 560 + Math.sin(t * 3) * 10, 1.5);
+    const tHit = T.asteroid + 0.6;
+    const impact = p(t, tHit, 0.15);
+    const aftermath = p(t, tHit, 3.0);
+    show(sky, dOn); show(hills, dOn); show(ground, dOn); show(mya, vis(t, T.around, T.extinction));
+    ferns.forEach((f, i) => { show(f, dOn * (1 - p(t, tHit + 0.6 + i * 0.2, 1.2))); });
+    set(sky, { fill: mix(mix('#14324a', '#7c2d12', p(t, tHit, 0.8)), '#1f1b1a', p(t, tHit + 1.2, 3)) });
+    set(skyGlow, { opacity: 0.55 * p(t, tHit - 0.8, 0.8) * (1 - p(t, tHit + 1.5, 3)) });
+    set(hills, { fill: mix('#16302a', '#1a1614', aftermath) });
+    set(ground, { fill: mix('#1c2b1f', '#221a15', aftermath) });
+    // asteroid streaks in toward the horizon
+    const fk = pl(t, T.around + 0.3, tHit - T.around - 0.3), ek = fk * fk;
+    const ax = lerp(1980, IX, ek), ay = lerp(-80, IY, ek);
+    move(rock, ax, ay, lerp(0.6, 1.2, ek));
+    show(rock, dOn * (t < tHit ? 1 : 0));
+    sparks.forEach((sp, i) => { const b0 = (t * 2.2 + i / 14) % 1; set(sp, { cx: ax + 60 + b0 * 260 + hash(i) * 30, cy: ay - 30 - b0 * 150 + (hash(i + 3) - 0.5) * 60, opacity: (1 - b0) * (t < tHit && t > T.around + 0.3 ? 1 : 0) }); });
+    set(flash, { opacity: 0.9 * vis(t, tHit, tHit + 0.35, 0.06, 0.9) });
+    const sw = pl(t, tHit, 1.6);
+    set(shock, { rx: 1500 * easeOut(sw), ry: 420 * easeOut(sw), opacity: (1 - sw) * (t > tHit ? 1 : 0) });
+    const fb = pl(t, tHit, 2.4);
+    set(fireball, { rx: 260 * easeOut(fb), ry: 180 * easeOut(fb), cy: IY - 120 * fb, opacity: 0.9 * (1 - fb) * (t > tHit ? 1 : 0) });
+    dust.forEach((d, i) => {
+      const k = pl(t, tHit + 0.1 + i * 0.03, 4);
+      const R = d.r0 * (0.3 + 1.6 * easeOut(k));
+      set(d.el, { cx: IX + Math.cos(d.a) * 520 * d.sp * easeOut(k), cy: IY + Math.sin(d.a) * 420 * d.sp * easeOut(k) - 80 * k, r: R, opacity: 0.7 * (t > tHit ? 1 : 0) * (1 - 0.65 * p(t, T.birds - 1.0, 2.0)) });
+    });
+    ash.forEach((a, i) => { const y = (a.ph + (t - tHit) * a.v) % 1100 - 20; set(a.el, { cx: a.x + Math.sin(t + i) * 20, cy: y, opacity: 0.6 * p(t, tHit + 1.0, 1.5) * (1 - p(t, T.algo - 0.8, 0.5)) }); });
+    // dinosaurs grey out, sink and crumble away; a ghost returns for "no promise"
+    const gone = p(t, T.extinction, 2.0);
+    dinos.forEach((d, i) => {
+      const walk = (1 - p(t, tHit, 0.3)) * Math.sin(t * 2.4 + i * 2) * 6;
+      const stone = p(t, tHit + 0.3 + i * 0.25, 1.2);
+      set(d.d.firstChild, { fill: mix(d.c, '#57534e', stone) });
+      move(d.d, d.x + walk * 3 + (1 - p(t, tHit, 0.3)) * (t - T.around) * 8, d.y + 30 + walk * 0.4 + 40 * gone, d.s * 1.5);
+      set(d.d, { opacity: dOn * (1 - gone) + 0.22 * vis(t, T.noPromise - 0.2, T.algo - 0.3, 0.5, 0.4) + (i === 2 ? 0.45 * vis(t, T.dinoLin - 0.4, T.noPromise - 0.2, 0.4, 0.4) : 0) });
+    });
+    // birds survive: one rises out of the dust and flies on
+    const bFly = p(t, T.birds - 0.6, 2.6, easeOut);
+    const bx = lerp(1180, 1560, bFly), by = lerp(700, 380, bFly) + Math.sin(t * 3) * 10;
+    show(birdS, dOn * p(t, T.birds - 0.6, 0.5));
+    set(birdS, { transform: `translate(${bx} ${by}) scale(-1.5 ${1.5 * (0.75 + 0.25 * Math.sin(t * 12))})` });
+    set(lineageArc, { d: `M 1370 640 Q 1420 470 ${bx - 20} ${by + 10}` });
+    show(lineageArc, vis(t, T.dinoLin - 0.2, T.noPromise, 0.4, 0.5)); draw(lineageArc, p(t, T.dinoLin - 0.2, 0.9));
+    // "no promise…": a long, successful reign cut short
+    show(reign, vis(t, T.noPromise - 0.3, T.algo - 0.3, 0.4, 0.5));
+    set(reignFill, { width: 1560 * p(t, T.noPromise, 1.6) });
+    show(reignCut, p(t, T.noPromise + 1.6, 0.25));
+    set(reignFill, { fill: p(t, T.noPromise + 1.6, 0.2) > 0.5 ? '#57534e' : '#4d7c5f' });
     show(noProm, 1);
     show(np1.g, p(t, T.noPromise, 0.5)); show(np2.g, p(t, T.chance, 0.4)); show(np3.g, p(t, T.chance + 0.8, 0.4));
     // the dinosaurs were well suited for a very long time — then chance struck, faster than they could adapt
-    move(crown, 820, 440); show(crown, vis(t, T.around + 0.5, T.extinction + 0.3, 0.4, 0.6) + vis(t, T.noPromise, T.algo - 0.3, 0.4, 0.4) * 0.6);
     move(dieS, 640, 960, 1, Math.floor(t * 6) * 47 % 360); show(dieS, p(t, T.chance, 0.4));
     move(clock, 1310, 960); set(hand, { transform: `rotate(${(t - T.chance) * 720})` }); show(clock, p(t, T.chance + 0.8, 0.4));
     set(ground, { fill: mix('#1c2b1f', '#2b2118', gone) });
