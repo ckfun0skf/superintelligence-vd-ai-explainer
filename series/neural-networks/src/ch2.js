@@ -55,6 +55,10 @@ export function createChapter2(root, cue) {
   rect(scr, -90, 135, 180, 14, { r: 7, fill: '#2a3e4f', stroke: 'none' });
   const sw = rect(scr, -95, -85, 190, 150, { r: 10, fill: grey(0.8), stroke: '#ffffff40', sw: 3 });
   const scrLabel = txt(scr, 0, 200, 'one grey swatch', { size: 30, weight: 600, fill: C.dim });
+  // zoomed-in view of the swatch: every pixel is made of red, green and blue light
+  const triad = g(scr);
+  const triadR = [C.R, C.G, C.B].map((c, i) => rect(triad, -95 + i * 64, -85, 60, 150, { r: 8, fill: c, stroke: 'none', attrs: { opacity: 0.85 } }));
+  const beams = [C.R, C.G, C.B].map(c => el('circle', { r: 16, fill: c, filter: 'url(#glow)' }, root));
 
   // light/dark question
   const task = g(root);
@@ -241,7 +245,20 @@ export function createChapter2(root, cue) {
     const zk = p(t, T.z2, 1.2);
     const inV = lerp(0.8, 0.2, zk);
     // screen + swatch
-    move(scr, 230, 540, 1);
+    const big = 1 - p(t, T.three + 0.6, 1.2);
+    const scX = lerp(230, 960, big), scY = lerp(540, 560, big), scS = lerp(1, 2.3, big);
+    move(scr, scX, scY, scS);
+    const triOn = vis(t, T.three + 0.2, T.range + 0.5, 0.6, 0.6);
+    show(triad, triOn);
+    triadR.forEach((r, i) => set(r, { opacity: 0.85 * (0.6 + 0.4 * Math.sin(t * 3 + i)) }));
+    beams.forEach((bm, i) => {
+      const t0 = [T.red, T.green, T.blue][i];
+      const k = p(t, t0, 0.9, easeOut);
+      const sx = scX + (-63 + i * 64) * scS, sy = scY - 10 * scS;
+      // world→screen for the bar position at camera 1 (world == screen before the first pan)
+      set(bm, { cx: lerp(sx, BX + 10, k), cy: lerp(sy, rows[i], k) });
+      show(bm, k > 0 && k < 1 ? 1 : 0);
+    });
     show(scr, p(t, T.swatch - 0.2, 0.6));
     set(sw, { fill: grey(lerp(0.8, 0.2, dk)) });
     set(scrLabel, { text: dk > 0.5 ? 'dark grey' : t > T.use ? 'light grey' : 'one grey swatch' });
@@ -275,7 +292,7 @@ export function createChapter2(root, cue) {
     // neuron enters
     const nIn = p(t, 0.8, 1.2);
     move(nGroup, lerp(960, NX, nIn), NY);
-    show(nGroup, lerp(0.35, 1, p(t, T.enter, 0.8)) * (t < 1 ? 1 : 1) + (t < 1.2 ? 0.65 * (1 - p(t, 0.6, 0.6)) : 0));
+    show(nGroup, t < T.three ? 1 - p(t, 0.4, 0.8) : p(t, T.enter - 0.8, 0.8));
     set(N.core, { opacity: 0.1 + 0.25 * vis(t, T.add, T.minus + 2) });
     show(sigma, p(t, T.calc, 0.5));
     show(thought, vis(t, T.notThink, T.calc + 0.6));

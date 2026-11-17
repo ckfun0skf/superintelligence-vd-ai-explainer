@@ -190,6 +190,10 @@ export function createChapter4(root, cue) {
   const tagIn = txt(DS, 0, 0, 'INPUT', { size: 28, weight: 800, fill: C.cyan });
   const tagAns = txt(DS, 0, 0, 'ANSWER (label)', { size: 28, weight: 800, fill: C.amber });
   const people = [0, 1].map(i => person(DS, 1.4, i ? '#94a3b8' : '#cbd5e1'));
+  // people sort a pile of colour swatches into LIGHT and DARK baskets
+  const sortG = g(DS);
+  const baskets = ['LIGHT', 'DARK'].map((l, i) => { const gg = g(sortG); el('path', { d: 'M -110 -40 L 110 -40 L 85 60 L -85 60 Z', fill: '#132433', stroke: i ? '#5b6b78' : '#ece7dc', 'stroke-width': 4 }, gg); const pp = pill(gg, l, { w: 150, size: 26 }); move(pp.g, 0, 100); move(gg, 660 + i * 600, 640); return gg; });
+  const pile = COLORS.map(([c, l], i) => ({ r: rect(sortG, -32, -32, 64, 64, { r: 10, fill: c, stroke: '#ffffff50', sw: 2 }), l, i }));
   const ruleAxis = g(DS);
   const rg = el('linearGradient', { id: 'lumGrad' }, ruleAxis);
   el('stop', { offset: '0%', 'stop-color': '#000' }, rg); el('stop', { offset: '100%', 'stop-color': '#fff' }, rg);
@@ -421,7 +425,16 @@ export function createChapter4(root, cue) {
     const tagOn = vis(t, T.asInput - 0.2, T.row2);
     set(tagIn, { x: 960 - 145, y: 290 }); show(tagIn, tagOn);
     set(tagAns, { x: 960 + 100, y: 290 }); show(tagAns, tagOn * p(t, T.asAnswer, 0.4));
-    people.forEach((pp, i) => { const pv = vis(t, T.prepare - 0.3, T.twoParts, 0.4, 0.4) + vis(t, T.agree - 0.3, T.noKnow, 0.4, 0.4); move(pp, pv > 0 && t > T.rule ? 860 + i * 200 : 820 + i * 280, t > T.rule ? 300 : 560); show(pp, Math.min(1, pv)); });
+    people.forEach((pp, i) => { const pv = vis(t, T.forOur - 0.2, T.twoParts, 0.5, 0.4) + vis(t, T.agree - 0.3, T.noKnow, 0.4, 0.4); move(pp, t > T.rule ? 860 + i * 200 : 660 + i * 600, t > T.rule ? 300 : 430); show(pp, Math.min(1, pv)); });
+    const sortOn = vis(t, T.forOur - 0.2, T.twoParts - 0.1, 0.5, 0.4);
+    show(sortG, sortOn);
+    pile.forEach(({ r, l, i }) => {
+      const k = p(t, T.prepare + 0.4 + i * 0.5, 0.6, easeOut);
+      const tx = l === 'LIGHT' ? 660 : 1260, ty = 600 - Math.floor(i / 2) * 6;
+      const px = 960 + (i % 3 - 1) * 26, py = 680 - i * 14;
+      const arc = Math.sin(Math.PI * k) * -160;
+      move(r, lerp(px, tx + (i % 4 - 1.5) * 30, k), lerp(py, ty, k) + arc, 1, k * (i % 2 ? 20 : -20));
+    });
     show(ruleAxis, toAxis * (1 - toNet));
     move(ruleLine, 200 + 0.5 * 1520, 0); show(ruleLine, p(t, T.consistent, 0.5) * (1 - toNet));
     set(agreeTx, { x: 960, y: 220 }); show(agreeTx, vis(t, T.agree + 1.0, T.noKnow));

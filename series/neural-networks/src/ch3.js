@@ -385,7 +385,7 @@ export function createChapter3(root, cue) {
       move(resG, 1790, 540); show(resG, guessOn);
       set(resTx, { text: Math.floor(t * 2.5) % 2 ? 'STRIPE?' : 'PLAIN?' });
       show(guessTx, guessOn);
-    } else { units.forEach((col, li) => col.forEach(u => move(u.n.g, u.x, u.y))); set(linkG, { opacity: netVis }); }
+    } else { units.forEach((col, li) => col.forEach(u => move(u.n.g, u.x, u.y))); set(linkG, { opacity: netVis }); show(guessTx, 0); }
     show(needTrain, p(t, T.still - 0.2, 0.5, easeBack));
     show(endTitle, eOn * (1 - p(t, T.still - 0.3, 0.3)));
     endLinks.forEach(l => set(l, { opacity: 0.35 * p(t, T.more + 0.8, 0.8) }));

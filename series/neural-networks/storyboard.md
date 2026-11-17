@@ -24,8 +24,8 @@ Each visual change starts on the word in **bold** (timings come from `src/timing
 
 | Narration | On screen |
 |---|---|
-| Imagine one **grey color swatch on a screen**… **light or dark**. | A monitor shows a grey swatch; LIGHT and DARK pills appear (no title). |
-| …three values: **red, green, and blue**. | Three channel bars appear in spoken order. |
+| Imagine one **grey color swatch on a screen**… **light or dark**. | A large monitor fills the centre with the grey swatch; LIGHT and DARK pills appear. |
+| …three values: **red, green, and blue**. | The swatch zooms into its red/green/blue sub-pixels; as each colour is named, its light flies out into its own channel bar. |
 | Each usually ranges from **zero to 255**… **rescale between zero and one**. | 0/255 scale labels; then 0/1 labels. |
 | …**204** becomes about **0.8**. | A marker at 204 on the red bar; "204 ÷ 255 ≈ 0.8". |
 | **red is 0.8, green is 0.8, and blue is 0.8**. | Each bar fills to 0.8 exactly as it is spoken. |
@@ -74,7 +74,7 @@ Each visual change starts on the word in **bold** (timings come from `src/timing
 |---|---|
 | …chosen the weights and bias **by hand**. | A cursor turns dials one by one. |
 | A real network has **many adjustable values**. Training is **finding settings**… | A wall of ~200 dials, jittering, then settling; "answers we want ✓". |
-| …people first **prepare examples**… **input**… **answer**. | Two people; an example card: swatch (INPUT) → label (ANSWER). |
+| …people first **prepare examples**… **input**… **answer**. | Two people sort a pile of colour swatches into LIGHT and DARK baskets; then an example card: swatch (INPUT) → label (ANSWER). |
 | **pale grey → light**; **dark blue → dark**; **labelled training set**. | Cards appear as spoken; eight cards form the set. |
 | **consistent rule**… **agree on what counts**. | Cards slide onto a dark→bright axis; an "agreed rule" line; people ✓. |
 | The network **does not know that rule**… only receives **examples and answers**. | A "?" network; the rule is blocked; cards fly into the network. |
@@ -106,11 +106,11 @@ Each visual change starts on the word in **bold** (timings come from `src/timing
 
 | Narration | On screen |
 |---|---|
-| …**examples with answers**, **measure how far**, **use gradients**. | Three recap cards in sync. |
+| **We have just seen**… **examples with answers**, **measure how far**, **use gradients**. | Three recap cards in sync (the first on the opening words). |
 | But labelled answers are **not always available**. | "answer: ???" |
 | In a game… **measure how well**… vs **correct move for every board**. | A playing snake with a live score ✓ vs a grid of boards each marked "?". |
-| …**many candidate networks**, **keeping more copies** of better ones, **small random changes**. | Eight networks with score bars; they sort; top ones glow green; next ones amber. |
-| **selection**… **mutation**… **biological evolution**. | SELECTION and MUTATION chips; a turning DNA helix. |
+| …**many candidate networks**, **keeping more copies** of better ones, **small random changes**, **trying again**. | Gen 1: eight networks with score bars sort by score; the top three glow and are copied down into gen 2 (more copies for the best); the copies get amber mutation sparks; gen 2 plays and scores. |
+| **selection**… **mutation**… **biological evolution**. | A funnel lets only the best (green) dots through; a network with one flickering changed link and a rolling die; a turning DNA helix. |
 | …individuals are **not all alike**… differences **inherited**. | Twelve moths of varied shade; a parent with similar-shaded offspring. |
 | **Peppered moth**… **pale with lichen**… light moths hard to spot… **dark moths easier to see**. | Lichen-covered trunk; light moths blend in; a bird targets a dark moth. |
 | **more light moths survived**… | Population bar stays ~90% light. |
@@ -122,7 +122,7 @@ Each visual change starts on the word in **bold** (timings come from `src/timing
 | …a **lineage disappears**. | A lineage tree: one branch ends ✗, another continues. |
 | **66 million years ago**… **asteroid**… **extinction**… **birds survived**. | Asteroid streak, impact flash, dinosaurs fade, a bird remains. |
 | **no promise**… **chance** and **speed** of change. | Ghosts of the dinosaurs under a crown ("well suited for 100+ million years"); "best-suited ≠ guaranteed survival"; a spinning die (chance) and a racing clock (speed). |
-| An **algorithm**… **not living organisms**… **population**… **evaluates**… **next generation**… **neuroevolution**. | Moth crossed out; ten candidate networks with score bars; an arrow to the next generation. |
+| An **algorithm**… **not living organisms**… **population**… **evaluates**… **next generation**… **neuroevolution**. | Ten moths spin and shrink into ten candidate networks; a crossed-out moth (not organisms); score bars; an arrow to the next generation. |
 | **Snake**… **food**, **danger**, **heading**… **straight, left, right**… **game follows**. | A live game; input chips light in spoken order; output score bars; the top action is taken each step. |
 | **many networks**… **most hit a wall**… **a few** survive or eat… **fitness score**… **apples raise**, **crashing lowers**… **whole attempt**. | Twelve games play at once; most crash (red ✗); a few eat apples; one score per game; legend +10 / −5. |
 | **Select**… **copy**… **randomly change a few weights**… **add a connection or neuron**. | High-scoring parent → copy; amber rings on changed weights; a new connection and neuron draw in. |
@@ -133,5 +133,7 @@ Each visual change starts on the word in **bold** (timings come from `src/timing
 | **Supervised** vs **neuroevolution**… **weights only** / **structure**… **not how every LLM** is trained. | Side-by-side cards fill in as spoken, each row with a small moving icon (swatch→label, pulsing mismatch bar, turning dial / mini boards, score bars, rolling die); chips; caveat. |
 | …from **classifying a color** to **learning a game**. | Swatch → snake board. |
 | **language models**… **explain**, **compare**, **write**, **plan**. | A chat window; four request chips pop in as spoken around a "?" model. |
-| **How can one model**…? What's **inside**…? **Where are the limits**? | The three questions appear one by one. |
-| **We'll explore that next**… like and **subscribe**. | "NEXT: inside a language model"; Like / Subscribe. |
+| **How can one model** respond to so many requests? | Ten different requests orbit one model, each linked to it. |
+| What's happening **inside** when it appears to **understand**, **reason**, **plan**? | The "?" opens to reveal a pulsing network inside; understand? / reason? / plan? tags pop on each word. |
+| **Where are the limits**? | A dashed boundary closes around the model; some requests end up outside it, flickering red. |
+| **We'll explore that next**… **like** and **subscribe**. | The camera dives into the model; "NEXT: inside a language model"; the Like button is tapped (Liked) and Subscribe flips to Subscribed ✓. |
