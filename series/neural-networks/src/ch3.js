@@ -1,6 +1,6 @@
 // Chapter 3 — From one neuron to layers.
 import { el, set, show, move, g, txt, rect, card, neuron, dial, draw, pointOn, arrowHead,
-  p, pl, vis, lerp, clamp, easeOut, easeBack, mix, grey, fmt, hash, C } from './engine.js';
+  p, pl, vis, lerp, clamp, easeOut, easeBack, mix, grey, fmt, hash, C, hush } from './engine.js';
 
 const sig = x => 1 / (1 + Math.exp(-x));
 
@@ -192,6 +192,8 @@ export function createChapter3(root, cue) {
   const endDials = ECOL.flatMap(([x, ys]) => ys.map(y => { const d = dial(root, 18); move(d.g, x + 46, y - 46); return d; }));
   const trainDials = links.filter((_, i) => i % 2 === 0).map(l => ({ d: dial(root, 20), l }));
 
+  // captions that only repeated the narration are removed from the picture
+  hush(layerTitle, ourLabels, bigTx, toyTag, actTitle, actNote, bpTitle, endTitle, needTrain);
   return function update(t) {
     // ----- patch: swatch → 3×3 patch → RGB per pixel → 27 numbers -----
     const toNet = p(t, T.layer - 0.6, 1.0);

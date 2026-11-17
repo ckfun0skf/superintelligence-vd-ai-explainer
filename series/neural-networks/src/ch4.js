@@ -1,6 +1,6 @@
 // Chapter 4 — How does a network learn from examples?
 import { el, set, show, move, g, txt, rect, neuron, dial, draw, pointOn, person,
-  p, pl, vis, lerp, clamp, easeOut, easeBack, mix, grey, hash, C } from './engine.js';
+  p, pl, vis, lerp, clamp, easeOut, easeBack, mix, grey, hash, C, hush } from './engine.js';
 
 const COLORS = [
   ['#d4d4d4', 'LIGHT'], ['#1e3a8a', 'DARK'], ['#fafaf9', 'LIGHT'], ['#111111', 'DARK'],
@@ -357,6 +357,8 @@ export function createChapter4(root, cue) {
 
   // ======================= update =======================
   let sensWobble = 0;
+  // captions that only repeated the narration are removed from the picture
+  hush(netNote, netSub, gridTx, dsTitle, lossSub, qTitle, biasedTx, chainTx, oneExTx, hoTitle, worldTx, tgTitle, recipeTx, goal);
   return function update(t) {
     const dsOn = vis(t, T.forOur - 0.4, T.beginning - 0.2, 0.6, 0.6);
     const netOn = Math.max(vis(t, 0, T.real + 0.3, 0.01, 0.5), vis(t, T.training + 1.5, T.forOur - 0.2, 0.5, 0.5), vis(t, T.beginning - 0.4, T.repeats + 0.2, 0.6, 0.6));

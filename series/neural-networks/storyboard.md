@@ -137,3 +137,11 @@ Each visual change starts on the word in **bold** (timings come from `src/timing
 | What's happening **inside** when it appears to **understand**, **reason**, **plan**? | The "?" opens to reveal a pulsing network inside; understand? / reason? / plan? tags pop on each word. |
 | **Where are the limits**? | A dashed boundary closes around the model; some requests end up outside it, flickering red. |
 | **We'll explore that next**… **like** and **subscribe**. | The camera dives into the model; "NEXT: inside a language model"; the Like button is tapped (Liked) and Subscribe flips to Subscribed ✓. |
+
+## On-screen text policy
+
+Headings and captions that only repeated the narration were removed (`hush(...)` near the end of each
+chapter's setup). Kept on screen: things the eye needs to read the picture — numbers and values,
+axis/legend labels, LIGHT/DARK answers, R/G/B, names and dates, request chips, and short tags
+whose wording is itself the point (e.g. "fitness = time alive ?"). The Chapter 5 DNA is a
+projected 3D double helix that rotates about its axis.

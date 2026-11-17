@@ -232,3 +232,6 @@ export function swatch(parent, size, color, o = {}) {
   const r = rect(gg, -size / 2, -size / 2, size, size, { r: size * 0.12, fill: color, stroke: o.stroke || '#ffffff33', sw: 3 });
   return { g: gg, rect: r };
 }
+
+/** Permanently remove elements from the picture (used to drop captions that only repeat the narration). */
+export const hush = (...els) => els.flat().forEach(e => e && e.setAttribute('display', 'none'));
