@@ -216,16 +216,29 @@ export function createChapter2(root, cue) {
   const imgLink = el('path', { d: 'M 1290 560 L 1420 560', fill: 'none', stroke: C.amber, 'stroke-width': 6, 'stroke-dasharray': '12 10' }, root);
   const imgQ = txt(root, 0, 0, '?', { size: 130, weight: 800, fill: C.amber });
   const imgTx = txt(root, 960, 110, '', { size: 52, weight: 800 });
-  // 3×3 patch + small network (handoff to Chapter 3)
-  const patch = g(root);
-  const patchCells = [];
-  for (let i = 0; i < 9; i++) patchCells.push(rect(patch, (i % 3) * 92 - 138, Math.floor(i / 3) * 92 - 138, 86, 86, { r: 8, fill: grey(0.8), stroke: '#ffffff30', sw: 2 }));
+  // the highlighted pixel grows into ONE big swatch — exactly the square Chapter 3 opens with
+  // carried over from Chapter 1's last frame: the 0.8 chip on its wire, which melts into the swatch
+  const carry = g(root);
+  const carryWire = el('path', { d: 'M 60 540 L 850 540', fill: 'none', stroke: C.cyan, 'stroke-width': 8, 'stroke-linecap': 'round' }, carry);
+  const carryChip = g(carry);
+  rect(carryChip, -80, -46, 160, 92, { r: 20, fill: '#0f2a3a', stroke: C.cyan, sw: 4 });
+  txt(carryChip, 0, 3, '0.8', { size: 56, weight: 800, fill: C.cyan, mono: true });
+  const handSw = rect(root, -43, -43, 86, 86, { r: 8, fill: grey(0.8), stroke: '#ffffff30', sw: 2 });
   const net = g(root);
-  const netNodes = [[760, 330], [760, 540], [760, 750], [1180, 400], [1180, 680], [1540, 540]];
+  const netNodes = [[1000, 330], [1000, 540], [1000, 750], [1420, 400], [1420, 680], [1780, 540]];
   const netEdges = [[0, 3], [0, 4], [1, 3], [1, 4], [2, 3], [2, 4], [3, 5], [4, 5]];
   const netLines = netEdges.map(([i, j]) => el('line', { x1: netNodes[i][0], y1: netNodes[i][1], x2: netNodes[j][0], y2: netNodes[j][1], stroke: C.teal, 'stroke-width': 4, opacity: 0.6 }, net));
-  const patchLines = [0, 1, 2].map(i => el('line', { x1: 520, y1: 540, x2: netNodes[i][0], y2: netNodes[i][1], stroke: C.cyan, 'stroke-width': 4, opacity: 0.5 }, net));
+  const patchLines = [0, 1, 2].map(i => el('line', { x1: 728, y1: 540, x2: netNodes[i][0], y2: netNodes[i][1], stroke: C.cyan, 'stroke-width': 4, opacity: 0.5 }, net));
   const netN = netNodes.map(([x, y], i) => { const n = neuron(net, i === 5 ? 64 : 54, { symbol: 'Σ' }); set(n.label, { 'font-size': 40 }); move(n.g, x, y); return n; });
+  const netPulses = netEdges.map(() => el('circle', { r: 8, fill: C.cyan, filter: 'url(#glow)' }, net));
+
+  // spotlight frames that follow the narration (world coordinates)
+  const spots = [0, 1, 2, 3].map(() => el('rect', { fill: 'none', stroke: C.amber, 'stroke-width': 7, rx: 26, filter: 'url(#glow)' }, world));
+  const spot = (k, x0, y0, x1, y1, on, col = C.amber) => {
+    const pad = 18 + 10 * (1 - on);
+    set(spots[k], { x: x0 - pad, y: y0 - pad, width: x1 - x0 + 2 * pad, height: y1 - y0 + 2 * pad, stroke: col });
+    show(spots[k], on);
+  };
 
   // ---------- update ----------
   // captions that only repeated the narration are removed from the picture
@@ -424,6 +437,33 @@ export function createChapter2(root, cue) {
     set(pDtx, { text: `DARK ${Math.round((1 - pr) * 100)}%` });
     show(exTag, vis(t, T.onlyEx, T.darkSw + 1));
 
+    // spotlights that follow the words
+    const DY = i => lerp(rows[i], NY, 0.12);
+    const wDial = vis(t, T.jobs - 0.1, cue.at('bias, and activation each') - 0.05, 0.25, 0.3);
+    const wBias = vis(t, cue.at('bias, and activation each'), cue.at('activation each') - 0.05, 0.25, 0.3);
+    const wAct = vis(t, cue.at('activation each'), cue.at('specific job') - 0.05, 0.25, 0.3);
+    const wAll = vis(t, cue.at('specific job'), T.easy - 0.3, 0.25, 0.4);
+    spot(0, DX - 96, DY(0) - 50, DX + 134, DY(2) + 50, Math.max(wDial, wAll));
+    spot(1, NX - 120, NY + 314, NX + 120, NY + 406, Math.max(wBias, wAll), C.violet);
+    spot(2, CX0 - 60, CY0 - 90, CX1 + 60, CY1 + 80, Math.max(wAct, wAll), C.teal);
+    // dark-swatch result: "the sigmoid turns that into… 29% light… 71% dark"
+    const prDark = sig(-0.9);
+    const sTurn = vis(t, T.turns, T.d29 - 0.05, 0.25, 0.3);
+    const sL = vis(t, T.d29, T.d71 - 0.05, 0.25, 0.3), sD = vis(t, T.d71, T.so - 0.2, 0.25, 0.4);
+    const dotYd = sy(sig(-0.9));
+    if (sTurn > 0) spot(3, sx(-0.9) - 40, dotYd - 40, sx(-0.9) + 40, CY1 + 10, sTurn, C.amber);
+    else if (sL > 0) spot(3, PX0, PY - 100, PX0 + PW * prDark, PY + 40, sL, C.light);
+    else spot(3, PX0 + PW * prDark, PY - 100, PX0 + PW, PY + 40, sD, C.ink);
+    // the same three-step pulse for the first (light) result
+    const lL = vis(t, T.p71, T.rem - 0.05, 0.25, 0.3), lD = vis(t, T.p29 - 0.1, T.onlyEx - 0.1, 0.25, 0.3);
+    if (t > T.p71 - 0.5 && t < T.onlyEx) { if (lL > 0) spot(3, PX0, PY - 100, PX0 + PW * sig(0.9), PY + 40, lL, C.light); else spot(3, PX0 + PW * sig(0.9), PY - 100, PX0 + PW, PY + 40, lD, C.ink); }
+    // bars pop when their word is said
+    const popL = Math.sin(Math.PI * pl(t, T.d29, 0.6)) + Math.sin(Math.PI * pl(t, T.p71, 0.6));
+    const popD = Math.sin(Math.PI * pl(t, T.d71, 0.6)) + Math.sin(Math.PI * pl(t, T.p29, 0.6));
+    set(pLtx, { 'font-size': 36 + 14 * popL }); set(pDtx, { 'font-size': 36 + 14 * popD });
+    // the curve point flashes as the score "turns into" a probability
+    set(scoreDot, { r: 15 + 10 * Math.sin(Math.PI * pl(t, T.turns, 0.8)) });
+
     // recap
     const rk = [T.so + 0.6, T.scales, T.offset, T.result];
     recapDefs.forEach((r, i) => show(r, vis(t, rk[i], T.easy - 0.4)));
@@ -448,12 +488,26 @@ export function createChapter2(root, cue) {
     move(imgN.g, 1500, 560, 1); show(imgN.g, vis(t, T.notImg, T.why + 0.4));
     show(imgLink, vis(t, T.notImg, T.why + 0.4));
     move(imgQ, 1500, 400); show(imgQ, vis(t, T.image, T.why + 0.4));
-    // several neurons connected, fed by a 3×3 patch
-    const nv = p(t, T.why + 0.2, 0.8);
-    show(patch, nv); move(patch, 330, 540);
+    const cv = 1 - p(t, 0.15, 0.9);
+    show(carry, cv);
+    move(carryChip, lerp(630, 960, p(t, 0, 0.9)), 540, lerp(1, 0.4, p(t, 0, 0.9)));
+    draw(carryWire, 1 - p(t, 0, 0.8));
+    // the pixel lifts out of the image and grows into the swatch Chapter 3 starts from
+    const lift = p(t, T.why - 0.2, 1.4);
+    const px0 = 943.6, py0 = 662, s0 = 39 / 86;
+    move(handSw, lerp(px0, 560, lift), lerp(py0, 540, lift), lerp(s0, 3.75, lift));
+    show(handSw, t > T.why - 0.25 ? 1 : 0);
+    const connectedEnd = cue.end('can be connected');
+    const nv = p(t, T.why + 0.4, 0.8) * (1 - p(t, connectedEnd + 0.05, 0.75));
     show(net, nv);
     netN.forEach((n, i) => { const k = p(t, T.several - 0.4 + i * 0.12, 0.5, easeBack); move(n.g, netNodes[i][0], netNodes[i][1], k); });
     netLines.forEach((l, i) => set(l, { opacity: 0.6 * p(t, T.several + 0.4 + i * 0.06, 0.4) }));
     patchLines.forEach((l, i) => set(l, { opacity: 0.5 * p(t, T.several + 0.2, 0.4) }));
+    netEdges.forEach(([i, j], k) => {
+      const c = ((t - T.several) * 0.9 + (i > 2 ? 0.5 : 0)) % 1;
+      const a0 = netNodes[i], b0 = netNodes[j];
+      set(netPulses[k], { cx: lerp(a0[0], b0[0], c), cy: lerp(a0[1], b0[1], c) });
+      show(netPulses[k], t > T.several + 0.8 ? 1 : 0);
+    });
   };
 }

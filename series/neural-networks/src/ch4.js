@@ -121,6 +121,7 @@ export function createChapter4(root, cue) {
   const hand = g(root);
   el('path', { d: 'M 0 0 L 0 48 L 12 36 L 22 60 L 32 55 L 22 32 L 40 32 Z', fill: C.ink, stroke: '#000', 'stroke-width': 2 }, hand);
   // many dials grid
+  let netDialPos = null;
   const grid = g(root);
   const gridDials = [];
   for (let r = 0; r < 9; r++) for (let c = 0; c < 22; c++) { const d = dial(grid, 14); move(d.g, 120 + c * 80, 220 + r * 78); gridDials.push(d); }
@@ -361,8 +362,15 @@ export function createChapter4(root, cue) {
   hush(netNote, netSub, gridTx, dsTitle, lossSub, qTitle, biasedTx, chainTx, oneExTx, hoTitle, worldTx, tgTitle, recipeTx, goal);
   return function update(t) {
     const dsOn = vis(t, T.forOur - 0.4, T.beginning - 0.2, 0.6, 0.6);
-    const netOn = Math.max(vis(t, 0, T.real + 0.3, 0.01, 0.5), vis(t, T.training + 1.5, T.forOur - 0.2, 0.5, 0.5), vis(t, T.beginning - 0.4, T.repeats + 0.2, 0.6, 0.6));
+    // the network's dials multiply out into a wall of dials, spin, settle, then collapse back
+    const expand = p(t, T.real - 0.3, 1.1, easeOut) * (1 - p(t, T.training + 0.9, 1.0));
+    const netOn = Math.max(vis(t, 0, T.forOur - 0.2, 0.01, 0.5) * (1 - 0.85 * expand), vis(t, T.beginning - 0.4, T.repeats + 0.2, 0.6, 0.6));
     show(NET, netOn);
+    // arriving from Chapter 3: links, dials and input colours fade in
+    const arrive = p(t, 0, 0.9);
+    set(linkG, { opacity: arrive });
+    nodes[0].forEach((n, i) => { set(n.ring, { stroke: mix(C.teal, [C.R, C.G, C.B][i], arrive) }); set(n.label, { fill: mix(C.teal, [C.R, C.G, C.B][i], arrive), opacity: arrive }); });
+    outLabels.forEach(o => set(o, { opacity: arrive }));
     show(netNote, netOn * (1 - vis(t, T.notDisc - 0.2, T.shown, 0.3, 0.3)));
     show(netSub, netOn);
 
@@ -384,7 +392,7 @@ export function createChapter4(root, cue) {
     dials.forEach(({ d, l }, k) => {
       const pt = pointOn(l.path, 0.5);
       move(d.g, pt.x, pt.y);
-      show(d.g, netOn);
+      show(d.g, netOn * p(t, 0.1, 0.8) * (1 - expand));
       let jiggle = handOn > 0 && hd === dials[k] ? Math.sin(t * 9) * 0.4 : 0;
       if (k === kBig) jiggle += Math.sin((t - T.backprop) * 9) * 0.6 * vis(t, T.backprop + 0.2, T.backprop + 2.6, 0.2, 0.2);
       if (k === kSmall) jiggle += Math.sin((t - T.backprop) * 9) * 0.6 * vis(t, T.backprop + 2.8, T.backward - 0.1, 0.2, 0.2);
@@ -395,9 +403,23 @@ export function createChapter4(root, cue) {
     set(netSub, { text: t < T.forOur ? '' : t >= T.lossMeasures && t < T.supplied ? '' : '' });
 
     // ---- many dials grid ----
-    const gOn = vis(t, T.real - 0.2, T.training + 1.6, 0.5, 0.5);
+    const gOn = expand > 0.002 ? 1 : 0;
     show(grid, gOn);
-    gridDials.forEach((d, i) => { show(d.g, p(t, T.many - 0.6 + (i % 22) * 0.02 + Math.floor(i / 22) * 0.04, 0.3)); const settle = p(t, T.finding, 2.5); d.setValue(lerp(hash(i) * 4 - 2 + Math.sin(t * 3 + i) * 0.5 * (1 - settle), Math.sin(i * 0.37) * 1.2, settle), -2, 2); });
+    const t0 = T.real - 0.3, tf = T.finding, D = 2.5;
+    const run = t < tf ? t - t0 : (tf - t0) + Math.min(t - tf, D) - Math.min(t - tf, D) ** 2 / (2 * D);
+    const runEnd = (tf - t0) + D / 2;
+    if (!netDialPos) netDialPos = dials.map(({ l }) => { const q = pointOn(l.path, 0.5); return [q.x, q.y]; });
+    gridDials.forEach((d, i) => {
+      const src = netDialPos[i % netDialPos.length];
+      const gx = 120 + (i % 22) * 80, gy = 220 + Math.floor(i / 22) * 78;
+      const e = clamp(expand * 1.25 - (((i % 22) + Math.floor(i / 22)) / 30) * 0.25);
+      move(d.g, lerp(src[0], gx, easeOut(e)), lerp(src[1], gy, easeOut(e)), lerp(19 / 14, 1, e));
+      show(d.g, e > 0.01 ? 1 : 0);
+      // spin continuously, then decelerate smoothly onto a found setting
+      const w = (hash(i) > 0.5 ? 1 : -1) * (140 + hash(i + 7) * 260);
+      const final = -135 + 270 * (Math.sin(i * 0.37) * 1.2 + 2) / 4;
+      set(d.needle, { transform: `rotate(${final - w * (runEnd - run)})` });
+    });
     set(gridTx, { text: t < T.training ? 'A real network: many adjustable values' : 'Training = finding good settings' });
     show(gridTx, gOn);
     show(goal, vis(t, T.answers - 0.3, T.forOur - 0.3) );

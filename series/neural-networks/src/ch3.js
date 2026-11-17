@@ -115,10 +115,18 @@ export function createChapter3(root, cue) {
   txt(toyTag, 0, 3, 'toy example: STRIPE or PLAIN?', { size: 26, weight: 800, fill: C.amber });
   move(toyTag, 250, 300);
   // job-title tags on middle units
-  const jobs = ['dark column?', 'light column?', 'contrast?'].map((s, i) => {
+  // picture labels: what each middle unit (illustratively) reacts to
+  const JOB_PAT = [
+    [[0, 9, 9], [0, 9, 9], [0, 9, 9]],   // a dark column
+    [[9, 1, 9], [9, 1, 9], [9, 1, 9]],   // a light column
+    [[0, 1, 9], [0, 1, 9], [0, 1, 9]],   // a dark→light edge (contrast)
+  ];
+  const jobs = JOB_PAT.map((pat, i) => {
     const gg = g(root);
-    rect(gg, -110, -26, 220, 52, { r: 26, fill: '#13283a', stroke: C.cyan, sw: 3 });
-    const tx = txt(gg, 0, 2, s, { size: 26, weight: 700, fill: C.cyan });
+    rect(gg, -62, -62, 124, 124, { r: 18, fill: '#13283a', stroke: C.cyan, sw: 3 });
+    pat.forEach((row, r) => row.forEach((v, c) => rect(gg, -48 + c * 33, -48 + r * 33, 30, 30, { r: 4, fill: v === 9 ? '#24384a' : v ? '#f1f5f9' : '#0b0f14', stroke: v === 9 ? 'none' : C.cyan, sw: v === 9 ? 0 : 1.5 })));
+    if (i === 2) el('line', { x1: -15, y1: -56, x2: -15, y2: 56, stroke: C.amber, 'stroke-width': 5 }, gg);
+    const tx = txt(gg, 0, 0, '', { size: 1 });
     return { g: gg, tx };
   });
   // what a real unit "responds to": a messy mix across several patterns
@@ -157,7 +165,7 @@ export function createChapter3(root, cue) {
 
   // ---------- boundary plot ----------
   const bpG = g(root);
-  const BPX = 960, BPY = 560, BPW = 760, BPH = 640;
+  const BPX = 1250, BPY = 560, BPW = 760, BPH = 640;
   rect(bpG, BPX - BPW / 2, BPY - BPH / 2, BPW, BPH, { r: 26, fill: '#0b1824', stroke: '#24405a' });
   const bpTitle = txt(bpG, 960, 170, '', { size: 46, weight: 800 });
   const pts = Array.from({ length: 28 }, (_, i) => {
@@ -174,6 +182,28 @@ export function createChapter3(root, cue) {
   set(flex, { transform: `translate(${BPX} ${BPY})` });
   const okMark = txt(bpG, BPX + BPW / 2 - 60, BPY - BPH / 2 + 60, '✓', { size: 70, weight: 800, fill: C.green });
   const noMark = txt(bpG, BPX + BPW / 2 - 60, BPY - BPH / 2 + 60, '✗', { size: 70, weight: 800, fill: C.red });
+
+  // the network that draws the boundary (left of the plot)
+  const HCOL = [C.cyan, C.violet, C.amber, C.green, C.rose, C.blue];
+  const bnG = g(bpG);
+  const bnIn = [[240, 440], [240, 640]], bnOut = [700, 540];
+  const bnHid = HCOL.map((_, k) => [470, 290 + k * 100]);
+  const bnDirect = bnIn.map(([x, y]) => el('line', { x1: x, y1: y, x2: bnOut[0], y2: bnOut[1], stroke: C.ink, 'stroke-width': 4, opacity: 0.7 }, bnG));
+  const bnL1 = [], bnL2 = [];
+  bnHid.forEach(([hx, hy], k) => {
+    bnIn.forEach(([x, y]) => bnL1.push({ k, el: el('line', { x1: x, y1: y, x2: hx, y2: hy, stroke: HCOL[k], 'stroke-width': 2.5, opacity: 0 }, bnG) }));
+    bnL2.push(el('line', { x1: hx, y1: hy, x2: bnOut[0], y2: bnOut[1], stroke: HCOL[k], 'stroke-width': 3, opacity: 0 }, bnG));
+  });
+  const bnInN = bnIn.map(([x, y], i) => { const n = neuron(bnG, 34, { symbol: i ? 'y' : 'x', color: C.dim }); set(n.label, { 'font-size': 30 }); move(n.g, x, y); return n; });
+  const bnHidN = bnHid.map(([x, y], k) => { const n = neuron(bnG, 26, { symbol: '', color: HCOL[k] }); move(n.g, x, y); return n; });
+  const bnOutN = neuron(bnG, 44, { symbol: 'Σ' }); set(bnOutN.label, { 'font-size': 36 }); move(bnOutN.g, bnOut[0], bnOut[1]);
+  const bnLink = el('path', { d: '', fill: 'none', stroke: C.ink, 'stroke-width': 3, 'stroke-dasharray': '8 8', opacity: 0.6 }, bnG);
+  // each hidden unit contributes one straight cut; together they form the curved boundary
+  const cuts = HCOL.map((c, k) => {
+    const a2 = -Math.PI / 2 + k * (Math.PI * 2 / HCOL.length), n = [Math.cos(a2), Math.sin(a2)], tg = [-n[1], n[0]], d0 = 165;
+    return { el: el('line', { x1: BPX + n[0] * d0 * 1.0 + tg[0] * 170, y1: BPY + n[1] * d0 * 0.9 + tg[1] * 170, x2: BPX + n[0] * d0 * 1.0 - tg[0] * 170, y2: BPY + n[1] * d0 * 0.9 - tg[1] * 170, stroke: c, 'stroke-width': 6, 'stroke-linecap': 'round' }, bpG) };
+  });
+  bpG.appendChild(flex);
 
   // ---------- smarter? / more stages / still need training ----------
   const endG = g(root);
@@ -299,9 +329,9 @@ export function createChapter3(root, cue) {
       const on = vis(t, T.arrangements + i * 0.3, T.piece, 0.4, 0.5);
       // at "Real networks…" the neat labels peel off and fall away
       const peel = p(t, T.real + 0.2 + i * 0.25, 1.1, x => x * x);
-      move(j.g, u.x + 190 + peel * 40, u.y + peel * 420, 1, peel * (i % 2 ? 35 : -30));
+      move(j.g, u.x + 140 + peel * 40, u.y + peel * 420, 0.85 * (1 + 0.12 * Math.sin(Math.PI * pl(t, T.arrangements + i * 0.3, 0.6))), peel * (i % 2 ? 35 : -30));
       show(j.g, on * (1 - peel));
-      set(j.tx, { text: ['dark column?', 'light column?', 'contrast?'][i] });
+      
       const pr = profiles[i];
       move(pr.g, u.x + 90, u.y, 1);
       const prOn = vis(t, T.jobTitles - 0.4 + i * 0.2, T.piece + 0.2, 0.4, 0.4);
@@ -339,7 +369,15 @@ export function createChapter3(root, cue) {
           const v2 = relu(fns[1](relu(fns[0](-x * 1.3 + 0.2), bend)), bend);
           y = v + v2 * p(t, T.combine, 1) * 0.9;
         }
-        d += `${s ? 'L' : 'M'} ${x * 110} ${-y * 80 + 0} `;
+        let X = x * 110, Y = -y * 80;
+        if (i === 3) {
+          // combining bends can enclose a region: the stacked result curls into a closed loop
+          const k = p(t, T.combine + 0.2, 1.6);
+          const a2 = (s / 40) * Math.PI * 2;
+          const rr = 72 + 12 * Math.sin(3 * a2 + 0.6);
+          X = lerp(X, Math.cos(a2) * rr * 1.25, k); Y = lerp(Y, Math.sin(a2) * rr - 10, k);
+        }
+        d += `${s ? 'L' : 'M'} ${X} ${Y} `;
       }
       set(pl_.ln, { d });
     });
@@ -361,7 +399,17 @@ export function createChapter3(root, cue) {
     const tryAng = t > T.parts ? Math.sin(pl(t, T.parts, 3) * Math.PI * 3) * 35 : 0;
     set(sLine, { transform: `translate(${BPX} ${BPY}) rotate(${tryAng}) scale(1 ${lineIn})` });
     show(sLine, lineIn * (1 - p(t, T.multi, 0.6)));
-    draw(flex, p(t, T.multi + 0.3, 1.6));
+    // simple network ↔ straight line; bigger network ↔ many cuts ↔ curved boundary
+    const grow = p(t, T.multi - 0.3, 0.8);
+    bnDirect.forEach(l => set(l, { opacity: 0.7 * (1 - grow) }));
+    bnHidN.forEach((n, k) => { const kk = p(t, T.multi - 0.2 + k * 0.22, 0.5, easeBack); move(n.g, bnHid[k][0], bnHid[k][1], kk); show(n.g, kk); set(n.core, { opacity: 0.5 * kk }); });
+    bnL1.forEach(o => set(o.el, { opacity: 0.6 * p(t, T.multi - 0.1 + o.k * 0.22, 0.4) }));
+    bnL2.forEach((l, k) => set(l, { opacity: 0.7 * p(t, T.multi + k * 0.22, 0.4) }));
+    cuts.forEach((c, k) => { const kk = p(t, T.multi + 0.1 + k * 0.22, 0.5); draw(c.el, kk); show(c.el, (kk > 0 ? 1 : 0) * (1 - 0.7 * p(t, T.flexible, 0.8))); });
+    set(bnOutN.ring, { stroke: lineIn > 0.5 && grow < 0.5 ? C.ink : C.teal });
+    set(bnLink, { d: `M ${bnOut[0] + 46} ${bnOut[1]} L ${BPX - BPW / 2 - 10} ${BPY}` }); show(bnLink, p(t, T.straight, 0.6));
+    show(bnG, p(t, T.visually, 0.6));
+    draw(flex, p(t, T.flexible - 0.3, 1.4));
     show(okMark, vis(t, T.simple + 0.6, T.bends + 0.2, 0.3, 0.3) + p(t, T.flexible, 0.4));
     show(noMark, vis(t, T.parts, T.multi + 0.3, 0.3, 0.3));
 
@@ -392,6 +440,23 @@ export function createChapter3(root, cue) {
     show(endTitle, eOn * (1 - p(t, T.still - 0.3, 0.3)));
     endLinks.forEach(l => set(l, { opacity: 0.35 * p(t, T.more + 0.8, 0.8) }));
     endDials.forEach((d, i) => { show(d.g, p(t, T.still + i * 0.03, 0.3)); d.setValue(Math.sin(t * 1.7 + i * 2.1) * 1.8, -2, 2); });
+    // hand-off: the network rearranges into Chapter 4's network (3 → 4 → 2)
+    const mo = p(t, cue.end('still need to be trained') + 0.05, 1.05);
+    if (mo > 0) {
+      const R = 46 / 54;
+      const plan = [
+        [units[0][0].n, 640, 380], [units[0][1].n, 640, 540], [units[0][2].n, 640, 700],
+        [extraCols[0][0], 940, 300], [extraCols[0][1], 940, 460], [extraCols[0][2], 940, 620], [units[1][0].n, 940, 780],
+        [units[2][0].n, 1240, 440], [extraCols[1][1], 1240, 640],
+      ];
+      const from = n => { const m = n.g.getAttribute('transform').match(/translate\(([-\d.]+) ([-\d.]+)\)/); return [+m[1], +m[2]]; };
+      plan.forEach(([n, x, y]) => { const [fx, fy] = from(n); move(n.g, lerp(fx, x, mo), lerp(fy, y, mo), lerp(1, R, mo)); });
+      [units[0][3].n, units[1][1].n, units[1][2].n, extraCols[1][0], extraCols[1][2]].forEach(n => show(n.g, 1 - mo));
+      endLinks.forEach(l => set(l, { opacity: 0.35 * (1 - mo) }));
+      endDials.forEach(d => show(d.g, 1 - mo));
+      reprPatches.forEach(rp => show(rp, 1 - mo));
+      show(patchG, 0);
+    }
     trainDials.forEach(({ d, l }, i) => {
       const pt = pointOn(l.path, 0.5);
       move(d.g, pt.x, pt.y, p(t, T.still + i * 0.05, 0.4, easeBack));

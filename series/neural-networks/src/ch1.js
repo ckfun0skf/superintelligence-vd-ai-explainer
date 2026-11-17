@@ -298,7 +298,7 @@ export function createChapter1(root, cue) {
 
   // =========== update ===========
   // captions that only repeated the narration are removed from the picture
-  hush(headB, knobLabel, notCopyTx, blockTx, engineLabel);
+  hush(headB, knobLabel, notCopyTx, blockTx, engineLabel, mpNames);
   return function update(t) {
     // ---- Scene A ----
     const aVis = vis(t, 0, T.myst - 0.2, 0.01, 0.7);

@@ -145,3 +145,18 @@ chapter's setup). Kept on screen: things the eye needs to read the picture — n
 axis/legend labels, LIGHT/DARK answers, R/G/B, names and dates, request chips, and short tags
 whose wording is itself the point (e.g. "fitness = time alive ?"). The Chapter 5 DNA is a
 projected 3D double helix that rotates about its axis.
+
+## Continuity (round 4)
+
+- Ch1→Ch2: the 0.8 chip and wire from Chapter 1's last frame carry over and melt into the screen.
+- Ch2 ending: the highlighted image pixel lifts out and grows into one large grey swatch; the small network
+  fades, leaving exactly the square that Chapter 3 opens with.
+- Ch3→Ch4: Chapter 3's final network rearranges into Chapter 4's 3→4→2 network; R/G/B colours, links and
+  dials fade in.
+- Ch4 "many adjustable values": the network's dials fly out into a wall of ~200 spinning dials, which slow
+  and settle on "finding settings", then fly back into the network.
+- Ch2 spotlights follow the words ("weights / bias / activation", "29% light / 71% dark").
+- Ch3: picture icons for the middle units (dark column, light column, dark→light edge); the stacked graph
+  curls into a closed loop; the boundary plot is driven by a network on its left: x,y → one output gives the
+  straight line, then six coloured hidden units each add one straight cut that together form the curve.
+- Ch1 portraits now use the supplied photos of McCulloch and Pitts.
