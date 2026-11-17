@@ -190,8 +190,26 @@ export class Cues {
 // ---------- reusable visual parts ----------
 
 /** A neuron "unit": circle with optional symbol. Returns {g, ring, core, label}. */
+// Ambient life: elements registered here get a gentle, deterministic idle motion every frame.
+const AMB = { breath: [], flutter: [] };
+let ambN = 0;
+export function ambientTick(t) {
+  for (const a of AMB.breath) {
+    const k = 0.5 + 0.5 * Math.sin(t * a.sp + a.ph);
+    set(a.el, { r: a.r * (1.18 + 0.32 * k), opacity: 0.05 + 0.12 * k });
+  }
+  for (const f of AMB.flutter) {
+    const k = Math.abs(Math.sin(t * f.sp + f.ph));
+    set(f.el, { transform: `scale(${0.72 + 0.28 * k} 1)` });
+  }
+}
+/** Register a group whose children are moth wings: they flutter. */
+export function flutter(el2, sp = 9) { AMB.flutter.push({ el: el2, sp, ph: hash(ambN++) * 6.28 }); }
+
 export function neuron(parent, r = 60, o = {}) {
   const gg = g(parent);
+  const breath = el('circle', { r: r * 1.3, fill: o.color || C.teal, opacity: 0.08 }, gg);
+  AMB.breath.push({ el: breath, r, sp: 1.6 + hash(ambN) * 0.8, ph: hash(ambN++ + 50) * 6.28 });
   const halo = el('circle', { r: r * 1.35, fill: o.color || C.teal, opacity: 0.08 }, gg);
   const ring = el('circle', { r, fill: '#0c1f2a', stroke: o.color || C.teal, 'stroke-width': o.sw || 5 }, gg);
   const core = el('circle', { r: r * 0.55, fill: o.color || C.teal, opacity: 0.0 }, gg);

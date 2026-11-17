@@ -441,10 +441,16 @@ export function createChapter4(root, cue) {
       x = lerp(x, ax, toAxis); y = lerp(y, ay, toAxis);
       const s = lerp(1, 0.6, toAxis);
       x = lerp(x, 1640, easeOut(clamp(toNet * 1.3 - i * 0.04))); y = lerp(y, 420, easeOut(clamp(toNet * 1.3 - i * 0.04)));
-      move(c.g, x, y, s * (1 - 0.7 * toNet));
+      move(c.g, x, y + Math.sin(t * 1.6 + i * 0.9) * 5 * (1 - toAxis), s * (1 - 0.7 * toNet));
       show(c.g, k * (1 - p(t, T.onlyRecv + 1.2, 0.5)));
       // first card shows only swatch first, then label
-      if (i === 0) show(c.lp.g, p(t, T.asAnswer, 0.4) + p(t, T.row1, 0.1));
+      if (i === 0) {
+        show(c.lp.g, p(t, T.asAnswer, 0.4) + p(t, T.row1, 0.1));
+        // "two parts": the input swatch and the answer slot pulse one after the other
+        const tp = cue.at('has two parts');
+        set(c.sw, { transform: `translate(-146 0) scale(${1 + 0.18 * Math.sin(Math.PI * pl(t, tp, 0.6))}) translate(146 0)` });
+        set(c.lp.g, { transform: `translate(100 0) scale(${1 + 0.18 * Math.sin(Math.PI * pl(t, tp + 0.6, 0.6)) + 0.18 * Math.sin(Math.PI * pl(t, T.asAnswer, 0.6))})` });
+      }
     });
     const tagOn = vis(t, T.asInput - 0.2, T.row2);
     set(tagIn, { x: 960 - 145, y: 290 }); show(tagIn, tagOn);
@@ -491,7 +497,8 @@ export function createChapter4(root, cue) {
       const kf = l.li === 0 ? clamp(cyc * 2) : clamp(cyc * 2 - 1);
       const pf = pointOn(l.path, kf);
       set(fwd[i], { cx: pf.x, cy: pf.y });
-      show(fwd[i], fwdOn * (kf > 0 && kf < 1 ? 1 : 0));
+      const idle = 0.3 * (1 - bwdOn) * (t > T.beginning && t < T.repeats ? 1 : 0);
+      show(fwd[i], Math.max(fwdOn, idle) * (kf > 0 && kf < 1 ? 1 : 0));
       const cb = (t * 0.8 + (l.li ? 0 : 0.5)) % 1;
       const kb = l.li === 1 ? 1 - clamp(cb * 2) : 1 - clamp(cb * 2 - 1);
       const pb = pointOn(l.path, kb);
@@ -532,7 +539,7 @@ export function createChapter4(root, cue) {
     const gOnN = vis(t, T.gradW - 0.1, T.small + 1.0, 0.5, 0.5);
     dials.forEach(({ l }, k) => {
       const pt = pointOn(l.path, 0.5);
-      set(qBadges[k], { x: pt.x + 26, y: pt.y - 26 });
+      set(qBadges[k], { x: pt.x + 26, y: pt.y - 26 + Math.sin(t * 4 + k) * 5 });
       show(qBadges[k], vis(t, T.which, T.backprop, 0.3, 0.3));
       const gr = grads[k];
       const len = 14 + Math.abs(gr.val) * 26, dir = gr.val > 0 ? -1 : 1;
@@ -559,7 +566,7 @@ export function createChapter4(root, cue) {
     set(predBars[1].tx, { text: `${Math.round((1 - pl0) * 100)}%` }); show(predBars[1].tx, p(t, T.d80 - 0.2, 0.5));
     show(tgtG, p(t, T.compares, 0.6));
     set(gapBar, { x: PX + PW * pl0, width: PW * (1 - pl0) * p(t, T.because, 0.8) });
-    show(gapBar, vis(t, T.because, T.repeats));
+    show(gapBar, vis(t, T.because, T.repeats) * (0.75 + 0.25 * Math.sin(t * 4)));
     show(ghost, vis(t, T.notJump, T.repeats));
     const lossV = -Math.log(pl0) / 2;
     const lossOn = vis(t, T.lossLarge - 0.4, T.repeats + 0.6, 0.5, 0.5);
@@ -573,8 +580,10 @@ export function createChapter4(root, cue) {
     // quality overlay
     const qOn = vis(t, T.quality - 0.3, T.decide - 0.2, 0.5, 0.5);
     show(QG, qOn);
-    show(conflict, p(t, T.inconsistent, 0.5));
-    show(cover, p(t, T.leaveOut - 0.3, 0.5));
+    show(conflict, p(t, T.quality + 0.6, 0.5));
+    show(cover, p(t, T.quality + 1.2, 0.5));
+    set(conflict, { transform: `translate(${560 + Math.sin(t * 30) * 4 * vis(t, T.inconsistent, T.inconsistent + 1.2, 0.1, 0.3)} 600)` });
+    set(gapBox, { 'stroke-dashoffset': -t * 40, 'stroke-width': 4 + 3 * Math.sin(t * 5) });
     show(biasedTx, p(t, T.biased - 0.3, 0.5));
 
     // ---- training loop ----
@@ -642,7 +651,8 @@ export function createChapter4(root, cue) {
     const tgOn = p(t, T.simpleTask - 0.3, 0.6);
     show(TG, tgOn);
     const tStarts = [T.category - 0.3, T.number - 0.2, T.sequence - 0.2, T.else_ - 0.2];
-    targets.forEach(([, gg], i) => { const k = p(t, tStarts[i], 0.5, easeBack); move(gg, 300 + i * 440, 420, k * (1 - 0.3 * p(t, T.later, 0.8))); show(gg, k * (1 - 0.55 * p(t, T.later, 0.8))); });
+    const recK = (t - T.recipe) * 2.2;
+    targets.forEach(([, gg], i) => { const k = p(t, tStarts[i], 0.5, easeBack); const pulse = t > T.recipe && t < T.later ? 0.1 * Math.max(0, Math.sin(Math.PI * (recK - i))) * (recK - i > 0 && recK - i < 1 ? 1 : 0) : 0; move(gg, 300 + i * 440, 420, k * (1 - 0.3 * p(t, T.later, 0.8)) * (1 + pulse)); show(gg, k * (1 - 0.55 * p(t, T.later, 0.8))); });
     show(recipeTx, vis(t, T.recipe - 0.2, T.later + 1));
     const nw = p(t, T.later + 0.5, 0.6);
     const slide = Math.min(2, Math.floor(Math.max(0, t - T.nextWord) / 2.6));

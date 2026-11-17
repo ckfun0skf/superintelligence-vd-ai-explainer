@@ -1,6 +1,6 @@
 // Chapter 5 — Another way to train: evolution, mutation and selection.
 import { el, set, show, move, g, txt, rect, neuron, dial, draw, pointOn, person,
-  p, pl, vis, lerp, clamp, easeOut, easeBack, mix, grey, hash, C, SANS, hush } from './engine.js';
+  p, pl, vis, lerp, clamp, easeOut, easeBack, mix, grey, hash, C, SANS, hush, flutter } from './engine.js';
 
 // ---------------- deterministic Snake simulation ----------------
 const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]];
@@ -63,10 +63,12 @@ const stateAt = (states, t, t0, rate) => states[Math.min(states.length - 1, Math
 function moth(parent, shade, s = 1) {
   const gg = g(parent);
   const c = grey(shade), c2 = grey(clamp(shade - 0.12));
-  el('path', { d: 'M 0 -4 C -18 -30 -52 -26 -50 -2 C -48 14 -24 18 0 6 Z', fill: c, stroke: c2, 'stroke-width': 2 }, gg);
-  el('path', { d: 'M 0 -4 C 18 -30 52 -26 50 -2 C 48 14 24 18 0 6 Z', fill: c, stroke: c2, 'stroke-width': 2 }, gg);
-  el('path', { d: 'M 0 4 C -14 10 -30 26 -20 32 C -10 34 -4 20 0 10 Z M 0 4 C 14 10 30 26 20 32 C 10 34 4 20 0 10 Z', fill: c2 }, gg);
-  [[-30, -10], [-20, 4], [30, -10], [20, 4], [-38, -2], [38, -2]].forEach(([x, y]) => el('circle', { cx: x, cy: y, r: 2.6, fill: grey(clamp(shade > 0.5 ? shade - 0.45 : shade + 0.12)) }, gg));
+  const wings = g(gg);
+  flutter(wings, 2.2 + hash(shade * 97) * 1.6);
+  el('path', { d: 'M 0 -4 C -18 -30 -52 -26 -50 -2 C -48 14 -24 18 0 6 Z', fill: c, stroke: c2, 'stroke-width': 2 }, wings);
+  el('path', { d: 'M 0 -4 C 18 -30 52 -26 50 -2 C 48 14 24 18 0 6 Z', fill: c, stroke: c2, 'stroke-width': 2 }, wings);
+  el('path', { d: 'M 0 4 C -14 10 -30 26 -20 32 C -10 34 -4 20 0 10 Z M 0 4 C 14 10 30 26 20 32 C 10 34 4 20 0 10 Z', fill: c2 }, wings);
+  [[-30, -10], [-20, 4], [30, -10], [20, 4], [-38, -2], [38, -2]].forEach(([x, y]) => el('circle', { cx: x, cy: y, r: 2.6, fill: grey(clamp(shade > 0.5 ? shade - 0.45 : shade + 0.12)) }, wings));
   el('ellipse', { cx: 0, cy: 6, rx: 5, ry: 18, fill: grey(clamp(shade - 0.25)) }, gg);
   if (s !== 1) set(gg, { transform: `scale(${s})` });
   return gg;
@@ -427,6 +429,8 @@ export function createChapter5(root, cue) {
   const parentNet = g(S8); rect(parentNet, -200, -150, 400, 300, { r: 26, fill: '#0f1d2a', stroke: C.green, sw: 4 });
   const pn = miniNet(parentNet, 3); set(pn, { transform: 'scale(2.6)' });
   txt(parentNet, 0, -185, 'high-scoring parent', { size: 32, weight: 800, fill: C.green });
+  const parentGlow = el('rect', { x: -212, y: -162, width: 424, height: 324, rx: 32, fill: 'none', stroke: C.green, 'stroke-width': 10, filter: 'url(#glow)', opacity: 0 }, parentNet);
+  const parentBadge = g(parentNet); el('circle', { r: 40, fill: C.green }, parentBadge); txt(parentBadge, 0, 3, '88', { size: 32, weight: 800, fill: '#04221c', mono: true });
   move(parentNet, 480, 520);
   const childNet = g(S8); rect(childNet, -200, -150, 400, 300, { r: 26, fill: '#0f1d2a', stroke: C.amber, sw: 4 });
   const cn = miniNet(childNet, 3); set(cn, { transform: 'scale(2.6)' });
@@ -477,6 +481,9 @@ export function createChapter5(root, cue) {
   let dc = '';
   for (let i = 0; i <= 40; i++) { const x = 200 + i * 16; const y = 730 - (380 * (1 - Math.exp(-i / 12)) + (hash(i + 5) - 0.5) * 50 * Math.exp(-i / 30)); dc += `${i ? 'L' : 'M'} ${x} ${y} `; }
   const progCurve = el('path', { d: dc, stroke: C.green, 'stroke-width': 6, fill: 'none' }, chart);
+  const chartMoth = moth(S10, 0.75, 1.1);
+  const progDot = el('circle', { r: 12, fill: C.green, filter: 'url(#glow)' }, chart);
+  const progGen = txt(chart, 0, 0, '', { size: 24, weight: 800, fill: C.green, mono: true });
   const designer = g(S10);
   person(designer, 1.6, '#cbd5e1');
   move(designer, 1080, 470);
@@ -593,7 +600,7 @@ export function createChapter5(root, cue) {
   const chat = g(S12);
   rect(chat, -520, -330, 1040, 660, { r: 32, fill: '#0d1a26', stroke: '#2b4559', sw: 3 });
   rect(chat, -470, 200, 940, 84, { r: 42, fill: '#0a141e', stroke: '#2f4a5e' });
-  txt(chat, -430, 244, 'Ask anything…', { size: 30, weight: 500, fill: C.dim, anchor: 'start' });
+  const chatTx = txt(chat, -430, 244, 'Ask anything…', { size: 30, weight: 500, fill: C.dim, anchor: 'start' });
   const reqs = [['Explain an idea', C.cyan], ['Compare options', C.green], ['Write a message', C.amber], ['Lay out a plan', C.violet]].map(([s, c], i) => { const ch = chip(chat, s, c, 400); move(ch.g, i % 2 ? 230 : -230, -170 + Math.floor(i / 2) * 130); return ch; });
   const llmCore = neuron(chat, 64, { symbol: '?' }); set(llmCore.label, { 'font-size': 60, fill: C.amber }); move(llmCore.g, 0, 90);
   move(chat, 960, 540);
@@ -696,7 +703,7 @@ export function createChapter5(root, cue) {
     show(S1, s1);
     recap.forEach((r, i) => show(r, p(t, [T.seen + 0.3, T.measure, T.grads][i] - 0.2, 0.5) * (1 - 0.6 * p(t, T.notAvail, 0.5))));
     // 1. examples: the swatch keeps changing and its label flips LIGHT / DARK
-    const ex = SW[Math.max(0, Math.floor((t - T.give) / 0.55)) % SW.length];
+    const ex = SW[Math.max(0, Math.floor((t - T.seen - 0.4) / 0.55)) % SW.length];
     const exPop = t > T.give ? 1 + 0.08 * Math.sin(Math.PI * (((t - T.give) / 0.55) % 1)) : 1;
     set(rcSw, { fill: t < T.give ? '#d4d4d4' : ex[0], transform: `translate(-115 -25) scale(${exPop}) translate(115 25)` });
     const isL = t < T.give || ex[1] === 'LIGHT';
@@ -740,7 +747,7 @@ export function createChapter5(root, cue) {
     const s2 = vis(t, T.imagine - 0.3, T.living + 0.4, 0.5, 0.6);
     show(S2, s2);
     const order = cands.map((c, i) => i).sort((x, y) => cands[y].sc - cands[x].sc);
-    const dimRows = (1 - 0.85 * p(t, T.twoIdeas - 0.2, 0.6)) * (1 - p(t, T.inspired - 0.3, 0.5));
+    const dimRows = (1 - p(t, T.twoIdeas - 0.2, 0.6)) * (1 - p(t, T.inspired - 0.3, 0.5));
     const sorted = p(t, T.imagine + 2.2, 0.9);
     cands.forEach((c, i) => {
       const r = order.indexOf(i);
@@ -768,7 +775,7 @@ export function createChapter5(root, cue) {
       set(k.bar, { width: 160 * sc * p(t, T.tryAgain + i * 0.1, 0.6) });
     });
     // the two ideas, as pictures
-    move(funnel, 600, 600); show(funnel, p(t, T.selection - 0.2, 0.5) * (1 - p(t, T.inspired - 0.2, 0.5)));
+    move(funnel, 600, 600); show(funnel, p(t, T.twoIdeas + 0.2, 0.5) * (1 - p(t, T.inspired - 0.2, 0.5)));
     fDots.forEach((d, i) => {
       const k = ((t - T.selection) * 0.6 + i / 10) % 1;
       const pass = i < 3;
@@ -776,7 +783,7 @@ export function createChapter5(root, cue) {
       const x = pass ? lerp((i - 1) * 80, 0, clamp(k * 1.6)) : lerp((i - 6) * 40, (i - 6) * 50, k);
       set(d, { cx: x, cy: y, opacity: pass ? 1 : 1 - k });
     });
-    move(mutG, 1320, 600); show(mutG, p(t, T.mutation - 0.2, 0.5) * (1 - p(t, T.inspired - 0.2, 0.5)));
+    move(mutG, 1320, 600); show(mutG, p(t, T.twoIdeas + 0.5, 0.5) * (1 - p(t, T.inspired - 0.2, 0.5)));
     set(mLink, { opacity: 0.5 + 0.5 * Math.sin(t * 6) });
     set(mDie, { transform: `translate(150 -120) rotate(${Math.floor(t * 5) * 41 % 360})` });
     const dnaOn = vis(t, T.inspired, T.living + 0.4);
@@ -825,8 +832,8 @@ export function createChapter5(root, cue) {
     set(pctL, { text: `${Math.round((1 - darkShare) * 100)}%` }); set(pctD, { text: `${Math.round(darkShare * 100)}%` });
     treeMoths.forEach((m, i) => {
       const isDark = hash(i * 7 + 1) < darkShare || (i === 3 && t < T.survived && t > T.darkExist - 0.2);
-      show(m.light, treeOn * (isDark ? 0 : 1) * p(t, T.lightHard - 0.6 + i * 0.05, 0.4));
-      show(m.dark, treeOn * (isDark ? 1 : 0) * p(t, T.lightHard - 0.6 + i * 0.05, 0.4));
+      show(m.light, treeOn * (isDark ? 0 : 1) * p(t, T.consider + 0.5 + i * 0.12, 0.5));
+      show(m.dark, treeOn * (isDark ? 1 : 0) * p(t, T.consider + 0.5 + i * 0.12, 0.5));
     });
     // bird & target: first dark moth (#3) visible, later a light moth (#5)
     const tm = t < T.soot ? treeMoths[3] : treeMoths[5];
@@ -1040,7 +1047,8 @@ export function createChapter5(root, cue) {
     players.forEach((pp, i) => {
       move(pp.g, pp.x, pp.y);
       show(pp.g, p(t, T.start + i * 0.06, 0.4));
-      const sst = stateAt(pp.st, t, T.most - 1.0, 3.2);
+      // after scoring, each game replays so the grid keeps playing
+      const sst = t < T.whole ? stateAt(pp.st, t, T.most - 1.0, 3.2) : pp.st[Math.floor((t - T.whole) * 5 + i * 3) % pp.st.length];
       pp.b.render(sst);
       const done = sst === pp.st[pp.st.length - 1];
       set(pp.fit, { text: t > T.afterEach ? String(pp.fitness) : sst.apples ? `+${sst.apples * 10}` : '' });
@@ -1054,6 +1062,8 @@ export function createChapter5(root, cue) {
     const s8 = vis(t, T.select - 0.3, T.again - 0.2, 0.5, 0.5);
     show(S8, s8);
     show(parentNet, p(t, T.select, 0.5));
+    set(parentGlow, { opacity: 0.25 + 0.35 * Math.sin(t * 3) * p(t, T.select, 0.5), 'stroke-width': 10 + 4 * Math.sin(t * 3) });
+    move(parentBadge, 175, -125, p(t, T.select + 0.4, 0.5, easeBack));
     show(childNet, p(t, T.copy + 0.4, 0.5)); draw(copyArrow, p(t, T.copy, 0.8)); show(copyTx, p(t, T.copy, 0.4));
     mutMarks.forEach((m, i) => show(m, p(t, T.change + 0.3 + i * 0.25, 0.3)));
     set(cn, { transform: `scale(2.6) rotate(${p(t, T.change, 0.6) * 4})` });
@@ -1113,8 +1123,15 @@ export function createChapter5(root, cue) {
     // ---------- S10: progress, designer, trick ----------
     const s10 = vis(t, T.overGens - 0.3, T.diff - 0.2, 0.5, 0.5);
     show(S10, s10);
-    draw(progCurve, p(t, T.overGens, 4, x => x));
+    const pk = p(t, T.overGens, 4, x => x);
+    draw(progCurve, pk);
+    const hp2 = pointOn(progCurve, pk);
+    set(progDot, { cx: hp2.x, cy: hp2.y, r: 12 + 4 * Math.sin(t * 5) }); show(progDot, pk > 0.01 ? 1 : 0);
+    set(progGen, { x: hp2.x, y: hp2.y - 34, text: `gen ${1 + Math.round(pk * 40)}` }); show(progGen, pk > 0.01 ? 1 : 0);
     show(chart, 1);
+    const mf = pl(t, T.part - 0.3, 3.2);
+    move(chartMoth, lerp(120, 980, mf), lerp(820, 300, mf) + Math.sin(mf * 18) * 30, 1.1, Math.sin(mf * 12) * 15);
+    show(chartMoth, mf > 0 && mf < 1 ? Math.sin(Math.PI * mf) * 1.4 : 0);
     show(designer, p(t, T.designer, 0.5)); show(designTx, p(t, T.designer, 0.5));
     show(fitFormula, p(t, T.better - 0.3, 0.5));
     set(ffTx, { text: t < T.poorly ? 'fitness = apples eaten' : 'fitness = time alive ?' });
@@ -1159,7 +1176,7 @@ export function createChapter5(root, cue) {
     rCards.forEach((c2, i) => {
       c2.b.render(rSt[i]);
       const selOn0 = t > neT[2] && ru > 2.2, top0 = rOrd.indexOf(i) < 2;
-      show(c2.g, p(t, T.neCmp - 0.2 + i * 0.08, 0.4) * (1 - evoMode) * (selOn0 && !top0 ? 0.45 : 1));
+      show(c2.g, Math.max(0.3 * p(t, T.diff + 0.8 + i * 0.08, 0.4), p(t, T.neCmp - 0.2 + i * 0.08, 0.4)) * (1 - evoMode) * (selOn0 && !top0 ? 0.45 : 1));
       const scored = t > neT[1] && ru > 1.9;
       set(c2.bar, { width: scored ? 140 * clamp(rFit[i] / 40) : 0 });
       const top = rOrd.indexOf(i) < 2, selOn = t > neT[2] && ru > 2.2;
@@ -1216,6 +1233,9 @@ export function createChapter5(root, cue) {
     set(jSpark, { d: dS || 'M 0 0' }); show(jSpark, p(t, trialT, 0.4));
     set(jFrameR, { 'stroke-width': 4 + 4 * Math.sin(Math.PI * pl(t, T.learnGame + 0.2, 0.8)) });
     show(chat, vis(t, T.modern - 0.2, T.howCan - 0.2, 0.5, 0.5));
+    const PROMPT = 'Explain how rainbows form, then plan my weekend';
+    const pn = Math.floor(PROMPT.length * p(t, T.modern, T.withText - T.modern + 0.6, x => x));
+    set(chatTx, { text: t < T.modern ? 'Ask anything…' : PROMPT.slice(0, pn) + (Math.floor(t * 2.5) % 2 ? '|' : ''), fill: t < T.modern ? C.dim : C.ink });
     reqs.forEach((r, i) => show(r.g, p(t, [T.explain, T.compare, T.write, T.plan][i] - 0.1, 0.4, easeBack)));
     show(llmCore.g, p(t, T.withText, 0.5));
     const qT = [T.howCan, T.inside, T.limits, T.next];

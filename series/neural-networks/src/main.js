@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { el, defs, Cues, hash, W, H } from './engine.js';
+import { el, defs, Cues, hash, W, H, ambientTick } from './engine.js';
 import { CHAPTER_OFFSETS, CHAPTER_LENGTHS, FILM_DURATION } from './film-timing.js';
 import { exportMp4, exportSupported } from './export.js';
 import { createChapter1 } from './ch1.js';
@@ -90,6 +90,7 @@ function renderFilm(T, force = false) {
     railButtons.forEach((b, j) => { b.classList.toggle('active', j === ch); b.toggleAttribute('aria-current', j === ch); });
   }
   chapters[ch].update(t - chapters[ch].start);
+  ambientTick(t);
   renderBackground(ch, t);
   if (!exporting) updateUI(t);
 }
