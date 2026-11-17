@@ -164,11 +164,36 @@ document.addEventListener('fullscreenchange', () => {
   showControls();
   setTimeout(() => { resizeWebGL(); renderFilm(audio.currentTime, true); }, 60);
 });
-shell.addEventListener('pointerdown', e => {
-  if (e.target.closest('.player-controls,.chapter-rail')) return showControls();
-  if (document.fullscreenElement) shell.classList.contains('controls-hidden') ? showControls() : shell.classList.add('controls-hidden');
+// Taps on the picture: single tap toggles controls (fullscreen); double tap on the left/right
+// third seeks −5 s / +5 s, like common video players.
+const seekFlash = document.querySelector('#seek-flash');
+let tapTimer = 0, lastTap = 0, flashTimer = 0;
+function flash(text, side) {
+  seekFlash.textContent = text;
+  seekFlash.dataset.side = side;
+  seekFlash.classList.remove('show'); void seekFlash.offsetWidth; seekFlash.classList.add('show');
+  clearTimeout(flashTimer); flashTimer = setTimeout(() => seekFlash.classList.remove('show'), 650);
+}
+shell.addEventListener('pointerup', e => {
+  if (e.target.closest('.player-controls,.chapter-rail,.external-captions')) return showControls();
+  const r = film.getBoundingClientRect();
+  if (e.clientY < r.top || e.clientY > r.bottom) return;
+  const x = (e.clientX - r.left) / r.width;
+  const now = performance.now();
+  if (now - lastTap < 320) {
+    clearTimeout(tapTimer);
+    lastTap = now; // allow repeated double taps (+5 s each)
+    if (x < 0.4) { seekTo(audio.currentTime - 5); flash('« 5 s', 'left'); }
+    else if (x > 0.6) { seekTo(audio.currentTime + 5); flash('5 s »', 'right'); }
+    return;
+  }
+  lastTap = now;
+  tapTimer = setTimeout(() => {
+    if (document.fullscreenElement) shell.classList.contains('controls-hidden') ? showControls() : (clearTimeout(controlsTimer), shell.classList.add('controls-hidden'));
+  }, 320);
 });
-shell.addEventListener('mousemove', () => { if (document.fullscreenElement) showControls(); });
+shell.addEventListener('dblclick', e => e.preventDefault());
+shell.addEventListener('pointermove', e => { if (e.pointerType === 'mouse' && document.fullscreenElement) showControls(); });
 window.addEventListener('keydown', e => {
   if (e.target instanceof HTMLInputElement || e.target instanceof HTMLSelectElement) return;
   if (e.code === 'Space') { e.preventDefault(); playButton.click(); }

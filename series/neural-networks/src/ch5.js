@@ -269,6 +269,10 @@ export function createChapter5(root, cue) {
   const np1 = chip(noProm, 'best-suited ≠ guaranteed survival', C.amber, 620); move(np1.g, 960, 860);
   const np2 = chip(noProm, 'chance', C.violet, 220); move(np2.g, 780, 960);
   const np3 = chip(noProm, 'speed of change', C.violet, 320); move(np3.g, 1100, 960);
+  const crown = g(S4); el('path', { d: 'M -40 20 L -40 -14 L -20 4 L 0 -24 L 20 4 L 40 -14 L 40 20 Z', fill: C.amber }, crown);
+  txt(crown, 0, 52, 'well suited for 100+ million years', { size: 26, weight: 800, fill: C.amber });
+  const dieS = g(S4); rect(dieS, -36, -36, 72, 72, { r: 12, fill: C.ink, stroke: 'none' }); [[-15, -15], [15, 15], [0, 0], [15, -15], [-15, 15]].forEach(([x, y]) => el('circle', { cx: x, cy: y, r: 6, fill: '#0b1520' }, dieS));
+  const clock = g(S4); el('circle', { r: 40, fill: 'none', stroke: C.violet, 'stroke-width': 6 }, clock); const hand = el('line', { x1: 0, y1: 0, x2: 0, y2: -30, stroke: C.violet, 'stroke-width': 6, 'stroke-linecap': 'round' }, clock);
 
   // ====== S5: algorithm population ======
   const S5 = g(root);
@@ -382,7 +386,20 @@ export function createChapter5(root, cue) {
     const gg = g(S11);
     rect(gg, -420, -330, 840, 660, { r: 30, fill: '#0f1d2a', stroke: c, sw: 4 });
     txt(gg, 0, -270, h, { size: 46, weight: 800, fill: c });
-    const rs = rows.map((r, k) => { const rg = g(gg); txt(rg, 0, 0, r, { size: 34, weight: 700, fill: C.ink }); move(rg, 0, -150 + k * 120); return rg; });
+    const rs = rows.map((r, k) => {
+      const rg = g(gg);
+      txt(rg, -250, 0, r, { size: 32, weight: 700, fill: C.ink, anchor: 'start' });
+      const ic = g(rg); move(ic, -320, 0);
+      if (i === 0 && k === 0) { rect(ic, -40, -22, 36, 44, { r: 6, fill: '#d4d4d4', stroke: 'none' }); rect(ic, 6, -16, 52, 32, { r: 16, fill: '#ece7dc', stroke: 'none' }); }
+      if (i === 0 && k === 1) { rect(ic, -45, -12, 100, 24, { r: 8, fill: '#132433', stroke: 'none' }); rect(ic, -45, -12, 24, 24, { r: 8, fill: '#ece7dc', stroke: 'none' }); ic.__gap = rect(ic, -21, -12, 76, 24, { r: 8, fill: C.red, stroke: 'none', attrs: { opacity: 0.6 } }); }
+      if (i === 0 && k === 2) { ic.__dial = dial(ic, 24); }
+      if (i === 1 && k === 0) { [0, 1, 2].forEach(q => { const b = board(ic, 4, 11); move(b.g, -38 + q * 38, 0); b.render(simulate(4, 70 + q, 0.6, 3)[2]); }); }
+      if (i === 1 && k === 1) { [0.3, 0.9, 0.5].forEach((v, q) => rect(ic, -45 + q * 34, 22 - 44 * v, 24, 44 * v, { r: 4, fill: C.green, stroke: 'none' })); }
+      if (i === 1 && k === 2) { ic.__die = g(ic); rect(ic.__die, -22, -22, 44, 44, { r: 8, fill: C.amber, stroke: 'none' }); [[-9, -9], [9, 9], [0, 0]].forEach(([x, y]) => el('circle', { cx: x, cy: y, r: 4, fill: '#0b1520' }, ic.__die)); }
+      rg.__ic = ic;
+      move(rg, 0, -150 + k * 120);
+      return rg;
+    });
     move(gg, 500 + i * 920, 520);
     return { g: gg, rs };
   });
@@ -533,10 +550,14 @@ export function createChapter5(root, cue) {
     show(rock, dOn * (1 - impact));
     set(flash, { opacity: 0.85 * vis(t, T.asteroid + 0.6, T.asteroid + 1.0, 0.1, 0.8) });
     const gone = p(t, T.extinction, 1.5);
-    dinos.forEach(d => { set(d.d, { opacity: dOn * (1 - gone) }); });
+    dinos.forEach(d => { set(d.d, { opacity: dOn * (1 - gone) + 0.22 * vis(t, T.noPromise - 0.2, T.algo - 0.3, 0.5, 0.4) }); });
     show(birdS, dOn * p(t, T.birds - 0.3, 0.5)); move(birdS, 1500, 560 + Math.sin(t * 3) * 10, 1.5);
     show(noProm, 1);
     show(np1.g, p(t, T.noPromise, 0.5)); show(np2.g, p(t, T.chance, 0.4)); show(np3.g, p(t, T.chance + 0.8, 0.4));
+    // the dinosaurs were well suited for a very long time — then chance struck, faster than they could adapt
+    move(crown, 820, 440); show(crown, vis(t, T.around + 0.5, T.extinction + 0.3, 0.4, 0.6) + vis(t, T.noPromise, T.algo - 0.3, 0.4, 0.4) * 0.6);
+    move(dieS, 640, 960, 1, Math.floor(t * 6) * 47 % 360); show(dieS, p(t, T.chance, 0.4));
+    move(clock, 1310, 960); set(hand, { transform: `rotate(${(t - T.chance) * 720})` }); show(clock, p(t, T.chance + 0.8, 0.4));
     set(ground, { fill: mix('#1c2b1f', '#2b2118', gone) });
 
     // ---------- S5: algorithm ----------
@@ -630,7 +651,13 @@ export function createChapter5(root, cue) {
     // ---------- S11: comparison ----------
     const s11 = vis(t, T.diff - 0.3, T.seenNow - 0.2, 0.5, 0.5);
     show(S11, s11);
-    cols.forEach((c, i) => { show(c.g, p(t, i ? T.neCmp - 0.3 : T.diff + 0.3, 0.5)); c.rs.forEach((r, k) => show(r, p(t, (i ? T.neCmp : T.supCmp) + k * 1.6, 0.4))); });
+    cols.forEach((c, i) => { show(c.g, p(t, i ? T.neCmp - 0.3 : T.diff + 0.3, 0.5)); c.rs.forEach((r, k) => {
+      show(r, p(t, (i ? T.neCmp : T.supCmp) + k * 1.6, 0.4));
+      const ic = r.__ic;
+      if (ic.__gap) set(ic.__gap, { width: 76 * (0.6 + 0.4 * Math.sin(t * 2)) });
+      if (ic.__dial) ic.__dial.setValue(Math.sin(t * 1.5) * 1.2, -2, 2);
+      if (ic.__die) set(ic.__die, { transform: `rotate(${Math.floor(t * 5) * 37 % 360})` });
+    }); });
     show(evoWhat, p(t, T.some - 0.2, 0.5)); show(ew2.g, p(t, T.others, 0.5));
     show(oneWay, p(t, T.oneWay, 0.5));
 
