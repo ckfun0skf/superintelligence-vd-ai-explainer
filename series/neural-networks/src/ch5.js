@@ -1,5 +1,5 @@
 // Chapter 5 — Another way to train: evolution, mutation and selection.
-import { el, set, show, move, g, txt, rect, neuron, dial, draw, person,
+import { el, set, show, move, g, txt, rect, neuron, dial, draw, pointOn, person,
   p, pl, vis, lerp, clamp, easeOut, easeBack, mix, grey, hash, C, hush } from './engine.js';
 
 // ---------------- deterministic Snake simulation ----------------
@@ -266,7 +266,10 @@ export function createChapter5(root, cue) {
   const popMoths = Array.from({ length: 12 }, (_, i) => { const sh = 0.15 + hash(i + 3) * 0.75; const m = moth(S3, sh); return { m, sh }; });
   const inherit = g(S3);
   const parentM = moth(inherit, 0.3, 1.6); move(parentM, 0, -120);
-  const kids = [0.28, 0.33, 0.25].map((sh, i) => { const m = moth(inherit, sh, 1.2); move(m, -200 + i * 200, 140); el('path', { d: `M 0 -70 L ${-200 + i * 200} 90`, stroke: C.dim, 'stroke-width': 3, 'stroke-dasharray': '8 8' }, inherit); return m; });
+  const kidLines = [0, 1, 2].map(i => el('path', { d: `M 0 -85 C 0 0 ${-200 + i * 200} 0 ${-200 + i * 200} 100`, fill: 'none', stroke: '#94a3b8', 'stroke-width': 4, 'stroke-linecap': 'round' }, inherit));
+  const kidDots = [0, 1, 2].map(() => el('circle', { r: 9, fill: '#cbd5e1', filter: 'url(#glow)' }, inherit));
+  kidLines.forEach(l => inherit.insertBefore(l, parentM));
+  const kids = [0.28, 0.33, 0.25].map((sh, i) => { const m = moth(inherit, sh, 1.2); return m; });
   // tree trunk scene
   const tree = g(S3);
   const bark = rect(tree, 560, 160, 800, 760, { r: 40, fill: '#cfc8b4', stroke: 'none' });
@@ -639,7 +642,24 @@ export function createChapter5(root, cue) {
     show(S3, s3);
     const popOn = vis(t, T.pop - 0.4, T.consider - 0.2, 0.5, 0.5);
     popMoths.forEach((m, i) => { move(m.m, 380 + (i % 6) * 230, 420 + Math.floor(i / 6) * 260, 1.3); show(m.m, popOn * p(t, T.pop + i * 0.08, 0.4) * (1 - p(t, T.inherited - 0.2, 0.4))); });
-    move(inherit, 960, 600, 1.5); show(inherit, vis(t, T.inherited, T.consider - 0.2, 0.5, 0.5));
+    move(inherit, 960, 600, 1.5); show(inherit, vis(t, T.inherited - 0.4, T.consider - 0.2, 0.4, 0.5));
+    // the parent's pattern is passed down: three lines grow, and three similar offspring appear at their ends
+    const pPop = p(t, T.inherited - 0.4, 0.5, easeBack);
+    move(parentM, 0, -120, 1.6 * pPop);
+    const genW = cue.at('the next generation');
+    kidLines.forEach((l, i) => {
+      const k = p(t, T.inherited + 0.3 + i * 0.35, 1.1, easeOut);
+      draw(l, k);
+      const q = pointOn(l, k);
+      set(kidDots[i], { cx: q.x, cy: q.y }); show(kidDots[i], k > 0.02 && k < 0.98 ? 1 : 0);
+      const born = p(t, T.inherited + 1.3 + i * 0.35, 0.5, easeBack);
+      move(kids[i], -200 + i * 200, 140, 1.2 * born, (i - 1) * 6 * (1 - born));
+      show(kids[i], born > 0.01 ? 1 : 0);
+    });
+    // on "next generation" the offspring flash to show they carry the parent's look
+    const flashK = Math.sin(Math.PI * pl(t, genW, 0.8));
+    kids.forEach(m => set(m, { opacity: 1 - 0.3 * flashK }));
+    set(parentM, { opacity: 1 - 0.3 * flashK });
     const treeOn = vis(t, T.consider - 0.3, T.didNot - 0.2, 0.6, 0.6);
     show(tree, treeOn); show(popBar, treeOn);
     // environment darkness: 0 pale → 1 sooty → back
