@@ -33,3 +33,11 @@ html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans)
 .player-shell.fullscreen .external-captions{display:none}
 .player-shell.fullscreen.controls-hidden .player-controls,.player-shell.fullscreen.controls-hidden .chapter-rail{opacity:0;pointer-events:none}
 @media(max-width:700px){.chapter-rail button{min-width:90px;font-size:12px}#caption-line{font-size:15px}}
+.download-panel{margin-top:14px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:#081019}
+.download-row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.download-row button,.download-row select{height:38px;padding:0 14px;border-radius:8px;border:1px solid #2c4659;background:#11202d;color:var(--ink);font:600 15px var(--sans);cursor:pointer}
+#download-mp4{background:#0f3b36;border-color:var(--teal)}
+#download-mp4:disabled{opacity:.5;cursor:default}
+#download-bar{width:100%;height:10px;margin-top:10px;accent-color:var(--teal)}
+#download-status{margin:8px 0 0;font-size:14px;color:var(--dim);line-height:1.5}
+@media(max-width:700px){.player-controls{flex-wrap:wrap;gap:8px}.player-controls input[type=range]{order:5;flex-basis:100%}}
