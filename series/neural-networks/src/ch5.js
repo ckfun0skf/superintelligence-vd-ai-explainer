@@ -49,7 +49,7 @@ function board(parent, N, cell) {
       set(food, { cx: -S / 2 + (st.food[0] + 0.5) * cell, cy: -S / 2 + (st.food[1] + 0.5) * cell });
       segs.forEach((r, i) => {
         const b = st.body[i];
-        if (!b) return show(r, 0);
+        if (!b) { set(r, { x: 0, y: 0 }); return show(r, 0); }
         show(r, 1);
         set(r, { x: -S / 2 + b[0] * cell + 1.5, y: -S / 2 + b[1] * cell + 1.5, fill: st.crashed && i === 0 ? C.red : i ? C.green : '#bbf7d0' });
       });
